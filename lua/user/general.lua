@@ -49,7 +49,7 @@ user.o = {
 
     -- 行号
     number = true,
-    relativenumber = true,
+    relativenumber = false,
 
     -- 特殊字符转换显示
     list = true,
