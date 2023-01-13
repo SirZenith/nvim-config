@@ -1,8 +1,7 @@
 local user = require "user"
 local fs = require "user.utils.fs"
 
-local onedrive = vim.env.ONEDRIVE or fs.path_join(vim.env.HOME, "OneDrive")
-local css_root = fs.path_join(onedrive, "Documents", "云端文档", "样式表", "markdown-preview.nvim")
+local css_root = fs.path_join(user.env.CONFIG_HOME(), "iamcco", "css")
 
 user.g = {
     mkdp_open_to_the_world = true,

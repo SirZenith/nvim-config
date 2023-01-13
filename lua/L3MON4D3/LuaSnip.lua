@@ -1,5 +1,5 @@
 local user = require "user"
-local ls = require("luasnip")
+local luansnip = require("luasnip")
 local types = require("luasnip.util.types")
 
 user.LuaSnip = {
@@ -23,5 +23,5 @@ user.LuaSnip = {
 
 return function()
     -- Every unspecified option will be set to the default.
-    ls.config.set_config(user.LuaSnip())
+    luansnip.config.set_config(user.LuaSnip())
 end

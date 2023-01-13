@@ -127,8 +127,6 @@ local function register_build_mapping(filetype, mapto)
     })
 end
 
-user.g.mapleader = " "
-
 ---@alias KeyMap {[string]: string|function}
 
 ---@type KeyMap
@@ -255,6 +253,10 @@ local common_keymap = {
     t = t_common_keymap,
     c = c_common_keymap,
 }
+
+-- -----------------------------------------------------------------------------
+
+user.g.mapleader = " "
 
 -- -----------------------------------------------------------------------------
 

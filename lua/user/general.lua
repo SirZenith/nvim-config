@@ -1,5 +1,49 @@
 local user = require "user"
-local utils = require "user.utils"
+
+local augroup_id = vim.api.nvim_create_augroup("user.general", { clear = true })
+
+local function im_auto_toggle_setup(cmd)
+    if not cmd then
+        return
+    end
+
+    local im_check_cmd = cmd.check
+
+    local im_on_cmd = cmd.on
+    local im_off_cmd = cmd.off
+    local im_isoff = cmd.isoff
+
+    local method_toggled = false
+
+    -- IM off
+    vim.api.nvim_create_autocmd("InsertLeave", {
+        group = augroup_id,
+        pattern = "*",
+        callback = function()
+            local im = vim.fn.system(im_check_cmd)
+            if not im_isoff(im) then
+                method_toggled = true
+                vim.fn.system(im_off_cmd)
+            else
+                method_toggled = false
+            end
+        end,
+    })
+
+    -- IM on
+    vim.api.nvim_create_autocmd("InsertEnter", {
+        group = augroup_id,
+        pattern = "*",
+        callback = function()
+            if method_toggled then
+                vim.fn.system(im_on_cmd)
+                method_toggled = false
+            end
+        end,
+    })
+end
+
+-- -----------------------------------------------------------------------------
 
 user.o = {
     autochdir = false, -- 总是自动切换到当前 buffer 所在的目录
@@ -44,7 +88,7 @@ user.o = {
     ruler = true, -- 在状态栏显示光标所在坐标
     showcmd = true, -- 显示输入的命令
     showmatch = true, -- 显示括号匹配
-    scrolloff= 15, -- 光标尽量和页码底部保持指定的行数间距
+    scrolloff = 15, -- 光标尽量和页码底部保持指定的行数间距
     termguicolors = true, -- 开启终端真色彩支持
 
     -- 行号
@@ -97,6 +141,7 @@ user.g = {
 
 user.general = {
     -- locale = "zh_CN.UTF-8",
+
     filetype = {
         -- 不使用软 tab 的类型
         no_soft_tab = { "go", "make", "plantuml", "vlang" },
@@ -105,45 +150,56 @@ user.general = {
             vlang = { "*.v", "*.vsh" },
         },
     },
+    im_select = {
+        check = "", on = "", off = "",
+        isoff = function() return true end
+    },
 }
 
-user.theme.highlight = {
-    CursorLine = {
-        fg = nil,
-        bg = "#353c4a",
+user.theme = {
+    colorscheme = nil,
+    highlight = {
+        CursorLine = {
+            fg = nil,
+            bg = "#353c4a",
+        },
+        Folded = {
+            fg = "#7e828c",
+            bg = "#282d38",
+        },
+        LspLogTrace = {
+            bg = "#3e4a5b",
+        },
+        LspLogDebug = {
+            bg = "#4f6074",
+        },
+        LspLogInfo = {
+            fg = "#000000",
+            bg = "#a3be8c",
+        },
+        LspLogWarn = {
+            fg = "#000000",
+            bg = "#ebcb8b",
+        },
+        LspLogError = {
+            fg = "#ffffff",
+            bg = "#bf616a",
+        },
+        Visual = {
+            fg = nil,
+            bg = "#3a4657",
+        }
     },
-    Folded = {
-        fg = "#7e828c",
-        bg = "#282d38",
-    },
-    LspLogTrace = {
-        bg = "#3e4a5b",
-    },
-    LspLogDebug = {
-        bg = "#4f6074",
-    },
-    LspLogInfo = {
-        fg = "#000000",
-        bg = "#a3be8c",
-    },
-    LspLogWarn = {
-        fg = "#000000",
-        bg = "#ebcb8b",
-    },
-    LspLogError = {
-        fg = "#ffffff",
-        bg = "#bf616a",
-    },
-    Visual = {
-        fg = nil,
-        bg = "#3a4657",
-    }
 }
 
 -- -----------------------------------------------------------------------------
 
 return function()
     vim.env.NVIM_TUI_ENABLE_TRUE_COLOR = 1
+
+    vim.cmd "filetype plugin indent on"
+
+    im_auto_toggle_setup(user.general.im_select())
 
     local locale = user.general.locale()
     if locale then
@@ -155,13 +211,9 @@ return function()
         vim.cmd("colorscheme " .. colorscheme)
     end
 
-    vim.cmd "filetype plugin indent on"
-
     for group, config in user.theme.highlight:pairs() do
         vim.api.nvim_set_hl(0, group, config)
     end
-
-    local augroup_id = vim.api.nvim_create_augroup("user.general", { clear = true })
 
     -- 禁用注释相关的自动格式化行为
     vim.api.nvim_create_autocmd("FileType", {
@@ -181,93 +233,12 @@ return function()
     end
 
     -- 不使用软 tab 的文件类型
-    do
-        local filetypes = user.general.filetype.no_soft_tab()
-        if filetypes then
+    local no_soft_tab_filetypes = user.general.filetype.no_soft_tab()
+    if no_soft_tab_filetypes then
         vim.api.nvim_create_autocmd("FileType", {
             group = augroup_id,
-            pattern = filetypes,
+            pattern = no_soft_tab_filetypes,
             callback = function() vim.opt_local.expandtab = false end
-        })
-        end
-    end
-
-    -- -------------------------------------------------------------------------
-    -- 输入法自动切换
-
-    ---@enum PlatformMark
-    ---| "linux"
-    ---| "termux"
-    ---| "windows"
-    ---| "wsl"
-    ---| "wsl2"
-
-    ---@class CommandSet
-    ---@field check string
-    ---@field on string
-    ---@field off string
-    ---@field isoff fun(im: string): boolean
-
-    ---@type table<PlatformMark, CommandSet>
-    local cmd_map = {}
-
-    cmd_map.default = {
-        check = "", on = "", off = "",
-        isoff = function() return true end
-    }
-
-    cmd_map.linux = {
-        check = "fcitx5-remote",
-        on = "fcitx5-remote -o",
-        off = "fcitx5-remote -c",
-        isoff = function(im)
-            return tonumber(im) == 1
-        end
-    }
-    cmd_map.wsl = {
-        check = "im-select.exe",
-        on = "im-select.exe 2052",
-        off = "im-select.exe 1033",
-        isoff = function(im)
-            return tonumber(im) == 1033
-        end
-    }
-    cmd_map.wsl2 = cmd_map.wsl
-    cmd_map.windows = cmd_map.wsl
-
-    local mark = vim.env.PLATFORM_MARK ---@type PlatformMark
-    local cmd = cmd_map[mark] or cmd_map.default
-    local im_check_cmd = cmd.check
-    local im_on_cmd = cmd.on
-    local im_off_cmd = cmd.off
-    local im_isoff = cmd.isoff
-
-    local method_toggled = false
-
-    if cmd_map[mark] then
-        -- IM off
-        vim.api.nvim_create_autocmd("InsertLeave", {
-            pattern = "*",
-            callback = function()
-                local im = vim.fn.system(im_check_cmd)
-                if not im_isoff(im) then
-                    method_toggled = true
-                    vim.fn.system(im_off_cmd)
-                else
-                    method_toggled = false
-                end
-            end,
-        })
-
-        -- IM on
-        vim.api.nvim_create_autocmd("InsertEnter", {
-            pattern = "*",
-            callback = function()
-                if method_toggled then
-                    vim.fn.system(im_on_cmd)
-                    method_toggled = false
-                end
-            end,
         })
     end
 end
