@@ -3,6 +3,10 @@ local utils = require "user.utils"
 local import = utils.import
 local fs = require "user.utils.fs"
 
+if vim.fn.executable("git") == 0 then
+    error("can't find command git.")
+end
+
 local fn = vim.fn
 
 local M = {}
@@ -63,13 +67,15 @@ local function make_loader(use)
             before_load()
         end
 
-        local ok, errmsg = pcall(use, spec)
-        if ok then
-            table.insert(loaded_plugin_list, spec)
-        else
-            io.write("while loading: ")
-            vim.pretty_print(spec)
-            vim.notify("error: " .. errmsg)
+        if xpcall(
+            function() use(spec) end,
+            function()
+                io.write("while loading: ")
+                vim.pretty_print(spec)
+                print(debug.traceback())
+            end
+        ) then
+            loaded_plugin_list[#loaded_plugin_list+1] = spec
         end
     end
 end

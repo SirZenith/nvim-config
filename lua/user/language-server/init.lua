@@ -11,15 +11,6 @@ local lsp_status = import "lsp-status"
 
 local M = {}
 
-user.lsp = {
-    log_update_method = ui.PanelContentUpdateMethod.append,
-    log_scroll_method = ui.ScrollMethod.bottom,
-    on_attach_callbacks = {},
-    capabilities_settings = {
-        vim.lsp.protocol.make_client_capabilities()
-    },
-}
-
 -- -----------------------------------------------------------------------------
 
 local LOG_MESSAGE_PANEL_NAME = "user.lsp.log_message"
@@ -199,5 +190,18 @@ function M.change_lsp_config(lsp_name, config)
         clients[i].workspace_did_change_configuration(settings)
     end
 end
+
+-- -----------------------------------------------------------------------------
+
+user.lsp = {
+    log_update_method = ui.PanelContentUpdateMethod.append,
+    log_scroll_method = ui.ScrollMethod.bottom,
+    on_attach_callbacks = {},
+    capabilities_settings = {
+        vim.lsp.protocol.make_client_capabilities()
+    },
+}
+
+-- -----------------------------------------------------------------------------
 
 return M
