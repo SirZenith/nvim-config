@@ -3,10 +3,16 @@ local import = utils.import
 local fs = require "user.utils.fs"
 local ConfigEntry = require "user.config_entry".ConfigEntry
 
+local env_config_home = vim.env.CONFIG_HOME
+if  not env_config_home then
+    vim.notify("failed to initialize, Can't find environment varialbe 'CONFIG_HOME'")
+    return
+end
+
 local user = ConfigEntry:new {
     env = {
-        NVIM_HOME = fs.path_join(vim.env.CONFIG_HOME, "nvim"),
-        CONFIG_HOME = fs.path_join(vim.env.CONFIG_HOME, "nvim", "lua"),
+        NVIM_HOME = fs.path_join(env_config_home, "nvim"),
+        CONFIG_HOME = fs.path_join(env_config_home, "nvim", "lua"),
     }
 }
 

@@ -149,7 +149,11 @@ return function()
     if locale then
         vim.cmd("language " .. locale)
     end
-    vim.cmd("colorscheme " .. user.theme.colorscheme())
+
+    local colorscheme = user.theme.colorscheme()
+    if colorscheme then
+        vim.cmd("colorscheme " .. colorscheme)
+    end
 
     vim.cmd "filetype plugin indent on"
 
@@ -177,11 +181,16 @@ return function()
     end
 
     -- 不使用软 tab 的文件类型
-    vim.api.nvim_create_autocmd("FileType", {
-        group = augroup_id,
-        pattern = user.general.filetype.no_soft_tab(),
-        callback = function() vim.opt_local.expandtab = false end
-    })
+    do
+        local filetypes = user.general.filetype.no_soft_tab()
+        if filetypes then
+        vim.api.nvim_create_autocmd("FileType", {
+            group = augroup_id,
+            pattern = filetypes,
+            callback = function() vim.opt_local.expandtab = false end
+        })
+        end
+    end
 
     -- -------------------------------------------------------------------------
     -- 输入法自动切换

@@ -108,7 +108,8 @@ end
 
 ---@param target string
 local function global_search(target)
-    local template = GLOBAL_SERACH_CMD_MAP[vim.env.PLATFORM_MARK] or GLOBAL_SERACH_CMD_MAP.default
+    local platform = vim.env.PLATFORM_MARK
+    local template = platform and GLOBAL_SERACH_CMD_MAP[platform] or GLOBAL_SERACH_CMD_MAP.default
     local cmd = template:format(target, vim.fn.getcwd())
     vim.api.nvim_command(cmd)
     vim.api.nvim_command("cw")

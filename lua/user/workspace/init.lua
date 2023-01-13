@@ -50,7 +50,9 @@ function M.load()
     if vim.fn.filereadable(file_path) == 0 then return end
 
     local module
-    local ok, result = pcall(require, M.get_workspace_config_require_path())
+    local ok, result = xpcall(function()
+        require(M.get_workspace_config_require_path())
+    end, debug.traceback)
     if ok then
         local result_type = type(result)
         local finalize

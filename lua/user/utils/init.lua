@@ -24,10 +24,10 @@ end
 
 local M = {}
 
--- 使用 pcall 进行 require。在失败时会打印错误内容，并返回 nil。
+-- 使用 xpcall 进行 require。在失败时会打印错误内容，并返回 nil。
 ---@param modname string
 function M.import(modname)
-    local ok, result = pcall(require, modname)
+    local ok, result = xpcall(function() return require(modname) end, debug.traceback)
 
     local module
     if ok then
