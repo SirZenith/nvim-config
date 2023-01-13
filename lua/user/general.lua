@@ -112,6 +112,21 @@ user.theme.highlight = {
         fg = nil,
         bg = "#353c4a",
     },
+    DiffChange = {
+        bg = "#3a4657",
+        fg = "#ebcb8b",
+    },
+    DiffCommon = {
+        fg = "#808080"
+    },
+    DiffDelete = {
+        bg = "#3a4657",
+        fg = "#bf616a",
+    },
+    DiffInsert = {
+        bg = "#3a4657",
+        fg = "#a3be8c",
+    },
     Folded = {
         fg = "#7e828c",
         bg = "#282d38",
