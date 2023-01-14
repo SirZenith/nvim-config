@@ -121,7 +121,6 @@ local function lsp_on_attach(client, bufnr)
     end
 
     for _, callback in user.lsp.on_attach_callbacks:ipairs() do
-        print(callback)
         callback(client, bufnr)
     end
 end

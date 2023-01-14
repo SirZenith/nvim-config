@@ -16,6 +16,10 @@ LUA_LINE_THEME = nil ---@type string?
 local loaded_plugin_list = {}
 local modules = {}
 
+local function get_config_name(path)
+    return "plugins/" .. path .. "_config"
+end
+
 local function require_packer()
     local is_bootstranp = false
     local install_path = fn.stdpath("data") .. "/site/pack/packer/start/packer.nvim"
@@ -49,9 +53,10 @@ local function load_config(spec)
 
     if not path or #path == 0 then return end
 
-    local file = fs.path_join(user.env.CONFIG_HOME(), path .. ".lua")
+    local cfg_name = get_config_name(path)
+    local file = fs.path_join(user.env.CONFIG_HOME(), cfg_name .. ".lua")
     if fn.filereadable(file) ~= 0 then
-        local module = import(path)
+        local module = import(cfg_name)
         modules[#modules + 1] = module
     end
 end
@@ -72,7 +77,7 @@ local function make_loader(use)
             function()
                 io.write("while loading: ")
                 vim.pretty_print(spec)
-                print(debug.traceback())
+                vim.notify(debug.traceback())
             end
         ) then
             loaded_plugin_list[#loaded_plugin_list+1] = spec
