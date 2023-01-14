@@ -113,10 +113,10 @@ packer.startup(function(use)
         requires = { "nvim-tree/nvim-web-devicons" },
     }
     load "tyru/open-browser.vim"
-    load "SirZenith/panelpal"
+    load "SirZenith/panelpal.nvim"
     load {
         "SirZenith/vcs-helper.nvim",
-        requires = { "SirZenith/panelpal" },
+        requires = { "SirZenith/panelpal.nvim" },
     }
     load {
         "nvim-telescope/telescope.nvim",
