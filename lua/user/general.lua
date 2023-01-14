@@ -200,6 +200,12 @@ user.theme = {
             fg = "#ffffff",
             bg = "#bf616a",
         },
+        PanelpalSelect = {
+            fg = "#ebcb8b",
+        },
+        PanelpalUnselect = {
+            fg = "#4f6074",
+        },
         Visual = {
             fg = nil,
             bg = "#3a4657",
