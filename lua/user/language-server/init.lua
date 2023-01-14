@@ -2,7 +2,7 @@ local user = require "user"
 local utils = require "user.utils"
 local fs = require "user.utils.fs"
 local table_utils = require "user.utils.table"
-local ui = require "user.utils.ui"
+local panelpal = require "panelpal"
 
 local import = utils.import
 
@@ -42,9 +42,9 @@ function M.lsp_debug_on()
             old_handler(err, result, ctx, config)
         end
 
-        local buf, win = ui.find_buf_with_name(LOG_MESSAGE_PANEL_NAME)
+        local buf, win = panelpal.find_buf_with_name(LOG_MESSAGE_PANEL_NAME)
         if not buf then
-            buf, win = ui.set_panel_visibility(LOG_MESSAGE_PANEL_NAME, true)
+            buf, win = panelpal.set_panel_visibility(LOG_MESSAGE_PANEL_NAME, true)
         end
         if not (buf and win) then return end
 
@@ -54,15 +54,15 @@ function M.lsp_debug_on()
         local update_method = user.lsp.log_update_method()
         local log_level = LspLogLevel[result.type]
 
-        ui.write_to_buf_with_highlight(
+        panelpal.write_to_buf_with_highlight(
             buf, "LspLog" .. log_level,
             vim.fn.strftime("[%Y-%m-%d %X]") .. " Log Level: " .. log_level,
             update_method
         )
-        ui.write_to_buf(buf, result.message, ui.PanelContentUpdateMethod.append)
+        panelpal.write_to_buf(buf, result.message, panelpal.PanelContentUpdateMethod.append)
         if win then
             -- offset 1 for log timestamp line
-            ui.scroll_win(win, user.lsp.log_scroll_method(), 1)
+            panelpal.scroll_win(win, user.lsp.log_scroll_method(), 1)
         end
 
         vim.bo[buf].modifiable = false
@@ -72,7 +72,7 @@ end
 function M.lsp_debug_off()
     if not M._is_debug_on then return end
 
-    ui.set_panel_visibility(LOG_MESSAGE_PANEL_NAME, false)
+    panelpal.set_panel_visibility(LOG_MESSAGE_PANEL_NAME, false)
     vim.lsp.set_log_level("warn")
     vim.lsp.handlers["window/logMessage"] = M._old_log_message_handler
 end
@@ -194,8 +194,8 @@ end
 -- -----------------------------------------------------------------------------
 
 user.lsp = {
-    log_update_method = ui.PanelContentUpdateMethod.append,
-    log_scroll_method = ui.ScrollMethod.bottom,
+    log_update_method = panelpal.PanelContentUpdateMethod.append,
+    log_scroll_method = panelpal.ScrollMethod.bottom,
     on_attach_callbacks = {},
     capabilities_settings = {
         vim.lsp.protocol.make_client_capabilities()

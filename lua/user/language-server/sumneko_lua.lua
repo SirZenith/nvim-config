@@ -46,6 +46,7 @@ local runtime_paths = (function()
             "nvim/runtime",
             "LuaSnip",
             "nvim-lspconfig",
+            "panelpal",
         }
 
         local list = vim.api.nvim_list_runtime_paths()

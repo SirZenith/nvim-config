@@ -1,6 +1,6 @@
 local user = require "user"
 local functional = require "user.utils.functional"
-local ui = require "user.utils.ui"
+local panelpal = require "panelpal"
 
 local USER_TERMINAL_PANEL_BUF_NAME = "user.terminal"
 ---@type table<string, string>
@@ -55,7 +55,7 @@ end
 
 local function toggle_quickfix()
     local is_visible = functional.any(
-        ui.list_visible_buf(0),
+        panelpal.list_visible_buf(0),
         function(_, buf) return vim.bo[buf].filetype == "qf" end
     )
     vim.cmd(is_visible and "cclose" or "copen")
@@ -63,7 +63,7 @@ end
 
 local function toggle_terminal()
     local name = USER_TERMINAL_PANEL_BUF_NAME
-    local buf_num, win_num = ui.find_buf_with_name(name)
+    local buf_num, win_num = panelpal.find_buf_with_name(name)
 
     if not buf_num then
         -- 不存在
@@ -222,7 +222,7 @@ local v_common_keymap = {
 
     -- 搜索
     ["<leader>sg"] = function()
-        local target = ui.visual_selection_text()
+        local target = panelpal.visual_selection_text()
         if not target or #target == 0 then return end
         global_search(target)
     end,
