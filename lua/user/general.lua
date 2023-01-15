@@ -93,7 +93,7 @@ user.o = {
 
     -- 行号
     number = true,
-    relativenumber = false,
+    relativenumber = true,
 
     -- 特殊字符转换显示
     list = true,
