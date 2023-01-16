@@ -1,5 +1,6 @@
 local M = {}
 
+-- if input value is a table, return its shallow copy, else return the value directly.
 -- 复制传入的值，如果传入值的类型为 table 则进行浅复制，否则将参数原样返回。
 ---@param src any
 ---@return any
@@ -14,7 +15,7 @@ function M.copy(src)
     return tbl
 end
 
--- 复制传入的值，如果传入值的类型为 table 则进行深复制，否则将参数原样返回。
+-- if input value is a table, return its deep copy, else return the value directly.
 ---@param src any
 ---@return any
 function M.deep_copy(src)
@@ -37,15 +38,17 @@ function M.extend_list(dst, src)
     end
 end
 
--- 使用 src 中的字段更新 dst。
--- src 中的字段如果在 dst 中也存在，则会使用 src 中的值覆盖 dst 中的值；
--- src 中的字段如果在 dst 中不存在，则会向 dst 中添加对应的字段；
--- dst 中存在但 src 中不存在的字段不会改变。
--- 如果需要复制的字段值是 table，则会递归运用上述规则，
--- 若要强制使用 src 中的 table 覆盖 dst 中对应的值，请在 src 的 table 字段中加入
--- `__override = true`。
--- 如果需要以列表形式将 src 中的表字段加入到 dst 对应位置，则可以在 src 字段值
--- 中加入 `__append = true`。
+-- update fields in dst using value in src.
+-- if a filed appears only in src, add this value to dst;
+-- if a field appears only in dst, it will be leave untouched;
+-- if a field appears both in src and dst:
+--     - if field value in src is not a table, override dst's value with src's one;
+--     - if field value in dst is not a table, override dst's value with src's one;
+--     - when field value in both src and dst are tables, recursively apply all other rules on this field.
+-- If you wnat to override dst's field directly with a table in src, you can add
+-- `__override = true` into that table value.
+-- If you want to append values in a table field in src into dst's one, you can
+-- add `__append = true` into that table value.
 ---@param dst table
 ---@param src table
 function M.update_table(dst, src)

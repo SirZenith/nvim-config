@@ -46,20 +46,20 @@ end
 -- -----------------------------------------------------------------------------
 
 user.o = {
-    autochdir = false, -- 总是自动切换到当前 buffer 所在的目录
-    autoread = true, -- 文件被外部改动时自动刷新内容
-    backspace = "indent,start,eol", -- 设定退格键可以跨越的界限
-    clipboard = "unnamedplus", -- 使用系统剪贴板存放复制内容
+    autochdir = false, -- auto chdir into directory of current buffer
+    autoread = true, -- reload when file changed externally
+    backspace = "indent,start,eol", -- select which boundary is ignored by backspace
+    clipboard = "unnamedplus", -- use system clipboard for yard
 
-    splitbelow = true, -- 横向切分创建在下方
-    splitright = true, -- 纵向切分创建在右侧
+    splitbelow = true, -- split at bottom when making horizontal split
+    splitright = true, -- split at right when making vertical split
 
-    timeoutlen = 250, -- 设定组合键检测的超时
+    timeoutlen = 250, -- set timeout for keymap
 
-    -- 打开文件时自动逐个尝试编码，直到解码过程没有发生错误
+    -- file encoding checking queue
     fileencodings = "utf-8,ucs-bom,shift-jis,gb18030,gbk,gb2312,cp936",
 
-    -- 缩进设定
+    -- Indent
     tabstop = 4,
     softtabstop = 4,
     shiftwidth = 4,
@@ -67,17 +67,17 @@ user.o = {
     autoindent = true,
     cindent = true,
 
-    -- 折叠设定
+    -- Folding
     -- foldmethod = "expr",
     -- foldexpr = "nvim_treesitter#foldexpr()",
     foldenable = true,
     foldnestmax = 4,
 
-    -- 设定 buffer 转为完全不可见时的行为，为 `false` 时，buffer 不可见时会被抛弃
-    -- 此时 buffer 对应的编辑历史会被清空
+    -- set behaviour when buffer becomes invisible
+    -- if `false` buffer will be set to inactive, else buffer will be set hidden
     hidden = true,
 
-    -- 搜索只在目标 pattern 包含大写时对大小写敏感
+    -- search case sensitively only when pattern contains capital letter
     ignorecase = true,
     smartcase = true,
 
@@ -85,43 +85,43 @@ user.o = {
     mouse = "a",
     grepprg = "rg --vimgrep",
 
-    ruler = true, -- 在状态栏显示光标所在坐标
-    showcmd = true, -- 显示输入的命令
-    showmatch = true, -- 显示括号匹配
-    scrolloff = 15, -- 光标尽量和页码底部保持指定的行数间距
-    termguicolors = true, -- 开启终端真色彩支持
+    ruler = true, -- show line:column coordinate in status line
+    showcmd = true, -- display command input
+    showmatch = true, -- show matching bracket
+    scrolloff = 15, -- key certain line gap between screen bottom
+    termguicolors = true, -- turn true color support
 
-    -- 行号
+    -- line number
     number = true,
     relativenumber = true,
 
-    -- 特殊字符转换显示
+    -- displaying special characters
     list = true,
     listchars = "tab:▸ ,trail:·,precedes:←,extends:→",
 
-    -- 自动折行
+    -- line wrap
     wrap = false,
     textwidth = 0,
     wrapmargin = 0,
-    -- 自动折行关闭时，光标横移时尽量和窗口边缘保持指定列数
-    -- 此值充分大时，光标会尽量保持在屏幕中央
+    -- when line wrap is off, key certain column gap between screen boundary,
+    -- when this value is sufficently large, cursor will stay centered on screen
     sidescrolloff = 15,
 
-    -- 光标所在行突出
+    -- highlight cursor line
     cursorline = true,
 
-    -- 纵向标尺
+    -- vertical ruler
     colorcolumn = "80",
 
-    -- 内容隐藏
+    -- character concealing
     conceallevel = 1,
-    -- concealcursor = "n", -- 在指定的模式下，光标所在行的文字也隐藏
+    -- concealcursor = "n", -- in these mode, also conceals cursorline
 
-    -- 为 LSP 内容显示提供支持
-    cmdheight = 2, -- 命令显示使用的行数
-    updatetime = 300, -- 在指定毫秒后若没有文件内容变动，swap 文件就会定入硬盘
-    -- 侧边 debug/诊断符号显示
-    -- `number` 为不独立为符号添加侧边列，符号和行号共用位置
+    -- setup LSP display
+    cmdheight = 2, -- height for command display area
+    updatetime = 300, -- after certain timeout in millisecond, swap file will be written to disk
+    -- display debug/diagnostic symbol in gutter
+    -- `number` means share space with line number, don't create extra column
     signcolumn = "number",
 }
 
@@ -236,7 +236,7 @@ return function()
         vim.api.nvim_set_hl(0, group, config)
     end
 
-    -- 禁用注释相关的自动格式化行为
+    -- disable all auto commenting.
     vim.api.nvim_create_autocmd("FileType", {
         group = augroup_id,
         callback = function()
@@ -244,7 +244,7 @@ return function()
         end,
     })
 
-    -- 文件类型映射
+    -- filetype mapping
     for filetype, pattern in user.general.filetype.mapping:pairs() do
         vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
             group = augroup_id,
@@ -253,7 +253,7 @@ return function()
         })
     end
 
-    -- 不使用软 tab 的文件类型
+    -- setup filetypes that don't use soft-tab
     local no_soft_tab_filetypes = user.general.filetype.no_soft_tab()
     if no_soft_tab_filetypes then
         vim.api.nvim_create_autocmd("FileType", {

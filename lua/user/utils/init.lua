@@ -24,7 +24,7 @@ end
 
 local M = {}
 
--- 使用 xpcall 进行 require。在失败时会打印错误内容，并返回 nil。
+-- wrap require in xpcall, print traceback then return nil when failed.
 ---@param modname string
 function M.import(modname)
     local ok, result = xpcall(function() return require(modname) end, debug.traceback)
@@ -39,7 +39,7 @@ function M.import(modname)
     return module
 end
 
--- 传入等待进行确定化加载的模块列表，逐个进行 finalize 调用。
+-- pass in loaded config modules, this function will finalize them in order.
 ---@param modules any[]
 function M.finalize(modules)
     for i = 1, #modules do

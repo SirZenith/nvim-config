@@ -152,8 +152,9 @@ function ConfigEntry:_set_value(k, v)
     end
 end
 
--- 获取 path 指定的 config 结点，如果路径上结点还不存在，则会在途径时创建新表。
--- 如果路径中出现非 table 类型结点，则返回 nil
+-- query config node specified by key segments. During process, non-exesits node
+-- will be created.
+-- If key path runs into a non-table node, this function returns nil.
 ---@param segments string[]
 ---@return {[string]: any}? tbl
 function ConfigEntry:_get_tbl_by_segments(segments)
@@ -258,7 +259,7 @@ function ConfigEntry:append(value)
     tbl[#tbl + 1] = value
 end
 
--- 返回当前条目对应的 config 值的 ipairs 迭代器
+-- return ipairs iterator of config in current entry for `for` loop.
 ---@return fun(state: any, var: any): any func
 ---@return any state
 ---@return any init_var
@@ -273,7 +274,7 @@ function ConfigEntry:ipairs()
     return ipairs(value)
 end
 
--- 返回当前条目对应的 config 值的 pairs 迭代器
+-- return pairs iterator of config in current entry for `for` loop.
 ---@return fun(state: any, var: any): any func
 ---@return any state
 ---@return any init_var

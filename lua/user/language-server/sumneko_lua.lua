@@ -92,7 +92,7 @@ local lib_path = (function()
         tbl[#tbl + 1] = dir
     end
 
-    -- 用户定义 EmmyLua
+    -- User defined EmmyLua
     local emmylua_path = fs.path_join(vim.env.APP_PATH or "", "EmmyLua", "lua-lib-annotation")
     tbl[#tbl + 1] = emmylua_path
 

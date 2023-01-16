@@ -11,7 +11,7 @@ user.g = {
     vimtex_syntax_enabled = 0,
     -- vim.g.vimtex_syntax_conceal_disable = 1
 
-    -- 设定编译引擎映射，其中 _ 是默认使用引擎
+    -- set command line argument for each engine, where _ is default engine.
     vimtex_compiler_latexmk_engines = {
         _                    = "-xelatex",
         pdflatex             = "-pdf",
