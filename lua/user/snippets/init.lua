@@ -26,7 +26,7 @@ return function()
         end
 
         if name ~= "init" then
-            import("user.snippets." .. name)
+            import("user/snippets/" .. name)
         end
     end
 

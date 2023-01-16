@@ -7,6 +7,8 @@ local M = {}
 ---@param modulename string
 function M.no_dot_substiting_loader(modulename)
     local errmsg = ""
+    local err_template = "%s\n\tno file '%s' (no dot-sub loader)"
+
     for path in string.gmatch(package.path, "([^;]+)") do
         local filename = string.gsub(path, "%?", modulename)
         local file = io.open(filename, "rb")
@@ -14,7 +16,7 @@ function M.no_dot_substiting_loader(modulename)
             local content = assert(file:read("*a"))
             return assert(loadstring(content, filename))
         end
-        errmsg = errmsg .. "\n\tno file '" .. filename .. "' (no dot-sub loader)"
+        errmsg = err_template:format(errmsg, path)
     end
     return errmsg
 end

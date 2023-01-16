@@ -2,26 +2,33 @@ local fnil = require "user.utils.functional".fnil
 local table_utils = require "user.utils.table"
 
 local reserved_key = {
+    __key = true,
     __reserved = true,
 }
 
 ---@class ConfigEntry
+--
+---@field __key_sep string
+---@field __config_base {[string]: any}
+---@field __reserved_keys {[string]: boolean}
+--
+---@field __key string
 local ConfigEntry = {
-    __root_key = "__root",
     __key_sep = ".",
-    __class_name = "ConfigEntry",
     __config_base = {},
     __reserved_keys = reserved_key,
 }
 
-ConfigEntry.__key = ConfigEntry.__root_key
+-- -----------------------------------------------------------------------------
 
+-- Try to join two key into one, both parameters can be nil at the same time,
+-- but can't both be empty string.
 ---@param base? string
 ---@param new? string
----@return string
+---@return string?
 function ConfigEntry:join_key(base, new)
     local key
-    if not base or #base == 0 or base == self.__root_key then
+    if not base or #base == 0 then
         key = new
     elseif not new or #new == 0 then
         key = base
@@ -29,9 +36,10 @@ function ConfigEntry:join_key(base, new)
         key = base .. self.__key_sep .. new
     end
 
-    if not key or key == "" then
-        error("empty key", 2)
+    if key == "" then
+        error("empty string key", 2)
     end
+
     return key
 end
 
@@ -41,26 +49,136 @@ function ConfigEntry:split_key(key)
     return vim.split(key, self.__key_sep, { plain = true })
 end
 
--- 将传入的 key 接在自身的 key 之后再进行切割，返回最后一分段以及此分段前所有分段
--- 组成的列表。
+-- return list of segments in current key.
+-- If extra key is passed, all segments in extra key will be appended to that list.
 ---@param key? string
----@return string tail
 ---@return string[] segments
-function ConfigEntry:into_segments(key)
+function ConfigEntry:get_key_segments(key)
     local complelte_key = key
         and self:join_key(self.__key, key)
         or self.__key
 
-    local segments = self:split_key(complelte_key)
+    if complelte_key then
+        return self:split_key(complelte_key)
+    else
+        return {}
+    end
+end
 
-    local tail
-    if key then
-        tail = segments[#segments]
-        segments[#segments] = nil
+---@param key string
+---@return string? parent
+---@return string child
+function ConfigEntry:split_parent(key)
+    local len = #key
+
+    local index
+    for i = len, 1, -1 do
+        if key:sub(i, i) == self.__key_sep then
+            index = i
+            break
+        end
     end
 
-    return tail, segments
+    if not index then
+        return nil, key
+    elseif index == 1 or index == len then
+        error("illegal key: " .. key)
+    else
+        return key:sub(1, index - 1), key:sub(index + 1)
+    end
 end
+
+-- -----------------------------------------------------------------------------
+
+-- If `k` is nil, return config of current entry, else get child in current entry.
+---@param k? string # a singele-segment key.
+---@return any value
+function ConfigEntry:_get_value(k)
+    if k ~= nil and type(k) ~= "string" then
+        error("expected key of string type.", 2)
+    end
+
+    local segments = self:get_key_segments(k)
+    local tail = table.remove(segments)
+
+    local tbl = self.__config_base
+    for i = 1, #segments do
+        tbl = tbl[segments[i]]
+
+        if type(tbl) ~= "table" then
+            error("indexing a non-table config: " .. tostring(self.__key), 2)
+        elseif tbl == nil then
+            break
+        end
+    end
+
+    if not tbl then
+        return nil
+    elseif not tail then
+        return tbl
+    else
+        return tbl[tail]
+    end
+end
+
+-- Inserting a value into internal config. Current entry must be table value.
+-- If `k` is not nil, a deep copy of `v` will be inserted into current entry,
+-- else `v` should be table, current entry will be updated using `v`.
+---@param k? string
+---@param v any
+function ConfigEntry:_set_value(k, v)
+    if k ~= nil and type(k) ~= "string" then
+        error("key of ConfigEntry must be of string type", 2)
+    end
+
+    local parent, tail
+    if k then
+        parent, tail = self:split_parent(k)
+    end
+
+    local tbl = self:_get_value(parent)
+    if type(tbl) ~= "table" then
+        error("trying to insert config into non-table config: " .. self.__key, 2)
+    end
+
+    local old_value = tail == nil and tbl or tbl[tail]
+
+    if type(old_value) == "table" and type(v) == "table" then
+        table_utils.update_table(old_value, v)
+    elseif tail == nil then
+        error("trying to update config with non-table value", 2)
+    else
+        tbl[tail] = table_utils.deep_copy(v)
+    end
+end
+
+-- 获取 path 指定的 config 结点，如果路径上结点还不存在，则会在途径时创建新表。
+-- 如果路径中出现非 table 类型结点，则返回 nil
+---@param segments string[]
+---@return {[string]: any}? tbl
+function ConfigEntry:_get_tbl_by_segments(segments)
+    local tbl = self.__config_base
+
+    local ok = true
+    for i = 1, #segments do
+        local seg = segments[i]
+        local next_tbl = tbl[seg]
+
+        if next_tbl == nil then
+            next_tbl = {}
+            tbl[seg] = next_tbl
+        elseif type(next_tbl) ~= "table" then
+            ok = false
+            break
+        end
+
+        tbl = next_tbl
+    end
+
+    return ok and tbl or nil
+end
+
+-- -----------------------------------------------------------------------------
 
 ---@param key? string|table
 ---@param initial_value? any
@@ -69,24 +187,24 @@ function ConfigEntry:new(key, initial_value)
     if type(key) == "table" then
         initial_value = key
         key = nil
-    end
-
-    key = key ~= nil and key or self.__root_key
-
-    if type(key) ~= "string" then
+    elseif key ~= nil and type(key) ~= "string" then
         error("key of ConfigEntry must be of string type.", 2)
     end
 
     if initial_value ~= nil then
-        self:_set_value(key, table_utils.deep_copy(initial_value))
+        self:_set_value(key, initial_value)
     end
 
     return setmetatable({ __key = key }, self)
 end
 
 function ConfigEntry:__index(key)
-    local value = getmetatable(self)[key] or rawget(self, key)
-    if value ~= nil then
+    if key == nil then
+        error("trying to index config with nil key", 2)
+    end
+
+    local value = ConfigEntry[key] or rawget(self, key)
+    if ConfigEntry.__reserved_keys[key] or value ~= nil then
         return value
     end
 
@@ -95,12 +213,15 @@ function ConfigEntry:__index(key)
 end
 
 function ConfigEntry:__newindex(key, value)
-    if self.__reserved_keys[key] then
+    if type(key) ~= "string" then
+        error("key of ConfigEntry must be of string type.", 2)
+    elseif ConfigEntry.__reserved_keys[key] then
         error("use for " .. key .. " is reserved in ConfigEntry", 2)
     end
 
-    local tail, segments = self:into_segments(key)
-    local tbl = self:_get_tbl_by_path(segments)
+    local segments = self:get_key_segments(key)
+    local tail = table.remove(segments)
+    local tbl = self:_get_tbl_by_segments(segments)
     if not tbl then
         error("trying to write to a non-table config: " .. self.__key, 2)
     end
@@ -121,9 +242,15 @@ function ConfigEntry:__call()
     return self:value()
 end
 
+---@return any
+function ConfigEntry:value()
+    return table_utils.deep_copy(self:_get_value())
+end
+
 function ConfigEntry:append(value)
-    local _, segments = self:into_segments()
-    local tbl = self:_get_tbl_by_path(segments)
+    local segments = self:get_key_segments()
+    table.remove(segments)
+    local tbl = self:_get_tbl_by_segments(segments)
     if not tbl then
         error("trying to append to a non-table value " .. self.__key)
     end
@@ -159,104 +286,6 @@ function ConfigEntry:pairs()
     end
 
     return pairs(value)
-end
-
----@return any
-function ConfigEntry:value()
-    return table_utils.deep_copy(self:_get_value())
-end
-
----@param k? string
----@return any value
-function ConfigEntry:_get_value(k)
-    if k ~= nil and type(k) ~= "string" then
-        error("expected key of string type.", 2)
-    end
-
-    local key = self.__key
-    if key == self.__root_key then
-        return self.__config_base
-    end
-
-    local complelte_key = self:join_key(key, k)
-    local segments = self:split_key(complelte_key)
-
-    k = segments[#segments]
-    segments[#segments] = nil
-
-    local tbl = self.__config_base
-    for i = 1, #segments do
-        tbl = tbl[segments[i]]
-
-        if type(tbl) ~= "table" then
-            error("indexing a non-table config: " .. key, 2)
-        elseif tbl == nil then
-            break
-        end
-    end
-
-    if not tbl then
-        return nil
-    else
-        return tbl[k]
-    end
-end
-
--- 获取 path 指定的 config 结点，如果路径上结点还不存在，则会在途径时创建新表。
--- 如果路径中出现非 table 类型结点，则返回 nil
----@param path_segments string[]
----@return table? tbl
-function ConfigEntry:_get_tbl_by_path(path_segments)
-    local tbl = self.__config_base
-    for i = 1, #path_segments do
-        local seg = path_segments[i]
-        local new_tbl = tbl[seg]
-
-        if new_tbl == nil then
-            new_tbl = {}
-            tbl[seg] = new_tbl
-        elseif type(new_tbl) ~= "table" then
-            tbl = nil
-            break
-        end
-
-        tbl = new_tbl
-    end
-
-    return tbl
-end
-
--- 将值插入到 config 库中。v 为表时，会将深复制后的结果加入到 config。
----@param k any
----@param v any
-function ConfigEntry:_set_value(k, v)
-    if type(k) ~= "string" then
-        error("key of ConfigEntry must be of string type.", 2)
-    end
-
-    if k == self.__root_key then
-        local v_type = type(v)
-        if v_type ~= "table" then
-            error("root key of config can only be updated with a table value. (get " .. v_type .. ")", 2)
-        end
-
-        table_utils.update_table(self.__config_base, v)
-
-        return
-    end
-
-    local tbl = self:_get_value()
-    if not tbl then
-        error("trying to set value in a nil config: " .. self.__key, 2)
-    end
-
-    local old_value = tbl[k]
-
-    if type(old_value) == "table" and type(v) == "table" then
-        table_utils.update_table(old_value, v)
-    else
-        tbl[k] = table_utils.deep_copy(v)
-    end
 end
 
 -- -----------------------------------------------------------------------------
