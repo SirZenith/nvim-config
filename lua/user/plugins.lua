@@ -17,7 +17,7 @@ local loaded_plugin_list = {}
 local modules = {}
 
 local function get_config_name(path)
-    return "plugins/" .. path .. "_config"
+    return fs.path_join("plugins", path, "config.lua")
 end
 
 local function require_packer()
@@ -54,7 +54,7 @@ local function load_config(spec)
     if not path or #path == 0 then return end
 
     local cfg_name = get_config_name(path)
-    local file = fs.path_join(user.env.CONFIG_HOME(), cfg_name .. ".lua")
+    local file = fs.path_join(user.env.CONFIG_HOME(), cfg_name)
     if fn.filereadable(file) ~= 0 then
         local module = import(cfg_name)
         modules[#modules + 1] = module

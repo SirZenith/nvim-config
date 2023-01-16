@@ -84,7 +84,7 @@ end
 ---@param is_open_in_new_tab boolean
 local function goto_cursor_file(is_open_in_new_tab)
     ---@type string[]
-    local patterns = vim.split("?;?.lua;?.h;?.hpp;plugins/?_config.lua", ";")
+    local patterns = vim.split("?;?.lua;?.h;?.hpp;plugins/?/config.lua", ";")
     local cfile = vim.fn.expand "<cfile>"
 
     local path
