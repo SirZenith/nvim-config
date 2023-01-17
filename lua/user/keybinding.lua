@@ -131,10 +131,10 @@ end
 
 ---@type KeyMap
 local n_common_keymap = {
-    -- 标签管理
-    -- 新标签
+    -- Tab management
+    -- new tab
     ["<C-n>"] = "<cmd>tabnew<cr>",
-    -- 关闭标签
+    -- close tab
     ["<A-w>"] = function()
         local cur_file = vim.expand("%:p")
         if vim.fn.filewritable(cur_file) then
@@ -144,7 +144,7 @@ local n_common_keymap = {
         vim.cmd "close"
     end,
 
-    -- 编辑相关
+    -- Editing
     ["<C-s>"] = "<cmd>w<cr>",
     ["dal"] = "0d$",
     [";;"] = "<esc>A;<esc>",
@@ -152,52 +152,52 @@ local n_common_keymap = {
     ["<A-up>"] = "ddkP",
     ["<A-down>"] = "ddp",
 
-    -- 用于控制折叠的开闭
+    -- Folding
     ["<Tab>"] = "za",
 
-    -- Buffer 切换
+    -- Buffer switching
     ["<leader>b"] = ":buffer ",
 
-    -- 搜索
+    -- Searching
     ["<leader>sg"] = function()
         local target = vim.fn.input("Global Search: ")
         if not target or #target == 0 then return end
         global_search(target)
     end,
 
-    -- 窗口分割移动
+    -- Moving windows
     ["<A-C-h>"] = "<C-w>H",
     ["<A-C-J>"] = "<C-w>J",
     ["<A-C-K>"] = "<C-w>K",
     ["<A-C-L>"] = "<C-w>L",
 
-    -- 面板 toggle
-    -- Quickfix 窗口
+    -- Toggling windows
+    -- Quickfix window
     ["<leader><backspace>"] = toggle_quickfix,
-    -- 终端面板
+    -- terminal window
     ["<C-p>"] = toggle_terminal,
 
-    -- 移动
-    -- 窗口分割间移动
+    -- Moving
+    -- moving between window splits
     ["<leader>n"] = "<C-w>h",
     ["<leader>."] = "<C-w>l",
-    -- 标签切换
+    -- tab switching
     ["<leader>y"] = "gT",
     ["<leader>o"] = "gt",
-    -- 行移动
+    -- line movement
     ["<leader>h"] = "^",
     ["<leader>l"] = "$",
     ["<leader>j"] = "+",
     ["<leader>k"] = "-",
 
-    -- 跳转
-    -- 历史位置跳转
+    -- Jumping
+    -- jumping in history position
     ["<C-h>"] = "<C-o>",
     ["<C-l>"] = "<C-i>",
-    -- Quick Fix 跳转
+    -- Quick Fix jumping
     ["<A-j>"] = "<cmd>cnext<cr>",
     ["<A-k>"] = "<cmd>cprevious<cr>",
-    -- 文件跳转
+    -- jump to file
     ["gf"] = function() goto_cursor_file(false) end,
     ["<C-w>gf"] = function() goto_cursor_file(true) end,
 }
@@ -206,7 +206,7 @@ local n_common_keymap = {
 local i_common_keymap = {
     ["<C-y>"] = "<esc>",
 
-    -- 编辑相关
+    -- Editing
     ["<C-s>"] = "<esc><cmd>w<cr>",
 }
 
@@ -214,13 +214,13 @@ local i_common_keymap = {
 local v_common_keymap = {
     ["<C-y>"] = "<esc>",
 
-    -- 移动
+    -- Movement
     ["<leader>h"] = "^",
     ["<leader>l"] = "$",
     ["<leader>j"] = "+",
     ["<leader>k"] = "-",
 
-    -- 搜索
+    -- Searching
     ["<leader>sg"] = function()
         local target = panelpal.visual_selection_text()
         if not target or #target == 0 then return end
@@ -232,7 +232,7 @@ local v_common_keymap = {
 local t_common_keymap = {
     ["<C-y>"] = "<C-\\><C-n>",
 
-    -- 终端面板
+    -- Terminal toggle
     ["<C-p>"] = toggle_terminal,
 }
 
@@ -240,7 +240,7 @@ local t_common_keymap = {
 local c_common_keymap = {
     ["<C-y>"] = "<esc>",
 
-    -- 命令历史
+    -- Command history
     ["<C-k>"] = "<up>",
     ["<C-j>"] = "<down>",
 }
@@ -262,7 +262,7 @@ user.g.mapleader = " "
 
 return function()
     -- -------------------------------------------------------------------------
-    -- 常规映射
+    -- Common mapping
 
     for mode, map_tbl in pairs(common_keymap) do
         for from, to in pairs(map_tbl) do

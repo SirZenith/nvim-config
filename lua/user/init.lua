@@ -5,7 +5,7 @@ local ConfigEntry = require "user.config_entry".ConfigEntry
 
 local env_config_home = vim.env.CONFIG_HOME
 if  not env_config_home then
-    vim.notify("failed to initialize, Can't find environment varialbe 'CONFIG_HOME'")
+    vim.notify("failed to initialize, Can't find environment variable 'CONFIG_HOME'")
     return
 end
 
@@ -16,8 +16,8 @@ local user = ConfigEntry:new {
     }
 }
 
--- 将 user 命名空间下的设置加载到 vim 的命名空间中。
----@param key string|string[] # 若传入字符串列表，则列表中每个字符串是一个目标键
+-- copying variables in user namespace into vim namespace.
+---@param key string|string[] # if a list of string is passed, each element in the list is treated as a key.
 local function load_into_vim(key)
     if type(key) == "string" then
         key = { key }
@@ -34,7 +34,8 @@ local function load_into_vim(key)
     end
 end
 
--- 跳转到首个打开的文件所在的目录，这一目录将作为本次启动的工作区
+-- chdir to directory of first file in command line arguments.
+-- This directory will be workspace directory of this run.
 local function chdir()
     local output = vim.api.nvim_command_output "args"
     local cur_file = output:match("%[(.+)%]")
@@ -54,30 +55,30 @@ end
 rawset(user, "finalize", function()
     chdir()
 
-    -- 加载自定义模块 loader
+    -- loading custom loader
     require "user.utils.module_loaders"
 
     local modules = {
-        -- 加载插件，保证其它配置文件中可以引用各个插件
+        -- load plugins first, make sure all config file can `require` them.
         import "user.plugins",
 
-        -- 用户设定
+        -- user config
         import "user.command",
         import "user.general",
         import "user.keybinding",
         import "user.snippets",
 
-        -- 平台限定设定
+        -- platform specific config
         import "user.platforms",
 
-        -- 工作区设定
+        -- workspace config
         import "user.workspace".load(),
     }
 
-    -- 确定 vim 相关设定
+    -- settle vim variables.
     load_into_vim { "o", "wo", "g", "go" }
 
-    -- 各组件的配置定稿化
+    -- finalize all loaded configs
     utils.finalize(modules)
 end)
 

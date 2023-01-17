@@ -1,12 +1,12 @@
 local user = require "user"
 
 user.g = {
-    -- 激活 indentLine 对 conceal 颜色设定的功能
+    -- let indentLine to set conceal color
     indentLine_setColors = true,
     indentLine_color_term = 239,
     indentLine_color_gui = "#7AB0B5",
     indentLine_char_list = { "|", "¦", "┆", "┊" },
-    -- 关闭 indentLine 对 conceal level 的修改
+    -- disable conceal level modifying of indentLine
     indentLine_setConceal = false,
 }
 
