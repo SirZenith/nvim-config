@@ -1,3 +1,4 @@
+local api = vim.api
 local user = require "user"
 local functional = require "user.utils.functional"
 local panelpal = require "panelpal"
@@ -8,7 +9,7 @@ local GLOBAL_SERACH_CMD_MAP = {
     default = [[:grep! '%s' '%s']],
 }
 
-local KEYBINDING_AUGROUP = vim.api.nvim_create_augroup("user.keybinding", { clear = true })
+local KEYBINDING_AUGROUP = api.nvim_create_augroup("user.keybinding", { clear = true })
 
 ---@param mode string
 ---@param from string
@@ -73,11 +74,11 @@ local function toggle_terminal()
     elseif not win_num then
         -- 不可见
         vim.cmd("vsplit")
-        local win = vim.api.nvim_get_current_win()
-        vim.api.nvim_win_set_buf(win, buf_num)
+        local win = api.nvim_get_current_win()
+        api.nvim_win_set_buf(win, buf_num)
         vim.cmd "startinsert"
     else
-        vim.api.nvim_win_hide(win_num)
+        api.nvim_win_hide(win_num)
     end
 end
 
@@ -111,14 +112,14 @@ local function global_search(target)
     local platform = vim.env.PLATFORM_MARK
     local template = platform and GLOBAL_SERACH_CMD_MAP[platform] or GLOBAL_SERACH_CMD_MAP.default
     local cmd = template:format(target, vim.fn.getcwd())
-    vim.api.nvim_command(cmd)
-    vim.api.nvim_command("cw")
+    api.nvim_command(cmd)
+    api.nvim_command("cw")
 end
 
 ---@param filetype string|string[]
 ---@param mapto string|function
 local function register_build_mapping(filetype, mapto)
-    vim.api.nvim_create_autocmd("FileType", {
+    api.nvim_create_autocmd("FileType", {
         group = KEYBINDING_AUGROUP,
         pattern = filetype,
         callback = function()
@@ -136,12 +137,23 @@ local n_common_keymap = {
     ["<C-n>"] = "<cmd>tabnew<cr>",
     -- close tab
     ["<A-w>"] = function()
-        local cur_file = vim.expand("%:p")
-        if vim.fn.filewritable(cur_file) then
-            vim.cmd "w"
+        local record = {}
+
+        local wins = api.nvim_tabpage_list_wins(0)
+        for i = 1, #wins do
+            local win = wins[i]
+            api.nvim_set_current_win(win)
+
+            local cur_file = api.nvim_buf_get_name(0)
+            if vim.fn.filewritable(cur_file) == 1
+                and not record[cur_file]
+            then
+                vim.cmd "w"
+                record[cur_file] = true
+            end
         end
 
-        vim.cmd "close"
+        vim.cmd "tabclose"
     end,
 
     -- Editing
