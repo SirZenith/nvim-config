@@ -6,7 +6,7 @@ local panelpal = require "panelpal"
 local USER_TERMINAL_PANEL_BUF_NAME = "user.terminal"
 ---@type table<string, string>
 local GLOBAL_SERACH_CMD_MAP = {
-    default = [[:grep! '%s' '%s']],
+    default = [[:grep! `%s` `%s`]],
 }
 
 local KEYBINDING_AUGROUP = api.nvim_create_augroup("user.keybinding", { clear = true })
