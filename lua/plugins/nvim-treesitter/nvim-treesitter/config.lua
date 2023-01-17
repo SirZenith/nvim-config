@@ -8,7 +8,7 @@ user.nvim_treesitter = {
         "c",
         "clojure",
         "cmake",
-        "comment",
+        -- "comment", -- disable due to performance problem
         "cpp",
         "c_sharp",
         "css",
