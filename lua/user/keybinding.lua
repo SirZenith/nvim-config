@@ -150,6 +150,13 @@ local n_common_keymap = {
             end
         end
 
+        local tab = api.nvim_get_current_tabpage()
+        local tabpages = api.nvim_list_tabpages()
+        if #tabpages == 1 then
+            vim.cmd "tabnew"
+            api.nvim_set_current_tabpage(tab)
+        end
+
         vim.cmd "tabclose"
     end,
 
