@@ -68,7 +68,7 @@ user.nvim_treesitter = {
         },
     },
     indent = {
-        enable = true,
+        -- enable = true,
     },
     playground = {
         enable = true,
@@ -95,6 +95,19 @@ user.nvim_treesitter = {
     },
 }
 
+local function register_debug_parser()
+    local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
+    parser_config.v = {
+        install_info = {
+            url = "~/Developer/vls/tree_sitter_v", -- local path or git repo
+            files = { "src/parser.c", "src/scanner.c" },
+            generate_requires_npm = false,
+            requires_generate_from_grammar = true,
+        },
+        filetype = "vlang",
+    }
+end
+
 return function()
     local augroup = vim.api.nvim_create_augroup("user.treesitter", { clear = true })
     -- 去除 markdown 中代码块的斜体
@@ -107,6 +120,10 @@ return function()
             vim.api.nvim_set_hl(0, "@text.literal", { link = name })
         end,
     })
+
+    if user.nvim_treesitter.debug() then
+        register_debug_parser()
+    end
 
     require 'nvim-treesitter.configs'.setup(user.nvim_treesitter())
 end
