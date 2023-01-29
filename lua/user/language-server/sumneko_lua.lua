@@ -29,15 +29,6 @@ local runtime_paths = (function()
         ".",
     }
 
-    if vim.env.PLATFORM_MARK ~= "windows" then
-        table_utils.extend_list(tbl, {
-            expand "~/.luarocks/share/lua/5.3",
-            expand "~/.luarocks/share/lua/5.4",
-            "/usr/share/lua/5.3",
-            "/usr/share/lua/5.4",
-        })
-    end
-
     -- Vim
     if is_nvim_config_path then
         tbl[#tbl + 1] = user.env.CONFIG_HOME()
@@ -57,8 +48,12 @@ local runtime_paths = (function()
                 return path:find(patt) ~= nil
             end)
         end)
+        local list_mapped = {}
+        for i = 1, #list do
+            list_mapped[#list_mapped+1] = fs.path_join(list[i], "lua")
+        end
 
-        table_utils.extend_list(tbl, list)
+        table_utils.extend_list(tbl, list_mapped)
     end
 
     -- Lua Path

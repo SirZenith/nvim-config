@@ -1,4 +1,5 @@
 local fs = require "user.utils.fs"
+local import = require "user.utils".import
 
 local M = {}
 
@@ -50,10 +51,8 @@ function M.load()
     if vim.fn.filereadable(file_path) == 0 then return end
 
     local module
-    local ok, result = xpcall(function()
-        require(M.get_workspace_config_require_path())
-    end, debug.traceback)
-    if ok then
+    local result = import(M.get_workspace_config_require_path())
+    if result then
         local result_type = type(result)
         local finalize
         if result_type == "function" then
@@ -68,8 +67,6 @@ function M.load()
                 vim.notify("workspace configuration loaded.")
             end
         }
-    else
-        vim.notify(result)
     end
 
     return module

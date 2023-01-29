@@ -6,7 +6,7 @@ local panelpal = require "panelpal"
 local USER_TERMINAL_PANEL_BUF_NAME = "user.terminal"
 ---@type table<string, string>
 local GLOBAL_SERACH_CMD_MAP = {
-    default = [[:grep! '%s' '%s']],
+    default = [[:grep! `%s` `%s`]],
 }
 
 local KEYBINDING_AUGROUP = api.nvim_create_augroup("user.keybinding", { clear = true })
@@ -137,23 +137,21 @@ local n_common_keymap = {
     ["<C-n>"] = "<cmd>tabnew<cr>",
     -- close tab
     ["<A-w>"] = function()
-        local record = {}
-
         local wins = api.nvim_tabpage_list_wins(0)
-        for i = 1, #wins do
-            local win = wins[i]
-            api.nvim_set_current_win(win)
 
-            local cur_file = api.nvim_buf_get_name(0)
-            if vim.fn.filewritable(cur_file) == 1
-                and not record[cur_file]
-            then
+        local record = {}
+        for _, win in ipairs(wins) do
+            local buf = api.nvim_win_get_buf(win)
+            local file = api.nvim_buf_get_name(buf)
+            if not record[file] and vim.fn.filewritable(file) == 1 then
+                api.nvim_set_current_win(win)
                 vim.cmd "w"
-                record[cur_file] = true
+                record[file] = true
             end
         end
 
-        vim.cmd "tabclose"
+        local tabpages = api.nvim_list_tabpages()
+        vim.cmd(#tabpages > 1 and "tabclose" or "q")
     end,
 
     -- Editing
