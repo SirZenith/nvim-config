@@ -9,7 +9,6 @@ user.nvim_tree = {
     ignore_buffer_on_setup = false,
     ignore_ft_on_setup = {},
     auto_reload_on_write = true,
-    open_on_setup = true,
     open_on_tab = false,
     update_cwd = true,
     hijack_unnamed_buffer_when_opening = false,
@@ -132,6 +131,14 @@ user.nvim_tree = {
 }
 
 return function()
+    local group_id = vim.api.nvim_create_augroup("user.nvim_tree", { clear = true })
+    vim.api.nvim_create_autocmd("VimEnter", {
+        group = group_id,
+        callback = function()
+            require("nvim-tree.api").tree.open()
+        end,
+    })
+
     vim.cmd "highlight NvimTreeFolderIcon guibg=blue"
     require "nvim-tree".setup(user.nvim_tree())
 end

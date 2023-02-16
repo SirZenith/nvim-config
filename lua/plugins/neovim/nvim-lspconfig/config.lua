@@ -16,7 +16,7 @@ local lsp_servers = {
     -- pip install python-lsp-ruff
     "pylsp",
     "rust_analyzer",
-    "sumneko_lua",
+    "lua_ls",
     -- TypeScript/JavaScript Server
     -- install with:
     -- npm install -g typescript typescript-language-server
