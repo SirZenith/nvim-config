@@ -26,7 +26,7 @@ user.nvim_treesitter = {
         "lua",
         "make",
         "markdown",
-        -- "markdown_inline",
+        "markdown_inline",
         "python",
         "query",
         "regex",
