@@ -33,6 +33,7 @@ user.nvim_treesitter = {
         "rust",
         "sql",
         "toml",
+        "typescript",
         "v",
         "vim",
         "yaml",
