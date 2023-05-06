@@ -5,6 +5,7 @@ local nvim_lsp = require "lspconfig"
 local lsp_servers = {
     "bashls",
     "clangd",
+    "cssls",
     "gopls",
     "hls",
     "html",
