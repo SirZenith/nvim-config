@@ -5,6 +5,11 @@ local nvim_lsp = require "lspconfig"
 local lsp_servers = {
     "bashls",
     "clangd",
+
+    -- nuget config -set http_proxy=http://127.0.0.1:1080
+    -- dotnet tool install --global csharp-ls
+    "csharp_ls",
+
     "cssls",
     "gopls",
     "hls",
