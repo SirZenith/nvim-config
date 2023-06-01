@@ -147,6 +147,7 @@ user.general = {
         no_soft_tab = { "go", "make", "plantuml", "vlang" },
         -- 文件类型对的文件名模式
         mapping = {
+            json = { "*.meta" },
             vlang = { "*.v", "*.vsh" },
         },
     },

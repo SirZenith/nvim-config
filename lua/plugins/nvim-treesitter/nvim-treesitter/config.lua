@@ -19,6 +19,7 @@ user.nvim_treesitter = {
         "haskell",
         "help",
         "html",
+        "ini",
         "javascript",
         "json",
         "kotlin",
