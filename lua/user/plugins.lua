@@ -99,27 +99,7 @@ end
 local is_bootstranp, packer = require_packer()
 local load = make_loader(packer.use)
 
-function M.load_plugins(plugin_list)
-    packer.startup(function()
-        for _, plugin in ipairs(plugin_list) do
-            load(plugin)
-        end
-
-        if is_bootstranp then
-            packer.sync()
-        else
-            for _, spec in ipairs(loaded_plugin_list) do
-                load_config(spec)
-            end
-        end
-    end)
-end
-
-function M.finalize()
-    utils.finalize(modules)
-end
-
-M.load_plugins {
+local plugin_list = {
     "wbthomason/packer.nvim",
 
     -- -------------------------------------------------------------------------
@@ -223,5 +203,31 @@ M.load_plugins {
     -- Snippet
     "L3MON4D3/LuaSnip",
 }
+
+packer.startup(function()
+    for _, plugin in ipairs(plugin_list) do
+        load(plugin)
+    end
+
+    if not is_bootstranp then
+        for _, spec in ipairs(loaded_plugin_list) do
+            load_config(spec)
+        end
+    end
+end)
+
+function M.load(spec)
+    packer.use(spec)
+    if not is_bootstranp then
+        load_config(spec)
+    end
+end
+
+function M.finalize()
+    if is_bootstranp then
+        packer.sync()
+    end
+    utils.finalize(modules)
+end
 
 return M

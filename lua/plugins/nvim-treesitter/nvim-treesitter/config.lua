@@ -17,7 +17,6 @@ user.nvim_treesitter = {
         "go",
         "gomod",
         "haskell",
-        "help",
         "html",
         "ini",
         "javascript",
