@@ -76,7 +76,7 @@ local function make_loader(use)
                 function() use(spec) end,
                 function()
                     io.write("while loading: ")
-                    vim.pretty_print(spec)
+                    vim.print(spec)
                     vim.notify(debug.traceback())
                 end
             ) then
