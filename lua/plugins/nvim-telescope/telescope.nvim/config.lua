@@ -3,7 +3,7 @@ local previewers = require "telescope.previewers"
 
 local check_exclude = function(filepath)
     local exclude = user.telescope_nvim.preview_exclude()
-    if not exclude or type(exclude) ~= "table" then
+    if type(exclude) ~= "table" then
         return false;
     end
 
