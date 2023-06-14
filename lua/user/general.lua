@@ -148,6 +148,7 @@ user.general = {
         -- 文件类型对的文件名模式
         mapping = {
             vlang = { "*.v", "*.vsh" },
+            xml = { "*.xaml" },
         },
     },
     im_select = {

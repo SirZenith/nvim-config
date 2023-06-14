@@ -23,6 +23,11 @@ local lsp_servers = {
     "pylsp",
     "rust_analyzer",
     "lua_ls",
+
+    -- XML LS by Red Hat
+    -- https://github.com/redhat-developer/vscode-xml/releases
+    "lemminx",
+
     -- TypeScript/JavaScript Server
     -- install with:
     -- npm install -g typescript typescript-language-server
