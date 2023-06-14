@@ -56,6 +56,8 @@ user.o = {
 
     timeoutlen = 250, -- set timeout for keymap
 
+    fileformats = "unix,dos",
+
     -- file encoding checking queue
     fileencodings = "utf-8,ucs-bom,shift-jis,gb18030,gbk,gb2312,cp936",
 
@@ -147,6 +149,7 @@ user.general = {
         no_soft_tab = { "go", "make", "plantuml", "vlang" },
         -- 文件类型对的文件名模式
         mapping = {
+            json = { "*.meta" },
             vlang = { "*.v", "*.vsh" },
             xml = { "*.xaml" },
         },

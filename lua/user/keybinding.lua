@@ -4,9 +4,28 @@ local functional = require "user.utils.functional"
 local panelpal = require "panelpal"
 
 local USER_TERMINAL_PANEL_BUF_NAME = "user.terminal"
----@type table<string, string>
-local GLOBAL_SERACH_CMD_MAP = {
-    default = [[:grep! `%s` `%s`]],
+
+user.global_search = {
+    ---@type table<string, string>
+    cmd_template_map = {
+        default = [[:grep! `%s` %s]],
+    },
+    ---@type fun(targert: string)
+    make_cmd = function(target)
+        local platform = vim.env.PLATFORM_MARK
+        local template_map = user.global_search.cmd_template_map()
+        local template = platform and template_map[platform] or template_map.default
+
+        local paths = user.global_search.search_paths() or { vim.fn.getcwd() }
+        local quoted = {}
+        for _, path in ipairs(paths) do
+            quoted[#quoted+1] = ("`%s`"):format(path)
+        end
+
+        return template:format(target, table.concat(quoted, " "))
+    end,
+    ---@type string[]
+    search_paths = { "." },
 }
 
 local KEYBINDING_AUGROUP = api.nvim_create_augroup("user.keybinding", { clear = true })
@@ -109,9 +128,8 @@ end
 
 ---@param target string
 local function global_search(target)
-    local platform = vim.env.PLATFORM_MARK
-    local template = platform and GLOBAL_SERACH_CMD_MAP[platform] or GLOBAL_SERACH_CMD_MAP.default
-    local cmd = template:format(target, vim.fn.getcwd())
+    local make_cmd = user.global_search.make_cmd()
+    local cmd = make_cmd(target)
     api.nvim_command(cmd)
     api.nvim_command("cw")
 end
@@ -153,7 +171,6 @@ local n_common_keymap = {
         local tabpages = api.nvim_list_tabpages()
         vim.cmd(#tabpages > 1 and "tabclose" or "q")
     end,
-
     -- Editing
     ["<C-s>"] = "<cmd>w<cr>",
     ["dal"] = "0d$",
@@ -161,32 +178,26 @@ local n_common_keymap = {
     [",,"] = "<esc>A,<esc>",
     ["<A-up>"] = "ddkP",
     ["<A-down>"] = "ddp",
-
     -- Folding
     ["<Tab>"] = "za",
-
     -- Buffer switching
     ["<leader>b"] = ":buffer ",
-
     -- Searching
     ["<leader>sg"] = function()
         local target = vim.fn.input("Global Search: ")
         if not target or #target == 0 then return end
         global_search(target)
     end,
-
     -- Moving windows
     ["<A-C-h>"] = "<C-w>H",
     ["<A-C-J>"] = "<C-w>J",
     ["<A-C-K>"] = "<C-w>K",
     ["<A-C-L>"] = "<C-w>L",
-
     -- Toggling windows
     -- Quickfix window
     ["<leader><backspace>"] = toggle_quickfix,
     -- terminal window
     ["<C-p>"] = toggle_terminal,
-
     -- Moving
     -- moving between window splits
     ["<leader>n"] = "<C-w>h",
@@ -199,7 +210,6 @@ local n_common_keymap = {
     ["<leader>l"] = "$",
     ["<leader>j"] = "+",
     ["<leader>k"] = "-",
-
     -- Jumping
     -- jumping in history position
     ["<C-h>"] = "<C-o>",
@@ -215,7 +225,6 @@ local n_common_keymap = {
 ---@type KeyMap
 local i_common_keymap = {
     ["<C-y>"] = "<esc>",
-
     -- Editing
     ["<C-s>"] = "<esc><cmd>w<cr>",
 }
@@ -223,13 +232,11 @@ local i_common_keymap = {
 ---@type KeyMap
 local v_common_keymap = {
     ["<C-y>"] = "<esc>",
-
     -- Movement
     ["<leader>h"] = "^",
     ["<leader>l"] = "$",
     ["<leader>j"] = "+",
     ["<leader>k"] = "-",
-
     -- Searching
     ["<leader>sg"] = function()
         local target = panelpal.visual_selection_text()
@@ -241,7 +248,6 @@ local v_common_keymap = {
 ---@type KeyMap
 local t_common_keymap = {
     ["<C-y>"] = "<C-\\><C-n>",
-
     -- Terminal toggle
     ["<C-p>"] = toggle_terminal,
 }
@@ -249,7 +255,6 @@ local t_common_keymap = {
 ---@type KeyMap
 local c_common_keymap = {
     ["<C-y>"] = "<esc>",
-
     -- Command history
     ["<C-k>"] = "<up>",
     ["<C-j>"] = "<down>",

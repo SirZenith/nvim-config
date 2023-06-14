@@ -73,14 +73,14 @@ local function make_loader(use)
         end
 
         if xpcall(
-            function() use(spec) end,
-            function()
-                io.write("while loading: ")
-                vim.pretty_print(spec)
-                vim.notify(debug.traceback())
-            end
-        ) then
-            loaded_plugin_list[#loaded_plugin_list+1] = spec
+                function() use(spec) end,
+                function()
+                    io.write("while loading: ")
+                    vim.print(spec)
+                    vim.notify(debug.traceback())
+                end
+            ) then
+            loaded_plugin_list[#loaded_plugin_list + 1] = spec
         end
     end
 end
@@ -97,122 +97,136 @@ local function turn_on_true_color()
 end
 
 local is_bootstranp, packer = require_packer()
+local load = make_loader(packer.use)
 
-packer.startup(function(use)
-    local load = make_loader(use)
-
-    load "wbthomason/packer.nvim"
+local plugin_list = {
+    "wbthomason/packer.nvim",
 
     -- -------------------------------------------------------------------------
     -- General
-    load "lewis6991/gitsigns.nvim"
-    load { "ggandor/lightspeed.nvim", disable = true }
-    load "scrooloose/nerdcommenter"
-    load {
+    "lewis6991/gitsigns.nvim",
+    { "ggandor/lightspeed.nvim",     disable = true },
+    "scrooloose/nerdcommenter",
+    {
         "nvim-tree/nvim-tree.lua",
         requires = { "nvim-tree/nvim-web-devicons" },
-    }
-    load "tyru/open-browser.vim"
-    load "SirZenith/panelpal.nvim"
-    load {
+    },
+    "tyru/open-browser.vim",
+    "SirZenith/panelpal.nvim",
+    {
         "SirZenith/vcs-helper.nvim",
         requires = { "SirZenith/panelpal.nvim" },
-    }
-    load {
+    },
+    {
         "nvim-telescope/telescope.nvim",
         requires = { { "nvim-lua/plenary.nvim" } },
-    }
-    load "voldikss/vim-floaterm"
+    },
+    "voldikss/vim-floaterm",
 
     -- -------------------------------------------------------------------------
     -- Visual Assitance
-    load "Yggdroot/indentline"
-    load "nvim-lua/lsp-status.nvim"
-    load "SirZenith/nvim-cursorline"
-    load "p00f/nvim-ts-rainbow"
-    load { "norcalli/nvim-colorizer.lua", __before_load = turn_on_true_color }
-    load { "anuvyklack/pretty-fold.nvim", disable = true }
+    "Yggdroot/indentline",
+    "nvim-lua/lsp-status.nvim",
+    "SirZenith/nvim-cursorline",
+    "p00f/nvim-ts-rainbow",
+    { "norcalli/nvim-colorizer.lua", __before_load = turn_on_true_color },
+    { "anuvyklack/pretty-fold.nvim", disable = true },
 
     -- -------------------------------------------------------------------------
     -- Themes
-    load { "catppuccin/nvim", as = "catppuccin", disable = true }
-    load { "marko-cerovac/material.nvim", disable = true }
-    load { "kaicataldo/material.vim", disable = true }
-    load {
-        "EdenEast/nightfox.nvim", disable = false,
+    { "catppuccin/nvim",             as = "catppuccin",                 disable = true },
+    { "marko-cerovac/material.nvim", disable = true },
+    { "kaicataldo/material.vim",     disable = true },
+    {
+        "EdenEast/nightfox.nvim",
+        disable = false,
         __before_load = turn_on_true_color,
-    }
-    load { "shaunsingh/nord.nvim", disable = true }
-    load { "mhartington/oceanic-next", disable = true }
-    load { "JoosepAlviste/palenightfall.nvim", disable = true }
-    load { "wadackel/vim-dogrun", disable = true }
-    load { "rakr/vim-two-firewatch", disable = true }
+    },
+    { "shaunsingh/nord.nvim",             disable = true },
+    { "mhartington/oceanic-next",         disable = true },
+    { "JoosepAlviste/palenightfall.nvim", disable = true },
+    { "wadackel/vim-dogrun",              disable = true },
+    { "rakr/vim-two-firewatch",           disable = true },
     -- after color scheme is loaded
-    load {
+    {
         "nvim-lualine/lualine.nvim",
         requires = { "kyazdani42/nvim-web-devicons", opt = true },
-    }
+    },
 
     -- -------------------------------------------------------------------------
     -- Syntax
-    load "nvim-treesitter/nvim-treesitter"
-    load "nvim-treesitter/playground"
+    "nvim-treesitter/nvim-treesitter",
+    "nvim-treesitter/playground",
 
-    load "neovimhaskell/haskell-vim"
-    load "udalov/kotlin-vim"
-    load {
+    "neovimhaskell/haskell-vim",
+    "udalov/kotlin-vim",
+    {
         "LhKipp/nvim-nu",
         requires = { "nvim-treesitter/nvim-treesitter" },
         run = ":TSInstall nu"
-    }
-    load "aklt/plantuml-syntax"
-    load { "vim-pandoc/vim-pandoc-syntax", disable = true }
+    },
+    "aklt/plantuml-syntax",
+    { "vim-pandoc/vim-pandoc-syntax", disable = true },
 
     -- -------------------------------------------------------------------------
     -- Language Support
-    load { "kevinhwang91/nvim-ufo", requires = "kevinhwang91/promise-async" } -- folding support
-    load {
+    { "kevinhwang91/nvim-ufo",        requires = "kevinhwang91/promise-async" }, -- folding support
+    {
         "iamcco/markdown-preview.nvim",
         run = function() vim.fn["mkdp#util#install"]() end,
-    }
-    load "neovim/nvim-lspconfig"
-    load {
+    },
+    "neovim/nvim-lspconfig",
+    {
         "jose-elias-alvarez/null-ls.nvim", -- LSP injection
         requires = { { "nvim-lua/plenary.nvim" } },
-    }
-    load "weirongxu/plantuml-previewer.vim"
-    load "rust-lang/rust.vim"
-    load { "fatih/vim-go", disable = true }
-    load { "scrooloose/vim-slumlord", disable = true } -- PlantUML in-vim preview
-    load "lervag/vimtex"
-    load "stevearc/vim-arduino"
-    load "sudar/vim-arduino-syntax"
-    load "vim-voom/VOoM"
+    },
+    "weirongxu/plantuml-previewer.vim",
+    "rust-lang/rust.vim",
+    { "fatih/vim-go",            disable = true },
+    { "scrooloose/vim-slumlord", disable = true }, -- PlantUML in-vim preview
+    "lervag/vimtex",
+    "stevearc/vim-arduino",
+    "sudar/vim-arduino-syntax",
+    "vim-voom/VOoM",
 
     -- -------------------------------------------------------------------------
     -- Completion
-    load "windwp/nvim-autopairs"
-    load "hrsh7th/cmp-buffer"
-    load "hrsh7th/cmp-cmdline"
-    load "saadparwaiz1/cmp_luasnip"
-    load "hrsh7th/cmp-nvim-lsp"
-    load "hrsh7th/cmp-path"
-    load "hrsh7th/nvim-cmp"
+    "windwp/nvim-autopairs",
+    "hrsh7th/cmp-buffer",
+    "hrsh7th/cmp-cmdline",
+    "saadparwaiz1/cmp_luasnip",
+    "hrsh7th/cmp-nvim-lsp",
+    "hrsh7th/cmp-path",
+    "hrsh7th/nvim-cmp",
 
     -- -------------------------------------------------------------------------
     -- Snippet
-    load "L3MON4D3/LuaSnip"
+    "L3MON4D3/LuaSnip",
+}
 
-    if is_bootstranp then
-        packer.sync()
-    else
+packer.startup(function()
+    for _, plugin in ipairs(plugin_list) do
+        load(plugin)
+    end
+
+    if not is_bootstranp then
         for _, spec in ipairs(loaded_plugin_list) do
             load_config(spec)
         end
     end
 end)
 
+function M.load(spec)
+    packer.use(spec)
+    if not is_bootstranp then
+        load_config(spec)
+    end
+end
+
 function M.finalize()
+    if is_bootstranp then
+        packer.sync()
+    end
     utils.finalize(modules)
 end
 

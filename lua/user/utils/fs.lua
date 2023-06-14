@@ -1,6 +1,9 @@
+local utils = require "user.utils"
 local M = {}
 
-M.PATH_SEP = vim.env.PLATFORM_MARK == "windows" and "\\" or "/"
+M.PATH_SEP = vim.env.PLATFORM_MARK:starts_with("windows")
+    and "\\"
+    or "/"
 
 -- concatenate multiple path component into one.
 ---@param path string
