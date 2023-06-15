@@ -1,8 +1,22 @@
--- snippets for writing snippets
-local s = require("user.snippets.util")
+# vim:ft=lua.snippet
+
 local snip_filetype = "snippet"
+local s = require("user.snippets.util")
 local makers = s.snippet_makers(snip_filetype)
+-- local sp = makers.sp
+-- local asp = makers.asp
+-- local psp = makers.psp
 local apsp = makers.apsp
+
+-- local condsp = makers.condsp
+-- local condasp = makers.condasp
+-- local condpsp = makers.condpsp
+-- local condapsp = makers.condapsp
+
+-- local regsp = makers.regsp
+-- local regasp = makers.regasp
+-- local regpsp = makers.regpsp
+-- local regapsp = makers.regapsp
 
 apsp("nsp", 'sp("${1}", ${0})')
 apsp("nasp", 'asp("${1}", ${0})')
@@ -23,8 +37,6 @@ apsp("stn", 's.t("${1}")')
 apsp("sin", 's.i(${1})')
 apsp("sfn", 's.f(${1})')
 apsp("scn", 's.c(${1})')
-apsp("ssn", 's.sn(${1})')
+apsp("ssn", 's.s(${1})')
 apsp("srn", 's.r(${1})')
 apsp("sdn", 's.d(${1})')
-
-makers.finalize()

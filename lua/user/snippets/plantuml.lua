@@ -84,5 +84,3 @@ condapsp(s.conds.line_begin, "mmmmml", "***** ")
 condapsp(s.conds.line_begin, "mmmmmml", "****** ")
 
 psp("color", "[#${1:Black}]")
-
-makers.finalize()

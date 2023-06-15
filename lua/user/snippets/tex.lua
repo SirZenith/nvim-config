@@ -409,5 +409,3 @@ condapsp(math, ";q", "\\psi")
 condapsp(math, ";Q", "\\Psi")
 condapsp(math, ";w", "\\omega")
 condapsp(math, ";W", "\\Omega")
-
-makers.finalize()

@@ -30,5 +30,3 @@ Restart=on-failure
 [Install]
 WantedBy=${1:default.target}
 ]])
-
-makers.finalize()

@@ -13,7 +13,9 @@ makers. For example we have `condsp`.
 
 After all snippets are made with maker, one have to call finalize to add all
 snippet into luasnip module.
-    makers.finalize()
+
+    local utils = require "utils"
+    utils.finalize()
 ]]
 local ls = require "luasnip"
 local M = {
@@ -22,6 +24,7 @@ local M = {
     f = ls.function_node,
     c = ls.choice_node,
     s = ls.snippet_node,
+    is = ls.indent_snippet_node,
     d = ls.dynamic_node,
     r = ls.restore_node,
     l = require("luasnip.extras").lambda,
@@ -34,6 +37,7 @@ local M = {
     fmta = require("luasnip.extras.fmt").fmta,
     types = require("luasnip.util.types"),
     conds = require("luasnip.extras.expand_conditions"),
+    snippets_map = {},
 }
 
 local function maker_factory(maker, snip_table)
@@ -60,8 +64,23 @@ end
 
 M.snippet_makers = function(filetype)
     -- snippets are stored in tables before finalize
-    local snippets = {}
-    local autosnippets = {}
+    local record = M.snippets_map[filetype]
+    if not record then
+        record = {}
+        M.snippets_map[filetype] = record
+    end
+
+    local snippets = record.snippets
+    if not snippets then
+        snippets = {}
+        record.snippets = snippets
+    end
+
+    local autosnippets = record.autosnippets
+    if not autosnippets then
+        autosnippets = {}
+        record.autosnippets = autosnippets
+    end
 
     local snip_tables = {
         [""] = snippets, a = autosnippets,
@@ -86,13 +105,14 @@ M.snippet_makers = function(filetype)
         end
     end
 
-    -- finalize will actually add snippets into luasnip
-    makers.finalize = function()
-        ls.add_snippets(filetype, snippets)
-        ls.add_snippets(filetype, autosnippets, { type = "autosnippets" })
-    end
-
     return makers
+end
+
+function M.finalize()
+    for filetype, record in pairs(M.snippets_map) do
+        ls.add_snippets(filetype, record.snippets)
+        ls.add_snippets(filetype, record.autosnippets, { type = "autosnippets" })
+    end
 end
 
 M.cond_and = function(a, b)
@@ -114,4 +134,3 @@ M.cond_not = function(a)
 end
 
 return M
-

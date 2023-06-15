@@ -42,5 +42,3 @@ apsp("emsee", "---@see")
 
 apsp("emasy", "---@async")
 apsp("emme", "---@meta")
-
-makers.finalize()

@@ -44,5 +44,3 @@ apsp("dmt", [[
     $1
 .\$\$ $0
 ]])
-
-makers.finalize()

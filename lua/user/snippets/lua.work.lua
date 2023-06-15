@@ -52,6 +52,3 @@ end
 apsp("bs_progressbar", "BS.ProgressBar9Sprite")
 
 apsp("getcontain", [[local container = self:GetGameObject("panel")]])
-
-makers.finalize()
-

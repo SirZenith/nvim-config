@@ -6,6 +6,7 @@ if not import "luasnip" then
 end
 
 local fs = require "user.utils.fs"
+local snip_util = require "user.snippets.util"
 
 return function()
     local snippet_group = vim.api.nvim_create_augroup("user.snippets", { clear = true })
@@ -30,4 +31,5 @@ return function()
         end
     end
 
+    snip_util.finalize()
 end

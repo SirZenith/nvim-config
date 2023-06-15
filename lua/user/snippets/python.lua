@@ -14,5 +14,3 @@ psp("func", [[
 def ${1:name}(${2}):
     ${0:pass}
 ]])
-
-makers.finalize()

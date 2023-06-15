@@ -1,11 +1,24 @@
+# vim:ft=lua.snippet
+
 local snip_filetype = "all"
 local s = require("user.snippets.util")
 local makers = s.snippet_makers(snip_filetype)
 local sp = makers.sp
-local psp = makers.psp
+-- local asp = makers.asp
+-- local psp = makers.psp
 local apsp = makers.apsp
 
-apsp("snipinit", [[
+-- local condsp = makers.condsp
+-- local condasp = makers.condasp
+-- local condpsp = makers.condpsp
+-- local condapsp = makers.condapsp
+
+-- local regsp = makers.regsp
+-- local regasp = makers.regasp
+-- local regpsp = makers.regpsp
+-- local regapsp = makers.regapsp
+
+apsp("snip-init;", [[
 # vim:ft=lua.snippet
 
 local snip_filetype = "${1:all}"
@@ -27,8 +40,6 @@ local makers = s.snippet_makers(snip_filetype)
 -- local regapsp = makers.regapsp
 
 ${0}
-
-makers.finalize()
 ]])
 
 sp("sepline", s.t({ string.rep("-", 77) }))
@@ -38,5 +49,3 @@ apsp("laa", "<- ")
 
 apsp("rra", "=> ")
 apsp("lla", "<= ")
-
-makers.finalize()
