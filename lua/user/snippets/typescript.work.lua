@@ -18,7 +18,7 @@ local regasp = makers.regasp
 -- local regpsp = makers.regpsp
 -- local regapsp = makers.regapsp
 
-apsp("panel-init;", [[
+apsp("panel.init;", [[
 import { S } from 'script_logic/base/global/singleton';
 import { UIBase } from 'script_logic/base/ui_system/ui_base';
 import { uiRegister } from 'script_logic/base/ui_system/ui_class_map';
@@ -52,7 +52,7 @@ class ${0} extends UIBase {
 }
 ]])
 
-apsp("tips-init;", [[
+apsp("tips.init;", [[
 import { LOGGING } from 'script_logic/common/base/logging';
 import { TipsTypeMap } from './tips_info_map';
 import { UITipsWidgetBase } from './ui_tips_base';
@@ -138,7 +138,7 @@ end))
 
 -- -----------------------------------------------------------------------------
 
-regasp("([_%w]-)%.init%.timer;", { s.d(1, function(_, snip)
+regasp("([_%w]-)%.new%.timer;", s.d(1, function(_, snip)
     local name = snip.captures[1]
     return s.s(1, {
         s.t({
@@ -159,7 +159,24 @@ regasp("([_%w]-)%.init%.timer;", { s.d(1, function(_, snip)
             "}"
         })
     })
-end) })
+end))
+
+regasp("([_%w]-)%.new%.scroll;", s.d(1, function(_, snip)
+    local name = snip.captures[1]
+    return s.s(1, {
+        s.t({
+            "private update" .. name .. "Scroll(): void {",
+            "    const scroll = this.getGameObject('', UIScrollView);",
+            "    scroll.setUpdateItemCallback(this.update" .. name .. "Item.bind(this));",
+            "",
+            "    const totalCnt = COMMON_CONST.ZERO;",
+            "    scroll.setTotalCount(totalCnt);",
+            "}",
+            "",
+            "private update" .. name .. "Item(item: GameObject, index: number): void {}",
+        }),
+    })
+end))
 
 regasp("([_%w]-)%.new%.function;", {
     s.t("const "),
