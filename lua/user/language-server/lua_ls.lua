@@ -4,8 +4,6 @@ local functional = require "user.utils.functional"
 local table_utils = require "user.utils.table"
 local workspace = require "user.workspace"
 
-local expand = vim.fn.expand
-
 local M = {}
 
 ---@param path_list string[]
@@ -16,7 +14,7 @@ local function add_runtime_path(path_list, path)
 end
 
 local workspace_path = workspace.get_workspace_path()
-local is_nvim_config_path = vim.fs.dirname(workspace_path):starts_with(user.env.NVIM_HOME())
+local is_nvim_config_path = workspace_path:starts_with(user.env.NVIM_HOME())
     or vim.fs.basename(workspace_path) == workspace.WORKSPACE_CONFIG_DIR_NAME
     or workspace_path:starts_with(vim.fn.stdpath("data"))
 

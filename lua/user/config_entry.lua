@@ -49,7 +49,7 @@ function ConfigEntry:split_key(key)
     return vim.split(key, self.__key_sep, { plain = true })
 end
 
--- return list of segments in current key.
+-- return list of segments of key path binded with current ConfigEntry object.
 -- If extra key is passed, all segments in extra key will be appended to that list.
 ---@param key? string
 ---@return string[] segments
@@ -65,6 +65,7 @@ function ConfigEntry:get_key_segments(key)
     end
 end
 
+-- splint a key into its last segment and the remaining part.
 ---@param key string
 ---@return string? parent
 ---@return string child
