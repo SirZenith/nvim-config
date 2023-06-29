@@ -42,7 +42,10 @@ local makers = s.snippet_makers(snip_filetype)
 ${0}
 ]])
 
-sp("sepline", s.t({ string.rep("-", 77) }))
+sp("sepline", s.f(function()
+    local line = vim.fn.getline(".")
+    return ("-"):rep(79 - #line)
+end))
 
 apsp("raa", "-> ")
 apsp("laa", "<- ")

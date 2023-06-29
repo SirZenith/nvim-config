@@ -70,6 +70,16 @@ export class ${2} extends UITipsWidgetBase<UITipsArg> {
 }
 ]])
 
+apsp("touch.close.layer;", [[
+const layer = this.getGameObject('node_bg/layer', UILayer);
+layer.setTouchEvent(this.close.bind(this));
+]])
+
+apsp("close.btn;", [[
+const btnClose = this.getGameObject('node_bg/panel/btn_close', UIButton);
+btnClose.setOnClick(this.close.bind(this));
+]])
+
 -- -----------------------------------------------------------------------------
 
 ---@class ImportInfo
@@ -80,8 +90,12 @@ export class ${2} extends UITipsWidgetBase<UITipsArg> {
 local import_map = {
     singleton = {
         names = { "S" },
-        path = "script_logic/base/global/singleton"
-    }
+        path = "script_logic/base/global/singleton",
+    },
+    common_const = {
+        names = { "COMMON_CONST" },
+        path = "script_logic/common/common_const",
+    },
 }
 
 regasp("([_%w]+)%.import;", s.f(function(_, snip)
@@ -118,7 +132,8 @@ regasp("([_%w]-)%.([_%w]-)%.gg%.([_%w]-);", s.d(1, function(_, snip)
     local class_name = game_object_name_map[class_alias]
 
     if not class_name then
-        return s.s(1, s.t(class_alias))
+        local text = ("%s.%s.gg."):format(variable, object)
+        return s.s(1, s.t(text))
     elseif class_name == "" then
         return s.s(1, {
             s.t("const " .. variable .. " = "),
@@ -166,7 +181,11 @@ regasp("([_%w]-)%.new%.scroll;", s.d(1, function(_, snip)
     return s.s(1, {
         s.t({
             "private update" .. name .. "Scroll(): void {",
-            "    const scroll = this.getGameObject('', UIScrollView);",
+            "    const scroll = this.getGameObject('"
+        }),
+        s.i(1),
+        s.t({
+            "', UIScrollView);",
             "    scroll.setUpdateItemCallback(this.update" .. name .. "Item.bind(this));",
             "",
             "    const totalCnt = COMMON_CONST.ZERO;",

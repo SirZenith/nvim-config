@@ -2,7 +2,7 @@ local snip_filetype = "markdown"
 local s = require("user.snippets.util")
 local makers = s.snippet_makers(snip_filetype)
 -- local sp = makers.sp
--- local asp = makers.asp
+local asp = makers.asp
 local psp = makers.psp
 local apsp = makers.apsp
 
@@ -23,17 +23,19 @@ $0
 ```
 ]])
 condasp(s.conds.line_begin, { trig = "([#%w]+)cbl", regTrig = true }, {
-    s.t("```"), s.f(function (_, snip) return snip.captures[1] end, {}),
+    s.t("```"), s.f(function(_, snip) return snip.captures[1] end, {}),
     s.t({ "", "" }), s.i(0),
     s.t({ "", "```" }),
 })
 
-condapsp(s.conds.line_begin, "hl", "# ")
-condapsp(s.conds.line_begin, "hhl", "## ")
-condapsp(s.conds.line_begin, "hhhl", "### ")
-condapsp(s.conds.line_begin, "hhhhl", "#### ")
-condapsp(s.conds.line_begin, "hhhhhl", "##### ")
-condapsp(s.conds.line_begin, "hhhhhhl", "###### ")
+condasp(
+    s.conds.line_begin,
+    { trig = "(h-)l;", regTrig = true },
+    s.f(function(_, snip)
+        local len = #snip.captures[1]
+        return ("#"):rep(len) .. " "
+    end)
+)
 
 psp("link", "[$1](${2:$TM_SELECTED_TEXT}) $0")
 psp("img", "![$1](${2:$TM_SELECTED_TEXT}) $0")
