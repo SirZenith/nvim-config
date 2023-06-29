@@ -158,7 +158,6 @@ local plugin_list = {
     "nvim-treesitter/nvim-treesitter",
     "nvim-treesitter/playground",
 
-    "neovimhaskell/haskell-vim",
     "udalov/kotlin-vim",
     {
         "LhKipp/nvim-nu",
