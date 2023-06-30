@@ -272,7 +272,7 @@ condapsp(math, "<<", "\\ll ")
 condapsp(math, "//", "\\frac{${1:TM_SELECTED_TEXT}}{$2} $0")
 
 condasp(
-    s.cond_and(math, s.conds.line_begin),
+    s.conds_ext.and_(math, s.conds.line_begin),
     { trig = "(.*%))/", regTrig = true },
     {
         s.f(

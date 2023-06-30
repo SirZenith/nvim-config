@@ -22,6 +22,8 @@ function string.ends_with(s, suffix)
     return string.sub(s, l_s - l_suf + 1) == suffix
 end
 
+-- ----------------------------------------------------------------------------
+
 local M = {}
 
 -- wrap require in xpcall, print traceback then return nil when failed.

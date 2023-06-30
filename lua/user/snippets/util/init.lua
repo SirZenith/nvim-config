@@ -18,6 +18,11 @@ snippet into luasnip module.
     utils.finalize()
 ]]
 local ls = require "luasnip"
+local ast_parser = require("luasnip.util.parser.ast_parser")
+local parse = require("luasnip.util.parser.neovim_parser").parse
+local Ast = require("luasnip.util.parser.neovim_ast")
+local Str = require("luasnip.util.str")
+
 local M = {
     t = ls.text_node,
     i = ls.insert_node,
@@ -38,6 +43,7 @@ local M = {
     types = require("luasnip.util.types"),
     conds = require("luasnip.extras.expand_conditions"),
     snippets_map = {},
+    conds_ext = require "user.snippets.util.cond",
 }
 
 local function maker_factory(maker, snip_table)
@@ -108,28 +114,83 @@ M.snippet_makers = function(filetype)
     return makers
 end
 
+---@param body string
+---@param opts table?
+function M.parse_string(body, opts)
+    if body == "" then
+        error("empty body")
+    end
+
+    opts = opts or {}
+    if opts.dedent == nil then
+        opts.dedent = true
+    end
+    if opts.trim_empty == nil then
+        opts.trim_empty = true
+    end
+
+    body = Str.sanitize(body)
+
+    local lines = vim.split(body, "\n")
+    Str.process_multiline(lines, opts)
+    body = table.concat(lines, "\n")
+
+    local ast = parse(body)
+
+    local nodes = ast_parser.to_luasnip_nodes(ast, {
+        var_functions = opts.variables,
+    })
+
+    return nodes
+end
+
+function M.command_snip(maker, context, cmd_map)
+    maker(
+        context,
+        M.d(1, function(_, snip)
+            ---@type string
+            local cmd = snip.captures[1]
+            local segments = vim.split(cmd, " ")
+
+            local result = nil
+            ---@type table | string | function | nil
+            local map_walker = cmd_map
+            for i = 1, #segments do
+                if map_walker == nil then
+                    break
+                end
+
+                local seg = segments[i]
+                map_walker = map_walker[seg]
+
+                if type(map_walker) == "function" then
+                    local args = { unpack(segments, i + 1) }
+                    result = map_walker(args)
+                    break
+                elseif type(map_walker) == "string" then
+                    result = map_walker
+                    break
+                end
+            end
+
+            local nodes = nil
+            if not result then
+                nodes = { s.t(":" .. cmd) }
+            elseif type(result) == "string" then
+                nodes = s.parse_string(result)
+            else
+                nodes = result
+            end
+
+            return s.s(1, nodes)
+        end)
+    )
+end
+
 function M.finalize()
     for filetype, record in pairs(M.snippets_map) do
         ls.add_snippets(filetype, record.snippets)
         ls.add_snippets(filetype, record.autosnippets, { type = "autosnippets" })
-    end
-end
-
-M.cond_and = function(a, b)
-    return function(line, trig, captures)
-        return a(line, trig, captures) and b(line, trig, captures)
-    end
-end
-
-M.cond_or = function(a, b)
-    return function(line, trig, captures)
-        return a(line, trig, captures) or b(line, trig, captures)
-    end
-end
-
-M.cond_not = function(a)
-    return function(line, trig, captures)
-        return not a(line, trig, captures)
     end
 end
 

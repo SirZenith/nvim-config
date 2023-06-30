@@ -4,9 +4,9 @@ local snip_filetype = "typescript"
 local s = require("user.snippets.util")
 local makers = s.snippet_makers(snip_filetype)
 -- local sp = makers.sp
--- local asp = makers.asp
+local asp = makers.asp
 -- local psp = makers.psp
-local apsp = makers.apsp
+-- local apsp = makers.apsp
 
 -- local condsp = makers.condsp
 -- local condasp = makers.condasp
@@ -14,11 +14,13 @@ local apsp = makers.apsp
 -- local condapsp = makers.condapsp
 
 -- local regsp = makers.regsp
-local regasp = makers.regasp
+-- local regasp = makers.regasp
 -- local regpsp = makers.regpsp
 -- local regapsp = makers.regapsp
 
-apsp("panel.init;", [[
+---@class Node
+
+local INIT_PANEL = [[
 import { S } from 'script_logic/base/global/singleton';
 import { UIBase } from 'script_logic/base/ui_system/ui_base';
 import { uiRegister } from 'script_logic/base/ui_system/ui_class_map';
@@ -50,9 +52,9 @@ class ${0} extends UIBase {
 
     protected onClose(): void {}
 }
-]])
+]]
 
-apsp("tips.init;", [[
+local INIT_TIPS = [[
 import { LOGGING } from 'script_logic/common/base/logging';
 import { TipsTypeMap } from './tips_info_map';
 import { UITipsWidgetBase } from './ui_tips_base';
@@ -60,7 +62,7 @@ import { UITipsWidgetBase } from './ui_tips_base';
 const Log = LOGGING.logger('${1}');
 
 type UITipsArg = TipsTypeMap['${1}']['args'];
-export class ${2} extends UITipsWidgetBase<UITipsArg> {
+export class ${1} extends UITipsWidgetBase<UITipsArg> {
     public getCustomPreloadAssetList(): string[] {
         return [];
     }
@@ -68,17 +70,34 @@ export class ${2} extends UITipsWidgetBase<UITipsArg> {
     protected initTips(): void {
     }
 }
-]])
+]]
 
-apsp("touch.close.layer;", [[
+local INIT_SUB_PANEL = [[
+import { LOGGING } from 'script_logic/common/base/logging';
+import { UISubView } from 'script_logic/base/ui_system/label_view/ui_sub_view';
+
+const Log = LOGGING.logger('${1}');
+
+export class ${1} extends UISubView {
+    protected onInit(): void {}
+
+    protected initEvents(args: UI_COMMON.TYPE_SHOW_PANEL_ARGS): void {}
+
+    protected onShow(args: UI_COMMON.TYPE_SHOW_PANEL_ARGS): void {}
+
+    protected onClose(): void {}
+}
+]]
+
+local NEW_TOUCH_CLOSE_LAYER = [[
 const layer = this.getGameObject('node_bg/layer', UILayer);
 layer.setTouchEvent(this.close.bind(this));
-]])
+]]
 
-apsp("close.btn;", [[
+local NEW_CLOSE_BTN = [[
 const btnClose = this.getGameObject('node_bg/panel/btn_close', UIButton);
 btnClose.setOnClick(this.close.bind(this));
-]])
+]]
 
 -- -----------------------------------------------------------------------------
 
@@ -96,10 +115,16 @@ local import_map = {
         names = { "COMMON_CONST" },
         path = "script_logic/common/common_const",
     },
+    role_event = {
+        names = { "ROLE_EVENT" },
+        path = "script_logic/event/role_event",
+    },
 }
 
-regasp("([_%w]+)%.import;", s.f(function(_, snip)
-    local name = snip.captures[1]
+---@param args string[]
+---@return string
+local function import_module(args)
+    local name = args[1]
     local info = import_map[name]
     if not info then
         return ""
@@ -109,7 +134,15 @@ regasp("([_%w]+)%.import;", s.f(function(_, snip)
         table.concat(info.names, ", "),
         info.path
     )
-end))
+end
+
+---@param args string[]
+---@return string
+local function import_util(args)
+    local name = args[1]
+    local symbol = name:upper()
+    return ("import { %s } from 'script_logic/common/utils/%s';"):format(symbol, name)
+end
 
 -- -----------------------------------------------------------------------------
 
@@ -125,98 +158,108 @@ local game_object_name_map = {
     layer = "UILayer",
 }
 
-regasp("([_%w]-)%.([_%w]-)%.gg%.([_%w]-);", s.d(1, function(_, snip)
-    local variable = snip.captures[1]
-    local object = snip.captures[2]
-    local class_alias = snip.captures[3]
+---@param args string[]
+---@return string | nil
+local function get_gameobject_of_type(args)
+    local variable = args[1]
+    local object = args[2]
+    local class_alias = args[3]
     local class_name = game_object_name_map[class_alias]
 
     if not class_name then
-        local text = ("%s.%s.gg."):format(variable, object)
-        return s.s(1, s.t(text))
+        return nil
     elseif class_name == "" then
-        return s.s(1, {
-            s.t("const " .. variable .. " = "),
-            s.t(object .. ".getGameObject('"),
-            s.i(1),
-            s.t("');"),
-        })
+        return ("const %s = %s.getGameObject('${1}');"):format(variable, object)
     end
 
-    return s.s(1, {
-        s.t("const " .. variable .. " = "),
-        s.t(object .. ".getGameObject('"),
-        s.i(1),
-        s.t("', " .. class_name .. ");"),
-    })
-end))
+    return ("const %s = %s.getGameObject('${1}', %s);"):format(variable, object, class_name)
+end
 
 -- -----------------------------------------------------------------------------
 
-regasp("([_%w]-)%.new%.timer;", s.d(1, function(_, snip)
-    local name = snip.captures[1]
-    return s.s(1, {
-        s.t({
-            "private init" .. name .. "Timer(): void {",
-            "    this.cancel" .. name .. "Timer();",
-            "    this.timer" .. name .. " = TIMER.",
-        }),
-        s.i(1, "addTimer"),
-        s.t({
-            ";",
-            "}",
-            "",
-            "private cancel" .. name .. "Timer(): void {",
-            "    if (this.timer" .. name .. ") {",
-            "        TIMER.clearTimer(this.timer" .. name .. ");",
-            "        this.timer" .. name .. " = null;",
-            "    }",
-            "}"
-        })
-    })
-end))
+---@param args string[]
+---@return string | nil
+local function new_timer(args)
+    local name = args[1]
+    if not name then return nil end
 
-regasp("([_%w]-)%.new%.scroll;", s.d(1, function(_, snip)
-    local name = snip.captures[1]
-    return s.s(1, {
-        s.t({
-            "private update" .. name .. "Scroll(): void {",
-            "    const scroll = this.getGameObject('"
-        }),
-        s.i(1),
-        s.t({
-            "', UIScrollView);",
-            "    scroll.setUpdateItemCallback(this.update" .. name .. "Item.bind(this));",
-            "",
-            "    const totalCnt = COMMON_CONST.ZERO;",
-            "    scroll.setTotalCount(totalCnt);",
-            "}",
-            "",
-            "private update" .. name .. "Item(item: GameObject, index: number): void {}",
-        }),
-    })
-end))
+    return table.concat({
+        "private init" .. name .. "Timer(): void {",
+        "    this.cancel" .. name .. "Timer();",
+        "    this.timer" .. name .. " = TIMER.${1:addTimer}();",
+        "}",
+        "",
+        "private cancel" .. name .. "Timer(): void {",
+        "    if (this.timer" .. name .. ") {",
+        "        TIMER.clearTimer(this.timer" .. name .. ");",
+        "        this.timer" .. name .. " = null;",
+        "    }",
+        "}",
+    }, "\n")
+end
 
-regasp("([_%w]-)%.new%.function;", {
-    s.t("const "),
-    s.f(function(_, snip) return snip.captures[1] end),
-    s.t(" = ("),
-    s.i(2),
-    s.t("): "),
-    s.i(1, "void"),
-    s.t(" => {"),
-    s.i(0),
-    s.t("};"),
-})
+---@param args string[]
+---@return string | nil
+local function new_scroll(args)
+    local name = args[1]
+    if not name then return nil end
 
-regasp("([_%w]-)%.new%.method;", {
-    s.t("private "),
-    s.f(function(_, snip) return snip.captures[1] end),
-    s.t("("),
-    s.i(2),
-    s.t("): "),
-    s.i(1, "void"),
-    s.t(" {"),
-    s.i(0),
-    s.t("}"),
+    return table.concat({
+        "private update" .. name .. "Scroll(): void {",
+        "    const scroll = this.getGameObject('${1}', UIScrollView);",
+        "    scroll.setUpdateItemCallback(this.update" .. name .. "Item.bind(this));",
+        "",
+        "    const totalCnt = COMMON_CONST.ZERO;",
+        "    scroll.setTotalCount(totalCnt);",
+        "}",
+        "",
+        "private update" .. name .. "Item(item: GameObject, index: number): void {}",
+    }, "\n")
+end
+
+---@param args string[]
+---@return string | nil
+local function new_function(args)
+    local name = args[1]
+    if not name then return nil end
+    return "const " .. name .. " = (${2}): ${1: void} => {${3}}"
+end
+
+---@param args string[]
+---@return string | nil
+local function new_method(args)
+    local name = args[1]
+    if not name then return nil end
+    local modifier = args[2] or "private"
+    return modifier .. " " .. name .. "(${2}): ${1:void} {${3}}"
+end
+
+-- ----------------------------------------------------------------------------
+
+---@alias SnipTableEntry number | string
+
+local context = {
+    trig = ":(.+);",
+    regTrig = true,
+    -- condition = s.conds_ext.line_begin_smart,
+}
+s.command_snip(asp, context, {
+    gg = get_gameobject_of_type,
+    import = {
+        module = import_module,
+        util = import_util,
+    },
+    init = {
+        panel = INIT_PANEL,
+        sub_panel = INIT_SUB_PANEL,
+        tips = INIT_TIPS,
+    },
+    new = {
+        close_btn = NEW_CLOSE_BTN,
+        func = new_function,
+        method = new_method,
+        scroll = new_scroll,
+        timer = new_timer,
+        touch_close = NEW_TOUCH_CLOSE_LAYER,
+    },
 })
