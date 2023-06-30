@@ -20,7 +20,6 @@ snippet into luasnip module.
 local ls = require "luasnip"
 local ast_parser = require("luasnip.util.parser.ast_parser")
 local parse = require("luasnip.util.parser.neovim_parser").parse
-local Ast = require("luasnip.util.parser.neovim_ast")
 local Str = require("luasnip.util.str")
 
 local M = {
@@ -175,14 +174,14 @@ function M.command_snip(maker, context, cmd_map)
 
             local nodes = nil
             if not result then
-                nodes = { s.t(":" .. cmd) }
+                nodes = { M.t(":" .. cmd) }
             elseif type(result) == "string" then
-                nodes = s.parse_string(result)
+                nodes = M.parse_string(result)
             else
                 nodes = result
             end
 
-            return s.s(1, nodes)
+            return M.s(1, nodes)
         end)
     )
 end
