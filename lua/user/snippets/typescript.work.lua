@@ -1,5 +1,7 @@
 # vim:ft=lua.snippet
 
+local utils = require "user.utils"
+
 local snip_filetype = "typescript"
 local s = require("user.snippets.util")
 local makers = s.snippet_makers(snip_filetype)
@@ -20,74 +22,83 @@ local asp = makers.asp
 
 ---@class Node
 
-local INIT_PANEL = [[
-import { S } from 'script_logic/base/global/singleton';
-import { UIBase } from 'script_logic/base/ui_system/ui_base';
-import { uiRegister } from 'script_logic/base/ui_system/ui_class_map';
-import { UI_COMMON } from 'script_logic/base/ui_system/ui_common';
-import { UIButton } from 'script_logic/base/ui_system/uiext/ui_button';
-import { UIText } from 'script_logic/base/ui_system/uiext/ui_text';
-import { LOGGING } from 'script_logic/common/base/logging';
+---@param index number
+local function to_camel(index)
+    return s.f(function(args)
+        return utils.underscore_to_camel_case(args[1][1])
+    end, { index })
+end
 
-const Log = LOGGING.logger('${1}');
-
-/**
- * ${2}
- *
- */
-@uiRegister({
-    panelName: '${1}',
-    panelDesc: '${2}',
-    prefabPath: '${3}',
-    fullScreen: true,
-    sortOrderType: UI_COMMON.CANVAS_SORT_ORDER.MENU,
-})
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-class ${0} extends UIBase {
-    protected onInit(): void {}
-
-    protected initEvents(args: UI_COMMON.TYPE_SHOW_PANEL_ARGS): void {}
-
-    protected onShow(args: UI_COMMON.TYPE_SHOW_PANEL_ARGS): void {}
-
-    protected onClose(): void {}
+local INIT_PANEL = {
+    __parse__ = true,
+    "import { S } from 'script_logic/base/global/singleton';",
+    "import { UIBase } from 'script_logic/base/ui_system/ui_base';",
+    "import { uiRegister } from 'script_logic/base/ui_system/ui_class_map';",
+    "import { UI_COMMON } from 'script_logic/base/ui_system/ui_common';",
+    "import { UIButton } from 'script_logic/base/ui_system/uiext/ui_button';",
+    "import { UIText } from 'script_logic/base/ui_system/uiext/ui_text';",
+    "import { LOGGING } from 'script_logic/common/base/logging';",
+    "",
+    { "const Log = LOGGING.logger('", 1, "');" },
+    "",
+    "/**",
+    { " * ",                          2 },
+    " *",
+    " */",
+    "@uiRegister({",
+    { "    panelName: '",                                    1, "'," },
+    { "    panelDesc: '",                                    2, "'," },
+    { "    prefabPath: '",                                   3, "'," },
+    { "    fullScreen: true," },
+    { "    sortOrderType: UI_COMMON.CANVAS_SORT_ORDER.MENU," },
+    "})",
+    "// eslint-disable-next-line @typescript-eslint/no-unused-vars",
+    { "class ", to_camel(1), " extends UIBase {" },
+    "    protected onInit(): void {}",
+    "",
+    "    protected initEvents(args: UI_COMMON.TYPE_SHOW_PANEL_ARGS): void {}",
+    "",
+    "    protected onShow(args: UI_COMMON.TYPE_SHOW_PANEL_ARGS): void {}",
+    "",
+    "    protected onClose(): void {}",
+    "}",
 }
-]]
 
-local INIT_TIPS = [[
-import { LOGGING } from 'script_logic/common/base/logging';
-import { TipsTypeMap } from './tips_info_map';
-import { UITipsWidgetBase } from './ui_tips_base';
-
-const Log = LOGGING.logger('${1}');
-
-type UITipsArg = TipsTypeMap['${1}']['args'];
-export class ${1} extends UITipsWidgetBase<UITipsArg> {
-    public getCustomPreloadAssetList(): string[] {
-        return [];
-    }
-
-    protected initTips(): void {
-    }
+local INIT_TIPS = {
+    __parse__ = true,
+    "import { LOGGING } from 'script_logic/common/base/logging';",
+    "import { TipsTypeMap } from './tips_info_map';",
+    "import { UITipsWidgetBase } from './ui_tips_base';",
+    "",
+    { "const Log = LOGGING.logger('",   1,           "');" },
+    "",
+    { "type UITipsArg = TipsTypeMap['", 1,           "']['args'];" },
+    { "export class ",                  to_camel(1), " extends UITipsWidgetBase<UITipsArg> {" },
+    "    public getCustomPreloadAssetList(): string[] {",
+    "        return [];",
+    "    }",
+    "",
+    "    protected initTips(): void {}",
+    "}",
 }
-]]
 
-local INIT_SUB_PANEL = [[
-import { LOGGING } from 'script_logic/common/base/logging';
-import { UISubView } from 'script_logic/base/ui_system/label_view/ui_sub_view';
-
-const Log = LOGGING.logger('${1}');
-
-export class ${1} extends UISubView {
-    protected onInit(): void {}
-
-    protected initEvents(args: UI_COMMON.TYPE_SHOW_PANEL_ARGS): void {}
-
-    protected onShow(args: UI_COMMON.TYPE_SHOW_PANEL_ARGS): void {}
-
-    protected onClose(): void {}
+local INIT_SUB_PANEL = {
+    __parse__ = true,
+    "import { LOGGING } from 'script_logic/common/base/logging';",
+    "import { UISubView } from 'script_logic/base/ui_system/label_view/ui_sub_view';",
+    "",
+    { "const Log = LOGGING.logger('", 1,           "');" },
+    "",
+    { "export class ",                to_camel(1), " extends UISubView {" },
+    "    protected onInit(): void {}",
+    "",
+    "    protected initEvents(args: UI_COMMON.TYPE_SHOW_PANEL_ARGS): void {}",
+    "",
+    "    protected onShow(args: UI_COMMON.TYPE_SHOW_PANEL_ARGS): void {}",
+    "",
+    "    protected onClose(): void {}",
+    "}",
 }
-]]
 
 local NEW_TOUCH_CLOSE_LAYER = [[
 const layer = this.getGameObject('node_bg/layer', UILayer);
@@ -178,15 +189,18 @@ end
 -- -----------------------------------------------------------------------------
 
 ---@param args string[]
----@return string | nil
+---@return string[] | nil
 local function new_timer(args)
     local name = args[1]
     if not name then return nil end
 
-    return table.concat({
+    return {
+        __parse__ = true,
         "private init" .. name .. "Timer(): void {",
         "    this.cancel" .. name .. "Timer();",
-        "    this.timer" .. name .. " = TIMER.${1:addTimer}();",
+        "    this.timer" .. name .. " = TIMER.",
+        1,
+        "();",
         "}",
         "",
         "private cancel" .. name .. "Timer(): void {",
@@ -195,18 +209,21 @@ local function new_timer(args)
         "        this.timer" .. name .. " = null;",
         "    }",
         "}",
-    }, "\n")
+    }
 end
 
 ---@param args string[]
----@return string | nil
+---@return string[] | nil
 local function new_scroll(args)
     local name = args[1]
     if not name then return nil end
 
-    return table.concat({
+    return {
+        __parse__ = true,
         "private update" .. name .. "Scroll(): void {",
-        "    const scroll = this.getGameObject('${1}', UIScrollView);",
+        "    const scroll = this.getGameObject('",
+        1,
+        "', UIScrollView);",
         "    scroll.setUpdateItemCallback(this.update" .. name .. "Item.bind(this));",
         "",
         "    const totalCnt = COMMON_CONST.ZERO;",
@@ -214,7 +231,7 @@ local function new_scroll(args)
         "}",
         "",
         "private update" .. name .. "Item(item: GameObject, index: number): void {}",
-    }, "\n")
+    }
 end
 
 ---@param args string[]

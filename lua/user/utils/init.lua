@@ -26,6 +26,41 @@ end
 
 local M = {}
 
+-- ----------------------------------------------------------------------------
+
+local special_camel_word = {
+    ui = "UI",
+    id = "ID",
+}
+
+---@param text string
+---@return string
+local function capital_fist_letter(text)
+    if text == "" then return "" end
+    return text:sub(1, 1):upper() .. text:sub(2)
+end
+
+---@param text string
+---@return string
+function M.underscore_to_camel_case(text)
+    local st, buffer = 1, {}
+
+    for i = 1, #text do
+        if text:sub(i, i) == "_" then
+            local part = text:sub(st, i - 1)
+            local special = special_camel_word[part:lower()]
+            buffer[#buffer + 1] = special or capital_fist_letter(part)
+            st = i + 1
+        end
+    end
+
+    buffer[#buffer + 1] = capital_fist_letter(text:sub(st, #text))
+
+    return table.concat(buffer)
+end
+
+-- ----------------------------------------------------------------------------
+
 -- wrap require in xpcall, print traceback then return nil when failed.
 ---@param modname string
 function M.import(modname)

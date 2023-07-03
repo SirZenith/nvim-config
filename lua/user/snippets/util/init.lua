@@ -17,6 +17,8 @@ snippet into luasnip module.
     local utils = require "utils"
     utils.finalize()
 ]]
+local table_utils = require "user.utils.table"
+
 local ls = require "luasnip"
 local ls_extra = require "luasnip.extras"
 local ast_parser = require("luasnip.util.parser.ast_parser")
@@ -163,6 +165,56 @@ function M.cached_parse_string(body)
     return nodes
 end
 
+---@param tbl (string | number | Node)[]
+---@param index_set table<number, boolean>
+---@return Node[]
+local function parse_line_element_table(tbl, index_set)
+    local nodes = {}
+
+    for i = 1, #tbl do
+        local element = tbl[i]
+        if type(element) == "string" then
+            table.insert(nodes, M.t(element))
+        elseif type(element) == "number" then
+            local new_node
+            if not index_set[element] then
+                new_node = M.i(element)
+            else
+                new_node = M.f(function(args) return args[1][1] end, { element })
+            end
+
+            table.insert(nodes, new_node)
+            index_set[element] = true
+        elseif type(element) == "table" then
+            table.insert(nodes, element)
+        end
+    end
+
+    return nodes
+end
+
+---@param tbl (string | table)[]
+function M.parse_table(tbl)
+    local nodes = {}
+    local index_set = {}
+
+    local len = #tbl
+    for i = 1, len do
+        local line = tbl[i]
+        if type(line) == "string" then
+            table.insert(nodes, M.t(line))
+        elseif type(line) == "table" then
+            table_utils.extend_list(nodes, parse_line_element_table(line, index_set))
+        end
+
+        if i < len then
+            table.insert(nodes, M.t({ "", "" }))
+        end
+    end
+
+    return nodes
+end
+
 -- ----------------------------------------------------------------------------
 
 local function command_snip_func(snip, cmd_map)
@@ -188,6 +240,9 @@ local function command_snip_func(snip, cmd_map)
         elseif type(map_walker) == "string" then
             result = map_walker
             break
+        elseif type(map_walker) == "table" and map_walker.__parse__ then
+            result = map_walker
+            break
         end
     end
 
@@ -196,6 +251,8 @@ local function command_snip_func(snip, cmd_map)
         nodes = { M.t(":" .. cmd) }
     elseif type(result) == "string" then
         nodes = M.parse_string(result)
+    elseif type(result) == "table" and result.__parse__ then
+        nodes = M.parse_table(result)
     else
         nodes = result
     end
