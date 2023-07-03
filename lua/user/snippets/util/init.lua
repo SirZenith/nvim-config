@@ -18,6 +18,7 @@ snippet into luasnip module.
     utils.finalize()
 ]]
 local ls = require "luasnip"
+local ls_extra = require "luasnip.extras"
 local ast_parser = require("luasnip.util.parser.ast_parser")
 local parse = require("luasnip.util.parser.neovim_parser").parse
 local Str = require("luasnip.util.str")
@@ -31,19 +32,22 @@ local M = {
     is = ls.indent_snippet_node,
     d = ls.dynamic_node,
     r = ls.restore_node,
-    l = require("luasnip.extras").lambda,
-    rep = require("luasnip.extras").rep,
-    p = require("luasnip.extras").partial,
-    m = require("luasnip.extras").match,
-    n = require("luasnip.extras").nonempty,
-    dl = require("luasnip.extras").dynamic_lambda,
+    l = ls_extra.lambda,
+    rep = ls_extra.rep,
+    p = ls_extra.partial,
+    m = ls_extra.match,
+    n = ls_extra.nonempty,
+    dl = ls_extra.dynamic_lambda,
     fmt = require("luasnip.extras.fmt").fmt,
     fmta = require("luasnip.extras.fmt").fmta,
     types = require("luasnip.util.types"),
     conds = require("luasnip.extras.expand_conditions"),
-    snippets_map = {},
     conds_ext = require "user.snippets.util.cond",
 }
+
+-- ----------------------------------------------------------------------------
+
+M.snippets_map = {}
 
 local function maker_factory(maker, snip_table)
     return function(...)
@@ -62,7 +66,8 @@ end
 
 local function maker_factory_reg(maker, snip_table)
     return function(trig, nodes)
-        local sp = maker({ trig = trig, regTrig = true }, nodes)
+        local sp = maker(trig, nodes)
+        sp.regTrig = true
         table.insert(snip_table, sp)
     end
 end
@@ -100,11 +105,11 @@ M.snippet_makers = function(filetype)
     }
     local makers = {}
 
-    for mname, m in pairs(base_makers) do
-        for tname, t in pairs(snip_tables) do
-            for fname, f in pairs(factories) do
-                local name = fname .. tname .. mname
-                local maker = f(m, t)
+    for maker_name, maker_func in pairs(base_makers) do
+        for table_name, tbl in pairs(snip_tables) do
+            for factory_name, factory in pairs(factories) do
+                local name = factory_name .. table_name .. maker_name
+                local maker = factory(maker_func, tbl)
                 makers[name] = maker
             end
         end
@@ -113,14 +118,16 @@ M.snippet_makers = function(filetype)
     return makers
 end
 
+-- ----------------------------------------------------------------------------
+
 ---@param body string
----@param opts table?
-function M.parse_string(body, opts)
+function M.parse_string(body)
+    vim.print('parse')
     if body == "" then
         error("empty body")
     end
 
-    opts = opts or {}
+    local opts = {}
     if opts.dedent == nil then
         opts.dedent = true
     end
@@ -143,48 +150,66 @@ function M.parse_string(body, opts)
     return nodes
 end
 
-function M.command_snip(maker, context, cmd_map)
-    maker(
-        context,
-        M.d(1, function(_, snip)
-            ---@type string
-            local cmd = snip.captures[1]
-            local segments = vim.split(cmd, " ")
+---@type { [string]: Node[] }
+local snip_parsing_cache = {}
 
-            local result = nil
-            ---@type table | string | function | nil
-            local map_walker = cmd_map
-            for i = 1, #segments do
-                if map_walker == nil then
-                    break
-                end
-
-                local seg = segments[i]
-                map_walker = map_walker[seg]
-
-                if type(map_walker) == "function" then
-                    local args = { unpack(segments, i + 1) }
-                    result = map_walker(args)
-                    break
-                elseif type(map_walker) == "string" then
-                    result = map_walker
-                    break
-                end
-            end
-
-            local nodes = nil
-            if not result then
-                nodes = { M.t(":" .. cmd) }
-            elseif type(result) == "string" then
-                nodes = M.parse_string(result)
-            else
-                nodes = result
-            end
-
-            return M.s(1, nodes)
-        end)
-    )
+---@param body string
+function M.cached_parse_string(body)
+    local nodes = snip_parsing_cache[body]
+    if not nodes then
+        nodes = M.parse_string(body)
+        snip_parsing_cache[body] = nodes
+    end
+    return nodes
 end
+
+-- ----------------------------------------------------------------------------
+
+local function command_snip_func(snip, cmd_map)
+    ---@type string
+    local cmd = snip.captures[1]
+    local segments = vim.split(cmd, " ")
+
+    local result = nil
+    ---@type table | string | function | nil
+    local map_walker = cmd_map
+    for i = 1, #segments do
+        if map_walker == nil then
+            break
+        end
+
+        local seg = segments[i]
+        map_walker = map_walker[seg]
+
+        if type(map_walker) == "function" then
+            local args = { unpack(segments, i + 1) }
+            result = map_walker(args)
+            break
+        elseif type(map_walker) == "string" then
+            result = map_walker
+            break
+        end
+    end
+
+    local nodes = nil
+    if not result then
+        nodes = { M.t(":" .. cmd) }
+    elseif type(result) == "string" then
+        nodes = M.parse_string(result)
+    else
+        nodes = result
+    end
+
+    return M.s(1, nodes)
+end
+
+function M.command_snip(maker, context, cmd_map)
+    maker(context, M.d(1, function(_, snip)
+        return command_snip_func(snip, cmd_map)
+    end))
+end
+
+-- ----------------------------------------------------------------------------
 
 function M.finalize()
     for filetype, record in pairs(M.snippets_map) do
