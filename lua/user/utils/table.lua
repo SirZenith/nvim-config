@@ -26,6 +26,11 @@ function M.deep_copy(src)
         tbl[k] = M.deep_copy(v)
     end
 
+    local mt = getmetatable(src)
+    if mt then
+        setmetatable(tbl, mt)
+    end
+
     return tbl
 end
 
@@ -55,6 +60,7 @@ function M.update_table(dst, src)
     for k, v in pairs(src) do
         local v_dst = dst[k]
         local v_type = type(v)
+
         if not v_dst
             or v_type ~= "table"
             or type(v_dst) ~= "table"

@@ -1,7 +1,7 @@
 local user = require "user"
 
 user.null_ls = {
-    sources = {}
+    sources = {},
 }
 
 return function()
