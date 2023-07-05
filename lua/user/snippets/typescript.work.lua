@@ -198,9 +198,7 @@ local function new_timer(args)
         __parse__ = true,
         "private init" .. name .. "Timer(): void {",
         "    this.cancel" .. name .. "Timer();",
-        "    this.timer" .. name .. " = TIMER.",
-        1,
-        "();",
+        { "    this.timer" .. name .. " = TIMER.", 1, "();" },
         "}",
         "",
         "private cancel" .. name .. "Timer(): void {",
@@ -221,9 +219,7 @@ local function new_scroll(args)
     return {
         __parse__ = true,
         "private update" .. name .. "Scroll(): void {",
-        "    const scroll = this.getGameObject('",
-        1,
-        "', UIScrollView);",
+        { "    const scroll = this.getGameObject('", 1, "', UIScrollView);" },
         "    scroll.setUpdateItemCallback(this.update" .. name .. "Item.bind(this));",
         "",
         "    const totalCnt = COMMON_CONST.ZERO;",
@@ -258,7 +254,7 @@ end
 local context = {
     trig = ":(.+);",
     regTrig = true,
-    -- condition = s.conds_ext.line_begin_smart,
+    condition = s.conds_ext.line_begin_smart,
 }
 s.command_snip(asp, context, {
     gg = get_gameobject_of_type,
