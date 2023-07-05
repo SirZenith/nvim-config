@@ -108,7 +108,7 @@ local INIT_GM = {
     "};",
 }
 
--- -----------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------
 
 ---@class ImportInfo
 ---@field names string[]
@@ -162,7 +162,7 @@ local function import_gm_cmd(args)
     return ("import * as %s from 'script_logic/common/wizcmd/cmds/%s'"):format(name:upper(), name)
 end
 
--- -----------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------
 
 ---@type table<string, string>
 local game_object_name_map = {
@@ -193,7 +193,7 @@ local function get_gameobject_of_type(args)
     return ("const %s = %s.getGameObject('${1}', %s);"):format(variable, object, class_name)
 end
 
--- -----------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------
 
 local NEW_CLOSE_BTN = [[
 const btnClose = this.getGameObject('node_bg/panel/btn_close', UIButton);

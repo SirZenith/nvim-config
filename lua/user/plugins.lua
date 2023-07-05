@@ -102,7 +102,7 @@ local load = make_loader(packer.use)
 local plugin_list = {
     "wbthomason/packer.nvim",
 
-    -- -------------------------------------------------------------------------
+    -- ------------------------------------------------------------------------
     -- General
     "lewis6991/gitsigns.nvim",
     { "ggandor/lightspeed.nvim",     disable = true },
@@ -123,7 +123,7 @@ local plugin_list = {
     },
     "voldikss/vim-floaterm",
 
-    -- -------------------------------------------------------------------------
+    -- ------------------------------------------------------------------------
     -- Visual Assitance
     "Yggdroot/indentline",
     "nvim-lua/lsp-status.nvim",
@@ -132,7 +132,7 @@ local plugin_list = {
     { "norcalli/nvim-colorizer.lua", __before_load = turn_on_true_color },
     { "anuvyklack/pretty-fold.nvim", disable = true },
 
-    -- -------------------------------------------------------------------------
+    -- ------------------------------------------------------------------------
     -- Themes
     { "catppuccin/nvim",             as = "catppuccin",                 disable = true },
     { "marko-cerovac/material.nvim", disable = true },
@@ -153,7 +153,7 @@ local plugin_list = {
         requires = { "kyazdani42/nvim-web-devicons", opt = true },
     },
 
-    -- -------------------------------------------------------------------------
+    -- ------------------------------------------------------------------------
     -- Syntax
     "nvim-treesitter/nvim-treesitter",
     "nvim-treesitter/playground",
@@ -167,7 +167,7 @@ local plugin_list = {
     "aklt/plantuml-syntax",
     { "vim-pandoc/vim-pandoc-syntax", disable = true },
 
-    -- -------------------------------------------------------------------------
+    -- ------------------------------------------------------------------------
     -- Language Support
     { "kevinhwang91/nvim-ufo",        requires = "kevinhwang91/promise-async" }, -- folding support
     {
@@ -188,7 +188,7 @@ local plugin_list = {
     "sudar/vim-arduino-syntax",
     "vim-voom/VOoM",
 
-    -- -------------------------------------------------------------------------
+    -- ------------------------------------------------------------------------
     -- Completion
     "windwp/nvim-autopairs",
     "hrsh7th/cmp-buffer",
@@ -198,7 +198,7 @@ local plugin_list = {
     "hrsh7th/cmp-path",
     "hrsh7th/nvim-cmp",
 
-    -- -------------------------------------------------------------------------
+    -- ------------------------------------------------------------------------
     -- Snippet
     "L3MON4D3/LuaSnip",
 }

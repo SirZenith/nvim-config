@@ -85,7 +85,7 @@ condapsp(s.conds.line_begin, "toc", "\\tableofcontents")
 condapsp(s.conds.line_begin, "lof", "\\listoffigures")
 condapsp(s.conds.line_begin, "lot", "\\listoftables")
 
--- -----------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------
 -- Environment
 apsp("begg", [[
 \begin{$1}
@@ -166,7 +166,7 @@ psp("nn", [[
 $0
 ]])
 
--- -----------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------
 -- General
 apsp("imt", "\\$$1\\$$0")
 apsp("dmt", [[
@@ -204,7 +204,7 @@ for _, name in ipairs(func_names) do
     condapsp(math, name, "\\" .. name .. " ")
 end
 
--- -----------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------
 -- Arrow
 condapsp(math, "<->", "\\leftrightarrow ")
 condapsp(math, "rarr", "\\rightarrow ")
@@ -212,7 +212,7 @@ condapsp(math, "larr", "\\leftarrow ")
 condapsp(math, "uarr", "\\uparrow ")
 condapsp(math, "darr", "\\downarrow ")
 
--- -----------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------
 -- Sets and Mapping
 condapsp(math, "invs", "^{-1} ")
 condapsp(math, "compl", "^{c} ")
@@ -239,7 +239,7 @@ condapsp(math, "uuu", "\\bigcup_{$1} $0")
 condapsp(math, "nnn", "\\bigcap_{$1} $0")
 apsp("letw", [[Let \\$\Omega \subset \C\\$ be open.]])
 
--- -----------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------
 -- Special Sets
 condapsp(math, "OO", "\\varnothing ")
 condapsp(math, "NN", "\\N ")
@@ -251,7 +251,7 @@ condapsp(math, "HH", "\\mathbb{H} ")
 condapsp(math, "DD", "\\mathbb{D} ")
 condapsp(math, "R0+", "\\R_0^+ ")
 
--- -----------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------
 -- Logic
 condapsp(math, "=>", "\\implies ")
 condapsp(math, "=<", "\\impliedby ")
@@ -266,7 +266,7 @@ condapsp(math, ">=", "\\geqslant ")
 condapsp(math, ">>", "\\gg ")
 condapsp(math, "<<", "\\ll ")
 
--- -----------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------
 -- Fraction
 
 condapsp(math, "//", "\\frac{${1:TM_SELECTED_TEXT}}{$2} $0")
@@ -300,7 +300,7 @@ condasp(
     }
 )
 
--- -----------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------
 -- Sub- and Supscript
 condapsp(math, { trig = "__", wordTrig = false }, "_{$1} $0")
 condsp(math, { trig = "(%a)(%d+)", regTrig = true }, s.f(
@@ -323,7 +323,7 @@ condapsp(math, { trig = "cb", wordTrig = false }, "^3")
 condapsp(math, { trig = "td", wordTrig = false }, "^{$1}$0")
 condapsp(math, { trig = "rd", wordTrig = false }, "^{($1)}$0")
 
--- -----------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------
 -- Limit Staff
 condapsp(math, "sum", "\\sum_{n = ${1:1}}^{${2:\\infty}} ${0:a_n z^n}")
 condapsp(
@@ -339,7 +339,7 @@ condapsp(
 condapsp(math, "part", "\\frac{\\partial ${1:V}}{\\partial ${2:x}} $0")
 condapsp(math, "dint", "\\int_{${1:-\\infty}}^{${2:\\infty}} ${3:${TM_SELECTED_TEXT}} $0")
 
--- -----------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------
 -- Others
 condapsp(math, "tt", "\\text{$1} $0")
 condapsp(math, "SI", "\\SI{$1}{$2} $0")
@@ -359,7 +359,7 @@ condasp(math, { trig = "(%a)hat", regTrig = true }, s.f(
     )
 )
 
--- -----------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------
 -- Greek Letters
 condapsp(math, ";a", "\\alpha")
 condapsp(math, ";A", "\\Alpha")

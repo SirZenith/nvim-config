@@ -21,7 +21,7 @@ function M.finalize()
     vim.go.shellcmdflag = shellcmdflag
 end
 
--- -----------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------
 
 user.platform.windows = {
     nu_config_path = fs.path_join(vim.env.HOME, [[AppData\Roaming\nushell\config.nu]]),
@@ -29,6 +29,6 @@ user.platform.windows = {
 }
 user.general.im_select = M.im_select
 
--- -----------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------
 
 return M
