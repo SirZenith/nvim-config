@@ -11,7 +11,7 @@ local lsp_status = import "lsp-status"
 
 local M = {}
 
--- -----------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------
 
 local LOG_MESSAGE_PANEL_NAME = "user.lsp.log_message"
 
@@ -26,7 +26,7 @@ local LspLogLevel = {
 M._is_debug_on = false
 M._old_log_message_handler = nil
 
--- -----------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------
 
 function M.lsp_debug_on()
     vim.lsp.set_log_level("debug")
@@ -77,7 +77,26 @@ function M.lsp_debug_off()
     vim.lsp.handlers["window/logMessage"] = M._old_log_message_handler
 end
 
--- -----------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------
+
+---@param source string # diagnostic source name
+function M.disable_diagnostic_source(source)
+    vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(
+        function(_, result, ctx, config)
+            local messages = {}
+            for _, diag in ipairs(result.diagnostics) do
+                if diag.source ~= source then
+                    table.insert(messages, diag)
+                end
+            end
+            result.diagnostics = messages
+            vim.lsp.diagnostic.on_publish_diagnostics(_, result, ctx, config)
+        end,
+        {}
+    )
+end
+
+-- ----------------------------------------------------------------------------
 
 local function lsp_on_attach(client, bufnr)
     local opts = { noremap = true, silent = true, buffer = bufnr }
@@ -92,7 +111,7 @@ local function lsp_on_attach(client, bufnr)
     -- See `:help vim.lsp.*` for documentation on any of the below functions
     local keymap = {
         -- utility
-        ["<A-F>"] = function() vim.lsp.buf.format { async = true } end,
+        ["<A-F>"] = function() vim.lsp.buf.format(user.lsp.format_args()) end,
         ["<F2>"] = vim.lsp.buf.rename,
         ["<space>d"] = vim.diagnostic.setloclist,
         -- goto
@@ -190,7 +209,7 @@ function M.change_lsp_config(lsp_name, config)
     end
 end
 
--- -----------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------
 
 user.lsp = {
     log_update_method = panelpal.PanelContentUpdateMethod.append,
@@ -199,8 +218,11 @@ user.lsp = {
     capabilities_settings = {
         vim.lsp.protocol.make_client_capabilities()
     },
+    format_args = {
+        async = true
+    },
 }
 
--- -----------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------
 
 return M

@@ -19,7 +19,7 @@ local ConfigEntry = {
     __reserved_keys = reserved_key,
 }
 
--- -----------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------
 
 -- Try to join two key into one, both parameters can be nil at the same time,
 -- but can't both be empty string.
@@ -89,7 +89,7 @@ function ConfigEntry:split_parent(key)
     end
 end
 
--- -----------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------
 
 -- If `k` is nil, return config of current entry, else get child in current entry.
 ---@param k? string # a singele-segment key.
@@ -180,7 +180,7 @@ function ConfigEntry:_get_tbl_by_segments(segments)
     return ok and tbl or nil
 end
 
--- -----------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------
 
 ---@param key? string|table
 ---@param initial_value? any
@@ -290,7 +290,7 @@ function ConfigEntry:pairs()
     return pairs(value)
 end
 
--- -----------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------
 
 for k in pairs(ConfigEntry) do
     reserved_key[k] = true

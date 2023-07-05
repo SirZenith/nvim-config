@@ -43,7 +43,7 @@ local function im_auto_toggle_setup(cmd)
     })
 end
 
--- -----------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------
 
 user.o = {
     autochdir = false, -- auto chdir into directory of current buffer

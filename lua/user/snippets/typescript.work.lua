@@ -1,6 +1,7 @@
 # vim:ft=lua.snippet
 
 local utils = require "user.utils"
+local table_utils = require "user.utils.table"
 
 local snip_filetype = "typescript"
 local s = require("user.snippets.util")
@@ -30,7 +31,6 @@ local function to_camel(index)
 end
 
 local INIT_PANEL = {
-    __parse__ = true,
     "import { S } from 'script_logic/base/global/singleton';",
     "import { UIBase } from 'script_logic/base/ui_system/ui_base';",
     "import { uiRegister } from 'script_logic/base/ui_system/ui_class_map';",
@@ -65,7 +65,6 @@ local INIT_PANEL = {
 }
 
 local INIT_TIPS = {
-    __parse__ = true,
     "import { LOGGING } from 'script_logic/common/base/logging';",
     "import { TipsTypeMap } from './tips_info_map';",
     "import { UITipsWidgetBase } from './ui_tips_base';",
@@ -83,7 +82,6 @@ local INIT_TIPS = {
 }
 
 local INIT_SUB_PANEL = {
-    __parse__ = true,
     "import { LOGGING } from 'script_logic/common/base/logging';",
     "import { UISubView } from 'script_logic/base/ui_system/label_view/ui_sub_view';",
     "",
@@ -100,15 +98,15 @@ local INIT_SUB_PANEL = {
     "}",
 }
 
-local NEW_TOUCH_CLOSE_LAYER = [[
-const layer = this.getGameObject('node_bg/layer', UILayer);
-layer.setTouchEvent(this.close.bind(this));
-]]
-
-local NEW_CLOSE_BTN = [[
-const btnClose = this.getGameObject('node_bg/panel/btn_close', UIButton);
-btnClose.setOnClick(this.close.bind(this));
-]]
+local INIT_GM = {
+    "/* eslint-disable @typescript-eslint/no-magic-numbers */",
+    "import { IFakeAgent, ICmdArgsMap, ICmds, importedMap } from 'script_logic/common/wizcmd/wizcmd_interface';",
+    "",
+    "export const CMDS: ICmds = {",
+    { "    rootKey: '", 1, "'," },
+    "    childrens: {},",
+    "};",
+}
 
 -- -----------------------------------------------------------------------------
 
@@ -155,6 +153,15 @@ local function import_util(args)
     return ("import { %s } from 'script_logic/common/utils/%s';"):format(symbol, name)
 end
 
+---@param args string[]
+---@return string | nil
+local function import_gm_cmd(args)
+    local name = args[1]
+    if not name then return nil end
+
+    return ("import * as %s from 'script_logic/common/wizcmd/cmds/%s'"):format(name:upper(), name)
+end
+
 -- -----------------------------------------------------------------------------
 
 ---@type table<string, string>
@@ -188,6 +195,95 @@ end
 
 -- -----------------------------------------------------------------------------
 
+local NEW_CLOSE_BTN = [[
+const btnClose = this.getGameObject('node_bg/panel/btn_close', UIButton);
+btnClose.setOnClick(this.close.bind(this));
+]]
+
+---@param args string[]
+---@return string | nil
+local function new_function(args)
+    local name = args[1]
+    if not name then return nil end
+    return "const " .. name .. " = (${2}): ${1: void} => {${3}}"
+end
+
+---@param args string[]
+---@return string | nil
+local function new_gm_arg(args)
+    local name = args[1]
+    if not name then return nil end
+
+    return ("{ name: '%s', typ: '${1}', default: ${2} }"):format(name)
+end
+
+local GmCmdType = {
+    Client = "client",
+    Server = "server",
+}
+
+---@param args string[]
+---@return Node[] | nil
+local function new_gm_cmd(args)
+    local type = args[1] or "client"
+
+    local buffer = {
+        { "'", 1, "': {" },
+        "    args: [],",
+    }
+
+    if type == GmCmdType.Server then
+        table_utils.extend_list(buffer, {
+            "    imports: { },",
+            { "    server: (agent: IFakeAgent, cmdArgs: ICmdArgsMap, imports: importedMap): void => {" },
+            "        // const { } = imports;",
+            "        // const role = agent.role;",
+            "        // const argName = cmdArgs.argName;",
+            "    },"
+        })
+    elseif type == GmCmdType.Client then
+        table_utils.extend_list(buffer, {
+            { "    client: (cmdArgs: ICmdArgsMap): void => {" },
+            "        // const argName = cmdArgs.argName;",
+            "    },"
+        })
+    else
+        return nil
+    end
+
+    table.insert(buffer, "},")
+
+    return buffer
+end
+
+---@param args string[]
+---@return string | nil
+local function new_method(args)
+    local name = args[1]
+    if not name then return nil end
+    local modifier = args[2] or "private"
+    return modifier .. " " .. name .. "(${2}): ${1:void} {${3}}"
+end
+
+---@param args string[]
+---@return string[] | nil
+local function new_scroll(args)
+    local name = args[1]
+    if not name then return nil end
+
+    return {
+        "private update" .. name .. "Scroll(): void {",
+        { "    const scroll = this.getGameObject('", 1, "', UIScrollView);" },
+        "    scroll.setUpdateItemCallback(this.update" .. name .. "Item.bind(this));",
+        "",
+        "    const totalCnt = COMMON_CONST.ZERO;",
+        "    scroll.setTotalCount(totalCnt);",
+        "}",
+        "",
+        "private update" .. name .. "Item(item: GameObject, index: number): void {}",
+    }
+end
+
 ---@param args string[]
 ---@return string[] | nil
 local function new_timer(args)
@@ -195,7 +291,6 @@ local function new_timer(args)
     if not name then return nil end
 
     return {
-        __parse__ = true,
         "private init" .. name .. "Timer(): void {",
         "    this.cancel" .. name .. "Timer();",
         { "    this.timer" .. name .. " = TIMER.", 1, "();" },
@@ -210,42 +305,10 @@ local function new_timer(args)
     }
 end
 
----@param args string[]
----@return string[] | nil
-local function new_scroll(args)
-    local name = args[1]
-    if not name then return nil end
-
-    return {
-        __parse__ = true,
-        "private update" .. name .. "Scroll(): void {",
-        { "    const scroll = this.getGameObject('", 1, "', UIScrollView);" },
-        "    scroll.setUpdateItemCallback(this.update" .. name .. "Item.bind(this));",
-        "",
-        "    const totalCnt = COMMON_CONST.ZERO;",
-        "    scroll.setTotalCount(totalCnt);",
-        "}",
-        "",
-        "private update" .. name .. "Item(item: GameObject, index: number): void {}",
-    }
-end
-
----@param args string[]
----@return string | nil
-local function new_function(args)
-    local name = args[1]
-    if not name then return nil end
-    return "const " .. name .. " = (${2}): ${1: void} => {${3}}"
-end
-
----@param args string[]
----@return string | nil
-local function new_method(args)
-    local name = args[1]
-    if not name then return nil end
-    local modifier = args[2] or "private"
-    return modifier .. " " .. name .. "(${2}): ${1:void} {${3}}"
-end
+local NEW_TOUCH_CLOSE_LAYER = [[
+const layer = this.getGameObject('node_bg/layer', UILayer);
+layer.setTouchEvent(this.close.bind(this));
+]]
 
 -- ----------------------------------------------------------------------------
 
@@ -259,10 +322,12 @@ local context = {
 s.command_snip(asp, context, {
     gg = get_gameobject_of_type,
     import = {
+        gm_cmd = import_gm_cmd,
         module = import_module,
         util = import_util,
     },
     init = {
+        gm = INIT_GM,
         panel = INIT_PANEL,
         sub_panel = INIT_SUB_PANEL,
         tips = INIT_TIPS,
@@ -270,6 +335,10 @@ s.command_snip(asp, context, {
     new = {
         close_btn = NEW_CLOSE_BTN,
         func = new_function,
+        gm = {
+            arg = new_gm_arg,
+            cmd = new_gm_cmd,
+        },
         method = new_method,
         scroll = new_scroll,
         timer = new_timer,

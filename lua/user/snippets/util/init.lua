@@ -240,21 +240,22 @@ local function command_snip_func(snip, cmd_map)
         elseif type(map_walker) == "string" then
             result = map_walker
             break
-        elseif type(map_walker) == "table" and map_walker.__parse__ then
-            result = map_walker
-            break
         end
     end
 
+    result = result or map_walker
+
     local nodes = nil
-    if not result then
-        nodes = { M.t(":" .. cmd) }
-    elseif type(result) == "string" then
+    if type(result) == "string" then
         nodes = M.parse_string(result)
-    elseif type(result) == "table" and result.__parse__ then
+    elseif type(result) ~= "table" then
+        nodes = { M.t(":" .. cmd) }
+    elseif result.__raw_node then
+        nodes = result
+    elseif #result ~= 0 then
         nodes = M.parse_table(result)
     else
-        nodes = result
+        vim.notify("snippet command ends at an non-parse table")
     end
 
     return M.s(1, nodes)
