@@ -114,4 +114,18 @@ function M.max(a, b)
     return a >= b and a or b
 end
 
+---@param args string[]
+---@return string | nil err
+---@return string? ...
+function M.arg_list_check(args, ...)
+    local targets = {...}
+    for i, name in ipairs(targets) do
+        if not args[i] then
+            return ("expecting '%s' at #%d"):format(name, i)
+        end
+    end
+
+    return nil, unpack(args)
+end
+
 return M

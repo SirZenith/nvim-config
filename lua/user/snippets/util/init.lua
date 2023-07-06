@@ -222,7 +222,7 @@ local function command_snip_func(snip, cmd_map)
     local cmd = snip.captures[1]
     local segments = vim.split(cmd, " ")
 
-    local result = nil
+    local result, err = nil
     ---@type table | string | function | nil
     local map_walker = cmd_map
     for i = 1, #segments do
@@ -235,7 +235,7 @@ local function command_snip_func(snip, cmd_map)
 
         if type(map_walker) == "function" then
             local args = { unpack(segments, i + 1) }
-            result = map_walker(args)
+            result, err = map_walker(args)
             break
         elseif type(map_walker) == "string" then
             result = map_walker
@@ -249,6 +249,10 @@ local function command_snip_func(snip, cmd_map)
     if type(result) == "string" then
         nodes = M.parse_string(result)
     elseif type(result) ~= "table" then
+        if err then
+            vim.notify(err);
+        end
+
         nodes = { M.t(":" .. cmd) }
     elseif result.__raw_node then
         nodes = result

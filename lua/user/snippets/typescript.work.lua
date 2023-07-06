@@ -3,6 +3,8 @@
 local utils = require "user.utils"
 local table_utils = require "user.utils.table"
 
+local arg_list_check = utils.arg_list_check
+
 local snip_filetype = "typescript"
 local s = require("user.snippets.util")
 local makers = s.snippet_makers(snip_filetype)
@@ -29,6 +31,23 @@ local function to_camel(index)
         return utils.underscore_to_camel_case(args[1][1])
     end, { index })
 end
+
+-- ----------------------------------------------------------------------------
+
+local INIT_DATA_MODEL = {
+    "import { setDataModel } from '../base/struct_helper';",
+    "",
+}
+
+local INIT_GM = {
+    "/* eslint-disable @typescript-eslint/no-magic-numbers */",
+    "import { IFakeAgent, ICmdArgsMap, ICmds, importedMap } from 'script_logic/common/wizcmd/wizcmd_interface';",
+    "",
+    "export const CMDS: ICmds = {",
+    { "    rootKey: '", 1, "'," },
+    "    childrens: {},",
+    "};",
+}
 
 local INIT_PANEL = {
     "import { S } from 'script_logic/base/global/singleton';",
@@ -98,16 +117,6 @@ local INIT_SUB_PANEL = {
     "}",
 }
 
-local INIT_GM = {
-    "/* eslint-disable @typescript-eslint/no-magic-numbers */",
-    "import { IFakeAgent, ICmdArgsMap, ICmds, importedMap } from 'script_logic/common/wizcmd/wizcmd_interface';",
-    "",
-    "export const CMDS: ICmds = {",
-    { "    rootKey: '", 1, "'," },
-    "    childrens: {},",
-    "};",
-}
-
 -- ----------------------------------------------------------------------------
 
 ---@class ImportInfo
@@ -116,27 +125,39 @@ local INIT_GM = {
 
 ---@type table<string, ImportInfo>
 local import_map = {
-    singleton = {
-        names = { "S" },
-        path = "script_logic/base/global/singleton",
+    client_utility = {
+        names = { "CLIENT_UTILITY" },
+        path = "script_logic/module/util/client_utility",
     },
     common_const = {
         names = { "COMMON_CONST" },
         path = "script_logic/common/common_const",
     },
+    logging = {
+        names = { "LOGGING" },
+        path = "script_logic/common/base/logging",
+    },
     role_event = {
         names = { "ROLE_EVENT" },
         path = "script_logic/event/role_event",
     },
+    singleton = {
+        names = { "S" },
+        path = "script_logic/base/global/singleton",
+    },
+    ui_utility = {
+        names = { "UI_UTILITY" },
+        path = "script_logic/ui/ui_common/ui_utility",
+    },
 }
 
 ---@param args string[]
----@return string
+---@return string | nil
 local function import_module(args)
     local name = args[1]
     local info = import_map[name]
     if not info then
-        return ""
+        return nil
     end
 
     return ("import { %s } from '%s';"):format(
@@ -204,8 +225,15 @@ btnClose.setOnClick(this.close.bind(this));
 ---@return string | nil
 local function new_function(args)
     local name = args[1]
+    local modifier = args[2]
     if not name then return nil end
-    return "const " .. name .. " = (${2}): ${1: void} => {${3}}"
+
+    local result = "const " .. name .. " = (${2}): ${1:void} => {${3}};"
+    if modifier then
+        result = modifier .. " " .. result
+    end
+
+    return result
 end
 
 ---@param args string[]
@@ -243,7 +271,7 @@ local function new_gm_cmd(args)
         })
     elseif type == GmCmdType.Client then
         table_utils.extend_list(buffer, {
-            { "    client: (cmdArgs: ICmdArgsMap): void => {" },
+            { "    client: (cmdArgs: ICmdArgsMap, imports: importedMap): void => {" },
             "        // const argName = cmdArgs.argName;",
             "    },"
         })
@@ -312,7 +340,52 @@ layer.setTouchEvent(this.close.bind(this));
 
 -- ----------------------------------------------------------------------------
 
----@alias SnipTableEntry number | string
+local DMFieldTypeInfo = {
+    string = nil,
+    bool = nil,
+    int = { "minLimit", "accum" },
+    float = { "minLimit", "accum" },
+    table = nil,
+    dict = { "idkey", "valueType", "customClass" },
+    list = { "valueType", "customClass" },
+    map = { "idtype", "valueType", "customClass" },
+    specNum = { "catetory" },
+    specDict = { "idkey", "valueType", "catetory" },
+}
+
+---@param args string[]
+---@return string | nil result
+---@return string | nil err
+local function data_model_field(args)
+    local err, name, index, type = arg_list_check(args, "name", "index", "type")
+    if err then return nil, err end
+
+    local extra_args = DMFieldTypeInfo[type] or {}
+    local jump_index = 1
+    local buffer = {}
+    for _, field in ipairs(extra_args) do
+        table.insert(buffer, " ")
+        table.insert(buffer, field)
+        table.insert(buffer, (": ${%d},"):format(jump_index))
+        jump_index = jump_index + 1
+    end
+
+    return ("%s: { index: %d, typ: '%s',%s desc: '${%d}' },"):format(
+        name, index, type, table.concat(buffer), jump_index
+    )
+end
+
+---@param args string[]
+---@return string? result
+---@return string? err
+local function data_model_new(args)
+    local err, name, desc = arg_list_check(args, "name", "desc")
+    if err then return nil, err end
+
+    return ("setDataModel('%s', '%s', {});"):format(name, desc)
+end
+
+-- ----------------------------------------------------------------------------
 
 local context = {
     trig = ":(.+);",
@@ -320,6 +393,10 @@ local context = {
     condition = s.conds_ext.line_begin_smart,
 }
 s.command_snip(asp, context, {
+    dm = {
+        fd = data_model_field,
+        new = data_model_new,
+    },
     gg = get_gameobject_of_type,
     import = {
         gm_cmd = import_gm_cmd,
@@ -327,6 +404,7 @@ s.command_snip(asp, context, {
         util = import_util,
     },
     init = {
+        data_model = INIT_DATA_MODEL,
         gm = INIT_GM,
         panel = INIT_PANEL,
         sub_panel = INIT_SUB_PANEL,
