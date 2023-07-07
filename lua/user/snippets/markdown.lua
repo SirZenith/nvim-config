@@ -30,7 +30,7 @@ condasp(s.conds.line_begin, { trig = "([#%w]+)cbl", regTrig = true }, {
 
 condasp(
     s.conds.line_begin,
-    { trig = "(h-)l;", regTrig = true },
+    { trig = "(hh-)l", regTrig = true },
     s.f(function(_, snip)
         local len = #snip.captures[1]
         return ("#"):rep(len) .. " "
