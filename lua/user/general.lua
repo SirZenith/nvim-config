@@ -14,12 +14,15 @@ local function im_auto_toggle_setup(cmd)
     local im_isoff = cmd.isoff
 
     local method_toggled = false
+    local auto_toggle_on = true
 
     -- IM off
     vim.api.nvim_create_autocmd("InsertLeave", {
         group = augroup_id,
         pattern = "*",
         callback = function()
+            if not auto_toggle_on then return end
+
             local im = vim.fn.system(im_check_cmd)
             if not im_isoff(im) then
                 method_toggled = true
@@ -35,12 +38,26 @@ local function im_auto_toggle_setup(cmd)
         group = augroup_id,
         pattern = "*",
         callback = function()
+            if not auto_toggle_on then return end
+
             if method_toggled then
                 vim.fn.system(im_on_cmd)
                 method_toggled = false
             end
         end,
     })
+
+    vim.api.nvim_create_user_command(
+        "IMToggleOn",
+        function() auto_toggle_on = true end,
+        { desc = "turn on input method auto toggle" }
+    )
+
+    vim.api.nvim_create_user_command(
+        "IMToggleOff",
+        function() auto_toggle_on = false end,
+        { desc = "turn off input method auto toggle" }
+    )
 end
 
 -- ----------------------------------------------------------------------------
