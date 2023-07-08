@@ -4,19 +4,18 @@ local fs = require "user.utils.fs"
 local ConfigEntry = require "user.config_entry".ConfigEntry
 
 local env_config_home = vim.env.CONFIG_HOME
-if  not env_config_home then
+if not env_config_home then
     vim.notify("failed to initialize, Can't find environment variable 'CONFIG_HOME'")
     return
 end
 
----@class UserConfig : ConfigEntry
 local user = ConfigEntry:new {
     env = {
         NVIM_HOME = fs.path_join(env_config_home, "nvim"),
         CONFIG_HOME = fs.path_join(env_config_home, "nvim", "lua"),
         PROXY_URL = vim.env.PROXY_URL,
     }
-}
+} --[[@as UserConfig]]
 
 -- copying variables in user namespace into vim namespace.
 ---@param key string|string[] # if a list of string is passed, each element in the list is treated as a key.
