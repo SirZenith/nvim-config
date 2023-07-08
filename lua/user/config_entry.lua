@@ -27,7 +27,7 @@ local ConfigEntry = {
 ---@param base? string
 ---@param new? string
 ---@return string?
-function ConfigEntry:join_key(base, new)
+function ConfigEntry:_join_key(base, new)
     local key
     if not base or #base == 0 then
         key = new
@@ -45,7 +45,7 @@ function ConfigEntry:join_key(base, new)
 end
 
 ---@param key? string
-function ConfigEntry:split_key(key)
+function ConfigEntry:_split_key(key)
     key = key or self.__key
     return vim.split(key, self.__key_sep, { plain = true })
 end
@@ -54,13 +54,13 @@ end
 -- If extra key is passed, all segments in extra key will be appended to that list.
 ---@param key? string
 ---@return string[] segments
-function ConfigEntry:get_key_segments(key)
+function ConfigEntry:_get_key_segments(key)
     local complelte_key = key
-        and self:join_key(self.__key, key)
+        and self:_join_key(self.__key, key)
         or self.__key
 
     if complelte_key then
-        return self:split_key(complelte_key)
+        return self:_split_key(complelte_key)
     else
         return {}
     end
@@ -70,7 +70,7 @@ end
 ---@param key string
 ---@return string? parent
 ---@return string child
-function ConfigEntry:split_parent(key)
+function ConfigEntry:_split_parent(key)
     local len = #key
 
     local index
@@ -100,7 +100,7 @@ function ConfigEntry:_get_value(k)
         error("expected key of string type.", 2)
     end
 
-    local segments = self:get_key_segments(k)
+    local segments = self:_get_key_segments(k)
     local tail = table.remove(segments)
 
     local tbl = self.__config_base
@@ -135,7 +135,7 @@ function ConfigEntry:_set_value(k, v)
 
     local parent, tail
     if k then
-        parent, tail = self:split_parent(k)
+        parent, tail = self:_split_parent(k)
     end
 
     local tbl = self:_get_value(parent)
@@ -211,7 +211,7 @@ function ConfigEntry:__index(key)
         return value
     end
 
-    local new_key = self:join_key(self.__key, key)
+    local new_key = self:_join_key(self.__key, key)
     return ConfigEntry:new(new_key)
 end
 
@@ -222,7 +222,7 @@ function ConfigEntry:__newindex(key, value)
         error("use for " .. key .. " is reserved in ConfigEntry", 2)
     end
 
-    local segments = self:get_key_segments(key)
+    local segments = self:_get_key_segments(key)
     local tail = table.remove(segments)
     local tbl = self:_get_tbl_by_segments(segments)
     if not tbl then
@@ -256,7 +256,7 @@ function ConfigEntry.value(self)
 end
 
 function ConfigEntry:append(value)
-    local segments = self:get_key_segments()
+    local segments = self:_get_key_segments()
     local tbl = self:_get_tbl_by_segments(segments)
     if not tbl then
         error("trying to append to a non-table value " .. self.__key)
