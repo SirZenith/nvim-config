@@ -7,7 +7,10 @@ local panelpal = require "panelpal"
 local import = utils.import
 
 local nvim_lsp = import "lspconfig"
+local nvim_lsp_configs = import "lspconfig.configs"
 local lsp_status = import "lsp-status"
+
+local validate = vim.validate
 
 local M = {}
 
@@ -207,6 +210,21 @@ function M.change_lsp_config(lsp_name, config)
     for i = 1, #clients do
         clients[i].workspace_did_change_configuration(settings)
     end
+end
+
+---@param lsp_name string
+---@param default_config table<string, any>
+---@param extra_opts? table<string, any>
+function M.add_lsp_config(lsp_name, default_config, extra_opts)
+    validate {
+        cmd = { default_config.cmd, 't' },
+        filetypes = { default_config.filetypes, 't' },
+        root_dir = { default_config.root_dir, 'f' },
+    }
+
+    local config = vim.tbl_deep_extend("force", {}, extra_opts or {})
+    config.default_config = default_config
+    nvim_lsp_configs[lsp_name] = config
 end
 
 -- ----------------------------------------------------------------------------

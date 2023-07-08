@@ -251,7 +251,6 @@ end
 
 function ConfigEntry:append(value)
     local segments = self:get_key_segments()
-    table.remove(segments)
     local tbl = self:_get_tbl_by_segments(segments)
     if not tbl then
         error("trying to append to a non-table value " .. self.__key)
