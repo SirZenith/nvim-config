@@ -5,27 +5,29 @@ local panelpal = require "panelpal"
 
 local USER_TERMINAL_PANEL_BUF_NAME = "user.terminal"
 
-user.global_search = {
-    ---@type table<string, string>
-    cmd_template_map = {
-        default = [[:grep! `%s` %s]],
-    },
-    ---@type fun(targert: string)
-    make_cmd = function(target)
-        local platform = vim.env.PLATFORM_MARK
-        local template_map = user.global_search.cmd_template_map()
-        local template = platform and template_map[platform] or template_map.default
+user.keybinding = {
+    global_search = {
+        ---@type table<string, string>
+        cmd_template_map = {
+            default = [[:grep! `%s` %s]],
+        },
+        ---@type fun(targert: string)
+        make_cmd = function(target)
+            local platform = vim.env.PLATFORM_MARK
+            local template_map = user.keybinding.global_search.cmd_template_map()
+            local template = platform and template_map[platform] or template_map.default
 
-        local paths = user.global_search.search_paths() or { vim.fn.getcwd() }
-        local quoted = {}
-        for _, path in ipairs(paths) do
-            quoted[#quoted+1] = ("`%s`"):format(path)
-        end
+            local paths = user.keybinding.global_search.search_paths() or { vim.fn.getcwd() }
+            local quoted = {}
+            for _, path in ipairs(paths) do
+                quoted[#quoted + 1] = ("`%s`"):format(path)
+            end
 
-        return template:format(target, table.concat(quoted, " "))
-    end,
-    ---@type string[]
-    search_paths = { "." },
+            return template:format(target, table.concat(quoted, " "))
+        end,
+        ---@type string[]
+        search_paths = { "." },
+    }
 }
 
 local KEYBINDING_AUGROUP = api.nvim_create_augroup("user.keybinding", { clear = true })
@@ -128,7 +130,7 @@ end
 
 ---@param target string
 local function global_search(target)
-    local make_cmd = user.global_search.make_cmd()
+    local make_cmd = user.keybinding.global_search.make_cmd()
     local cmd = make_cmd(target)
     api.nvim_command(cmd)
     api.nvim_command("cw")

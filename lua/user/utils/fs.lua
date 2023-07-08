@@ -1,4 +1,3 @@
-local utils = require "user.utils"
 local M = {}
 
 M.PATH_SEP = vim.env.PLATFORM_MARK:starts_with("windows")

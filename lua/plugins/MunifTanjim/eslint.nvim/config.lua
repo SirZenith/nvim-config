@@ -1,7 +1,7 @@
 local user = require "user"
 local eslint = require "eslint"
 
-user.eslint = {
+user.plugin.eslint = {
     bin = 'eslint',
     code_actions = {
         enable = true,
@@ -22,5 +22,5 @@ user.eslint = {
 }
 
 return function()
-    eslint.setup(user.eslint())
+    eslint.setup(user.plugin.eslint())
 end

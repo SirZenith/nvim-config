@@ -1,6 +1,6 @@
 local user = require "user"
 
-user.null_ls = {
+user.plugin.null_ls = {
     sources = {},
 }
 

@@ -1,4 +1,5 @@
 local fnil = require "user.utils.functional".fnil
+local utils = require "user.utils"
 local table_utils = require "user.utils.table"
 
 local reserved_key = {
@@ -240,12 +241,17 @@ function ConfigEntry:__tostring()
     return vim.inspect(self:_get_value())
 end
 
-function ConfigEntry:__call()
+---@generic T : ConfigEntry
+---@param self T
+---@return T
+function ConfigEntry.__call(self)
     return self:value()
 end
 
----@return any
-function ConfigEntry:value()
+---@generic T : ConfigEntry
+---@param self T
+---@return T
+function ConfigEntry.value(self)
     return table_utils.deep_copy(self:_get_value())
 end
 
@@ -287,6 +293,62 @@ function ConfigEntry:pairs()
     end
 
     return pairs(value)
+end
+
+-- ----------------------------------------------------------------------------
+
+---@class PendingTarget
+---@field name string
+---@field value table
+
+---@class DumpEnv
+---@field buffer string[] # dump result line buffer
+---@field cur_path string[]
+---@field pending PendingTarget[]
+
+---@return string
+function ConfigEntry:dump_signature()
+    ---@class DumpEnv
+    local env = {
+        buffer = { "---@meta", ""},
+        pending = {},
+    }
+
+    local target = { name = "UserConfig", value = self.__config_base }
+    while target do
+        self:_dump_config_class(env, target.name, target.value)
+        target = table.remove(env.pending, 1)
+    end
+
+    return table.concat(env.buffer, "\n")
+end
+
+---@param env DumpEnv
+---@param class_name string
+---@param tbl any
+function ConfigEntry:_dump_config_class(env, class_name, tbl)
+    local parent_class = "ConfigEntry"
+    if table_utils.is_array(tbl) then
+        ---@type string
+        local element_type = tbl[1] and type(tbl[1]) or "any"
+        table.insert(env.buffer, "-- underlaying: " .. element_type .. "[]")
+    end
+
+    table.insert(env.buffer, "---@class " .. class_name .. " : " .. parent_class)
+
+    for key, value in pairs(tbl) do
+        if type(key) == "number" then
+            -- pass
+        elseif type(value) ~= "table" then
+            table.insert(env.buffer, "---@field " .. key .. " " .. type(value))
+        else
+            local name = class_name .. utils.underscore_to_camel_case(key)
+            table.insert(env.buffer, "---@field " .. key .. " " .. name)
+            table.insert(env.pending, { name = name, value = value })
+        end
+    end
+
+    table.insert(env.buffer, "")
 end
 
 -- ----------------------------------------------------------------------------

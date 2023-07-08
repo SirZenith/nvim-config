@@ -2,7 +2,7 @@ local user = require "user"
 local previewers = require "telescope.previewers"
 
 local check_exclude = function(filepath)
-    local exclude = user.telescope_nvim.preview_exclude()
+    local exclude = user.plugin.telescope_nvim.preview_exclude()
     if type(exclude) ~= "table" then
         return false;
     end
@@ -29,7 +29,7 @@ local previewer_maker = function(filepath, bufnr, opts)
     previewers.buffer_previewer_maker(filepath, bufnr, opts)
 end
 
-user.telescope_nvim = {
+user.plugin.telescope_nvim = {
     -- turn of syntax highlighting for certain file name pattern.
     preview_exclude = { ".*%.meta", ".*%.prefab" },
     config = {
@@ -40,5 +40,5 @@ user.telescope_nvim = {
 }
 
 return function()
-    require("telescope").setup(user.telescope_nvim.config())
+    require("telescope").setup(user.plugin.telescope_nvim.config())
 end

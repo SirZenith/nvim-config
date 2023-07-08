@@ -58,16 +58,16 @@ for i = 1, #lsp_servers do
     config_map[server] = config
 end
 
-user.nvim_lspconfig = {
+user.plugin.nvim_lspconfig = {
     lsp_servers = lsp_servers,
     config = config_map,
 }
 
 return function()
-    local servers = user.nvim_lspconfig.lsp_servers()
+    local servers = user.plugin.nvim_lspconfig.lsp_servers()
     for i = 1, #servers do
         local server = get_name(servers[i])
-        local config = user.nvim_lspconfig.config[server]() or {}
+        local config = user.plugin.nvim_lspconfig.config[server]() or {}
         nvim_lsp[server].setup(config)
     end
 end

@@ -176,7 +176,6 @@ local plugin_list = {
     },
     "weirongxu/plantuml-previewer.vim",
     "rust-lang/rust.vim",
-    { "fatih/vim-go",            disable = true },
     { "scrooloose/vim-slumlord", disable = true }, -- PlantUML in-vim preview
     "lervag/vimtex",
     "stevearc/vim-arduino",

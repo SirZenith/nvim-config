@@ -1,5 +1,21 @@
 local M = {}
 
+---@param tbl table
+---@return boolean
+function M.is_array(tbl)
+    local result = true
+    local size = #tbl
+
+    for k in pairs(tbl) do
+        if type(k) ~= "number" or k < 1 or k > size then
+            result = false
+            break
+        end
+    end
+
+    return result
+end
+
 -- if input value is a table, return its shallow copy, else return the value directly.
 -- 复制传入的值，如果传入值的类型为 table 则进行浅复制，否则将参数原样返回。
 ---@param src any

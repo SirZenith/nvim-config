@@ -159,7 +159,7 @@ user.g = {
 }
 
 user.general = {
-    -- locale = "zh_CN.UTF-8",
+    locale = "zh_CN.UTF-8",
 
     filetype = {
         -- 不使用软 tab 的类型
@@ -179,6 +179,7 @@ user.general = {
 }
 
 user.theme = {
+    ---@type string
     colorscheme = nil,
     highlight = {
         CursorLine = {

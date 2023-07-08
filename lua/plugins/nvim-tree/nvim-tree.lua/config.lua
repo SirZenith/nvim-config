@@ -1,6 +1,6 @@
 local user = require "user"
 
-user.nvim_tree = {
+user.plugin.nvim_tree = {
     respect_buf_cwd = false,
     create_in_closed_folder = false,
     disable_netrw = false,
@@ -138,5 +138,5 @@ return function()
     })
 
     vim.cmd "highlight NvimTreeFolderIcon guibg=blue"
-    require "nvim-tree".setup(user.nvim_tree())
+    require "nvim-tree".setup(user.plugin.nvim_tree())
 end

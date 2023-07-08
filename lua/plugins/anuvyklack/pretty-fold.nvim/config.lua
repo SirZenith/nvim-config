@@ -1,6 +1,6 @@
 local user = require "user"
 
-user.pretty_fold = {
+user.plugin.pretty_fold = {
     sections = {
         left = {
             "content",
@@ -43,5 +43,5 @@ user.pretty_fold = {
 }
 
 return function()
-    require("pretty-fold").setup(user.pretty_fold())
+    require("pretty-fold").setup(user.plugin.pretty_fold())
 end

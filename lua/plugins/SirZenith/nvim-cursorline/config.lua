@@ -1,6 +1,6 @@
 local user = require "user"
 
-user.nvim_cursorline = {
+user.plugin.nvim_cursorline = {
     disable_in_filetype = { "floaterm" },
     disable_in_buftype = { "terminal" },
     cursorline = {
@@ -21,5 +21,5 @@ user.nvim_cursorline = {
 }
 
 return function()
-    require('nvim-cursorline').setup(user.nvim_cursorline())
+    require('nvim-cursorline').setup(user.plugin.nvim_cursorline())
 end

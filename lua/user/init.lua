@@ -9,6 +9,7 @@ if  not env_config_home then
     return
 end
 
+---@class UserConfig : ConfigEntry
 local user = ConfigEntry:new {
     env = {
         NVIM_HOME = fs.path_join(env_config_home, "nvim"),
@@ -81,6 +82,8 @@ rawset(user, "finalize", function()
 
     -- finalize all loaded configs
     utils.finalize(modules)
+
+    utils.dump_signature_metafile()
 end)
 
 return user

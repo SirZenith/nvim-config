@@ -2,7 +2,7 @@ local user = require "user"
 local luansnip = require("luasnip")
 local types = require("luasnip.util.types")
 
-user.LuaSnip = {
+user.plugin.luasnip = {
     history = true,
     -- Update more often, :h events for more info.
     updateevents = "TextChanged,TextChangedI",
@@ -23,5 +23,5 @@ user.LuaSnip = {
 
 return function()
     -- Every unspecified option will be set to the default.
-    luansnip.config.set_config(user.LuaSnip())
+    luansnip.config.set_config(user.plugin.luasnip())
 end

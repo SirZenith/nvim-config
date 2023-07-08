@@ -13,7 +13,7 @@ user.g.material_style = styles[3]
 user.theme.colorscheme = "material"
 user.theme.lua_line_theme = "material-nvim"
 
-user.material_nvim = {
+user.plugin.material_nvim = {
     contrast = true, -- Enable contrast for sidebars, floating windows and popup menus like Nvim-Tree
     borders = true, -- Enable borders between verticaly split windows
 
@@ -48,5 +48,5 @@ user.material_nvim = {
 }
 
 return function()
-    require('material').setup(user.material_nvim())
+    require('material').setup(user.plugin.material_nvim())
 end

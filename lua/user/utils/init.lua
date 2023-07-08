@@ -118,7 +118,7 @@ end
 ---@return string | nil err
 ---@return string? ...
 function M.arg_list_check(args, ...)
-    local targets = {...}
+    local targets = { ... }
     for i, name in ipairs(targets) do
         if not args[i] then
             return ("expecting '%s' at #%d"):format(name, i)
@@ -126,6 +126,25 @@ function M.arg_list_check(args, ...)
     end
 
     return nil, unpack(args)
+end
+
+-- ----------------------------------------------------------------------------
+
+function M.dump_signature_metafile()
+    local user = require "user"
+    local fs = require "user.utils.fs"
+
+    local filepath = fs.path_join(user.env.CONFIG_HOME(), "user", "meta", "user_config.lua")
+
+    local file, err = io.open(filepath, "w")
+    if not file then
+        vim.notify(err or "")
+        return
+    end
+
+    local metadata = user:dump_signature()
+    file:write(metadata)
+    file:close()
 end
 
 return M

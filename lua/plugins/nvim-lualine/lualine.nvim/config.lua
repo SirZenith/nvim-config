@@ -1,6 +1,6 @@
 local user = require "user"
 
-user.lualine = {
+user.plugin.lualine = {
     options = {
         icons_enabled = true,
         theme = "auto",
@@ -43,7 +43,7 @@ user.lualine = {
 
 return function()
     local theme = user.theme.lua_line_theme()
-    user.lualine.optionis.theme = theme
+    user.plugin.lualine.optionis.theme = theme
 
-    require("lualine").setup(user.lualine())
+    require("lualine").setup(user.plugin.lualine())
 end

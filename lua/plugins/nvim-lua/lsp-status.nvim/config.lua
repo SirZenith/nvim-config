@@ -1,7 +1,7 @@
 local user = require "user"
 local lsp_status = require "lsp-status"
 
-user.lsp_status = {
+user.plugin.lsp_status = {
     kind_labels = {},
     current_function = true,
     show_filename = false,
@@ -25,5 +25,5 @@ user.lsp.capabilities_settings:append(lsp_status.capabilities)
 return function()
     lsp_status.register_progress()
 
-    lsp_status.config(user.lsp_status())
+    lsp_status.config(user.plugin.lsp_status())
 end

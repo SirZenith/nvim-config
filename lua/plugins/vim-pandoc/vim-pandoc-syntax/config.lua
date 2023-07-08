@@ -1,6 +1,6 @@
 local user = require "user"
 
-user.pandoc_syntax.markdown_code_langs = {
+user.plugin.pandoc_syntax.markdown_code_langs = {
     "asm",
     "arch",
     "arduino",
@@ -30,7 +30,7 @@ user.pandoc_syntax.markdown_code_langs = {
     "yaml",
 }
 
-user.pandoc_syntax.enabled_features = {
+user.plugin.pandoc_syntax.enabled_features = {
     "formatting", "folding", "toc", "command", "menu",
     "bibliographies", "completion", "keyboard",
 }
@@ -43,6 +43,6 @@ return function()
         command = "set filetype=markdown.pandoc"
     })
 
-    vim.g["pandoc#syntax#codeblocks#embeds#langs"] = user.pandoc_syntax.markdown_code_langs()
-    vim.g["pandoc#modules#enabled"] = user.pandoc_syntax.enabled_features()
+    vim.g["pandoc#syntax#codeblocks#embeds#langs"] = user.plugin.pandoc_syntax.markdown_code_langs()
+    vim.g["pandoc#modules#enabled"] = user.plugin.pandoc_syntax.enabled_features()
 end

@@ -14,7 +14,7 @@ user.lsp.capabilities:append {
     }
 }
 
-local config = {
+user.plugin.nvim_ufo = {
     -- Time in millisecond between the range to be highlgihted and to be cleared
     -- while opening the folded line, `0` value will disable the highlight
     open_fold_hl_timeout = 0,
@@ -53,5 +53,5 @@ local config = {
 }
 
 return function()
-    require("ufo").setup(config)
+    require("ufo").setup(user.plugin.nvim_ufo())
 end

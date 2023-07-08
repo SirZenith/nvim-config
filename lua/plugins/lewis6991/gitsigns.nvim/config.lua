@@ -1,6 +1,6 @@
 local user = require "user"
 
-user.gitsigns = {
+user.plugin.gitsigns = {
     signs                        = {
         add          = { hl = 'GitSignsAdd', text = '⁆', numhl = 'GitSignsAddNr', linehl = 'GitSignsAddLn' },
         change       = { hl = 'GitSignsChange', text = '▌', numhl = 'GitSignsChangeNr', linehl = 'GitSignsChangeLn' },
@@ -44,5 +44,5 @@ user.gitsigns = {
 }
 
 return function()
-    require('gitsigns').setup(user.gitsigns())
+    require('gitsigns').setup(user.plugin.gitsigns())
 end
