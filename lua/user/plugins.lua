@@ -159,11 +159,6 @@ local plugin_list = {
     "nvim-treesitter/playground",
 
     "udalov/kotlin-vim",
-    {
-        "LhKipp/nvim-nu",
-        requires = { "nvim-treesitter/nvim-treesitter" },
-        run = ":TSInstall nu"
-    },
     "aklt/plantuml-syntax",
     { "vim-pandoc/vim-pandoc-syntax", disable = true },
 
