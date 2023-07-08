@@ -217,7 +217,7 @@ end
 ---@param extra_opts? table<string, any>
 function M.add_lsp_config(lsp_name, default_config, extra_opts)
     validate {
-        cmd = { default_config.cmd, 't' },
+        cmd = { default_config.cmd, { 't', 'f' } },
         filetypes = { default_config.filetypes, 't' },
         root_dir = { default_config.root_dir, 'f' },
     }
