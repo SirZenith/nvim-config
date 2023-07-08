@@ -167,6 +167,7 @@ user.general = {
         -- 文件类型对的文件名模式
         mapping = {
             json = { "*.meta" },
+            nu = { "*.nu" },
             vlang = { "*.v", "*.vsh" },
             xml = { "*.xaml" },
         },
