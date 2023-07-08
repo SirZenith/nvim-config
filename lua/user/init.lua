@@ -82,8 +82,6 @@ rawset(user, "finalize", function()
 
     -- finalize all loaded configs
     utils.finalize(modules)
-
-    utils.dump_signature_metafile()
 end)
 
 return user
