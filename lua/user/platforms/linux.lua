@@ -1,5 +1,4 @@
 local user = require "user"
-local utils = require "user.utils"
 
 user.general.im_select = {
     check = "fcitx5-remote",

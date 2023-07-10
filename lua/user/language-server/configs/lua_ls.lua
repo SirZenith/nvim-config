@@ -22,7 +22,8 @@ local runtime_version = is_nvim_config_path and "Lua 5.1" or "Lua 5.4"
 
 -- pathes that are not in current workspace need also be
 -- presenting in workspace.library setting.
-local runtime_paths = (function()
+local runtime_paths
+do
     local tbl = {
         ".",
     }
@@ -65,12 +66,11 @@ local runtime_paths = (function()
         add_runtime_path(runtime, tbl[i])
     end
 
-    runtime = table_utils.remove_duplicates(runtime, lua_path)
+    runtime_paths = table_utils.remove_duplicates(runtime, lua_path)
+end
 
-    return runtime
-end)()
-
-local lib_path = (function()
+local lib_paths
+do
     local tbl = {}
 
     -- Loading runtime path
@@ -94,10 +94,8 @@ local lib_path = (function()
         lib[i] = vim.fs.normalize(tbl[i])
     end
 
-    lib = table_utils.remove_duplicates(lib)
-
-    return lib
-end)()
+    lib_paths = table_utils.remove_duplicates(lib)
+end
 
 M.settings = {
     Lua = {
@@ -136,7 +134,7 @@ M.settings = {
                 ".nvim"
             },
             -- Annotation files path
-            library = lib_path,
+            library = lib_paths,
         }
     }
 }

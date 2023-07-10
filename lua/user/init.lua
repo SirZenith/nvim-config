@@ -1,7 +1,7 @@
 local utils = require "user.utils"
 local import = utils.import
 local fs = require "user.utils.fs"
-local ConfigEntry = require "user.config_entry".ConfigEntry
+local ConfigEntry = require "user.utils.config_entry".ConfigEntry
 
 local env_config_home = vim.env.CONFIG_HOME
 if not env_config_home then

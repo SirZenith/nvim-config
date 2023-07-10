@@ -1,5 +1,12 @@
 local user = require "user"
 
+-- return false when nvim is started with name of file as arguments.
+local function check_need_open_tree()
+    local output = vim.api.nvim_command_output "args"
+    local cur_file = output:match("%[(.+)%]")
+    return vim.fn.filereadable(cur_file) ~= 1
+end
+
 user.plugin.nvim_tree = {
     __new_entry = true,
     respect_buf_cwd = false,
@@ -134,7 +141,9 @@ return function()
     vim.api.nvim_create_autocmd("VimEnter", {
         group = group_id,
         callback = function()
-            require("nvim-tree.api").tree.open()
+            if check_need_open_tree() then
+                require("nvim-tree.api").tree.open()
+            end
         end,
     })
 

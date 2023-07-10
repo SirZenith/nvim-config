@@ -1,5 +1,4 @@
 local fnil = require "user.utils.functional".fnil
-local utils = require "user.utils"
 local table_utils = require "user.utils.table"
 
 local reserved_key = {
