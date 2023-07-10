@@ -29,7 +29,7 @@ user.platform.windows = {
 }
 user.general.im_select = M.im_select
 
-user.nvim_treesitter.install = {
+user.plugin.nvim_treesitter.install = {
     compilers = { "cl", "clang", "gcc" },
     command_extra_args = {
         cl = { "/nologo" },

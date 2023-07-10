@@ -14,7 +14,8 @@ local user = ConfigEntry:new {
         NVIM_HOME = fs.path_join(env_config_home, "nvim"),
         CONFIG_HOME = fs.path_join(env_config_home, "nvim", "lua"),
         PROXY_URL = vim.env.PROXY_URL,
-    }
+    },
+    platform = {}
 } --[[@as UserConfig]]
 
 -- copying variables in user namespace into vim namespace.
