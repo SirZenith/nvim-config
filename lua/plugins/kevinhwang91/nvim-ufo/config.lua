@@ -1,20 +1,14 @@
 local user = require "user"
 
-user.o.foldcolumn = '1' -- '0' is not bad
-user.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
-user.o.foldlevelstart = 99
-user.o.foldenable = true
-
-user.lsp.capabilities:append {
-    textDocument = {
-        foldingRange = {
-            dynamicRegistration = false,
-            lineFoldingOnly = true
-        }
-    }
+user.option.o = {
+    foldcolumn = '1', -- '0' is not bad
+    foldlevel = 99,   -- Using ufo provider need a large value, feel free to decrease the value
+    foldlevelstart = 99,
+    foldenable = true,
 }
 
 user.plugin.nvim_ufo = {
+    __new_entry = true,
     -- Time in millisecond between the range to be highlgihted and to be cleared
     -- while opening the folded line, `0` value will disable the highlight
     open_fold_hl_timeout = 0,
@@ -53,5 +47,14 @@ user.plugin.nvim_ufo = {
 }
 
 return function()
+    user.lsp.capabilities_settings:append {
+        textDocument = {
+            foldingRange = {
+                dynamicRegistration = false,
+                lineFoldingOnly = true
+            }
+        }
+    }
+
     require("ufo").setup(user.plugin.nvim_ufo())
 end

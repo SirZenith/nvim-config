@@ -1,6 +1,6 @@
 local user = require "user"
 
-user.g = {
+user.option.g = {
     NERDSpaceDelims = 1, -- Atuo spacing after delimter
     NERDCompactSexyComs = 1, -- Using compat format for multi-line
     -- NERDDefaultAlign = "left",      -- Align line-wise rather than code indent

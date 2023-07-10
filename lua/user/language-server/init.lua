@@ -230,6 +230,7 @@ end
 -- ----------------------------------------------------------------------------
 
 user.lsp = {
+    __new_entry = true,
     log_update_method = panelpal.PanelContentUpdateMethod.append,
     log_scroll_method = panelpal.ScrollMethod.bottom,
     on_attach_callbacks = {},

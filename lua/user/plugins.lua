@@ -160,7 +160,6 @@ local plugin_list = {
 
     "udalov/kotlin-vim",
     "aklt/plantuml-syntax",
-    { "vim-pandoc/vim-pandoc-syntax", disable = true },
 
     -- ------------------------------------------------------------------------
     -- Language Support

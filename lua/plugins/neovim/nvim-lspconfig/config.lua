@@ -59,6 +59,8 @@ for i = 1, #lsp_servers do
 end
 
 user.plugin.nvim_lspconfig = {
+    __new_entry = true,
+
     lsp_servers = lsp_servers,
     config = config_map,
 }

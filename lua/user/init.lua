@@ -15,7 +15,19 @@ local user = ConfigEntry:new {
         CONFIG_HOME = fs.path_join(env_config_home, "nvim", "lua"),
         PROXY_URL = vim.env.PROXY_URL,
     },
-    platform = {}
+    general = {},
+    keybinding = {},
+    option = {
+        o = {},
+        go = {},
+        g = {},
+    },
+    platform = {},
+    plugin = {},
+    theme = {
+        colorscheme = "",
+        lualine_theme = "",
+    },
 } --[[@as UserConfig]]
 
 -- copying variables in user namespace into vim namespace.
@@ -26,7 +38,7 @@ local function load_into_vim(key)
     end
 
     for _, k in ipairs(key) do
-        local optioins = user[k]
+        local optioins = user.option[k]
         if not optioins then return end
 
         local target = vim[k]
@@ -78,7 +90,7 @@ rawset(user, "finalize", function()
     }
 
     -- settle vim variables.
-    load_into_vim { "o", "wo", "g", "go" }
+    load_into_vim { "o", "g", "go" }
 
     -- finalize all loaded configs
     utils.finalize(modules)

@@ -1,4 +1,4 @@
 local user = require "user"
-user.g = {
+user.option.g = {
     voom_python_versions = { 3 }
 }

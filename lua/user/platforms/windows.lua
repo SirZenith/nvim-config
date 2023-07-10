@@ -24,6 +24,8 @@ end
 -- ----------------------------------------------------------------------------
 
 user.platform.windows = {
+    __new_entry = true,
+
     nu_config_path = fs.path_join(vim.env.HOME, [[AppData\Roaming\nushell\config.nu]]),
     nu_env_path = fs.path_join(vim.env.HOME, [[AppData\Roaming\nushell\env.nu]]),
 }

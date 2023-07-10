@@ -1,7 +1,9 @@
 local user = require "user"
 
-user.o.background = "dark" -- or light if you prefer the light version
-user.g = {
+user.option.o = {
+    background = "dark", -- or light if you prefer the light version
+}
+user.option.g = {
     two_firewatch_italics = 1,
     airline_theme = "twofirewatch",
 }

@@ -3,6 +3,7 @@ local luansnip = require("luasnip")
 local types = require("luasnip.util.types")
 
 user.plugin.luasnip = {
+    __new_entry = true,
     history = true,
     -- Update more often, :h events for more info.
     updateevents = "TextChanged,TextChangedI",

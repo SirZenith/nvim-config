@@ -1,6 +1,7 @@
 local user = require "user"
 
 user.plugin.nvim_tree = {
+    __new_entry = true,
     respect_buf_cwd = false,
     create_in_closed_folder = false,
     disable_netrw = false,

@@ -6,6 +6,7 @@ local nts_parsers = require "nvim-treesitter.parsers"
 local nts_install = require "nvim-treesitter.install"
 
 user.plugin.nvim_treesitter = {
+    __new_entry = true,
     configs = {
         -- One of "all", "maintained" (parsers with maintainers), or a list of languages
         ensure_installed = {
@@ -44,17 +45,14 @@ user.plugin.nvim_treesitter = {
             "vim",
             "yaml",
         },
-
         -- Install languages synchronously (only applied to `ensure_installed`)
         sync_install = false,
-
         -- List of parsers to ignore installing
         -- ignore_install = { "javascript" },
 
         highlight = {
             -- `false` will disable the whole extension
             enable = true,
-
             -- list of language that will be disabled
             -- disable = { "latex" },
 
@@ -95,8 +93,8 @@ user.plugin.nvim_treesitter = {
         rainbow = {
             enable = true,
             -- disable = { "jsx", "cpp" }, list of languages you want to disable the plugin for
-            extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
-            max_file_lines = nil, -- Do not enable for files with more than n lines, int
+            extended_mode = true,                                                                     -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
+            max_file_lines = nil,                                                                     -- Do not enable for files with more than n lines, int
             colors = { "#6c9ef8", "#d85896", "#b77fdb", "#ef5350", "#64b5f6", "#ffee58", "#ab47bc" }, -- table of hex strings
             -- termcolors = {}, -- table of colour name strings
         },

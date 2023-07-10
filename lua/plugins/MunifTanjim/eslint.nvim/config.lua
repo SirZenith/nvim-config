@@ -2,6 +2,7 @@ local user = require "user"
 local eslint = require "eslint"
 
 user.plugin.eslint = {
+    __new_entry = true,
     bin = 'eslint',
     code_actions = {
         enable = true,

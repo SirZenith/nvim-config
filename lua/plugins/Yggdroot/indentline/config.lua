@@ -1,6 +1,6 @@
 local user = require "user"
 
-user.g = {
+user.option.g = {
     -- let indentLine to set conceal color
     indentLine_setColors = true,
     indentLine_color_term = 239,

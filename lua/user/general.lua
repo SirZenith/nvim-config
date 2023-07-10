@@ -62,105 +62,88 @@ end
 
 -- ----------------------------------------------------------------------------
 
-user.o = {
-    autochdir = false, -- auto chdir into directory of current buffer
-    autoread = true, -- reload when file changed externally
-    backspace = "indent,start,eol", -- select which boundary is ignored by backspace
-    clipboard = "unnamedplus", -- use system clipboard for yard
+user.option = {
+    o = {
+        autochdir = false,              -- auto chdir into directory of current buffer
+        autoread = true,                -- reload when file changed externally
+        backspace = "indent,start,eol", -- select which boundary is ignored by backspace
+        clipboard = "unnamedplus",      -- use system clipboard for yard
+        splitbelow = true,              -- split at bottom when making horizontal split
+        splitright = true,              -- split at right when making vertical split
+        timeoutlen = 250,               -- set timeout for keymap
+        fileformats = "unix,dos",
+        -- file encoding checking queue
+        fileencodings = "utf-8,ucs-bom,shift-jis,gb18030,gbk,gb2312,cp936",
+        -- Indent
+        tabstop = 4,
+        softtabstop = 4,
+        shiftwidth = 4,
+        expandtab = true,
+        autoindent = true,
+        cindent = true,
+        -- Folding
+        -- foldmethod = "expr",
+        -- foldexpr = "nvim_treesitter#foldexpr()",
+        foldenable = true,
+        foldnestmax = 4,
+        -- set behaviour when buffer becomes invisible
+        -- if `false` buffer will be set to inactive, else buffer will be set hidden
+        hidden = true,
+        -- search case sensitively only when pattern contains capital letter
+        ignorecase = true,
+        smartcase = true,
+        completeopt = "menu,menuone,noselect",
+        mouse = "a",
+        grepprg = "rg --vimgrep",
+        ruler = true,         -- show line:column coordinate in status line
+        showcmd = true,       -- display command input
+        showmatch = true,     -- show matching bracket
+        scrolloff = 15,       -- key certain line gap between screen bottom
+        termguicolors = true, -- turn true color support
+        -- line number
+        number = true,
+        relativenumber = true,
+        -- displaying special characters
+        list = true,
+        listchars = "tab:▸ ,trail:·,precedes:←,extends:→",
+        -- line wrap
+        wrap = false,
+        textwidth = 0,
+        wrapmargin = 0,
+        -- when line wrap is off, key certain column gap between screen boundary,
+        -- when this value is sufficently large, cursor will stay centered on screen
+        sidescrolloff = 15,
+        -- highlight cursor line
+        cursorline = true,
+        -- vertical ruler
+        colorcolumn = "80",
+        -- character concealing
+        conceallevel = 1,
+        -- concealcursor = "n", -- in these mode, also conceals cursorline
 
-    splitbelow = true, -- split at bottom when making horizontal split
-    splitright = true, -- split at right when making vertical split
-
-    timeoutlen = 250, -- set timeout for keymap
-
-    fileformats = "unix,dos",
-
-    -- file encoding checking queue
-    fileencodings = "utf-8,ucs-bom,shift-jis,gb18030,gbk,gb2312,cp936",
-
-    -- Indent
-    tabstop = 4,
-    softtabstop = 4,
-    shiftwidth = 4,
-    expandtab = true,
-    autoindent = true,
-    cindent = true,
-
-    -- Folding
-    -- foldmethod = "expr",
-    -- foldexpr = "nvim_treesitter#foldexpr()",
-    foldenable = true,
-    foldnestmax = 4,
-
-    -- set behaviour when buffer becomes invisible
-    -- if `false` buffer will be set to inactive, else buffer will be set hidden
-    hidden = true,
-
-    -- search case sensitively only when pattern contains capital letter
-    ignorecase = true,
-    smartcase = true,
-
-    completeopt = "menu,menuone,noselect",
-    mouse = "a",
-    grepprg = "rg --vimgrep",
-
-    ruler = true, -- show line:column coordinate in status line
-    showcmd = true, -- display command input
-    showmatch = true, -- show matching bracket
-    scrolloff = 15, -- key certain line gap between screen bottom
-    termguicolors = true, -- turn true color support
-
-    -- line number
-    number = true,
-    relativenumber = true,
-
-    -- displaying special characters
-    list = true,
-    listchars = "tab:▸ ,trail:·,precedes:←,extends:→",
-
-    -- line wrap
-    wrap = false,
-    textwidth = 0,
-    wrapmargin = 0,
-    -- when line wrap is off, key certain column gap between screen boundary,
-    -- when this value is sufficently large, cursor will stay centered on screen
-    sidescrolloff = 15,
-
-    -- highlight cursor line
-    cursorline = true,
-
-    -- vertical ruler
-    colorcolumn = "80",
-
-    -- character concealing
-    conceallevel = 1,
-    -- concealcursor = "n", -- in these mode, also conceals cursorline
-
-    -- setup LSP display
-    cmdheight = 2, -- height for command display area
-    updatetime = 300, -- after certain timeout in millisecond, swap file will be written to disk
-    -- display debug/diagnostic symbol in gutter
-    -- `number` means share space with line number, don't create extra column
-    signcolumn = "number",
-}
-
-user.go = {
-    shell = "nu",
-    shellcmdflag = "-c",
-    shellquote = "",
-    shellxquote = "",
-    shellpipe = "| save --raw",
-    shellredir = "| sed 's/\\033\\[[0-9;]*m//g' | save --raw",
-}
-
-user.g = {
-    python3_host_prog = vim.env.PYTHON_PATH,
-    loaded_netrwPlugin = 1, -- 禁用 Netrw
+        -- setup LSP display
+        cmdheight = 2,    -- height for command display area
+        updatetime = 300, -- after certain timeout in millisecond, swap file will be written to disk
+        -- display debug/diagnostic symbol in gutter
+        -- `number` means share space with line number, don't create extra column
+        signcolumn = "number",
+    },
+    go = {
+        shell = "nu",
+        shellcmdflag = "-c",
+        shellquote = "",
+        shellxquote = "",
+        shellpipe = "| save --raw",
+        shellredir = "| sed 's/\\033\\[[0-9;]*m//g' | save --raw",
+    },
+    g = {
+        python3_host_prog = vim.env.PYTHON_PATH,
+        loaded_netrwPlugin = 1, -- 禁用 Netrw
+    }
 }
 
 user.general = {
     locale = "zh_CN.UTF-8",
-
     filetype = {
         -- 不使用软 tab 的类型
         no_soft_tab = { "go", "make", "plantuml", "vlang" },
@@ -173,66 +156,65 @@ user.general = {
         },
     },
     im_select = {
-        check = "", on = "", off = "",
+        check = "",
+        on = "",
+        off = "",
         isoff = function() return true end
     },
 }
 
-user.theme = {
-    ---@type string
-    colorscheme = nil,
-    highlight = {
-        CursorLine = {
-            fg = nil,
-            bg = "#353c4a",
-        },
-        DiffChange = {
-            bg = "#3a4657",
-            fg = "#ebcb8b",
-        },
-        DiffCommon = {
-            fg = "#808080"
-        },
-        DiffDelete = {
-            bg = "#3a4657",
-            fg = "#bf616a",
-        },
-        DiffInsert = {
-            bg = "#3a4657",
-            fg = "#a3be8c",
-        },
-        Folded = {
-            fg = "#7e828c",
-            bg = "#282d38",
-        },
-        LspLogTrace = {
-            bg = "#3e4a5b",
-        },
-        LspLogDebug = {
-            bg = "#4f6074",
-        },
-        LspLogInfo = {
-            fg = "#000000",
-            bg = "#a3be8c",
-        },
-        LspLogWarn = {
-            fg = "#000000",
-            bg = "#ebcb8b",
-        },
-        LspLogError = {
-            fg = "#ffffff",
-            bg = "#bf616a",
-        },
-        PanelpalSelect = {
-            fg = "#ebcb8b",
-        },
-        PanelpalUnselect = {
-            fg = "#4f6074",
-        },
-        Visual = {
-            fg = nil,
-            bg = "#3a4657",
-        },
+user.theme.highlight = {
+    __new_entry = true,
+    CursorLine = {
+        fg = nil,
+        bg = "#353c4a",
+    },
+    DiffChange = {
+        bg = "#3a4657",
+        fg = "#ebcb8b",
+    },
+    DiffCommon = {
+        fg = "#808080"
+    },
+    DiffDelete = {
+        bg = "#3a4657",
+        fg = "#bf616a",
+    },
+    DiffInsert = {
+        bg = "#3a4657",
+        fg = "#a3be8c",
+    },
+    Folded = {
+        fg = "#7e828c",
+        bg = "#282d38",
+    },
+    LspLogTrace = {
+        bg = "#3e4a5b",
+    },
+    LspLogDebug = {
+        bg = "#4f6074",
+    },
+    LspLogInfo = {
+        fg = "#000000",
+        bg = "#a3be8c",
+    },
+    LspLogWarn = {
+        fg = "#000000",
+        bg = "#ebcb8b",
+    },
+    LspLogError = {
+        fg = "#ffffff",
+        bg = "#bf616a",
+    },
+    PanelpalSelect = {
+        fg = "#ebcb8b",
+    },
+    PanelpalUnselect = {
+        fg = "#4f6074",
+    },
+    Visual = {
+        fg = nil,
+        bg = "#3a4657",
     },
 }
 
@@ -251,7 +233,7 @@ return function()
     end
 
     local colorscheme = user.theme.colorscheme()
-    if colorscheme then
+    if colorscheme and colorscheme ~= "" then
         vim.cmd("colorscheme " .. colorscheme)
     end
 

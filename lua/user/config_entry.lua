@@ -18,6 +18,9 @@ local ConfigEntry = {
     __key_sep = ".",
     __config_base = {},
     __reserved_keys = reserved_key,
+    __meta_keys = {
+        __new_entry = true,
+    },
 }
 
 -- ----------------------------------------------------------------------------
@@ -50,7 +53,7 @@ function ConfigEntry:_split_key(key)
     return vim.split(key, self.__key_sep, { plain = true })
 end
 
--- return list of segments of key path binded with current ConfigEntry object.
+-- Returns list of segments of key path binded with current ConfigEntry object.
 -- If extra key is passed, all segments in extra key will be appended to that list.
 ---@param key? string
 ---@return string[] segments
@@ -66,7 +69,7 @@ function ConfigEntry:_get_key_segments(key)
     end
 end
 
--- splint a key into its last segment and the remaining part.
+-- Split a key into its last segment and the remaining part.
 ---@param key string
 ---@return string? parent
 ---@return string child
@@ -91,6 +94,19 @@ function ConfigEntry:_split_parent(key)
 end
 
 -- ----------------------------------------------------------------------------
+
+-- Specialized version deep copy. Will remove all meta keys from result after
+-- copying.
+---@param value any
+function ConfigEntry:_deep_copy(value)
+    value = table_utils.deep_copy(value)
+    if type(value) == "table" then
+        for k in pairs(self.__meta_keys) do
+            value[k] = nil
+        end
+    end
+    return value
+end
 
 -- If `k` is nil, return config of current entry, else get child in current entry.
 ---@param k? string # a singele-segment key.
@@ -154,9 +170,8 @@ function ConfigEntry:_set_value(k, v)
     end
 end
 
--- query config node specified by key segments. During process, non-exesits node
--- will be created.
--- If key path runs into a non-table node, this function returns nil.
+-- Query config node specified by key segments.
+-- Returns nil if segmented path points to nothing or non-table value.
 ---@param segments string[]
 ---@return {[string]: any}? tbl
 function ConfigEntry:_get_tbl_by_segments(segments)
@@ -167,10 +182,7 @@ function ConfigEntry:_get_tbl_by_segments(segments)
         local seg = segments[i]
         local next_tbl = tbl[seg]
 
-        if next_tbl == nil then
-            next_tbl = {}
-            tbl[seg] = next_tbl
-        elseif type(next_tbl) ~= "table" then
+        if type(next_tbl) ~= "table" then
             ok = false
             break
         end
@@ -215,6 +227,9 @@ function ConfigEntry:__index(key)
     return ConfigEntry:new(new_key)
 end
 
+-- Update or insert config value.
+-- New key is only allowed when its value is table, and __new_entry is set
+-- to ture in that table.
 function ConfigEntry:__newindex(key, value)
     if type(key) ~= "string" then
         error("key of ConfigEntry must be of string type.", 2)
@@ -222,18 +237,30 @@ function ConfigEntry:__newindex(key, value)
         error("use for " .. key .. " is reserved in ConfigEntry", 2)
     end
 
+    local target = self:_join_key(self.__key, key)
+
     local segments = self:_get_key_segments(key)
     local tail = table.remove(segments)
     local tbl = self:_get_tbl_by_segments(segments)
     if not tbl then
-        error("trying to write to a non-table config: " .. self.__key, 2)
+        error("trying to write into an invalid path: " .. target, 2)
     end
 
     local old_value = tbl[tail]
-    if type(old_value) == "table" and type(value) == "table" then
+    local value_t = type(value)
+
+    if type(old_value) == "table" and value_t == "table" then
         table_utils.update_table(old_value, value)
+    elseif old_value ~= nil then
+        tbl[tail] = self:_deep_copy(value)
+    elseif value_t == "table" then
+        if value.__new_entry == nil then
+            error("trying to insert table at: " .. target, 2)
+        else
+            tbl[tail] = self:_deep_copy(value)
+        end
     else
-        tbl[tail] = table_utils.deep_copy(value)
+        error("trying to insert new config at: " .. target, 2)
     end
 end
 

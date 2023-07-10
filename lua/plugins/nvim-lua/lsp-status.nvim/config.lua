@@ -2,6 +2,7 @@ local user = require "user"
 local lsp_status = require "lsp-status"
 
 user.plugin.lsp_status = {
+    __new_entry = true,
     kind_labels = {},
     current_function = true,
     show_filename = false,
@@ -19,10 +20,10 @@ user.plugin.lsp_status = {
     update_interval = 100
 }
 
-user.lsp.on_attack_callbacks:append(lsp_status.on_attack)
-user.lsp.capabilities_settings:append(lsp_status.capabilities)
-
 return function()
+    user.lsp.on_attach_callbacks:append(lsp_status.on_attach)
+    user.lsp.capabilities_settings:append(lsp_status.capabilities)
+
     lsp_status.register_progress()
 
     lsp_status.config(user.plugin.lsp_status())
