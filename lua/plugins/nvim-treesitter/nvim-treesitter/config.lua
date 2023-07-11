@@ -90,6 +90,11 @@ user.plugin.nvim_treesitter = {
                 show_help = '?',
             },
         },
+        query_linter = {
+            enable = true,
+            use_virtual_text = true,
+            lint_events = { "BufWrite", "CursorHold" },
+        },
         rainbow = {
             enable = true,
             -- disable = { "jsx", "cpp" }, list of languages you want to disable the plugin for
@@ -101,8 +106,10 @@ user.plugin.nvim_treesitter = {
     },
     install = {
         prefer_git = false,
+        compilers = { vim.env.CC, "cl", "clang", "gcc", "cc", "zig" },
         command_extra_args = {
-            curl = { "-x", user.env.PROXY_URL() }
+            cl = { "/nologo" },
+            curl = { "-x", user.env.PROXY_URL() },
         },
     },
     parsers = {
