@@ -1,5 +1,5 @@
 local snip_filetype = "lua"
-local s = require("user.snippets.util")
+local s = require("user.snippets.utils")
 local makers = s.snippet_makers(snip_filetype)
 -- local sp = makers.sp
 local asp = makers.asp

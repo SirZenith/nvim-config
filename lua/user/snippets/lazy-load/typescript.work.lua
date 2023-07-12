@@ -4,7 +4,7 @@ local table_utils = require "user.utils.table"
 local arg_list_check = utils.arg_list_check
 
 local snip_filetype = "typescript"
-local s = require("user.snippets.util")
+local s = require("user.snippets.utils")
 local makers = s.snippet_makers(snip_filetype)
 -- local sp = makers.sp
 local asp = makers.asp

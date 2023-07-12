@@ -1,5 +1,5 @@
 local snip_filetype = "python"
-local s = require("user.snippets.util")
+local s = require("user.snippets.utils")
 local makers = s.snippet_makers(snip_filetype)
 local psp = makers.psp
 local apsp = makers.apsp

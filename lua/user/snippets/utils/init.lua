@@ -17,7 +17,9 @@ snippet into luasnip module.
     local utils = require "utils"
     utils.finalize()
 ]]
+local user = require "user"
 local table_utils = require "user.utils.table"
+local fs = require "user.utils.fs"
 local import = require "user.utils".import
 
 local ls = require "luasnip"
@@ -45,12 +47,15 @@ local M = {
     fmta = require("luasnip.extras.fmt").fmta,
     types = require("luasnip.util.types"),
     conds = require("luasnip.extras.expand_conditions"),
-    conds_ext = require "user.snippets.util.cond",
+    conds_ext = require "user.snippets.utils.cond",
 }
 
 -- ----------------------------------------------------------------------------
 
 local pending_snippets_map = {}
+
+---@type { [string]: boolean }
+M.loaded_snippets_set = {}
 
 local function maker_factory(maker, snip_table)
     return function(...)
@@ -288,27 +293,43 @@ local function finalize()
 end
 
 ---@param filename string
-local function load_auto_snip(filename)
+function M.load_snip(filename)
+    if M.loaded_snippets_set[filename] then return end
+
     import(filename)
     finalize()
+
+    M.loaded_snippets_set[filename] = true
 end
 
----@param augroup number
----@param filename string
-function M.setup_autoload_cmd(augroup, filename)
-    local basename = vim.fs.basename(filename)
-    local filetype = vim.split(basename, ".", { plain = true })[1]
+function M.load_autoload()
+    local snippet_dir = fs.path_join(user.env.CONFIG_HOME(), "user", "snippets", "auto-load")
+    local files = fs.listdir(snippet_dir)
 
-    vim.api.nvim_create_autocmd("FileType", {
-        group = augroup,
-        pattern = {
-            filetype,
-            filetype .. ".*",
-            "*." .. filetype,
-            "*." .. filetype .. ".*",
-        },
-        callback = function() load_auto_snip(filename) end,
-    })
+    for _, filename in ipairs(files) do
+        M.load_snip(filename)
+    end
+end
+
+function M.init_lazy_load()
+    local lazyload_group = vim.api.nvim_create_augroup("user.snippets.lazy-load", { clear = true })
+    local snippet_dir = fs.path_join(user.env.CONFIG_HOME(), "user", "snippets", "lazy-load")
+    local files = fs.listdir(snippet_dir)
+
+    for _, filename in ipairs(files) do
+        local basename = vim.fs.basename(filename)
+        local filetype = vim.split(basename, ".", { plain = true })[1]
+        vim.api.nvim_create_autocmd("FileType", {
+            group = lazyload_group,
+            pattern = {
+                filetype,
+                filetype .. ".*",
+                "*." .. filetype,
+                "*." .. filetype .. ".*",
+            },
+            callback = function() M.load_snip(filename) end,
+        })
+    end
 end
 
 return M

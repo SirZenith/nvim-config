@@ -1,5 +1,5 @@
 local snip_filetype = "all"
-local s = require("user.snippets.util")
+local s = require("user.snippets.utils")
 local makers = s.snippet_makers(snip_filetype)
 -- local sp = makers.sp
 local asp = makers.asp
@@ -18,7 +18,7 @@ local apsp = makers.apsp
 
 apsp("snip-init;", [[
 local snip_filetype = "${1:all}"
-local s = require("user.snippets.util")
+local s = require("user.snippets.utils")
 local makers = s.snippet_makers(snip_filetype)
 -- local sp = makers.sp
 -- local asp = makers.asp

@@ -3,7 +3,7 @@ local utils = require "user.utils"
 local arg_list_check = utils.arg_list_check
 
 local snip_filetype = "tree-sitter-test"
-local s = require("user.snippets.util")
+local s = require("user.snippets.utils")
 local makers = s.snippet_makers(snip_filetype)
 -- local sp = makers.sp
 local asp = makers.asp
