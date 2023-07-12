@@ -1,5 +1,3 @@
-# vim:ft=lua.snippet
-
 local snip_filetype = "all"
 local s = require("user.snippets.util")
 local makers = s.snippet_makers(snip_filetype)
@@ -19,8 +17,6 @@ local apsp = makers.apsp
 -- local regapsp = makers.regapsp
 
 apsp("snip-init;", [[
-# vim:ft=lua.snippet
-
 local snip_filetype = "${1:all}"
 local s = require("user.snippets.util")
 local makers = s.snippet_makers(snip_filetype)

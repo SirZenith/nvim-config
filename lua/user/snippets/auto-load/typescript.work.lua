@@ -1,5 +1,3 @@
-# vim:ft=lua.snippet
-
 local utils = require "user.utils"
 local table_utils = require "user.utils.table"
 

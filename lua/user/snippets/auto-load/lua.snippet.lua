@@ -1,5 +1,3 @@
-# vim:ft=lua.snippet
-
 local snip_filetype = "snippet"
 local s = require("user.snippets.util")
 local makers = s.snippet_makers(snip_filetype)

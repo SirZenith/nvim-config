@@ -9,27 +9,12 @@ local fs = require "user.utils.fs"
 local snip_util = require "user.snippets.util"
 
 return function()
-    local snippet_group = vim.api.nvim_create_augroup("user.snippets", { clear = true })
-    vim.api.nvim_create_autocmd({ "BufNewFile", "BufFilePre", "BufRead" }, {
-        group = snippet_group,
-        pattern = "**/user/snippets/*.lua",
-        command = "set filetype=lua.snippet"
-    })
-
-    -- 加载 snippet 文件
-    local snippet_dir = fs.path_join(user.env.CONFIG_HOME(), "user", "snippets")
+    -- 注册 snippet 文件
+    local autoload_group = vim.api.nvim_create_augroup("user.snippets.autoload", { clear = true })
+    local snippet_dir = fs.path_join(user.env.CONFIG_HOME(), "user", "snippets", "auto-load")
     local files = fs.listdir(snippet_dir)
-    for i = 1, #files do
-        local name = vim.fs.basename(files[i])
 
-        if name:sub(-4) == ".lua" then
-            name = name:sub(1, -5)
-        end
-
-        if name ~= "init" then
-            import("user/snippets/" .. name)
-        end
+    for _, filename in ipairs(files) do
+        snip_util.setup_autoload_cmd(autoload_group, filename)
     end
-
-    snip_util.finalize()
 end

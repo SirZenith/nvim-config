@@ -18,6 +18,7 @@ snippet into luasnip module.
     utils.finalize()
 ]]
 local table_utils = require "user.utils.table"
+local import = require "user.utils".import
 
 local ls = require "luasnip"
 local ls_extra = require "luasnip.extras"
@@ -49,7 +50,7 @@ local M = {
 
 -- ----------------------------------------------------------------------------
 
-M.snippets_map = {}
+local pending_snippets_map = {}
 
 local function maker_factory(maker, snip_table)
     return function(...)
@@ -74,12 +75,13 @@ local function maker_factory_reg(maker, snip_table)
     end
 end
 
-M.snippet_makers = function(filetype)
+---@param filetype string
+function M.snippet_makers(filetype)
     -- snippets are stored in tables before finalize
-    local record = M.snippets_map[filetype]
+    local record = pending_snippets_map[filetype]
     if not record then
         record = {}
-        M.snippets_map[filetype] = record
+        pending_snippets_map[filetype] = record
     end
 
     local snippets = record.snippets
@@ -124,7 +126,6 @@ end
 
 ---@param body string
 function M.parse_string(body)
-    vim.print('parse')
     if body == "" then
         error("empty body")
     end
@@ -222,7 +223,7 @@ local function command_snip_func(snip, cmd_map)
     local cmd = snip.captures[1]
     local segments = vim.split(cmd, " ")
 
-    local result, err = nil
+    local result, err = nil, nil
     ---@type table | string | function | nil
     local map_walker = cmd_map
     for i = 1, #segments do
@@ -266,6 +267,11 @@ local function command_snip_func(snip, cmd_map)
 end
 
 function M.command_snip(maker, context, cmd_map)
+    context = context or {
+        trig = ":(.+);",
+        regTrig = true,
+        condition = M.conds_ext.line_begin_smart,
+    }
     maker(context, M.d(1, function(_, snip)
         return command_snip_func(snip, cmd_map)
     end))
@@ -273,11 +279,36 @@ end
 
 -- ----------------------------------------------------------------------------
 
-function M.finalize()
-    for filetype, record in pairs(M.snippets_map) do
+local function finalize()
+    for filetype, record in pairs(pending_snippets_map) do
         ls.add_snippets(filetype, record.snippets)
         ls.add_snippets(filetype, record.autosnippets, { type = "autosnippets" })
+        pending_snippets_map[filetype] = nil
     end
+end
+
+---@param filename string
+local function load_auto_snip(filename)
+    import(filename)
+    finalize()
+end
+
+---@param augroup number
+---@param filename string
+function M.setup_autoload_cmd(augroup, filename)
+    local basename = vim.fs.basename(filename)
+    local filetype = vim.split(basename, ".", { plain = true })[1]
+
+    vim.api.nvim_create_autocmd("FileType", {
+        group = augroup,
+        pattern = {
+            filetype,
+            filetype .. ".*",
+            "*." .. filetype,
+            "*." .. filetype .. ".*",
+        },
+        callback = function() load_auto_snip(filename) end,
+    })
 end
 
 return M

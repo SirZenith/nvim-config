@@ -151,6 +151,8 @@ user.general = {
         mapping = {
             json = { "*.meta" },
             nu = { "*.nu" },
+            snippet = { "*/snippets/*.lua", "*/snippets/*/*.lua" },
+            ["tree-sitter-test"] = { "*/corpus/*/*.*" },
             vlang = { "*.v", "*.vsh" },
             xml = { "*.xaml" },
         },
@@ -254,7 +256,12 @@ return function()
         vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
             group = augroup_id,
             pattern = pattern,
-            callback = function() vim.opt_local.filetype = filetype end,
+            callback = function()
+                local cur_type = vim.opt_local.filetype:get()
+                vim.opt_local.filetype = cur_type == ""
+                    and filetype
+                    or cur_type .. "." .. filetype
+            end,
         })
     end
 
