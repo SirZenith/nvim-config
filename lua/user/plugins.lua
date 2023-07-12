@@ -86,7 +86,6 @@ local function make_loader(use)
 end
 
 local function turn_on_true_color()
-    -- 开启真色彩
     if vim.fn.has "nvim" then
         vim.env.NVIM_TUI_ENABLE_TRUE_COLOR = 1
     end

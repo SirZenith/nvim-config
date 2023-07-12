@@ -137,7 +137,7 @@ user.plugin.nvim_tree = {
 }
 
 return function()
-    local group_id = vim.api.nvim_create_augroup("user.nvim_tree", { clear = true })
+    local group_id = vim.api.nvim_create_augroup("user.plugin.nvim_tree", { clear = true })
     vim.api.nvim_create_autocmd("VimEnter", {
         group = group_id,
         callback = function()
