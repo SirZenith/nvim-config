@@ -190,6 +190,7 @@ local plugin_list = {
     "hrsh7th/cmp-nvim-lsp",
     "hrsh7th/cmp-path",
     "hrsh7th/nvim-cmp",
+    "SirZenith/ts-grammar-navigator",
 
     -- ------------------------------------------------------------------------
     -- Snippet
