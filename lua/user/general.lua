@@ -260,7 +260,7 @@ return function()
                 local cur_type = vim.opt_local.filetype:get()
                 vim.opt_local.filetype = cur_type == ""
                     and filetype
-                    or cur_type .. "." .. filetype
+                    or filetype .. "." .. cur_type
             end,
         })
     end
