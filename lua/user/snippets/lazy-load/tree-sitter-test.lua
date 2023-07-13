@@ -45,5 +45,5 @@ end
 s.command_snip(asp, nil, {
     new = {
         test = new_test,
-    }
+    },
 })

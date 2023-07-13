@@ -410,7 +410,7 @@ s.command_snip(asp, context, {
     },
     new = {
         close_btn = NEW_CLOSE_BTN,
-        func = new_function,
+        fn = new_function,
         gm = {
             arg = new_gm_arg,
             cmd = new_gm_cmd,
