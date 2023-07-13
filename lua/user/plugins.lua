@@ -86,7 +86,6 @@ local function make_loader(use)
 end
 
 local function turn_on_true_color()
-    -- 开启真色彩
     if vim.fn.has "nvim" then
         vim.env.NVIM_TUI_ENABLE_TRUE_COLOR = 1
     end
@@ -190,6 +189,7 @@ local plugin_list = {
     "hrsh7th/cmp-nvim-lsp",
     "hrsh7th/cmp-path",
     "hrsh7th/nvim-cmp",
+    "SirZenith/ts-grammar-navigator",
 
     -- ------------------------------------------------------------------------
     -- Snippet

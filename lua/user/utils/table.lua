@@ -17,7 +17,6 @@ function M.is_array(tbl)
 end
 
 -- if input value is a table, return its shallow copy, else return the value directly.
--- 复制传入的值，如果传入值的类型为 table 则进行浅复制，否则将参数原样返回。
 ---@param src any
 ---@return any
 function M.copy(src)

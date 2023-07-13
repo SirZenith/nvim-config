@@ -98,8 +98,8 @@ user.plugin.nvim_treesitter = {
         rainbow = {
             enable = true,
             -- disable = { "jsx", "cpp" }, list of languages you want to disable the plugin for
-            extended_mode = true,                                                                     -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
-            max_file_lines = nil,                                                                     -- Do not enable for files with more than n lines, int
+            extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
+            max_file_lines = nil, -- Do not enable for files with more than n lines, int
             colors = { "#6c9ef8", "#d85896", "#b77fdb", "#ef5350", "#64b5f6", "#ffee58", "#ab47bc" }, -- table of hex strings
             -- termcolors = {}, -- table of colour name strings
         },
@@ -125,8 +125,8 @@ user.plugin.nvim_treesitter = {
 }
 
 return function()
-    local augroup = vim.api.nvim_create_augroup("user.treesitter", { clear = true })
-    -- 去除 markdown 中代码块的斜体
+    local augroup = vim.api.nvim_create_augroup("user.plugin.nvim_treesitter", { clear = true })
+    -- remote italic in markdown code block
     vim.api.nvim_create_autocmd("FileType", {
         group = augroup,
         pattern = "markdown",

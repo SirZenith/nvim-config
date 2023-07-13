@@ -1,4 +1,5 @@
 local user = require "user"
+local functional = require "user.utils.functional"
 
 local augroup_id = vim.api.nvim_create_augroup("user.general", { clear = true })
 
@@ -64,13 +65,13 @@ end
 
 user.option = {
     o = {
-        autochdir = false,              -- auto chdir into directory of current buffer
-        autoread = true,                -- reload when file changed externally
+        autochdir = false, -- auto chdir into directory of current buffer
+        autoread = true, -- reload when file changed externally
         backspace = "indent,start,eol", -- select which boundary is ignored by backspace
-        clipboard = "unnamedplus",      -- use system clipboard for yard
-        splitbelow = true,              -- split at bottom when making horizontal split
-        splitright = true,              -- split at right when making vertical split
-        timeoutlen = 250,               -- set timeout for keymap
+        clipboard = "unnamedplus", -- use system clipboard for yard
+        splitbelow = true, -- split at bottom when making horizontal split
+        splitright = true, -- split at right when making vertical split
+        timeoutlen = 250, -- set timeout for keymap
         fileformats = "unix,dos",
         -- file encoding checking queue
         fileencodings = "utf-8,ucs-bom,shift-jis,gb18030,gbk,gb2312,cp936",
@@ -95,10 +96,10 @@ user.option = {
         completeopt = "menu,menuone,noselect",
         mouse = "a",
         grepprg = "rg --vimgrep",
-        ruler = true,         -- show line:column coordinate in status line
-        showcmd = true,       -- display command input
-        showmatch = true,     -- show matching bracket
-        scrolloff = 15,       -- key certain line gap between screen bottom
+        ruler = true, -- show line:column coordinate in status line
+        showcmd = true, -- display command input
+        showmatch = true, -- show matching bracket
+        scrolloff = 15, -- key certain line gap between screen bottom
         termguicolors = true, -- turn true color support
         -- line number
         number = true,
@@ -122,7 +123,7 @@ user.option = {
         -- concealcursor = "n", -- in these mode, also conceals cursorline
 
         -- setup LSP display
-        cmdheight = 2,    -- height for command display area
+        cmdheight = 2, -- height for command display area
         updatetime = 300, -- after certain timeout in millisecond, swap file will be written to disk
         -- display debug/diagnostic symbol in gutter
         -- `number` means share space with line number, don't create extra column
@@ -145,16 +146,35 @@ user.option = {
 user.general = {
     locale = "zh_CN.UTF-8",
     filetype = {
-        -- 不使用软 tab 的类型
+        -- disable soft tab for listed file types
         no_soft_tab = { "go", "make", "plantuml", "vlang" },
-        -- 文件类型对的文件名模式
+        -- file type mapping pattern. file types appear earlier in the list take
+        -- high priority.
         mapping = {
-            json = { "*.meta" },
-            nu = { "*.nu" },
-            snippet = { "*/snippets/*-load/*.lua" },
-            ["tree-sitter-test"] = { "*/corpus/*/*.*" },
-            vlang = { "*.v", "*.vsh" },
-            xml = { "*.xaml" },
+            {
+                name = "json",
+                pattern = "%.meta$",
+            },
+            {
+                name = "nu",
+                pattern = "%.nu$",
+            },
+            {
+                name = "vlang",
+                pattern = { "%.v$", "%.vsh$" }
+            },
+            {
+                name = "xml",
+                pattern = "%.xaml$",
+            },
+            {
+                name = "snippet",
+                pattern = "/snippets/.+%-load/.-%.lua$"
+            },
+            {
+                name = "tree-sitter-test",
+                pattern = "/corpus/.-/[^/]+$.*$",
+            },
         },
     },
     im_select = {
@@ -252,18 +272,26 @@ return function()
     })
 
     -- filetype mapping
-    for filetype, pattern in user.general.filetype.mapping:pairs() do
-        vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
-            group = augroup_id,
-            pattern = pattern,
-            callback = function()
-                local cur_type = vim.opt_local.filetype:get()
-                vim.opt_local.filetype = cur_type == ""
-                    and filetype
-                    or filetype .. "." .. cur_type
-            end,
-        })
-    end
+    vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
+        group = augroup_id,
+        callback = function(info)
+            local match = info.match
+            local buffer = {}
+            for _, map in user.general.filetype.mapping:pairs() do
+                if type(map.pattern) == "string"
+                    and match:match(map.pattern)
+                then
+                    table.insert(buffer, map.name)
+                elseif type(map.pattern) == "table"
+                    and functional.any(map.pattern, function(p) return match:match(p) ~= nil end)
+                then
+                    table.insert(buffer, map.name)
+                end
+            end
+            table.insert(buffer, vim.opt_local.filetype:get())
+            vim.opt_local.filetype = table.concat(buffer, ".")
+        end,
+    })
 
     -- setup filetypes that don't use soft-tab
     local no_soft_tab_filetypes = user.general.filetype.no_soft_tab()

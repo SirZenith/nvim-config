@@ -88,12 +88,12 @@ local function toggle_terminal()
     local buf_num, win_num = panelpal.find_buf_with_name(name)
 
     if not buf_num then
-        -- 不存在
+        -- not exists
         vim.cmd("vsplit | terminal")
         vim.cmd("keepalt file " .. name)
         vim.cmd "startinsert"
     elseif not win_num then
-        -- 不可见
+        -- not visible
         vim.cmd("vsplit")
         local win = api.nvim_get_current_win()
         api.nvim_win_set_buf(win, buf_num)
