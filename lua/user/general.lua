@@ -173,7 +173,7 @@ user.general = {
             },
             {
                 name = "tree-sitter-test",
-                pattern = "/corpus/.-/[^/]+$.*$",
+                pattern = "/corpus/.-/[^/]+%.*$",
             },
         },
     },
@@ -288,7 +288,11 @@ return function()
                     table.insert(buffer, map.name)
                 end
             end
-            table.insert(buffer, vim.opt_local.filetype:get())
+
+            local old_type = vim.opt_local.filetype:get()
+            if old_type ~= "" then
+                table.insert(buffer, old_type)
+            end
             vim.opt_local.filetype = table.concat(buffer, ".")
         end,
     })
