@@ -105,12 +105,11 @@ local plugin_list = {
     -- General
     "lewis6991/gitsigns.nvim",
     { "ggandor/lightspeed.nvim",     disable = true },
-    "scrooloose/nerdcommenter",
+    "numToStr/Comment.nvim",
     {
         "nvim-tree/nvim-tree.lua",
         requires = { "nvim-tree/nvim-web-devicons" },
     },
-    "tyru/open-browser.vim",
     "SirZenith/panelpal.nvim",
     {
         "SirZenith/vcs-helper.nvim",
@@ -118,7 +117,7 @@ local plugin_list = {
     },
     {
         "nvim-telescope/telescope.nvim",
-        requires = { { "nvim-lua/plenary.nvim" } },
+        requires = { "nvim-lua/plenary.nvim" },
     },
     "voldikss/vim-floaterm",
 
@@ -127,18 +126,24 @@ local plugin_list = {
     "Yggdroot/indentline",
     "nvim-lua/lsp-status.nvim",
     "SirZenith/nvim-cursorline",
-    "p00f/nvim-ts-rainbow",
-    { "norcalli/nvim-colorizer.lua", __before_load = turn_on_true_color },
+    {
+        -- highlight color code with its color in vim
+        "norcalli/nvim-colorizer.lua",
+        __before_load = turn_on_true_color
+    },
     { "anuvyklack/pretty-fold.nvim", disable = true },
 
     -- ------------------------------------------------------------------------
     -- Themes
-    { "catppuccin/nvim",             as = "catppuccin",                 disable = true },
+    {
+        "catppuccin/nvim",
+        as = "catppuccin",
+        disable = true
+    },
     { "marko-cerovac/material.nvim", disable = true },
     { "kaicataldo/material.vim",     disable = true },
     {
         "EdenEast/nightfox.nvim",
-        disable = false,
         __before_load = turn_on_true_color,
     },
     { "shaunsingh/nord.nvim",             disable = true },
@@ -146,7 +151,6 @@ local plugin_list = {
     { "JoosepAlviste/palenightfall.nvim", disable = true },
     { "wadackel/vim-dogrun",              disable = true },
     { "rakr/vim-two-firewatch",           disable = true },
-    -- after color scheme is loaded
     {
         "nvim-lualine/lualine.nvim",
         requires = { "kyazdani42/nvim-web-devicons", opt = true },
@@ -155,26 +159,42 @@ local plugin_list = {
     -- ------------------------------------------------------------------------
     -- Syntax
     "nvim-treesitter/nvim-treesitter",
-    "nvim-treesitter/playground",
+    {
+        "nvim-treesitter/playground",
+        requires = { "nvim-treesitter/nvim-treesitter" },
+    },
+    {
+        "p00f/nvim-ts-rainbow",
+        requires = { "nvim-treesitter/nvim-treesitter" },
+    },
 
     "udalov/kotlin-vim",
-    "aklt/plantuml-syntax",
 
     -- ------------------------------------------------------------------------
     -- Language Support
-    { "kevinhwang91/nvim-ufo",        requires = "kevinhwang91/promise-async" }, -- folding support
+    {
+        -- folding support
+        "kevinhwang91/nvim-ufo",
+        requires = "kevinhwang91/promise-async"
+    },
     {
         "iamcco/markdown-preview.nvim",
         run = function() vim.fn["mkdp#util#install"]() end,
     },
     "neovim/nvim-lspconfig",
     {
-        "jose-elias-alvarez/null-ls.nvim", -- LSP injection
-        requires = { { "nvim-lua/plenary.nvim" } },
+        -- LSP injection
+        "jose-elias-alvarez/null-ls.nvim",
+        requires = { "nvim-lua/plenary.nvim" },
     },
-    "weirongxu/plantuml-previewer.vim",
-    "rust-lang/rust.vim",
-    { "scrooloose/vim-slumlord", disable = true }, -- PlantUML in-vim preview
+    {
+        -- Preview PlantUML in browser
+        "weirongxu/plantuml-previewer.vim",
+        requires = {
+            "aklt/plantuml-syntax",
+            "tyru/open-browser.vim",
+        },
+    },
     "lervag/vimtex",
     "stevearc/vim-arduino",
     "sudar/vim-arduino-syntax",
@@ -184,17 +204,35 @@ local plugin_list = {
     -- Completion
     "windwp/nvim-autopairs",
     "windwp/nvim-ts-autotag",
-    "hrsh7th/cmp-buffer",
-    "hrsh7th/cmp-cmdline",
-    "saadparwaiz1/cmp_luasnip",
-    "hrsh7th/cmp-nvim-lsp",
-    "hrsh7th/cmp-path",
-    "hrsh7th/nvim-cmp",
-    "SirZenith/ts-grammar-navigator",
-
-    -- ------------------------------------------------------------------------
-    -- Snippet
     "L3MON4D3/LuaSnip",
+    "hrsh7th/nvim-cmp",
+    {
+        "hrsh7th/cmp-buffer",
+        requires = { "hrsh7th/nvim-cmp" },
+    },
+    {
+        "hrsh7th/cmp-cmdline",
+        requires = { "hrsh7th/nvim-cmp" },
+    },
+    {
+        "saadparwaiz1/cmp_luasnip",
+        requires = { "hrsh7th/nvim-cmp" },
+    },
+    {
+        "hrsh7th/cmp-nvim-lsp",
+        requires = { "hrsh7th/nvim-cmp" },
+    },
+    {
+        "hrsh7th/cmp-path",
+        requires = { "hrsh7th/nvim-cmp" },
+    },
+    {
+        "SirZenith/ts-grammar-navigator",
+        requires = {
+            "SirZenith/panelpal.nvim",
+            "hrsh7th/nvim-cmp",
+        },
+    },
 }
 
 packer.startup(function()

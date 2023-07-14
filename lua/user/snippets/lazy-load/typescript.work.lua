@@ -221,10 +221,16 @@ btnClose.setOnClick(this.close.bind(this));
 
 ---@param args string[]
 ---@return string | nil
+---@return string | nil err
 local function new_function(args)
-    local name = args[1]
-    local modifier = args[2]
-    if not name then return nil end
+    local err, name = arg_list_check(args, "name")
+    if err then return nil, err end
+
+    local modifier
+    if args[2] then
+        modifier = name
+        name = args[2]
+    end
 
     local result = "const " .. name .. " = (${2}): ${1:void} => {${3}};"
     if modifier then
@@ -284,10 +290,17 @@ end
 
 ---@param args string[]
 ---@return string | nil
+---@return string | nil err
 local function new_method(args)
-    local name = args[1]
-    if not name then return nil end
-    local modifier = args[2] or "private"
+    local err, name = arg_list_check(args, "name")
+    if err then return nil, err end
+
+    local modifier = "private"
+    if args[2] then
+        modifier = name or ""
+        name = args[2]
+    end
+
     return modifier .. " " .. name .. "(${2}): ${1:void} {${3}}"
 end
 
@@ -395,6 +408,7 @@ s.command_snip(asp, context, {
         fd = data_model_field,
         new = data_model_new,
     },
+    fn = new_function,
     gg = get_gameobject_of_type,
     import = {
         gm_cmd = import_gm_cmd,
@@ -408,14 +422,13 @@ s.command_snip(asp, context, {
         sub_panel = INIT_SUB_PANEL,
         tips = INIT_TIPS,
     },
+    method = new_method,
     new = {
         close_btn = NEW_CLOSE_BTN,
-        fn = new_function,
         gm = {
             arg = new_gm_arg,
             cmd = new_gm_cmd,
         },
-        method = new_method,
         scroll = new_scroll,
         timer = new_timer,
         touch_close = NEW_TOUCH_CLOSE_LAYER,
