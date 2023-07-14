@@ -103,6 +103,9 @@ user.plugin.nvim_treesitter = {
             colors = { "#6c9ef8", "#d85896", "#b77fdb", "#ef5350", "#64b5f6", "#ffee58", "#ab47bc" }, -- table of hex strings
             -- termcolors = {}, -- table of colour name strings
         },
+        -- autotag = {
+            -- enable = true,
+        -- }
     },
     install = {
         prefer_git = false,

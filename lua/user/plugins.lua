@@ -183,6 +183,7 @@ local plugin_list = {
     -- ------------------------------------------------------------------------
     -- Completion
     "windwp/nvim-autopairs",
+    "windwp/nvim-ts-autotag",
     "hrsh7th/cmp-buffer",
     "hrsh7th/cmp-cmdline",
     "saadparwaiz1/cmp_luasnip",
