@@ -6,12 +6,12 @@ M.cond_func = nil
 
 local RULE_INIT = [[
 module.exports = grammar({
-  name: '${1}',
+    name: '${1}',
 
-  rules: {
-    // TODO: add the actual grammar rules
-    source_file: $ => ${0}
-  }
+    rules: {
+        // TODO: add the actual grammar rules
+        source_file: $ => ${0}
+    }
 });
 ]]
 
