@@ -1,4 +1,5 @@
 local user = require "user"
+local table_utils = require "user.utils.table"
 local functional = require "user.utils.functional"
 
 local augroup_id = vim.api.nvim_create_augroup("user.general", { clear = true })
@@ -150,6 +151,8 @@ user.general = {
         no_soft_tab = { "go", "make", "plantuml", "vlang" },
         -- file type mapping pattern. file types appear earlier in the list take
         -- high priority.
+        -- `secondary = true` means that file type will be appended to original
+        -- file type.
         mapping = {
             {
                 name = "json",
@@ -169,11 +172,18 @@ user.general = {
             },
             {
                 name = "snippet",
-                pattern = "/snippets/.+%-load/.-%.lua$"
+                pattern = "/snippets/.+%-load/.-%.lua$",
+                secondary = true,
             },
             {
                 name = "tree-sitter-test",
                 pattern = "/corpus/.-/[^/]+%.*$",
+                secondary = true,
+            },
+            {
+                name = "tree-sitter-rule",
+                pattern = "tree%-sitter%-.-/grammar%.js$",
+                secondary = true,
             },
         },
     },
@@ -276,23 +286,36 @@ return function()
         group = augroup_id,
         callback = function(info)
             local match = info.match
-            local buffer = {}
+            local primary, secondary = {}, {}
+
             for _, map in user.general.filetype.mapping:pairs() do
+                local is_match = false
                 if type(map.pattern) == "string"
                     and match:match(map.pattern)
                 then
-                    table.insert(buffer, map.name)
+                    is_match = true
                 elseif type(map.pattern) == "table"
                     and functional.any(map.pattern, function(p) return match:match(p) ~= nil end)
                 then
-                    table.insert(buffer, map.name)
+                    is_match = true
+                end
+
+                if is_match then
+                    local target = map.secondary and secondary or primary
+                    table.insert(target, map.name)
                 end
             end
 
+            if #primary + #secondary == 0 then return end
+
             local old_type = vim.opt_local.filetype:get()
             if old_type ~= "" then
-                table.insert(buffer, old_type)
+                table.insert(primary, old_type)
             end
+
+            local buffer = {}
+            table_utils.extend_list(buffer, primary)
+            table_utils.extend_list(buffer, secondary)
             vim.opt_local.filetype = table.concat(buffer, ".")
         end,
     })

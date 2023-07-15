@@ -332,4 +332,42 @@ function M.init_lazy_load()
     end
 end
 
+function M.init_conditional_load()
+    local conditional_group = vim.api.nvim_create_augroup("user.snippets.conditional-load", { clear = true })
+    local snippet_dir = fs.path_join(user.env.CONFIG_HOME(), "user", "snippets", "conditional-load")
+    local files = fs.listdir(snippet_dir)
+
+    for _, filename in ipairs(files) do
+        local module = import(filename)
+        local ok = xpcall(
+            function()
+                vim.validate {
+                    event = { module.event, { "s", "t" } },
+                    pattern = { module.pattern, { "s", "t" } },
+                    cond_func = { module.cond_func, "f", true },
+                    setup = { module.setup, "f" },
+                }
+            end,
+            function(msg)
+                msg = ("while loading '%s':\n    %s"):format(filename, msg)
+                vim.notify(msg)
+            end
+        )
+
+        if ok and module then
+            vim.api.nvim_create_autocmd(module.event, {
+                group = conditional_group,
+                pattern = module.pattern,
+                callback = function(info)
+                    if module.cond_func and not module.cond_func(info) then
+                        return
+                    end
+                    module.setup()
+                    finalize()
+                end,
+            })
+        end
+    end
+end
+
 return M

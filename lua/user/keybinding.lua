@@ -192,9 +192,9 @@ local n_common_keymap = {
     end,
     -- Moving windows
     ["<A-C-h>"] = "<C-w>H",
-    ["<A-C-J>"] = "<C-w>J",
-    ["<A-C-K>"] = "<C-w>K",
-    ["<A-C-L>"] = "<C-w>L",
+    ["<A-C-j>"] = "<C-w>J",
+    ["<A-C-k>"] = "<C-w>K",
+    ["<A-C-l>"] = "<C-w>L",
     -- Toggling windows
     -- Quickfix window
     ["<leader><backspace>"] = toggle_quickfix,
