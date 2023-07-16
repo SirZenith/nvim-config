@@ -33,12 +33,12 @@ user.plugin.lualine = {
         }
     },
     inactive_sections = {
-        lualine_a = { 'filename' },
+        lualine_a = {},
         lualine_b = {},
-        lualine_c = {},
-        lualine_x = {},
+        lualine_c = { 'filename' },
+        lualine_x = { 'location' },
         lualine_y = {},
-        lualine_z = { 'location' },
+        lualine_z = {},
     },
     tabline = {},
     winbar = {},
