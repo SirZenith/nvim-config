@@ -177,12 +177,7 @@ user.general = {
             },
             {
                 name = "tree-sitter-test",
-                pattern = "/corpus/.-/[^/]+%.*$",
-                secondary = true,
-            },
-            {
-                name = "tree-sitter-rule",
-                pattern = "tree%-sitter%-.-/grammar%.js$",
+                pattern = "tree%-sitter%-.-/corpus/.+%..*$",
                 secondary = true,
             },
         },
@@ -252,6 +247,54 @@ user.theme.highlight = {
 
 -- ----------------------------------------------------------------------------
 
+---@param match string
+local function setup_filetype(match)
+    local known_type = {}
+    local primary, secondary = {}, {}
+
+    local function add_type(list, filetype)
+        if known_type[filetype] or filetype == "" then return end
+        known_type[filetype] = true
+        table.insert(list, filetype)
+    end
+
+    local cond = function(_, p)
+        return match:match(p) ~= nil
+    end
+
+    for _, map in user.general.filetype.mapping:pairs() do
+        local is_match = false
+        if type(map.pattern) == "string"
+            and match:match(map.pattern)
+        then
+            is_match = true
+
+        elseif type(map.pattern) == "table"
+            and functional.any(map.pattern, cond)
+        then
+            is_match = true
+
+        end
+
+        if is_match then
+            local target = map.secondary and secondary or primary
+            add_type(target, map.name)
+        end
+    end
+
+    if #primary + #secondary == 0 then return end
+
+    local old_types = vim.split(vim.opt_local.filetype:get(), ".")
+    for _, type in ipairs(old_types) do
+        add_type(primary, type)
+    end
+
+    local buffer = {}
+    table_utils.extend_list(buffer, primary)
+    table_utils.extend_list(buffer, secondary)
+    vim.opt_local.filetype = table.concat(buffer, ".")
+end
+
 return function()
     vim.env.NVIM_TUI_ENABLE_TRUE_COLOR = 1
 
@@ -285,38 +328,7 @@ return function()
     vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
         group = augroup_id,
         callback = function(info)
-            local match = info.match
-            local primary, secondary = {}, {}
-
-            for _, map in user.general.filetype.mapping:pairs() do
-                local is_match = false
-                if type(map.pattern) == "string"
-                    and match:match(map.pattern)
-                then
-                    is_match = true
-                elseif type(map.pattern) == "table"
-                    and functional.any(map.pattern, function(p) return match:match(p) ~= nil end)
-                then
-                    is_match = true
-                end
-
-                if is_match then
-                    local target = map.secondary and secondary or primary
-                    table.insert(target, map.name)
-                end
-            end
-
-            if #primary + #secondary == 0 then return end
-
-            local old_type = vim.opt_local.filetype:get()
-            if old_type ~= "" then
-                table.insert(primary, old_type)
-            end
-
-            local buffer = {}
-            table_utils.extend_list(buffer, primary)
-            table_utils.extend_list(buffer, secondary)
-            vim.opt_local.filetype = table.concat(buffer, ".")
+            setup_filetype(info.match)
         end,
     })
 

@@ -10,13 +10,13 @@ module.exports = grammar({
 
     rules: {
         // TODO: add the actual grammar rules
-        source_file: $ => ${0}
+        source_file: $ => '${0}'
     }
 });
 ]]
 
 function M.setup()
-    local snip_filetype = "tree-sitter-rule"
+    local snip_filetype = "all"
     local s = require("user.snippets.utils")
     local makers = s.snippet_makers(snip_filetype)
     -- local sp = makers.sp
