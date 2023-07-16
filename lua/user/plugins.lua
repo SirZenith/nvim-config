@@ -155,6 +155,7 @@ local plugin_list = {
         "nvim-lualine/lualine.nvim",
         requires = { "kyazdani42/nvim-web-devicons", opt = true },
     },
+    "nanozuki/tabby.nvim", -- tab line styling
 
     -- ------------------------------------------------------------------------
     -- Syntax

@@ -239,6 +239,18 @@ user.theme.highlight = {
     PanelpalUnselect = {
         fg = "#4f6074",
     },
+    TabDarker = {
+        fg = "#cdcecf",
+        bg = "#232831"
+    },
+    TabStatus = {
+        fg = "#abb1bb",
+        bg = "#444c5e",
+    },
+    TabLineSel = {
+        fg = "#2e3440",
+        bg = "#81a1c1",
+    },
     Visual = {
         fg = nil,
         bg = "#3a4657",

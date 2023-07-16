@@ -88,7 +88,7 @@ user.plugin.nvim_tree = {
         -- enable = vim.env.PLATFORM_MARK ~= "windows",
         enable = true,
         ignore = false,
-        timeout = 200,
+        timeout = 1000,
     },
     view = {
         width = 30,
