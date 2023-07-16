@@ -296,7 +296,7 @@ local function setup_filetype(match)
 
     if #primary + #secondary == 0 then return end
 
-    local old_types = vim.split(vim.opt_local.filetype:get(), ".")
+    local old_types = vim.split(vim.opt_local.filetype:get(), ".", { plain = true })
     for _, type in ipairs(old_types) do
         add_type(primary, type)
     end
