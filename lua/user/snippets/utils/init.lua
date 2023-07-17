@@ -269,7 +269,8 @@ local function command_snip_func(snip, cmd_map)
         vim.notify("snippet command ends at an non-parse table")
     end
 
-    return M.s(1, nodes)
+    local ok, result = pcall(M.s, 1, nodes)
+    return ok and result or { M.t(":" .. cmd) }
 end
 
 function M.command_snip(maker, context, cmd_map)
