@@ -1,3 +1,5 @@
+local cmd_snip = require "user.snippets.cmd-snippet"
+
 local snip_filetype = "lua"
 local s = require("user.snippets.utils")
 local makers = s.snippet_makers(snip_filetype)
@@ -46,31 +48,22 @@ apsp("emme", "---@meta")
 
 -- ----------------------------------------------------------------------------
 
----@param args string[]
----@return Node[] | nil
-local function arg_check(args)
-    if #args == 0 then return nil end
+cmd_snip.register {
+    argcheck = {
+        args = { { "name", is_varg = true } },
+        content = function(...)
+            local names = { ... }
+            local buffer = {}
+            for _, name in ipairs(names) do
+                table.insert(buffer, ('"%s"'):format(name))
+            end
 
-    local buffer = {}
-    for _, name in ipairs(args) do
-        table.insert(buffer, ('"%s"'):format(name))
-    end
-
-    return {
-        ("local err, %s = arg_list_check(args, %s)"):format(
-            table.concat(args, ", "), table.concat(buffer, ", ")
-        ),
-        "if err then return nil, err end",
+            return {
+                ("local err, %s = arg_list_check(args, %s)"):format(
+                    table.concat(names, ", "), table.concat(buffer, ", ")
+                ),
+                "if err then return nil, err end",
+            }
+        end,
     }
-end
-
--- ----------------------------------------------------------------------------
-
-local context = {
-    trig = ":(.+);",
-    regTrig = true,
-    condition = s.conds_ext.line_begin_smart,
 }
-s.command_snip(asp, context, {
-    argcheck = arg_check,
-})

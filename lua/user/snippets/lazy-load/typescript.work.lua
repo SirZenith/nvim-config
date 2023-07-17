@@ -1,5 +1,6 @@
 local utils = require "user.utils"
 local table_utils = require "user.utils.table"
+local cmd_snip = require "user.snippets.cmd-snippet"
 
 local arg_list_check = utils.arg_list_check
 
@@ -29,91 +30,6 @@ local function to_camel(index)
         return utils.underscore_to_camel_case(args[1][1])
     end, { index })
 end
-
--- ----------------------------------------------------------------------------
-
-local INIT_DATA_MODEL = {
-    "import { setDataModel } from '../base/struct_helper';",
-    "",
-}
-
-local INIT_GM = {
-    "/* eslint-disable @typescript-eslint/no-magic-numbers */",
-    "import { IFakeAgent, ICmdArgsMap, ICmds, importedMap } from 'script_logic/common/wizcmd/wizcmd_interface';",
-    "",
-    "export const CMDS: ICmds = {",
-    { "    rootKey: '", 1, "'," },
-    "    childrens: {},",
-    "};",
-}
-
-local INIT_PANEL = {
-    "import { S } from 'script_logic/base/global/singleton';",
-    "import { UIBase } from 'script_logic/base/ui_system/ui_base';",
-    "import { uiRegister } from 'script_logic/base/ui_system/ui_class_map';",
-    "import { UI_COMMON } from 'script_logic/base/ui_system/ui_common';",
-    "import { UIButton } from 'script_logic/base/ui_system/uiext/ui_button';",
-    "import { UIText } from 'script_logic/base/ui_system/uiext/ui_text';",
-    "import { LOGGING } from 'script_logic/common/base/logging';",
-    "",
-    { "const Log = LOGGING.logger('", 1, "');" },
-    "",
-    "/**",
-    { " * ",                          2 },
-    " *",
-    " */",
-    "@uiRegister({",
-    { "    panelName: '",                                    1, "'," },
-    { "    panelDesc: '",                                    2, "'," },
-    { "    prefabPath: '",                                   3, "'," },
-    { "    fullScreen: true," },
-    { "    sortOrderType: UI_COMMON.CANVAS_SORT_ORDER.MENU," },
-    "})",
-    "// eslint-disable-next-line @typescript-eslint/no-unused-vars",
-    { "class ", to_camel(1), " extends UIBase {" },
-    "    protected onInit(): void {}",
-    "",
-    "    protected initEvents(args: UI_COMMON.TYPE_SHOW_PANEL_ARGS): void {}",
-    "",
-    "    protected onShow(args: UI_COMMON.TYPE_SHOW_PANEL_ARGS): void {}",
-    "",
-    "    protected onClose(): void {}",
-    "}",
-}
-
-local INIT_TIPS = {
-    "import { LOGGING } from 'script_logic/common/base/logging';",
-    "import { TipsTypeMap } from './tips_info_map';",
-    "import { UITipsWidgetBase } from './ui_tips_base';",
-    "",
-    { "const Log = LOGGING.logger('",   1,           "');" },
-    "",
-    { "type UITipsArg = TipsTypeMap['", 1,           "']['args'];" },
-    { "export class ",                  to_camel(1), " extends UITipsWidgetBase<UITipsArg> {" },
-    "    public getCustomPreloadAssetList(): string[] {",
-    "        return [];",
-    "    }",
-    "",
-    "    protected initTips(): void {}",
-    "}",
-}
-
-local INIT_SUB_PANEL = {
-    "import { LOGGING } from 'script_logic/common/base/logging';",
-    "import { UISubView } from 'script_logic/base/ui_system/label_view/ui_sub_view';",
-    "",
-    { "const Log = LOGGING.logger('", 1,           "');" },
-    "",
-    { "export class ",                to_camel(1), " extends UISubView {" },
-    "    protected onInit(): void {}",
-    "",
-    "    protected initEvents(args: UI_COMMON.TYPE_SHOW_PANEL_ARGS): void {}",
-    "",
-    "    protected onShow(args: UI_COMMON.TYPE_SHOW_PANEL_ARGS): void {}",
-    "",
-    "    protected onClose(): void {}",
-    "}",
-}
 
 -- ----------------------------------------------------------------------------
 
@@ -149,40 +65,6 @@ local import_map = {
     },
 }
 
----@param args string[]
----@return string | nil
-local function import_module(args)
-    local name = args[1]
-    local info = import_map[name]
-    if not info then
-        return nil
-    end
-
-    return ("import { %s } from '%s';"):format(
-        table.concat(info.names, ", "),
-        info.path
-    )
-end
-
----@param args string[]
----@return string
-local function import_util(args)
-    local name = args[1]
-    local symbol = name:upper()
-    return ("import { %s } from 'script_logic/common/utils/%s';"):format(symbol, name)
-end
-
----@param args string[]
----@return string | nil
-local function import_gm_cmd(args)
-    local name = args[1]
-    if not name then return nil end
-
-    return ("import * as %s from 'script_logic/common/wizcmd/cmds/%s'"):format(name:upper(), name)
-end
-
--- ----------------------------------------------------------------------------
-
 ---@type table<string, string>
 local game_object_name_map = {
     go = "", -- GameObject
@@ -195,162 +77,10 @@ local game_object_name_map = {
     layer = "UILayer",
 }
 
----@param args string[]
----@return string | nil
-local function get_gameobject_of_type(args)
-    local variable = args[1]
-    local object = args[2]
-    local class_alias = args[3]
-    local class_name = game_object_name_map[class_alias]
-
-    if not class_name then
-        return nil
-    elseif class_name == "" then
-        return ("const %s = %s.getGameObject('${1}');"):format(variable, object)
-    end
-
-    return ("const %s = %s.getGameObject('${1}', %s);"):format(variable, object, class_name)
-end
-
--- ----------------------------------------------------------------------------
-
-local NEW_CLOSE_BTN = [[
-const btnClose = this.getGameObject('node_bg/panel/btn_close', UIButton);
-btnClose.setOnClick(this.close.bind(this));
-]]
-
----@param args string[]
----@return string | nil
----@return string | nil err
-local function new_function(args)
-    local err, name = arg_list_check(args, "name")
-    if err then return nil, err end
-
-    local modifier
-    if args[2] then
-        modifier = name
-        name = args[2]
-    end
-
-    local result = "const " .. name .. " = (${2}): ${1:void} => {${3}};"
-    if modifier then
-        result = modifier .. " " .. result
-    end
-
-    return result
-end
-
----@param args string[]
----@return string | nil
-local function new_gm_arg(args)
-    local name = args[1]
-    if not name then return nil end
-
-    return ("{ name: '%s', typ: '${1}', default: ${2} }"):format(name)
-end
-
 local GmCmdType = {
     Client = "client",
     Server = "server",
 }
-
----@param args string[]
----@return Node[] | nil
-local function new_gm_cmd(args)
-    local type = args[1] or "client"
-
-    local buffer = {
-        { "'", 1, "': {" },
-        "    args: [],",
-    }
-
-    if type == GmCmdType.Server then
-        table_utils.extend_list(buffer, {
-            "    imports: { },",
-            "    server: (agent: IFakeAgent, cmdArgs: ICmdArgsMap, imports: importedMap): void => {",
-            "        // const { } = imports;",
-            "        // const role = agent.role;",
-            "        // const argName = cmdArgs.argName;",
-            "    },"
-        })
-    elseif type == GmCmdType.Client then
-        table_utils.extend_list(buffer, {
-            "    client: (cmdArgs: ICmdArgsMap, imports: importedMap): void => {",
-            "        // const { } = imports;",
-            "        // const argName = cmdArgs.argName;",
-            "    },"
-        })
-    else
-        return nil
-    end
-
-    table.insert(buffer, "},")
-
-    return buffer
-end
-
----@param args string[]
----@return string | nil
----@return string | nil err
-local function new_method(args)
-    local err, name = arg_list_check(args, "name")
-    if err then return nil, err end
-
-    local modifier = "private"
-    if args[2] then
-        modifier = name or ""
-        name = args[2]
-    end
-
-    return modifier .. " " .. name .. "(${2}): ${1:void} {${3}}"
-end
-
----@param args string[]
----@return string[] | nil
-local function new_scroll(args)
-    local name = args[1]
-    if not name then return nil end
-
-    return {
-        "private update" .. name .. "Scroll(): void {",
-        { "    const scroll = this.getGameObject('", 1, "', UIScrollView);" },
-        "    scroll.setUpdateItemCallback(this.update" .. name .. "Item.bind(this));",
-        "",
-        "    const totalCnt = COMMON_CONST.ZERO;",
-        "    scroll.setTotalCount(totalCnt);",
-        "}",
-        "",
-        "private update" .. name .. "Item(item: GameObject, index: number): void {}",
-    }
-end
-
----@param args string[]
----@return string[] | nil
-local function new_timer(args)
-    local name = args[1]
-    if not name then return nil end
-
-    return {
-        "private init" .. name .. "Timer(): void {",
-        "    this.cancel" .. name .. "Timer();",
-        { "    this.timer" .. name .. " = TIMER.", 1, "();" },
-        "}",
-        "",
-        "private cancel" .. name .. "Timer(): void {",
-        "    if (this.timer" .. name .. ") {",
-        "        TIMER.clearTimer(this.timer" .. name .. ");",
-        "        this.timer" .. name .. " = null;",
-        "    }",
-        "}",
-    }
-end
-
-local NEW_TOUCH_CLOSE_LAYER = [[
-const layer = this.getGameObject('node_bg/layer', UILayer);
-layer.setTouchEvent(this.close.bind(this));
-]]
-
--- ----------------------------------------------------------------------------
 
 local DMFieldTypeInfo = {
     string = nil,
@@ -365,73 +95,286 @@ local DMFieldTypeInfo = {
     specDict = { "idkey", "valueType", "catetory" },
 }
 
----@param args string[]
----@return string | nil result
----@return string | nil err
-local function data_model_field(args)
-    local err, name, index, type = arg_list_check(args, "name", "index", "type")
-    if err then return nil, err end
+-- ----------------------------------------------------------------------------
 
-    local extra_args = DMFieldTypeInfo[type] or {}
-    local jump_index = 1
-    local buffer = {}
-    for _, field in ipairs(extra_args) do
-        table.insert(buffer, " ")
-        table.insert(buffer, field)
-        table.insert(buffer, (": ${%d},"):format(jump_index))
-        jump_index = jump_index + 1
-    end
+local INIT_DATA_MODEL = {
+    "import { setDataModel } from '../base/struct_helper';",
+    "",
+}
 
-    return ("%s: { index: %d, typ: '%s',%s desc: '${%d}' },"):format(
-        name, index, type, table.concat(buffer), jump_index
-    )
-end
+local INIT_GM = {
+    "/* eslint-disable @typescript-eslint/no-magic-numbers */",
+    "import { IFakeAgent, ICmdArgsMap, ICmds, importedMap } from 'script_logic/common/wizcmd/wizcmd_interface';",
+    "",
+    "export const CMDS: ICmds = {",
+    { "    rootKey: '", 1, "'," },
+    "    childrens: {},",
+    "};",
+}
 
----@param args string[]
----@return string? result
----@return string? err
-local function data_model_new(args)
-    local err, name, desc = arg_list_check(args, "name", "desc")
-    if err then return nil, err end
+local INIT_PANEL = {
+    "import { S } from 'script_logic/base/global/singleton';",
+    "import { UIBase } from 'script_logic/base/ui_system/ui_base';",
+    "import { uiRegister } from 'script_logic/base/ui_system/ui_class_map';",
+    "import { UI_COMMON } from 'script_logic/base/ui_system/ui_common';",
+    "import { UIButton } from 'script_logic/base/ui_system/uiext/ui_button';",
+    "import { UIText } from 'script_logic/base/ui_system/uiext/ui_text';",
+    "import { LOGGING } from 'script_logic/common/base/logging';",
+    "",
+    { "const Log = LOGGING.logger('", 1, "');" },
+    "",
+    "/**",
+    { " * ", 2 },
+    " *",
+    " */",
+    "@uiRegister({",
+    { "    panelName: '", 1, "'," },
+    { "    panelDesc: '", 2, "'," },
+    { "    prefabPath: '", 3, "'," },
+    { "    fullScreen: true," },
+    { "    sortOrderType: UI_COMMON.CANVAS_SORT_ORDER.MENU," },
+    "})",
+    "// eslint-disable-next-line @typescript-eslint/no-unused-vars",
+    { "class ", to_camel(1), " extends UIBase {" },
+    "    protected onInit(): void {}",
+    "",
+    "    protected initEvents(args: UI_COMMON.TYPE_SHOW_PANEL_ARGS): void {}",
+    "",
+    "    protected onShow(args: UI_COMMON.TYPE_SHOW_PANEL_ARGS): void {}",
+    "",
+    "    protected onClose(): void {}",
+    "}",
+}
 
-    return ("setDataModel('%s', '%s', {});"):format(name, desc)
-end
+local INIT_TIPS = {
+    "import { LOGGING } from 'script_logic/common/base/logging';",
+    "import { TipsTypeMap } from './tips_info_map';",
+    "import { UITipsWidgetBase } from './ui_tips_base';",
+    "",
+    { "const Log = LOGGING.logger('", 1, "');" },
+    "",
+    { "type UITipsArg = TipsTypeMap['", 1, "']['args'];" },
+    { "export class ", to_camel(1), " extends UITipsWidgetBase<UITipsArg> {" },
+    "    public getCustomPreloadAssetList(): string[] {",
+    "        return [];",
+    "    }",
+    "",
+    "    protected initTips(): void {}",
+    "}",
+}
+
+local INIT_SUB_PANEL = {
+    "import { LOGGING } from 'script_logic/common/base/logging';",
+    "import { UISubView } from 'script_logic/base/ui_system/label_view/ui_sub_view';",
+    "",
+    { "const Log = LOGGING.logger('", 1, "');" },
+    "",
+    { "export class ", to_camel(1), " extends UISubView {" },
+    "    protected onInit(): void {}",
+    "",
+    "    protected initEvents(args: UI_COMMON.TYPE_SHOW_PANEL_ARGS): void {}",
+    "",
+    "    protected onShow(args: UI_COMMON.TYPE_SHOW_PANEL_ARGS): void {}",
+    "",
+    "    protected onClose(): void {}",
+    "}",
+}
+
+local NEW_CLOSE_BTN = [[
+const btnClose = this.getGameObject('node_bg/panel/btn_close', UIButton);
+btnClose.setOnClick(this.close.bind(this));
+]]
+
+local NEW_TOUCH_CLOSE_LAYER = [[
+const layer = this.getGameObject('node_bg/layer', UILayer);
+layer.setTouchEvent(this.close.bind(this));
+]]
 
 -- ----------------------------------------------------------------------------
 
-local context = {
-    trig = ":(.+);",
-    regTrig = true,
-    condition = s.conds_ext.line_begin_smart,
+cmd_snip.register {
+    ["dm fd"] = {
+        args = { "name", "index", "type" },
+        content = function(name, index, type)
+            index = tonumber(index) or 0
+            local extra_args = DMFieldTypeInfo[type] or {}
+            local jump_index = 1
+            local buffer = {}
+            for _, field in ipairs(extra_args) do
+                table.insert(buffer, " ")
+                table.insert(buffer, field)
+                table.insert(buffer, (": ${%d},"):format(jump_index))
+                jump_index = jump_index + 1
+            end
+
+            return ("%s: { index: %d, typ: '%s',%s desc: '${%d}' },"):format(
+                name, index, type, table.concat(buffer), jump_index
+            )
+        end,
+    },
+    ["dm new"] = {
+        args = { "name", "desc" },
+        content = function(name, desc)
+            return ("setDataModel('%s', '%s', {});"):format(name, desc)
+        end,
+    },
+    fn = {
+        args = { "modifier-or-name", {"name", is_optional = true } },
+        content = function(modifier_or_name, name)
+            local modifier = name and modifier_or_name or ""
+            name = name or modifier_or_name
+
+            local result = "const " .. name .. " = (${2}): ${1:void} => {${3}};"
+            if modifier then
+                result = modifier .. " " .. result
+            end
+
+            return result
+        end,
+    },
+    gg = {
+        -- get game object of type
+        args = { "variable", "object", "class-alias" },
+        content = function(variable, object, class_alias)
+            local class_name = game_object_name_map[class_alias]
+
+            if not class_name then
+                return nil
+            elseif class_name == "" then
+                return ("const %s = %s.getGameObject('${1}');"):format(variable, object)
+            end
+
+            return ("const %s = %s.getGameObject('${1}', %s);"):format(variable, object, class_name)
+        end,
+    },
+    ["import gm_cmd"] = {
+        args = { "name" },
+        content = function(name)
+            return ("import * as %s from 'script_logic/common/wizcmd/cmds/%s'"):format(name:upper(), name)
+        end,
+    },
+    ["import module"] = {
+        args = { "name" },
+        content = function(name)
+            local info = import_map[name]
+            if not info then
+                return nil
+            end
+
+            return ("import { %s } from '%s';"):format(
+                table.concat(info.names, ", "),
+                info.path
+            )
+        end,
+    },
+    ["import util"] = {
+        args = { "name" },
+        content = function(name)
+            local symbol = name:upper()
+            return ("import { %s } from 'script_logic/common/utils/%s';"):format(symbol, name)
+        end,
+    },
+    ["init data_model"] = {
+        content = INIT_DATA_MODEL,
+    },
+    ["init gm"] = {
+        content = INIT_GM,
+    },
+    ["init panel"] = {
+        content = INIT_PANEL,
+    },
+    ["init sub_panel"] = {
+        content = INIT_SUB_PANEL,
+    },
+    ["init tips"] = {
+        content = INIT_TIPS,
+    },
+    method = {
+        args = { "modifier-or-name", { "name", is_optional = true } },
+        content = function(modifier_or_name, name)
+            local modifier = name and modifier_or_name or "private"
+            name = name or modifier_or_name
+            return modifier .. " " .. name .. "(${2}): ${1:void} {${3}}"
+        end,
+    },
+    ["new gm arg"] = {
+        args = { "name" },
+        content = function(name)
+            return ("{ name: '%s', typ: '${1}', default: ${2} }"):format(name)
+        end,
+    },
+    ["new gm cmd"] = {
+        args = { { "type", is_optional = true } },
+        content = function(type)
+            type = type or "client"
+            local buffer = {
+                { "'", 1, "': {" },
+                "    args: [],",
+            }
+
+            if type == GmCmdType.Server then
+                table_utils.extend_list(buffer, {
+                    "    imports: { },",
+                    "    server: (agent: IFakeAgent, cmdArgs: ICmdArgsMap, imports: importedMap): void => {",
+                    "        // const { } = imports;",
+                    "        // const role = agent.role;",
+                    "        // const argName = cmdArgs.argName;",
+                    "    },"
+                })
+            elseif type == GmCmdType.Client then
+                table_utils.extend_list(buffer, {
+                    "    client: (cmdArgs: ICmdArgsMap, imports: importedMap): void => {",
+                    "        // const { } = imports;",
+                    "        // const argName = cmdArgs.argName;",
+                    "    },"
+                })
+            else
+                return nil
+            end
+
+            table.insert(buffer, "},")
+
+            return buffer
+        end,
+    },
+    ["new close_btn"] = {
+        content = NEW_CLOSE_BTN,
+    },
+    ["new scroll"] = {
+        args = { "name" },
+        content = function(name)
+            return {
+                "private update" .. name .. "Scroll(): void {",
+                { "    const scroll = this.getGameObject('", 1, "', UIScrollView);" },
+                "    scroll.setUpdateItemCallback(this.update" .. name .. "Item.bind(this));",
+                "",
+                "    const totalCnt = COMMON_CONST.ZERO;",
+                "    scroll.setTotalCount(totalCnt);",
+                "}",
+                "",
+                "private update" .. name .. "Item(item: GameObject, index: number): void {}",
+            }
+        end,
+    },
+    ["new timer"] = {
+        args = { "name" },
+        content = function(name)
+            return {
+                "private init" .. name .. "Timer(): void {",
+                "    this.cancel" .. name .. "Timer();",
+                { "    this.timer" .. name .. " = TIMER.", 1, "();" },
+                "}",
+                "",
+                "private cancel" .. name .. "Timer(): void {",
+                "    if (this.timer" .. name .. ") {",
+                "        TIMER.clearTimer(this.timer" .. name .. ");",
+                "        this.timer" .. name .. " = null;",
+                "    }",
+                "}",
+            }
+        end,
+    },
+    ["new touch_close"] = {
+        content = NEW_TOUCH_CLOSE_LAYER,
+    },
 }
-s.command_snip(asp, context, {
-    dm = {
-        fd = data_model_field,
-        new = data_model_new,
-    },
-    fn = new_function,
-    gg = get_gameobject_of_type,
-    import = {
-        gm_cmd = import_gm_cmd,
-        module = import_module,
-        util = import_util,
-    },
-    init = {
-        data_model = INIT_DATA_MODEL,
-        gm = INIT_GM,
-        panel = INIT_PANEL,
-        sub_panel = INIT_SUB_PANEL,
-        tips = INIT_TIPS,
-    },
-    method = new_method,
-    new = {
-        close_btn = NEW_CLOSE_BTN,
-        gm = {
-            arg = new_gm_arg,
-            cmd = new_gm_cmd,
-        },
-        scroll = new_scroll,
-        timer = new_timer,
-        touch_close = NEW_TOUCH_CLOSE_LAYER,
-    },
-})

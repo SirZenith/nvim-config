@@ -83,3 +83,9 @@ apsp("ssn", 's.s(${1})')
 apsp("sps", 's.ps(${1})')
 apsp("srn", 's.r(${1})')
 apsp("sdn", 's.d(${1})')
+
+apsp("new-cmd-snip", [[
+["${1:cmd}"] = cmd_snip.cmd_item {
+    content = ${0}
+}
+]])

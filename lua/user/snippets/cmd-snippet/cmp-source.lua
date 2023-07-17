@@ -1,4 +1,5 @@
 local import = require "user.utils".import
+local CmdItem = require "user.snippets.cmd-snippet.cmd-item"
 
 local M = {}
 
@@ -51,17 +52,28 @@ local function gen_completion(params)
         end
     end
 
+    local result = {}
     local walker = cmd_map
     for _, seg in ipairs(segments) do
+        if not walker then break end
         walker = walker[seg]
 
-        if type(walker) ~= "table" then
-            walker = EMPTY_SIGNAL_ITEM
+        if not walker then
+            result = EMPTY_SIGNAL_ITEM
+            break
+        elseif type(walker) == "table" and CmdItem:is_instance(walker) then
+            for _, name in ipairs(walker:get_arg_names()) do
+                name = "<" .. name .. ">"
+                result[name] = true
+            end
+            walker = nil
             break
         end
     end
 
-    for k in pairs(walker) do
+    result = walker or result
+
+    for k in pairs(result) do
         table.insert(items, {
             label = k,
             dup = 0,

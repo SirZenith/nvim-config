@@ -46,7 +46,8 @@ local function lsp_on_attach(client, bufnr)
         ["<space>wa"] = vim.lsp.buf.add_workspace_folder,
         ["<space>wr"] = vim.lsp.buf.remove_workspace_folder,
         ["<space>wl"] = function()
-            vim.print(vim.lsp.buf.list_workspace_folders())
+            local msg = table.concat(vim.lsp.buf.list_workspace_folders(), ",\n")
+            vim.notify(msg)
         end,
     }
 

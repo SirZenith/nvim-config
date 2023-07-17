@@ -1,4 +1,5 @@
 local utils = require "user.utils"
+local cmd_snip = require "user.snippets.cmd-snippet"
 
 local arg_list_check = utils.arg_list_check
 
@@ -20,30 +21,23 @@ local asp = makers.asp
 -- local regpsp = makers.regpsp
 -- local regapsp = makers.regapsp
 
----@param args string[]
----@return Node[] | nil
----@return string | nil err
-local function new_test(args)
-    local err, name = arg_list_check(args, "name")
-    if err then return nil, err end
-
-    local sep_len = 5
-    local title_sep = ("="):rep(5)
-    return {
-        title_sep,
-        name,
-        title_sep,
-        "",
-        { 1 },
-        "",
-        ("-"):rep(sep_len),
-        "",
-        { 2 },
-    }
-end
-
-s.command_snip(asp, nil, {
-    new = {
-        test = new_test,
+cmd_snip.register {
+    ["new test"] = {
+        args = { "name" },
+        content = function(name)
+            local sep_len = 5
+            local title_sep = ("="):rep(5)
+            return {
+                title_sep,
+                name,
+                title_sep,
+                "",
+                { 1 },
+                "",
+                ("-"):rep(sep_len),
+                "",
+                { 2 },
+            }
+        end,
     },
-})
+}

@@ -177,7 +177,10 @@ user.general = {
             },
             {
                 name = "tree-sitter-test",
-                pattern = "tree%-sitter%-.-/corpus/.+%..*$",
+                pattern = {
+                    "tree%-sitter%-.-/corpus/.+%..*$",
+                    "tests%-for%-future/.+$",
+                },
                 secondary = true,
             },
         },

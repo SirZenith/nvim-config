@@ -1,5 +1,5 @@
 local user = require "user"
-local snip_completion = require "user.snippets.util.cmd_completion"
+local snip_completion = require "user.snippets.cmd-snippet.cmp-source"
 
 return function()
     user.lsp.capabilities_settings:append(
@@ -17,8 +17,7 @@ return function()
     local cmp = require "cmp"
 
     local function has_words_before()
-        local unpac = unpack or table.unpack
-        local line, col = unpac(vim.api.nvim_win_get_cursor(0))
+        local line, col = unpack(vim.api.nvim_win_get_cursor(0))
         return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match "%s" == nil
     end
 
