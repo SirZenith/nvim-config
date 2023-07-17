@@ -83,7 +83,7 @@ function M:complete(params, callback)
 
     local items = gen_completion(params)
 
-    callback({ items = items, isIncomplete = true })
+    callback({ items = items, isIncomplete = false })
 end
 
 -- ----------------------------------------------------------------------------
