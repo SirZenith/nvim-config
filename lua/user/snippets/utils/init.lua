@@ -21,6 +21,7 @@ local user = require "user"
 local table_utils = require "user.utils.table"
 local fs = require "user.utils.fs"
 local import = require "user.utils".import
+local snip_completion = require "user.snippets.util.cmd_completion"
 
 local ls = require "luasnip"
 local ls_extra = require "luasnip.extras"
@@ -277,9 +278,12 @@ function M.command_snip(maker, context, cmd_map)
         regTrig = true,
         condition = M.conds_ext.line_begin_smart,
     }
+
     maker(context, M.d(1, function(_, snip)
         return command_snip_func(snip, cmd_map)
     end))
+
+    snip_completion.set_cmd_map(cmd_map)
 end
 
 -- ----------------------------------------------------------------------------

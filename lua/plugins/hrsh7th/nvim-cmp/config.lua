@@ -1,4 +1,5 @@
 local user = require "user"
+local snip_completion = require "user.snippets.util.cmd_completion"
 
 return function()
     user.lsp.capabilities_settings:append(
@@ -75,6 +76,9 @@ return function()
             { name = "tree-sitter-grammar" },
         }, {
             { name = "buffer" },
+        }, {
+            -- completion source registered in user configs
+            { name = snip_completion.name },
         })
     })
 
