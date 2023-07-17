@@ -239,18 +239,46 @@ user.theme.highlight = {
     PanelpalUnselect = {
         fg = "#4f6074",
     },
-    TabDarker = {
-        fg = "#cdcecf",
-        bg = "#232831"
+    -- ------------------------------------------------------------------------
+    -- Tab Line Style
+    TabBar = {
+        bg = "#232831",
+        -- bg = "#2e3440",
+        -- bg = "#39404f",
+    },
+    TabIcon = {
+        fg = "#7e8188",
+        bg = "#39404f",
     },
     TabStatus = {
         fg = "#abb1bb",
         bg = "#444c5e",
     },
-    TabLineSel = {
+    TabInactive = {
+        fg = "#abb1bb",
+        bg = "#232831"
+    },
+    TabActive = {
         fg = "#2e3440",
         bg = "#81a1c1",
     },
+    TabSign = {
+        fg = "#c7cdd9",
+        bg = "#232831"
+    },
+    TabSignActive = {
+        fg = "#c7cdd9",
+        bg = "#81a1c1",
+    },
+    TabStatusSign = {
+        fg = "#abb1bb",
+        bg = "#444c5e",
+    },
+    TabStatusSignActive = {
+        fg = "#c7cdd9",
+        bg = "#444c5e",
+    },
+    -- ------------------------------------------------------------------------
     Visual = {
         fg = nil,
         bg = "#3a4657",
