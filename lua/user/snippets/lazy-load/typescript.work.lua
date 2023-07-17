@@ -267,7 +267,7 @@ local function new_gm_cmd(args)
     if type == GmCmdType.Server then
         table_utils.extend_list(buffer, {
             "    imports: { },",
-            { "    server: (agent: IFakeAgent, cmdArgs: ICmdArgsMap, imports: importedMap): void => {" },
+            "    server: (agent: IFakeAgent, cmdArgs: ICmdArgsMap, imports: importedMap): void => {",
             "        // const { } = imports;",
             "        // const role = agent.role;",
             "        // const argName = cmdArgs.argName;",
@@ -275,7 +275,8 @@ local function new_gm_cmd(args)
         })
     elseif type == GmCmdType.Client then
         table_utils.extend_list(buffer, {
-            { "    client: (cmdArgs: ICmdArgsMap, imports: importedMap): void => {" },
+            "    client: (cmdArgs: ICmdArgsMap, imports: importedMap): void => {",
+            "        // const { } = imports;",
             "        // const argName = cmdArgs.argName;",
             "    },"
         })
