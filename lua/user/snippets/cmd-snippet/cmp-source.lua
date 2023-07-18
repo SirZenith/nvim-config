@@ -3,13 +3,20 @@ local CmdItem = require "user.snippets.cmd-snippet.cmd-item"
 
 local M = {}
 
-local EMPTY_SIGNAL_ITEM = { ["[empty]"] = true }
+local EMPTY_SIGNAL_ITEM = {
+    {
+        label = "[empty]",
+        insertText = "",
+        kind = vim.lsp.protocol.CompletionItemKind.Text,
+    },
+}
 
----@alias CommandMap { [string]: CommandMap }
+---@alias CommandMap { [string]: (CommandMap | CmdItem) }
 
 ---@class CompletionItem
 ---@field label string
----@field dup number
+---@field insterText? string
+---@field kind vim.lsp.protocol.CompletionItemKind
 
 M.name = "cmd-snip-cmp"
 
@@ -34,6 +41,52 @@ function M:is_available()
     return cmd_map ~= nil
 end
 
+---@param item CommandMap
+local function gen_cmd_list(item)
+    local result = {}
+    for k in pairs(item) do
+        table.insert(result, {
+            label = k,
+            kind = vim.lsp.protocol.CompletionItemKind.Method,
+        })
+    end
+    return result
+end
+
+---@param item CommandMap
+---@param seg string
+local function gen_cmd_matching(item, seg)
+    local result = {}
+    for k in pairs(item) do
+        if k:starts_with(seg) then
+            table.insert(result, {
+                label = k,
+                kind = vim.lsp.protocol.CompletionItemKind.Method,
+            })
+        end
+    end
+    return result
+end
+
+---@param item CmdItem
+---@return CompletionItem[]
+local function gen_argument_list(item)
+    local result = {}
+    for i, name in ipairs(item:get_arg_names()) do
+        table.insert(result, {
+            label = ("#%d: %s"):format(i, name),
+            insertText = name:gsub("-", "_"),
+            kind = vim.lsp.protocol.CompletionItemKind.Field,
+        })
+    end
+    return result
+end
+
+local function gen_empty_list()
+    return EMPTY_SIGNAL_ITEM
+end
+
+---@return CompletionItem[] | nil
 local function gen_completion(params)
     local items = {}
     if not cmd_map then return items end
@@ -52,39 +105,33 @@ local function gen_completion(params)
         end
     end
 
-    local result = {}
+    local result
     local walker = cmd_map
-    for _, seg in ipairs(segments) do
-        if not walker then break end
-        walker = walker[seg]
+    local len = #segments
+    for i, seg in ipairs(segments) do
+        local next_step = walker[seg]
+        local is_last = i == len
 
-        if not walker then
-            result = EMPTY_SIGNAL_ITEM
+        if not next_step then
+            result = is_last
+                and gen_cmd_matching(walker, seg)
+                or gen_empty_list()
             break
-        elseif type(walker) == "table" and CmdItem:is_instance(walker) then
-            for _, name in ipairs(walker:get_arg_names()) do
-                name = "<" .. name .. ">"
-                result[name] = true
-            end
-            walker = nil
+        elseif type(next_step) == "table" and CmdItem:is_instance(next_step) then
+            result = gen_argument_list(next_step)
             break
         end
+
+        walker = next_step
     end
 
-    result = walker or result
-
-    for k in pairs(result) do
-        table.insert(items, {
-            label = k,
-            dup = 0,
-            kind = vim.lsp.protocol.CompletionItemKind.Method,
-        })
+    if not result then
+        result = gen_cmd_list(walker)
     end
 
-    return items
+    return result
 end
 
--- Completion only start on a line ends with pattern `%(%S*`.
 ---@param params any
 ---@param callback fun(result: { items: CompletionItem[], isIncomplete: boolean } | nil)
 function M:complete(params, callback)
@@ -94,8 +141,12 @@ function M:complete(params, callback)
     end
 
     local items = gen_completion(params)
+    if not items
+        then callback(nil)
+    else
+        callback({ items = items, isIncomplete = true })
+    end
 
-    callback({ items = items, isIncomplete = false })
 end
 
 -- ----------------------------------------------------------------------------
