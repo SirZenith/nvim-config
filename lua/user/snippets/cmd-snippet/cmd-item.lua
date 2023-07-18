@@ -164,6 +164,20 @@ function CmdItem:check_args(args)
     return nil
 end
 
+---@return number
+function CmdItem:get_required_arg_cnt()
+    local cnt = 0
+    if not self.args then return cnt end
+
+    for _, item in ipairs(self.args) do
+        if not item.is_optional then
+            cnt = cnt + 1
+        end
+    end
+
+    return cnt
+end
+
 ---@return string[]
 function CmdItem:get_arg_names()
     local names = {}

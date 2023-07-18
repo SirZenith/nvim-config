@@ -77,7 +77,7 @@ local function command_snip_func(_, snip)
     local nodes
     if not target then
         vim.notify("no matching command", vim.log.levels.WARN)
-    elseif target.args and #target.args ~= 0 and #args == 0 then
+    elseif target.args and target:get_required_arg_cnt() > 0 and #args == 0 then
         nodes = target:gen_signature_snip()
         table.insert(nodes, 1, luasnip.text_node(":" .. cmd .. " "))
     else
