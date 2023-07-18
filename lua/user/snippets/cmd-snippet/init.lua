@@ -83,7 +83,7 @@ local function command_snip_func(_, snip)
     else
         local err = target:check_args(args)
         if err then
-            vim.notify(err, vim.log.levels.ERROR)
+            vim.notify(err, vim.log.levels.WARN)
         else
             nodes = target:make_snippet(args)
         end

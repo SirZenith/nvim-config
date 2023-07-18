@@ -144,7 +144,7 @@ function CmdItem:check_args(args)
     local len = #self.args
     local last_item = self.args[len]
     local has_varg = last_item and last_item.is_varg
-    if not has_varg and #args ~= len then
+    if not has_varg and #args > len then
         return ("mismatch argument count: want %d got %d"):format(len, #args)
     end
 
