@@ -61,30 +61,6 @@ local function load_config(spec)
     end
 end
 
-local function make_loader(use)
-    return function(spec)
-        local before_load = spec.__before_load
-        local before_load_type = type(before_load)
-
-        if before_load_type == "string" then
-            vim.cmd(before_load)
-        elseif before_load_type == "function" then
-            before_load()
-        end
-
-        if xpcall(
-                function() use(spec) end,
-                function()
-                    io.write("while loading: ")
-                    vim.print(spec)
-                    vim.notify(debug.traceback())
-                end
-            ) then
-            loaded_plugin_list[#loaded_plugin_list + 1] = spec
-        end
-    end
-end
-
 local function turn_on_true_color()
     if vim.fn.has "nvim" then
         vim.env.NVIM_TUI_ENABLE_TRUE_COLOR = 1
@@ -96,7 +72,28 @@ local function turn_on_true_color()
 end
 
 local is_bootstranp, packer = require_packer()
-local load = make_loader(packer.use)
+
+local function load(spec)
+    local before_load = spec.__before_load
+    local before_load_type = type(before_load)
+
+    if before_load_type == "string" then
+        vim.cmd(before_load)
+    elseif before_load_type == "function" then
+        before_load()
+    end
+
+    if xpcall(
+        function() packer.use(spec) end,
+        function()
+            io.write("while loading: ")
+            vim.print(spec)
+            vim.notify(debug.traceback())
+        end
+    ) then
+        loaded_plugin_list[#loaded_plugin_list + 1] = spec
+    end
+end
 
 local plugin_list = {
     "wbthomason/packer.nvim",
@@ -104,7 +101,7 @@ local plugin_list = {
     -- ------------------------------------------------------------------------
     -- General
     "lewis6991/gitsigns.nvim",
-    { "ggandor/lightspeed.nvim",     disable = true },
+    { "ggandor/lightspeed.nvim", disable = true },
     "numToStr/Comment.nvim",
     {
         "nvim-tree/nvim-tree.lua",
@@ -141,16 +138,16 @@ local plugin_list = {
         disable = true
     },
     { "marko-cerovac/material.nvim", disable = true },
-    { "kaicataldo/material.vim",     disable = true },
+    { "kaicataldo/material.vim", disable = true },
     {
         "EdenEast/nightfox.nvim",
         __before_load = turn_on_true_color,
     },
-    { "shaunsingh/nord.nvim",             disable = true },
-    { "mhartington/oceanic-next",         disable = true },
+    { "shaunsingh/nord.nvim", disable = true },
+    { "mhartington/oceanic-next", disable = true },
     { "JoosepAlviste/palenightfall.nvim", disable = true },
-    { "wadackel/vim-dogrun",              disable = true },
-    { "rakr/vim-two-firewatch",           disable = true },
+    { "wadackel/vim-dogrun", disable = true },
+    { "rakr/vim-two-firewatch", disable = true },
     {
         "nvim-lualine/lualine.nvim",
         requires = { "kyazdani42/nvim-web-devicons", opt = true },

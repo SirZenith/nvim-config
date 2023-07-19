@@ -70,7 +70,9 @@ rawset(user, "finalize", function()
     chdir()
 
     -- loading custom loader
-    require "user.utils.module_loaders"
+    require "user.utils.module_loaders".setup {
+        config_home = user.env.CONFIG_HOME(),
+    }
 
     local modules = {
         -- load plugins first, make sure all config file can `require` them.
