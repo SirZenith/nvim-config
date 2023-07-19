@@ -23,6 +23,19 @@ local theme = {
     status_sign_active = "TabStatusSignActive",
 }
 
+local max_len = 12
+
+---@param text string
+---@param max_len number
+local function str_digest(text, max_len)
+    local len = #text
+    if len <= max_len then
+        return text
+    else
+        return text:sub(1, max_len - 3) .. "..."
+    end
+end
+
 return function()
     local tabline = require "tabby.tabline"
     tabline.set(function(line)
@@ -40,7 +53,7 @@ return function()
                     line.sep('', hl, theme.fill),
                     { sign, hl = sign_hl, margin = ' ' },
                     tab.number(),
-                    tab.name(),
+                    str_digest(tab.name(), max_len),
                     tab.close_btn(''),
                     line.sep(' ', hl, theme.fill),
                     hl = hl,
@@ -55,7 +68,7 @@ return function()
                 return {
                     line.sep('', theme.status, theme.fill),
                     { sign, hl = sign_hl, margin = ' ' },
-                    win.buf_name(),
+                    str_digest(win.buf_name(), max_len),
                     line.sep(' ', theme.status, theme.fill),
                     hl = theme.status,
                     margin = ' ',
