@@ -8,10 +8,11 @@ if err then
 end
 
 local utils = require "user.utils"
+local fs = require "user.utils.fs"
 local import = utils.import
-local ConfigEntry = require "user.utils.config_entry".ConfigEntry
+local config_entry = require "user.utils.config_entry"
 
-local user = ConfigEntry:new(base_config) --[[@as UserConfig]]
+local user = config_entry.ConfigEntry:new(base_config) --[[@as UserConfig]]
 
 -- ----------------------------------------------------------------------------
 
@@ -51,6 +52,11 @@ local function chdir()
     end
 end
 
+local function dump_user_config_meta()
+    local filepath = fs.path_join(user.env.CONFIG_HOME(), "user", "meta", "user_config.lua")
+    config_entry.dump_signature(user --[[@as ConfigEntry]], filepath)
+end
+
 -- ----------------------------------------------------------------------------
 
 rawset(user, "finalize", function()
@@ -85,6 +91,8 @@ rawset(user, "finalize", function()
 
     -- finalize all loaded configs
     utils.finalize(modules)
+
+    dump_user_config_meta()
 end)
 
 return user

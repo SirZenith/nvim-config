@@ -37,4 +37,16 @@ function M.filter(list, cond_func)
     return tab
 end
 
+---@generic Input, Output
+---@param list Input[]
+---@param func fun(i: integer, item: Input): Output
+---@return Output[]
+function M.map(list, func)
+    local result = {}
+    for i = 1, #list do
+        result[i] = func(i, list[i])
+    end
+    return result
+end
+
 return M

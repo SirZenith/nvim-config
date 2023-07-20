@@ -1,3 +1,4 @@
+local utils = require "user.utils"
 local fnil = require "user.utils.functional".fnil
 local table_utils = require "user.utils.table"
 
@@ -330,5 +331,83 @@ end
 local M = {
     ConfigEntry = ConfigEntry
 }
+
+-- ----------------------------------------------------------------------------
+
+---@class PendingTarget
+---@field name string
+---@field value table
+
+---@class DumpEnv
+---@field buffer string[] # dump result line buffer
+---@field cur_path string[]
+---@field pending PendingTarget[]
+
+---@param env DumpEnv
+---@param class_name string
+---@param tbl any
+---@param parent_class? string
+local function _dump_config_class(env, class_name, tbl, parent_class)
+    parent_class = parent_class or "ConfigEntry"
+    if table_utils.is_array(tbl) then
+        ---@type string
+        local element_type = tbl[1] and type(tbl[1]) or "any"
+        table.insert(env.buffer, "-- underlaying: " .. element_type .. "[]")
+    end
+
+    local class_line = "---@class " .. class_name
+    if parent_class ~= "" then
+        class_line = class_line .. " : " .. parent_class
+    end
+    table.insert(env.buffer, class_line)
+
+    for key, value in pairs(tbl) do
+        if type(key) == "number" then
+            -- pass
+        elseif type(value) ~= "table" then
+            table.insert(env.buffer, "---@field " .. key .. " " .. type(value))
+        else
+            local name = class_name .. utils.underscore_to_camel_case(key)
+            table.insert(env.buffer, "---@field " .. key .. " " .. name)
+            table.insert(env.pending, { name = name, value = value })
+        end
+    end
+
+    table.insert(env.buffer, "")
+end
+
+---@param config_entry ConfigEntry
+---@return string
+local function dump_signature(config_entry)
+    ---@class DumpEnv
+    local env = {
+        buffer = { "---@meta", ""},
+        pending = {},
+    }
+
+    local target = { name = "UserConfig", value = config_entry(), parent_class = "" }
+    while target do
+        _dump_config_class(env, target.name, target.value, target.parent_class)
+        target = table.remove(env.pending, 1)
+    end
+
+    return table.concat(env.buffer, "\n")
+end
+
+---@param config_entry ConfigEntry
+---@param path string # path to output meta file
+function M.dump_signature(config_entry, path)
+    local file, err = io.open(path, "w")
+    if not file then
+        vim.notify(err or "")
+        return
+    end
+
+    local metadata = dump_signature(config_entry)
+    file:write(metadata)
+    file:close()
+end
+
+
 
 return M

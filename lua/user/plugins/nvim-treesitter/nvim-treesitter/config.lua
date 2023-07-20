@@ -66,10 +66,10 @@ user.plugin.nvim_treesitter = {
             enable = true,
             keymaps = {
                 -- set to `false` to disable one of the mappings
-                init_selection = "<leader>g",
-                node_incremental = "<leader>gl",
-                scope_incremental = "<leader>g;",
-                node_decremental = "<leader>ga",
+                init_selection = "<Backspace>g",
+                node_incremental = "<Backspace>gl",
+                scope_incremental = "<Backspace>g;",
+                node_decremental = "<Backspace>ga",
             },
         },
         indent = {

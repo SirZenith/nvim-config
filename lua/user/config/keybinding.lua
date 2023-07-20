@@ -27,7 +27,16 @@ user.keybinding = {
         end,
         ---@type string[]
         search_paths = { "." },
-    }
+    },
+    cursor_file = {
+        jump_pattern = {
+            "?",
+            "?.lua",
+            "?.h",
+            "?.hpp",
+            "user/plugins/?/config.lua",
+        }
+    },
 }
 
 local KEYBINDING_AUGROUP = api.nvim_create_augroup("user.keybinding", { clear = true })
@@ -105,26 +114,40 @@ end
 
 ---@param is_open_in_new_tab boolean
 local function goto_cursor_file(is_open_in_new_tab)
-    ---@type string[]
-    local patterns = vim.split("?;?.lua;?.h;?.hpp;plugins/?/config.lua", ";")
     local cfile = vim.fn.expand "<cfile>"
 
+    local search_targets = {}
     local path
-    for i = 1, #patterns do
-        local p = patterns[i]:gsub("%?", cfile)
+    for _, pattern in user.keybinding.cursor_file.jump_pattern:ipairs() do
+        local p = pattern:gsub("%?", cfile)
         if vim.fn.filereadable(p) == 1 then
             path = p
             break
         end
+        table.insert(search_targets, p)
     end
 
-    if not path then
-        vim.notify("no match found for: " .. cfile)
-    else
+    if not path and #search_targets > 0 then
+        local buffer = { "No match found do you want to create it?" }
+        for i, p in ipairs(search_targets) do
+            table.insert(buffer, ("%d. %s"):format(i, p))
+        end
+        table.insert(buffer, "Input an index to confirm, or empty to quit: ")
+
+        local prompt = table.concat(buffer, "\n")
+        local index = tonumber(vim.fn.input(prompt))
+        if index then
+            path = search_targets[index]
+        end
+    end
+
+    if path then
         local prefix = is_open_in_new_tab
             and "tabe "
             or "e "
         vim.cmd(prefix .. path)
+    else
+        vim.notify("No match found for: " .. cfile)
     end
 end
 
@@ -220,8 +243,8 @@ local n_common_keymap = {
     ["<A-j>"] = "<cmd>cnext<cr>",
     ["<A-k>"] = "<cmd>cprevious<cr>",
     -- jump to file
-    ["gf"] = function() goto_cursor_file(false) end,
-    ["<C-w>gf"] = function() goto_cursor_file(true) end,
+    ["gf"] = function() goto_cursor_file(true) end,
+    ["<leader>gf"] = function() goto_cursor_file(false) end,
 }
 
 ---@type KeyMap

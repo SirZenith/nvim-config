@@ -1,4 +1,5 @@
-local utils = require "user.utils"
+local config_entry = require "user.utils.config_entry"
+local fs = require "user.utils.fs"
 local ls = require "user.language-server"
 local snip_utils = require "user.snippets.utils"
 
@@ -25,8 +26,12 @@ cmd("DumpConfigMeta", function()
             package.loaded[k] = nil
         end
     end
-    require "user".finalize()
-    utils.dump_signature_metafile()
+
+    local user = require "user"
+    user.finalize()
+
+    local filepath = fs.path_join(user.env.CONFIG_HOME(), "user", "meta", "user_config.lua")
+    config_entry.dump_signature(user --[[@as ConfigEntry]], filepath)
 end, {
     desc = "dump user config metadata to file."
 })
