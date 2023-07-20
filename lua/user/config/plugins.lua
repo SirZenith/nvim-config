@@ -1,66 +1,3 @@
-local user = require "user"
-local utils = require "user.utils"
-local import = utils.import
-local fs = require "user.utils.fs"
-
-if vim.fn.executable("git") == 0 then
-    error("can't find command git.")
-end
-
-local fn = vim.fn
-
-local M = {}
-
-LUA_LINE_THEME = nil ---@type string?
-
-local loaded_plugin_list = {}
-local modules = {}
-
-local function get_config_name(path)
-    return fs.path_join("plugins", path, "config.lua")
-end
-
-local function require_packer()
-    local is_bootstranp = false
-    local install_path = fn.stdpath("data") .. "/site/pack/packer/start/packer.nvim"
-
-    if fn.empty(fn.glob(install_path)) == 1 then
-        is_bootstranp = true
-
-        fn.system {
-            "git",
-            "clone",
-            "--depth",
-            "1",
-            "https://github.com/wbthomason/packer.nvim",
-            install_path,
-        }
-    end
-
-    vim.cmd "packadd packer.nvim"
-
-    return is_bootstranp, require("packer")
-end
-
-local function load_config(spec)
-    local path
-    local spec_type = type(spec)
-    if spec_type == "table" then
-        path = not spec.disable and spec[1] or nil
-    elseif spec_type == "string" then
-        path = spec
-    end
-
-    if not path or #path == 0 then return end
-
-    local cfg_name = get_config_name(path)
-    local file = fs.path_join(user.env.CONFIG_HOME(), cfg_name)
-    if fn.filereadable(file) ~= 0 then
-        local module = import(cfg_name)
-        modules[#modules + 1] = module
-    end
-end
-
 local function turn_on_true_color()
     if vim.fn.has "nvim" then
         vim.env.NVIM_TUI_ENABLE_TRUE_COLOR = 1
@@ -71,37 +8,14 @@ local function turn_on_true_color()
     end
 end
 
-local is_bootstranp, packer = require_packer()
-
-local function load(spec)
-    local before_load = spec.__before_load
-    local before_load_type = type(before_load)
-
-    if before_load_type == "string" then
-        vim.cmd(before_load)
-    elseif before_load_type == "function" then
-        before_load()
-    end
-
-    if xpcall(
-        function() packer.use(spec) end,
-        function()
-            io.write("while loading: ")
-            vim.print(spec)
-            vim.notify(debug.traceback())
-        end
-    ) then
-        loaded_plugin_list[#loaded_plugin_list + 1] = spec
-    end
-end
-
-local plugin_list = {
+return {
     "wbthomason/packer.nvim",
 
     -- ------------------------------------------------------------------------
     -- General
     "lewis6991/gitsigns.nvim",
-    { "ggandor/lightspeed.nvim", disable = true },
+    -- { "ggandor/lightspeed.nvim",     disable = true },
+    { "ggandor/lightspeed.nvim" },
     "numToStr/Comment.nvim",
     {
         "nvim-tree/nvim-tree.lua",
@@ -138,16 +52,16 @@ local plugin_list = {
         disable = true
     },
     { "marko-cerovac/material.nvim", disable = true },
-    { "kaicataldo/material.vim", disable = true },
+    { "kaicataldo/material.vim",     disable = true },
     {
         "EdenEast/nightfox.nvim",
         __before_load = turn_on_true_color,
     },
-    { "shaunsingh/nord.nvim", disable = true },
-    { "mhartington/oceanic-next", disable = true },
+    { "shaunsingh/nord.nvim",             disable = true },
+    { "mhartington/oceanic-next",         disable = true },
     { "JoosepAlviste/palenightfall.nvim", disable = true },
-    { "wadackel/vim-dogrun", disable = true },
-    { "rakr/vim-two-firewatch", disable = true },
+    { "wadackel/vim-dogrun",              disable = true },
+    { "rakr/vim-two-firewatch",           disable = true },
     {
         "nvim-lualine/lualine.nvim",
         requires = { "kyazdani42/nvim-web-devicons", opt = true },
@@ -232,31 +146,3 @@ local plugin_list = {
         },
     },
 }
-
-packer.startup(function()
-    for _, plugin in ipairs(plugin_list) do
-        load(plugin)
-    end
-
-    if not is_bootstranp then
-        for _, spec in ipairs(loaded_plugin_list) do
-            load_config(spec)
-        end
-    end
-end)
-
-function M.load(spec)
-    packer.use(spec)
-    if not is_bootstranp then
-        load_config(spec)
-    end
-end
-
-function M.finalize()
-    if is_bootstranp then
-        packer.sync()
-    end
-    utils.finalize(modules)
-end
-
-return M

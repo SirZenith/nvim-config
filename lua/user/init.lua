@@ -1,34 +1,17 @@
-local utils = require "user.utils"
-local import = utils.import
-local fs = require "user.utils.fs"
-local ConfigEntry = require "user.utils.config_entry".ConfigEntry
-
-local env_config_home = vim.env.CONFIG_HOME
-if not env_config_home then
-    vim.notify("failed to initialize, Can't find environment variable 'CONFIG_HOME'")
-    return
+local base_config, err = require "user.config"
+if err then
+    return {
+        finalize = function()
+            vim.notify(err, vim.log.levels.ERROR)
+        end
+    }
 end
 
-local user = ConfigEntry:new {
-    env = {
-        NVIM_HOME = fs.path_join(env_config_home, "nvim"),
-        CONFIG_HOME = fs.path_join(env_config_home, "nvim", "lua"),
-        PROXY_URL = vim.env.PROXY_URL,
-    },
-    general = {},
-    keybinding = {},
-    option = {
-        o = {},
-        go = {},
-        g = {},
-    },
-    platform = {},
-    plugin = {},
-    theme = {
-        colorscheme = "",
-        lualine_theme = "",
-    },
-} --[[@as UserConfig]]
+local utils = require "user.utils"
+local import = utils.import
+local ConfigEntry = require "user.utils.config_entry".ConfigEntry
+
+-- ----------------------------------------------------------------------------
 
 -- copying variables in user namespace into vim namespace.
 ---@param key string|string[] # if a list of string is passed, each element in the list is treated as a key.
@@ -66,6 +49,10 @@ local function chdir()
     end
 end
 
+-- ----------------------------------------------------------------------------
+
+local user = ConfigEntry:new(base_config) --[[@as UserConfig]]
+
 rawset(user, "finalize", function()
     chdir()
 
@@ -74,14 +61,16 @@ rawset(user, "finalize", function()
         config_home = user.env.CONFIG_HOME(),
     }
 
+    local plugin_specs = require "user.config.plugins"
+
     local modules = {
         -- load plugins first, make sure all config file can `require` them.
-        import "user.plugins",
+        import "user.plugins.loader".setup(plugin_specs),
 
         -- user config
-        import "user.command",
-        import "user.general",
-        import "user.keybinding",
+        import "user.config.command",
+        import "user.config.general",
+        import "user.config.keybinding",
         import "user.snippets",
 
         -- platform specific config
