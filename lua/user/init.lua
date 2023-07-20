@@ -11,6 +11,8 @@ local utils = require "user.utils"
 local import = utils.import
 local ConfigEntry = require "user.utils.config_entry".ConfigEntry
 
+local user = ConfigEntry:new(base_config) --[[@as UserConfig]]
+
 -- ----------------------------------------------------------------------------
 
 -- copying variables in user namespace into vim namespace.
@@ -50,8 +52,6 @@ local function chdir()
 end
 
 -- ----------------------------------------------------------------------------
-
-local user = ConfigEntry:new(base_config) --[[@as UserConfig]]
 
 rawset(user, "finalize", function()
     chdir()
