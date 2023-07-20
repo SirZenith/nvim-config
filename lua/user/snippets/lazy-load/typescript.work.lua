@@ -124,13 +124,13 @@ local INIT_PANEL = {
     { "const Log = LOGGING.logger('", 1, "');" },
     "",
     "/**",
-    { " * ", 2 },
+    { " * ",                          2 },
     " *",
     " */",
     "@uiRegister({",
-    { "    panelName: '", 1, "'," },
-    { "    panelDesc: '", 2, "'," },
-    { "    prefabPath: '", 3, "'," },
+    { "    panelName: '",                                    1, "'," },
+    { "    panelDesc: '",                                    2, "'," },
+    { "    prefabPath: '",                                   3, "'," },
     { "    fullScreen: true," },
     { "    sortOrderType: UI_COMMON.CANVAS_SORT_ORDER.MENU," },
     "})",
@@ -151,10 +151,10 @@ local INIT_TIPS = {
     "import { TipsTypeMap } from './tips_info_map';",
     "import { UITipsWidgetBase } from './ui_tips_base';",
     "",
-    { "const Log = LOGGING.logger('", 1, "');" },
+    { "const Log = LOGGING.logger('",   1,           "');" },
     "",
-    { "type UITipsArg = TipsTypeMap['", 1, "']['args'];" },
-    { "export class ", to_camel(1), " extends UITipsWidgetBase<UITipsArg> {" },
+    { "type UITipsArg = TipsTypeMap['", 1,           "']['args'];" },
+    { "export class ",                  to_camel(1), " extends UITipsWidgetBase<UITipsArg> {" },
     "    public getCustomPreloadAssetList(): string[] {",
     "        return [];",
     "    }",
@@ -167,9 +167,9 @@ local INIT_SUB_PANEL = {
     "import { LOGGING } from 'script_logic/common/base/logging';",
     "import { UISubView } from 'script_logic/base/ui_system/label_view/ui_sub_view';",
     "",
-    { "const Log = LOGGING.logger('", 1, "');" },
+    { "const Log = LOGGING.logger('", 1,           "');" },
     "",
-    { "export class ", to_camel(1), " extends UISubView {" },
+    { "export class ",                to_camel(1), " extends UISubView {" },
     "    protected onInit(): void {}",
     "",
     "    protected initEvents(args: UI_COMMON.TYPE_SHOW_PANEL_ARGS): void {}",
@@ -219,7 +219,7 @@ cmd_snip.register {
         end,
     },
     fn = {
-        args = { "modifier-or-name", {"name", is_optional = true } },
+        args = { "modifier-or-name", { "name", is_optional = true } },
         content = function(modifier_or_name, name)
             local modifier = name and modifier_or_name or ""
             name = name or modifier_or_name
@@ -376,5 +376,32 @@ cmd_snip.register {
     },
     ["new touch_close"] = {
         content = NEW_TOUCH_CLOSE_LAYER,
+    },
+    ["spine new"] = {
+        content = {
+            { "const panelModel = this.getGameObject('", 1, "');" },
+            "this.modelRenderer = S.uiModelManager.createRenderModel(panelModel);",
+        },
+    },
+    ["spine clean"] = {
+        content = {
+            "if (this.modelRenderer) {",
+            "    S.uiModelManager.removeRenderTextureObj(this.modelRenderer);",
+            "    this.modelRenderer = null;",
+            "}",
+        },
+    },
+    ["spine set"] = {
+        content = {
+            "if (this.modelRenderer === null) {",
+            "    return;",
+            "}",
+            "",
+            "this.modelRenderer.removeModel();",
+            { "const modelId = ", 1 },
+            "S.uiModelManager.showRoleModel(this.modelRenderer, {",
+            "    modelId,",
+            "});",
+        },
     },
 }
