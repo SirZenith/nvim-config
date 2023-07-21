@@ -232,6 +232,16 @@ cmd_snip.register {
             return result
         end,
     },
+    ["get keys"] = {
+        content = {
+            {"const keys = Object.keys(", 1, ");"},
+        }
+    },
+    ["get values"] = {
+        content = {
+            {"const values = Object.values(", 1, ");"},
+        }
+    },
     gg = {
         -- get game object of type
         args = { "variable", "object", "class-alias" },
