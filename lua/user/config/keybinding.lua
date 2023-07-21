@@ -138,6 +138,8 @@ local function goto_cursor_file(is_open_in_new_tab)
         local index = tonumber(vim.fn.input(prompt))
         if index then
             path = search_targets[index]
+            local dir = vim.fs.dirname(path)
+            vim.cmd("!mkdir " .. dir)
         end
     end
 
