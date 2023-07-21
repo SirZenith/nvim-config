@@ -14,8 +14,7 @@ return {
     -- ------------------------------------------------------------------------
     -- General
     "lewis6991/gitsigns.nvim",
-    -- { "ggandor/lightspeed.nvim",     disable = true },
-    { "ggandor/lightspeed.nvim" },
+    "ggandor/leap.nvim", -- search & jump
     "numToStr/Comment.nvim",
     {
         "nvim-tree/nvim-tree.lua",
