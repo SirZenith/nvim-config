@@ -23,9 +23,11 @@ local Str = require("luasnip.util.str")
 ---@field is_varg? boolean
 ---@field is_optional? boolean
 
+---@alias SnipParsable string | (string | SnippetNodeInfoTable)[]
+
 ---@class CmdItem
 ---@field args? string[] | ArgItem[]
----@field content string  | (string | SnippetNodeInfoTable)[] | function
+---@field content SnipParsable | fun(...: string): SnipParsable | nil
 local CmdItem = {}
 CmdItem.__index = CmdItem
 
