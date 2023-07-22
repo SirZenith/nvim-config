@@ -65,16 +65,39 @@ local import_map = {
     },
 }
 
----@type table<string, string>
+---@type table<string, { name: string, prefix?: string }>
 local game_object_name_map = {
-    go = "", -- GameObject
-    btn = "UIButton",
-    text = "UIText",
-    img = "UIImage",
-    scroll = "UIScrollView",
-    prog = "UIProgressBar",
-    input = "UIInputField",
-    layer = "UILayer",
+    go = {
+        name ="", -- GameObject
+    },
+    btn = {
+        name = "UIButton",
+        prefix = "btn",
+    },
+    text = {
+        name = "UIText",
+        prefix = "text",
+    },
+    img = {
+        name = "UIImage",
+        prefix = "img",
+    },
+    scroll = {
+        name = "UIScrollView",
+        prefix = "scroll",
+    },
+    prog = {
+        name = "UIProgressBar",
+        prefix = "bar",
+    },
+    input = {
+        name = "UIInputField",
+        prefix = "input",
+    },
+    layer = {
+        name = "UILayer",
+        prefix = "layer",
+    },
 }
 
 local GmCmdType = {
@@ -112,13 +135,57 @@ local INIT_GM = {
     "};",
 }
 
+local INIT_LABEL_VIEW = {
+    "import { uiRegister } from 'script_logic/base/ui_system/ui_class_map';",
+    "import { UI_COMMON } from 'script_logic/base/ui_system/ui_common';",
+    "import { LOGGING } from 'script_logic/common/base/logging';",
+    "import { UILabelView } from 'script_logic/base/ui_system/label_view/ui_label_view';",
+    "import { ILabelInfo } from 'script_logic/base/ui_system/label_view/label_view_interface';",
+    "",
+    { "const Log = LOGGING.logger('", 1, "');" },
+    "",
+    "const enum LabelType {}",
+    "",
+    "const LABEL_INFO_LIST: ILabelInfo[] = [];",
+    "",
+    "/**",
+    { " * ",                          2 },
+    " *",
+    " */",
+    "@uiRegister({",
+    { "    panelName: '",                                    1, "'," },
+    { "    panelDesc: '",                                    2, "'," },
+    { "    prefabPath: '",                                   3, "'," },
+    { "    fullScreen: true," },
+    { "    sortOrderType: UI_COMMON.CANVAS_SORT_ORDER.MENU," },
+    "})",
+    "// eslint-disable-next-line @typescript-eslint/no-unused-vars",
+    { "class ", to_camel(1), " extends UILabelView {" },
+    "    protected onInit(): void {}",
+    "",
+    "    protected prepareLabelInfo(): void {",
+    "        this._labelInfoDict = new Map<number, ILabelInfo>();",
+    "",
+    "        for (const labelInfo of LABEL_INFO_LIST) {",
+    "            this._labelInfoDict.set(labelInfo.labelType!, labelInfo);",
+    "        }",
+    "",
+    "        this.defaultLabelType = null;",
+    "    }",
+    "",
+    "    protected initEvents(args: UI_COMMON.TYPE_SHOW_PANEL_ARGS): void {}",
+    "",
+    "    protected onShow(args: UI_COMMON.TYPE_SHOW_PANEL_ARGS): void {}",
+    "",
+    "    protected onClose(): void {}",
+    "}",
+}
+
 local INIT_PANEL = {
     "import { S } from 'script_logic/base/global/singleton';",
     "import { UIBase } from 'script_logic/base/ui_system/ui_base';",
     "import { uiRegister } from 'script_logic/base/ui_system/ui_class_map';",
     "import { UI_COMMON } from 'script_logic/base/ui_system/ui_common';",
-    "import { UIButton } from 'script_logic/base/ui_system/uiext/ui_button';",
-    "import { UIText } from 'script_logic/base/ui_system/uiext/ui_text';",
     "import { LOGGING } from 'script_logic/common/base/logging';",
     "",
     { "const Log = LOGGING.logger('", 1, "');" },
@@ -165,6 +232,7 @@ local INIT_TIPS = {
 
 local INIT_SUB_PANEL = {
     "import { LOGGING } from 'script_logic/common/base/logging';",
+    "import { UI_COMMON } from 'script_logic/base/ui_system/ui_common';",
     "import { UISubView } from 'script_logic/base/ui_system/label_view/ui_sub_view';",
     "",
     { "const Log = LOGGING.logger('", 1,           "');" },
@@ -184,6 +252,18 @@ local NEW_CLOSE_BTN = [[
 const btnClose = this.getGameObject('node_bg/panel/btn_close', UIButton);
 btnClose.setOnClick(this.close.bind(this));
 ]]
+
+local NEW_LABEL_INFO = {
+    "{",
+    { "    labelType: ", 1, ","},
+    { "    prefab: '", 2 ,"'," },
+    { "    clsClass: ", 3, "," },
+    { "    text: '", 4, "'," },
+    { "    iconPath: '", 5, "'," },
+    { "    iconPathUnSel: '", 6, "'," },
+    { "    showOrder: '", 7, "'," },
+    "},",
+}
 
 local NEW_TOUCH_CLOSE_LAYER = [[
 const layer = this.getGameObject('node_bg/layer', UILayer);
@@ -246,11 +326,18 @@ cmd_snip.register {
         -- get game object of type
         args = { "variable", "object", "class-alias" },
         content = function(variable, object, class_alias)
-            local class_name = game_object_name_map[class_alias]
+            local info = game_object_name_map[class_alias]
+            if not info then return nil end
 
-            if not class_name then
-                return nil
-            elseif class_name == "" then
+            local class_name = info.name;
+            if not class_name then return nil end
+
+            local prefix = info.prefix
+            if prefix then
+                variable = prefix .. variable:sub(1, 1):upper() .. variable:sub(2, #variable)
+            end
+
+            if class_name == "" then
                 return ("const %s = %s.getGameObject('${1}');"):format(variable, object)
             end
 
@@ -289,6 +376,9 @@ cmd_snip.register {
     },
     ["init gm"] = {
         content = INIT_GM,
+    },
+    ["init label_view"] = {
+        content = INIT_LABEL_VIEW,
     },
     ["init panel"] = {
         content = INIT_PANEL,
@@ -349,6 +439,23 @@ cmd_snip.register {
     },
     ["new close_btn"] = {
         content = NEW_CLOSE_BTN,
+    },
+    ["new label_info"] = {
+        content = NEW_LABEL_INFO,
+    },
+    ["new request"] = {
+        args = { "name", { "flag_name", is_optional = true } },
+        content = function(name, flag_name)
+            flag_name = flag_name or name
+            return {
+                { "private ", name, "(", 1 ,"): void {" },
+                { "    if (this.requested", flag_name, ") {" },
+                "        return;",
+                "    }",
+                "",
+                "}",
+            }
+        end,
     },
     ["new scroll"] = {
         args = { "name" },
