@@ -36,8 +36,9 @@ do
         local patterns = {
             "nvim/runtime",
             "LuaSnip",
-            "nvim-lspconfig",
+            "nvim%-lspconfig",
             "panelpal.nvim",
+            "nvim%-cmp",
         }
 
         local list = vim.api.nvim_list_runtime_paths()
@@ -45,13 +46,13 @@ do
             path = vim.fs.normalize(path) ---@type string
 
             return functional.any(patterns, function(_, patt)
-                return path:find(patt) ~= nil
+                return path:match(patt) ~= nil
             end)
         end)
-        local list_mapped = {}
-        for i = 1, #list do
-            list_mapped[#list_mapped+1] = fs.path_join(list[i], "lua")
-        end
+
+        local list_mapped = functional.map(list, function(_, path)
+            return fs.path_join(path, "lua")
+        end)
 
         table_utils.extend_list(tbl, list_mapped)
     end
