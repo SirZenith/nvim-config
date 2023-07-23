@@ -57,28 +57,31 @@ return function()
 
     cmp.setup({
         snippet = {
-            -- REQUIRED - you must specify a snippet engine
             expand = function(args)
-                --vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
                 if luasnip_ok then
-                    luasnip.lsp_expand(args.body) -- For `luasnip` users.
+                    luasnip.lsp_expand(args.body)
                 end
-                -- require("snippy").expand_snippet(args.body) -- For `snippy` users.
-                -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
             end,
         },
         mapping = mapping or {},
-        sources = cmp.config.sources({
-            { name = "nvim_lsp" },
-            { name = "path" },
-            { name = "luasnip" },
-            { name = "tree-sitter-grammar" },
-        }, {
-            { name = "buffer" },
-        }, {
-            -- completion source registered in user configs
-            { name = snip_completion.name },
-        })
+        sources = cmp.config.sources(
+            {
+                -- completion source registered in user configs
+                { name = snip_completion.name, priority = 10 },
+            },
+            {
+                { name = "tree-sitter-grammar" },
+                { name = "prefab-completion" },
+            },
+            {
+                { name = "nvim_lsp" },
+                { name = "path" },
+                { name = "luasnip" },
+            },
+            {
+                { name = "buffer" },
+            }
+        )
     })
 
     -- Use buffer source for `/` (if you enabled `native_menu`, this won"t work anymore).

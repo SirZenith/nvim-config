@@ -144,4 +144,10 @@ return {
             "hrsh7th/nvim-cmp",
         },
     },
+    {
+        "SirZenith/prefab-cmp",
+        requires = {
+            "hrsh7th/nvim-cmp",
+        },
+    },
 }
