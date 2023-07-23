@@ -22,6 +22,7 @@ M.name = "cmd-snip-cmp"
 
 ---@type string[]
 M.trigger_characters = { ":", " " }
+M.cmd_head_char = ":"
 
 ---@type CommandMap | nil
 local cmd_map = nil
@@ -94,7 +95,7 @@ local function gen_completion(params)
     local line = params.context.cursor_before_line
     if not line then return items end
 
-    local cmd = line:match(":(.*)$")
+    local cmd = line:match(M.cmd_head_char .. "(.*)$")
     if not cmd then return items end
 
     cmd = cmd:gsub("%s+", "\n") .. "\n"
@@ -156,6 +157,9 @@ function M.init()
     if not cmp then return end
 
     cmp.register_source(M.name, M)
+
+    local cmd_snip = require "user.snippets.cmd-snippet"
+    M.cmd_head_char = cmd_snip.cmd_head_char
 end
 
 return M

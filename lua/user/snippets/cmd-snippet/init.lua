@@ -6,7 +6,7 @@ local CmdItem = require "user.snippets.cmd-snippet.cmd-item"
 local M = {}
 
 M.initialized = false
-M.cmd_head_char = ":"
+M.cmd_head_char = "::"
 M.cmd_tail_char = ";"
 
 local cmd_map = {}
@@ -79,7 +79,7 @@ local function command_snip_func(_, snip)
         vim.notify("no matching command", vim.log.levels.WARN)
     elseif target.args and target:get_required_arg_cnt() > 0 and #args == 0 then
         nodes = target:gen_signature_snip()
-        table.insert(nodes, 1, luasnip.text_node(":" .. cmd .. " "))
+        table.insert(nodes, 1, luasnip.text_node(M.cmd_head_char .. cmd .. " "))
     else
         local err = target:check_args(args)
         if err then
@@ -93,7 +93,7 @@ local function command_snip_func(_, snip)
     if nodes then
         ok, result = pcall(luasnip.snippet_node, 1, nodes)
     end
-    return ok and result or luasnip.snippet_node(1, { luasnip.text_node(":" .. cmd) })
+    return ok and result or luasnip.snippet_node(1, { luasnip.text_node(M.cmd_head_char .. cmd) })
 end
 
 function M.init()
@@ -101,9 +101,9 @@ function M.init()
 
     local cmd_snip = luasnip.snippet(
         {
-            trig = ":(.+);",
+            trig = M.cmd_head_char .. "::(.+)" .. M.cmd_tail_char,
             regTrig = true,
-            condition = snip_cond.line_begin_smart,
+            -- condition = snip_cond.line_begin_smart,
         },
         luasnip.dynamic_node(1, command_snip_func)
     )
