@@ -101,7 +101,7 @@ function M.init()
 
     local cmd_snip = luasnip.snippet(
         {
-            trig = M.cmd_head_char .. "::(.+)" .. M.cmd_tail_char,
+            trig = M.cmd_head_char .. "(.+)" .. M.cmd_tail_char,
             regTrig = true,
             -- condition = snip_cond.line_begin_smart,
         },
