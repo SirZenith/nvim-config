@@ -141,4 +141,8 @@ M.settings = {
     }
 }
 
+M.root_dir = function()
+    return vim.fn.getcwd()
+end
+
 return M
