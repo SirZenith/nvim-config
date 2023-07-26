@@ -74,6 +74,7 @@ user.option = {
         splitright = true, -- split at right when making vertical split
         timeoutlen = 250, -- set timeout for keymap
         fileformats = "unix,dos",
+        fixendofline = false, -- don't append new line at EOF
         -- file encoding checking queue
         fileencodings = "utf-8,ucs-bom,shift-jis,gb18030,gbk,gb2312,cp936",
         -- Indent
