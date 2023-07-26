@@ -68,7 +68,7 @@ local import_map = {
 ---@type table<string, { name: string, prefix?: string }>
 local game_object_name_map = {
     go = {
-        name ="", -- GameObject
+        name = "", -- GameObject
     },
     btn = {
         name = "UIButton",
@@ -255,13 +255,13 @@ btnClose.setOnClick(this.close.bind(this));
 
 local NEW_LABEL_INFO = {
     "{",
-    { "    labelType: ", 1, ","},
-    { "    prefab: '", 2 ,"'," },
-    { "    clsClass: ", 3, "," },
-    { "    text: '", 4, "'," },
-    { "    iconPath: '", 5, "'," },
+    { "    labelType: ",      1, "," },
+    { "    prefab: '",        2, "'," },
+    { "    clsClass: ",       3, "," },
+    { "    text: '",          4, "'," },
+    { "    iconPath: '",      5, "'," },
     { "    iconPathUnSel: '", 6, "'," },
-    { "    showOrder: '", 7, "'," },
+    { "    showOrder: '",     7, "'," },
     "},",
 }
 
@@ -314,12 +314,12 @@ cmd_snip.register {
     },
     ["get keys"] = {
         content = {
-            {"const keys = Object.keys(", 1, ");"},
+            { "const keys = Object.keys(", 1, ");" },
         }
     },
     ["get values"] = {
         content = {
-            {"const values = Object.values(", 1, ");"},
+            { "const values = Object.values(", 1, ");" },
         }
     },
     gg = {
@@ -443,12 +443,26 @@ cmd_snip.register {
     ["new label_info"] = {
         content = NEW_LABEL_INFO,
     },
+    ["new reddot"] = {
+        args = { "name" },
+        content = function(name)
+            local key_name = name .. "Key"
+            local node_name = name .. "Node"
+            return {
+                { "const ",  key_name,               " = ",                         1,        " + '", name, "';" },
+                { "const ",  node_name,              " = reddotMgr.addNodeByPath(", key_name, ");" },
+                { node_name, ".setCheckFunc(() => {" },
+                "    return false;",
+                "});",
+            }
+        end,
+    },
     ["new request"] = {
         args = { "name", { "flag_name", is_optional = true } },
         content = function(name, flag_name)
             flag_name = flag_name or name
             return {
-                { "private ", name, "(", 1 ,"): void {" },
+                { "private ",               name,      "(",  1, "): void {" },
                 { "    if (this.requested", flag_name, ") {" },
                 "        return;",
                 "    }",
