@@ -47,11 +47,24 @@ local color = {
     },
 }
 
-local highlight = {
+local highlight = vim.tbl_extend("keep", {
     __new_entry = true,
+}, {
+    -- ------------------------------------------------------------------------
+    -- General
     CursorLine = {
         bg = color.sel.darker,
     },
+    Folded = {
+        fg = "#7e828c",
+        bg = "#282d38",
+    },
+    Visual = {
+        bg = color.sel.normal,
+    },
+}, {
+    -- ------------------------------------------------------------------------
+    -- Diff
     DiffChange = {
         bg = color.sel.normal,
         fg = color.yellow.normal,
@@ -67,10 +80,9 @@ local highlight = {
         bg = color.sel.normal,
         fg = color.green.normal,
     },
-    Folded = {
-        fg = "#7e828c",
-        bg = "#282d38",
-    },
+}, {
+    -- ------------------------------------------------------------------------
+    -- LSP log
     LspLogTrace = {
         bg = color.sel.dark,
     },
@@ -89,20 +101,34 @@ local highlight = {
         fg = color.white.normal,
         bg = color.red.normal,
     },
+}, {
     -- ------------------------------------------------------------------------
+    -- LuaSnip
     LuaSnipInsertHint = {
         fg = color.yellow.normal,
     },
     LuaSnipChoiceHint = {
         fg = color.green.normal,
     },
+}, {
     -- ------------------------------------------------------------------------
+    -- Panelpal
     PanelpalSelect = {
         fg = color.yellow.normal,
     },
     PanelpalUnselect = {
         fg = color.sel.light,
     },
+}, {
+    FineCmdLineWin = {
+        fg = color.yellow.normal,
+        bg = color.bg.light,
+    },
+    FineCmdLineBorder = {
+        fg = color.blue.normal,
+        bg = color.bg.light,
+    },
+}, {
     -- ------------------------------------------------------------------------
     -- Tab Line Style
     TabBar = {
@@ -140,13 +166,9 @@ local highlight = {
         fg = color.fg.light,
         bg = color.bg.lighter,
     },
+}, {
     -- ------------------------------------------------------------------------
-    Visual = {
-        bg = color.sel.normal,
-    },
-}
-
-local completion = {
+    -- Completion
     Pmenu = {
         fg = color.fg.dark,
         bg = color.bg.light,
@@ -290,8 +312,6 @@ local completion = {
         fg = "#EED8DA",
         bg = color.pink.dark,
     },
-}
-
-highlight = vim.tbl_extend("keep", highlight, completion)
+})
 
 return highlight
