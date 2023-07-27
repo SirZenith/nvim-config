@@ -1,1 +1,5 @@
-vim.keymap.set("n", "<A-CR>", "<cmd>FineCmdline<CR>")
+local fineline = require "fine-cmdline"
+
+vim.keymap.set("n", "<leader><Cr>", function()
+    fineline.open()
+end)

@@ -25,21 +25,22 @@ user.plugin.fine_cmdline = {
             style = "rounded",
         },
         win_options = {
-            winhighlight = "Normal:Normal,FloatBorder:FloatBorder",
+            winhighlight = "Normal:FineCmdLineWin,FloatBorder:FineCmdLineBorder" ,
         },
     },
     hooks = {
-        --[[ before_mount = function(input)
+        before_mount = function(input)
         end,
         after_mount = function(input)
-        end, ]]
+            local opt = { buffer = 0 }
+            local set = vim.keymap.set
+            set("i", "<Esc>", fn.close, opt)
+            set("i", "<C-c>", fn.close, opt)
+            set("i", "<Up>", fn.up_search_history, opt)
+            set("i", "<Down>", fn.down_search_history, opt)
+        end,
         set_keymaps = function(imap, feedkeys)
-            -- All default key mapping except <Tab>, reserve that for completion
-            imap('<Esc>', fn.close)
-            imap('<C-c>', fn.close)
-            imap('<Up>', fn.up_search_history)
-            imap('<Down>', fn.down_search_history)
-        end
+        end,
     }
 }
 
