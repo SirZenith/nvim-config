@@ -10,10 +10,14 @@ user.plugin.nvim_cmp = {
     __new_entry = true,
     window = {
         completion = {
+            border = "shadow",
             winhighlight = "Normal:Pmenu,FloatBorder:Pmenu,CursorLine:PmenuSel,Search:None",
             col_offset = -1,
             side_padding = 0,
         },
+        documentation = {
+            border = "rounded",
+        }
     },
     formatting = {
         fields = { "kind", "abbr", "menu" },
