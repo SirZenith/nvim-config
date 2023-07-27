@@ -10,9 +10,14 @@ user.plugin.luasnip = {
     ext_opts = {
         [types.choiceNode] = {
             active = {
-                virt_text = { { "choiceNode", "Comment" } },
+                virt_text = { { "●", "LuaSnipChoiceHint" } },
             },
         },
+        [types.insertNode] = {
+            active = {
+                virt_text = { { "●", "LuaSnipInsertHint" } }
+            }
+        }
     },
     -- treesitter-hl has 100, use something higher (default is 200).
     ext_base_prio = 300,

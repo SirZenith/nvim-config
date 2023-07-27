@@ -66,15 +66,15 @@ end
 
 user.option = {
     o = {
-        autochdir = false, -- auto chdir into directory of current buffer
-        autoread = true, -- reload when file changed externally
+        autochdir = false,              -- auto chdir into directory of current buffer
+        autoread = true,                -- reload when file changed externally
         backspace = "indent,start,eol", -- select which boundary is ignored by backspace
-        clipboard = "unnamedplus", -- use system clipboard for yard
-        splitbelow = true, -- split at bottom when making horizontal split
-        splitright = true, -- split at right when making vertical split
-        timeoutlen = 250, -- set timeout for keymap
+        clipboard = "unnamedplus",      -- use system clipboard for yard
+        splitbelow = true,              -- split at bottom when making horizontal split
+        splitright = true,              -- split at right when making vertical split
+        timeoutlen = 250,               -- set timeout for keymap
         fileformats = "unix,dos",
-        fixendofline = false, -- don't append new line at EOF
+        fixendofline = false,           -- don't append new line at EOF
         -- file encoding checking queue
         fileencodings = "utf-8,ucs-bom,shift-jis,gb18030,gbk,gb2312,cp936",
         -- Indent
@@ -98,10 +98,10 @@ user.option = {
         completeopt = "menu,menuone,noselect",
         mouse = "a",
         grepprg = "rg --vimgrep",
-        ruler = true, -- show line:column coordinate in status line
-        showcmd = true, -- display command input
-        showmatch = true, -- show matching bracket
-        scrolloff = 15, -- key certain line gap between screen bottom
+        ruler = true,         -- show line:column coordinate in status line
+        showcmd = true,       -- display command input
+        showmatch = true,     -- show matching bracket
+        scrolloff = 15,       -- key certain line gap between screen bottom
         termguicolors = true, -- turn true color support
         -- line number
         number = true,
@@ -125,7 +125,7 @@ user.option = {
         -- concealcursor = "n", -- in these mode, also conceals cursorline
 
         -- setup LSP display
-        cmdheight = 2, -- height for command display area
+        cmdheight = 2,    -- height for command display area
         updatetime = 300, -- after certain timeout in millisecond, swap file will be written to disk
         -- display debug/diagnostic symbol in gutter
         -- `number` means share space with line number, don't create extra column
@@ -237,6 +237,14 @@ user.theme.highlight = {
         fg = "#ffffff",
         bg = "#bf616a",
     },
+    -- ------------------------------------------------------------------------
+    LuaSnipInsertHint = {
+        fg = "#ebcb8b",
+    },
+    LuaSnipChoiceHint = {
+        fg = "#a3be8c",
+    },
+    -- ------------------------------------------------------------------------
     PanelpalSelect = {
         fg = "#ebcb8b",
     },
@@ -312,12 +320,10 @@ local function setup_filetype(match)
             and match:match(map.pattern)
         then
             is_match = true
-
         elseif type(map.pattern) == "table"
             and functional.any(map.pattern, cond)
         then
             is_match = true
-
         end
 
         if is_match then
