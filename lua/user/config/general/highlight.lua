@@ -152,8 +152,8 @@ local completion = {
         bg = color.bg.light,
     },
     PmenuSel = {
-        fg = color.green.light,
-        bg = color.bg.dark,
+        fg = color.bg.dark,
+        bg = color.green.normal,
         bold = true,
     },
 
