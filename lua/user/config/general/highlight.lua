@@ -268,10 +268,6 @@ local completion = {
         fg = "#DDE5F5",
         bg = color.blue.dark,
     },
-    CmpItemKindValue = {
-        fg = "#DDE5F5",
-        bg = color.blue.dark,
-    },
     CmpItemKindEnumMember = {
         fg = "#DDE5F5",
         bg = color.blue.dark,
@@ -288,6 +284,11 @@ local completion = {
     CmpItemKindTypeParameter = {
         fg = "#ece3df",
         bg = color.orange.dark
+    },
+
+    CmpItemKindValue = {
+        fg = "#EED8DA",
+        bg = color.pink.dark,
     },
 }
 

@@ -1,1 +1,1 @@
-vim.keymap.set("n", "<Esc>", "<cmd>FineCmdline<CR>")
+vim.keymap.set("n", "<A-CR>", "<cmd>FineCmdline<CR>")
