@@ -56,6 +56,7 @@ return function()
 
     local lspkind_cfg = user.plugin.lspkind()
     lspkind_cfg.maxwidth = 50
+    lspkind_cfg.symbol_map = user.lsp.kind_label()
 
     local fmt_func = lspkind.cmp_format(lspkind_cfg)
 

@@ -15,7 +15,7 @@ user.plugin.lualine = {
         always_divide_middle = true,
         globalstatus = false,
         refresh = {
-            statusline = 1000,
+            statusline = 150,
             tabline = 1000,
             winbar = 1000,
         }

@@ -39,6 +39,7 @@ do
             "nvim%-lspconfig",
             "panelpal.nvim",
             "nvim%-cmp",
+            "noice%.nvim",
         }
 
         local list = vim.api.nvim_list_runtime_paths()

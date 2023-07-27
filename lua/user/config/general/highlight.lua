@@ -120,15 +120,6 @@ local highlight = vim.tbl_extend("keep", {
         fg = color.sel.light,
     },
 }, {
-    FineCmdLineWin = {
-        fg = color.yellow.normal,
-        bg = color.bg.light,
-    },
-    FineCmdLineBorder = {
-        fg = color.blue.normal,
-        bg = color.bg.light,
-    },
-}, {
     -- ------------------------------------------------------------------------
     -- Tab Line Style
     TabBar = {

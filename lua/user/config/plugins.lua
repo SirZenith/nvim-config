@@ -17,10 +17,21 @@ local specs = {
     "lewis6991/gitsigns.nvim",
     "ggandor/leap.nvim", -- search & jump
     "numToStr/Comment.nvim",
-    {
-        'VonHeikemen/fine-cmdline.nvim',
+    --[[ {
+        "VonHeikemen/fine-cmdline.nvim",
         requires = {
-            'MunifTanjim/nui.nvim',
+            "MunifTanjim/nui.nvim",
+            "hrsh7th/nvim-cmp",
+        }
+    }, ]]
+    {
+        "folke/noice.nvim",
+        requires = {
+            "MunifTanjim/nui.nvim",
+            -- OPTIONAL:
+            --   `nvim-notify` is only needed, if you want to use the notification view.
+            --   If not available, we use `mini` as the fallback
+            "rcarriga/nvim-notify",
         }
     },
     {
@@ -155,7 +166,10 @@ local specs = {
     },
     {
         "hrsh7th/nvim-cmp",
-        requires = { "L3MON4D3/LuaSnip" },
+        requires = {
+            "L3MON4D3/LuaSnip",
+            "onsails/lspkind.nvim",
+        },
     },
     {
         "hrsh7th/cmp-buffer",

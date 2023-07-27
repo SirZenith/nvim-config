@@ -26,5 +26,7 @@ return function()
 
     lsp_status.register_progress()
 
-    lsp_status.config(user.plugin.lsp_status())
+    local cfg = user.plugin.lsp_status()
+    cfg.kind_labels = user.lsp.kind_label()
+    lsp_status.config(cfg)
 end

@@ -20,7 +20,7 @@ M._old_log_message_handler = nil
 
 -- ----------------------------------------------------------------------------
 
--- Sets LSP log level to `debug` and open a side panel for displaying LSP server's
+-- Sets LSP log level to `debug` and open a side panel for displaying LSP server"s
 -- log message.
 function M.lsp_server_debug_on()
     vim.lsp.set_log_level("debug")
@@ -75,7 +75,7 @@ end
 
 ---@param source string # diagnostic source name
 function M.disable_diagnostic_source(source)
-    vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(
+    vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
         function(_, result, ctx, config)
             local messages = {}
             for _, diag in ipairs(result.diagnostics) do
@@ -103,6 +103,33 @@ user.lsp = {
     format_args = {
         async = true
     },
+    kind_label = {
+        Text = "",
+        Method = "",
+        Function = "",
+        Constructor = "",
+        Field = "",
+        Variable = "",
+        Class = "",
+        Interface = "",
+        Module = "",
+        Property = "",
+        Unit = "",
+        Value = "",
+        Enum = "",
+        Keyword = "",
+        Snippet = "",
+        Color = "",
+        File = "",
+        Reference = "",
+        Folder = "",
+        EnumMember = "",
+        Constant = "",
+        Struct = "",
+        Event = "",
+        Operator = "",
+        TypeParameter = "",
+    }
 }
 
 -- ----------------------------------------------------------------------------
