@@ -173,8 +173,6 @@ local INIT_LABEL_VIEW = {
     "",
     "    protected initEvents(args: UI_COMMON.TYPE_SHOW_PANEL_ARGS): void {}",
     "",
-    "    protected onShow(args: UI_COMMON.TYPE_SHOW_PANEL_ARGS): void {}",
-    "",
     "    protected onClose(): void {}",
     "}",
 }
