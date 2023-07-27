@@ -18,7 +18,12 @@ return function()
 
     local function has_words_before()
         local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-        return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match "%s" == nil
+        if col == 0 then
+            return false
+        end
+        local cursor_line = vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]
+        local last_char = cursor_line:sub(col, col)
+        return last_char ~= " " and last_char ~= "\t" and last_char ~= "\v"
     end
 
     local mapping = {
@@ -46,9 +51,10 @@ return function()
         ["<cr>"] = cmp.mapping.confirm { select = true },
         ["<C-b>"] = cmp.mapping(cmp.mapping.scroll_docs(-4), { "i", "c" }),
         ["<C-f>"] = cmp.mapping(cmp.mapping.scroll_docs(4), { "i", "c" }),
-        ["<C-e>"] = cmp.mapping(cmp.mapping.complete(), { "i", "c" }),
         -- Specify `cmp.config.disable` if you want to remove the default `<C-y>` mapping.
         ["<C-y>"] = cmp.config.disable,
+        -- Trigger/close completion
+        ["<C-j>"] = cmp.mapping(cmp.mapping.complete(), { "i", "c" }),
         ["<C-k>"] = cmp.mapping {
             i = cmp.mapping.abort(),
             c = cmp.mapping.close(),
@@ -63,7 +69,7 @@ return function()
                 end
             end,
         },
-        mapping = mapping or {},
+        mapping = mapping,
         sources = cmp.config.sources(
             {
                 -- completion source registered in user configs
