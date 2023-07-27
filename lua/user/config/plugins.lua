@@ -8,7 +8,8 @@ local function turn_on_true_color()
     end
 end
 
-return {
+---@type (packer.PluginSpec | string)[]
+local specs = {
     "wbthomason/packer.nvim",
 
     -- ------------------------------------------------------------------------
@@ -79,8 +80,6 @@ return {
         requires = { "nvim-treesitter/nvim-treesitter" },
     },
 
-    "udalov/kotlin-vim",
-
     -- ------------------------------------------------------------------------
     -- Language Support
     {
@@ -105,16 +104,47 @@ return {
             "aklt/plantuml-syntax",
             "tyru/open-browser.vim",
         },
+        ft = "plantuml",
     },
-    "lervag/vimtex",
-    "stevearc/vim-arduino",
-    "sudar/vim-arduino-syntax",
-    "vim-voom/VOoM",
+    {
+        "lervag/vimtex",
+        ft = { "tex", "latex", "bibtex" },
+    },
+    {
+        "stevearc/vim-arduino",
+        ft = "arduino",
+    },
+    {
+        "sudar/vim-arduino-syntax",
+        ft = "arduino",
+    },
+    {
+        "vim-voom/VOoM",
+        ft = "markdown",
+    },
 
     -- ------------------------------------------------------------------------
     -- Completion
     "windwp/nvim-autopairs",
-    "windwp/nvim-ts-autotag",
+    {
+        "windwp/nvim-ts-autotag",
+        ft = {
+            "astro",
+            "glimmer",
+            "handlebars",
+            "html",
+            "javascript",
+            "jsx",
+            "markdown",
+            "php",
+            "rescript",
+            "svelte",
+            "tsx",
+            "typescript",
+            "vue",
+            "xml",
+        },
+    },
     "L3MON4D3/LuaSnip",
     "hrsh7th/nvim-cmp",
     {
@@ -143,6 +173,7 @@ return {
             "SirZenith/panelpal.nvim",
             "hrsh7th/nvim-cmp",
         },
+        ft = "tree-sitter-test",
     },
     {
         "SirZenith/prefab-cmp",
@@ -151,3 +182,5 @@ return {
         },
     },
 }
+
+return specs
