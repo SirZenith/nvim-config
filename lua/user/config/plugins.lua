@@ -18,6 +18,12 @@ local specs = {
     "ggandor/leap.nvim", -- search & jump
     "numToStr/Comment.nvim",
     {
+        'VonHeikemen/fine-cmdline.nvim',
+        requires = {
+            'MunifTanjim/nui.nvim',
+        }
+    },
+    {
         "nvim-tree/nvim-tree.lua",
         requires = { "nvim-tree/nvim-web-devicons" },
     },
@@ -125,6 +131,8 @@ local specs = {
 
     -- ------------------------------------------------------------------------
     -- Completion
+    "L3MON4D3/LuaSnip",
+    "onsails/lspkind.nvim", -- LSP completion item kind icon for completion menu
     "windwp/nvim-autopairs",
     {
         "windwp/nvim-ts-autotag",
@@ -145,8 +153,10 @@ local specs = {
             "xml",
         },
     },
-    "L3MON4D3/LuaSnip",
-    "hrsh7th/nvim-cmp",
+    {
+        "hrsh7th/nvim-cmp",
+        requires = { "L3MON4D3/LuaSnip" },
+    },
     {
         "hrsh7th/cmp-buffer",
         requires = { "hrsh7th/nvim-cmp" },

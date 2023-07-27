@@ -15,7 +15,7 @@
 ---@field commit? string # Specifies a git commit to use
 ---@field lock? boolean # Skip updating this plugin in updates/syncs. Still cleans.
 ---@field run? string | function | table # Post-update/install hook. See "update/install hooks".
----@field requires? string | string[] # Specifies plugin dependencies. See "dependencies".
+---@field requires? string | (string | packer.PluginSpec)[] # Specifies plugin dependencies. See "dependencies".
 ---@field rocks? string | string[] # Specifies Luarocks dependencies for the plugin
 ---@field config? string | function # Specifies code to run after this plugin is loaded.
 ---@field setup? string | function # implies `opt = true` Specifies code to run before this plugin is loaded even the plugin is waiting for other conditions.
