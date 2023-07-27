@@ -25,6 +25,7 @@ cmd_snip.register {
             local param_cnt = tonumber(param_cnt_str)
             if not param_cnt then
                 vim.notify('invalid number: ' .. param_cnt_str, vim.log.levels.WARN)
+                return;
             end
 
             local result = { "/**", " * " }
