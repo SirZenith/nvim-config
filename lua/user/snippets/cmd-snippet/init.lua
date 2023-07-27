@@ -91,9 +91,9 @@ local function command_snip_func(_, snip)
 
     local ok, result = false, nil
     if nodes then
-        ok, result = pcall(luasnip.snippet_node, 1, nodes)
+        ok, result = pcall(luasnip.snippet_node, nil, nodes)
     end
-    return ok and result or luasnip.snippet_node(1, { luasnip.text_node(M.cmd_head_char .. cmd) })
+    return ok and result or luasnip.snippet_node(nil, { luasnip.text_node(M.cmd_head_char .. cmd) })
 end
 
 function M.init()
