@@ -58,10 +58,10 @@ return function()
     local cmp_cfg = user.plugin.nvim_cmp()
     cmp_cfg.formatting.format = function(entry, vim_item)
         local kind = fmt_func(entry, vim_item)
-        local strings = vim.split(kind.kind, "%s", { trimempty = true })
+        local strings = vim.split(kind.kind, "%s+", { trimempty = true })
 
-        kind.kind = (" %s "):format(strings[1] or "")
-        kind.menu = ("(%s)"):format(strings[2] or "")
+        kind.kind = (" %s "):format(strings[1] or "-")
+        kind.menu = ("(%s)"):format(strings[2] or "[Unknown]")
 
         return kind
     end
