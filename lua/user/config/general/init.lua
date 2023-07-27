@@ -2,6 +2,8 @@ local user = require "user"
 local table_utils = require "user.utils.table"
 local functional = require "user.utils.functional"
 
+local highlight = require "user.config.general.highlight"
+
 local augroup_id = vim.api.nvim_create_augroup("user.general", { clear = true })
 
 local function im_auto_toggle_setup(cmd)
@@ -125,7 +127,7 @@ user.option = {
         -- concealcursor = "n", -- in these mode, also conceals cursorline
 
         -- setup LSP display
-        cmdheight = 2,    -- height for command display area
+        cmdheight = 1,    -- height for command display area
         updatetime = 300, -- after certain timeout in millisecond, swap file will be written to disk
         -- display debug/diagnostic symbol in gutter
         -- `number` means share space with line number, don't create extra column
@@ -194,108 +196,7 @@ user.general = {
     },
 }
 
-user.theme.highlight = {
-    __new_entry = true,
-    CursorLine = {
-        fg = nil,
-        bg = "#353c4a",
-    },
-    DiffChange = {
-        bg = "#3a4657",
-        fg = "#ebcb8b",
-    },
-    DiffCommon = {
-        fg = "#808080"
-    },
-    DiffDelete = {
-        bg = "#3a4657",
-        fg = "#bf616a",
-    },
-    DiffInsert = {
-        bg = "#3a4657",
-        fg = "#a3be8c",
-    },
-    Folded = {
-        fg = "#7e828c",
-        bg = "#282d38",
-    },
-    LspLogTrace = {
-        bg = "#3e4a5b",
-    },
-    LspLogDebug = {
-        bg = "#4f6074",
-    },
-    LspLogInfo = {
-        fg = "#000000",
-        bg = "#a3be8c",
-    },
-    LspLogWarn = {
-        fg = "#000000",
-        bg = "#ebcb8b",
-    },
-    LspLogError = {
-        fg = "#ffffff",
-        bg = "#bf616a",
-    },
-    -- ------------------------------------------------------------------------
-    LuaSnipInsertHint = {
-        fg = "#ebcb8b",
-    },
-    LuaSnipChoiceHint = {
-        fg = "#a3be8c",
-    },
-    -- ------------------------------------------------------------------------
-    PanelpalSelect = {
-        fg = "#ebcb8b",
-    },
-    PanelpalUnselect = {
-        fg = "#4f6074",
-    },
-    -- ------------------------------------------------------------------------
-    -- Tab Line Style
-    TabBar = {
-        bg = "#232831",
-        -- bg = "#2e3440",
-        -- bg = "#39404f",
-    },
-    TabIcon = {
-        fg = "#7e8188",
-        bg = "#39404f",
-    },
-    TabStatus = {
-        fg = "#abb1bb",
-        bg = "#444c5e",
-    },
-    TabInactive = {
-        fg = "#abb1bb",
-        bg = "#232831"
-    },
-    TabActive = {
-        fg = "#2e3440",
-        bg = "#81a1c1",
-    },
-    TabSign = {
-        fg = "#c7cdd9",
-        bg = "#232831"
-    },
-    TabSignActive = {
-        fg = "#c7cdd9",
-        bg = "#81a1c1",
-    },
-    TabStatusSign = {
-        fg = "#abb1bb",
-        bg = "#444c5e",
-    },
-    TabStatusSignActive = {
-        fg = "#c7cdd9",
-        bg = "#444c5e",
-    },
-    -- ------------------------------------------------------------------------
-    Visual = {
-        fg = nil,
-        bg = "#3a4657",
-    },
-}
+user.theme.highlight = highlight
 
 -- ----------------------------------------------------------------------------
 
