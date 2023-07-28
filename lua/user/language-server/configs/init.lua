@@ -52,6 +52,10 @@ local function lsp_on_attach(client, bufnr)
         set("n", key, callback, opts)
     end
 
+    if vim.fn.has("nvim-0.10") == 1 and client.server_capabilities.inlayHintProvider then
+        vim.lsp.inlay_hint(bufnr, true)
+    end
+
     for _, callback in user.lsp.on_attach_callbacks:ipairs() do
         callback(client, bufnr)
     end
