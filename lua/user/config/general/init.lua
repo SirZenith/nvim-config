@@ -89,7 +89,7 @@ user.option = {
         -- Folding
         foldmethod = "expr",
         foldexpr = "nvim_treesitter#foldexpr()",
-        foldenable = false,
+        foldenable = true,
         foldnestmax = 4,
         -- set behaviour when buffer becomes invisible
         -- if `false` buffer will be set to inactive, else buffer will be set hidden

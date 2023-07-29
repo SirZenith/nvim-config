@@ -67,9 +67,9 @@ user.plugin.nvim_treesitter = {
             keymaps = {
                 -- set to `false` to disable one of the mappings
                 init_selection = "<Backspace>g",
-                node_incremental = "<Backspace>gl",
-                scope_incremental = "<Backspace>g;",
-                node_decremental = "<Backspace>ga",
+                node_incremental = "gj",
+                node_decremental = "gk",
+                scope_incremental = "g<Cr>",
             },
         },
         indent = {
@@ -103,9 +103,9 @@ user.plugin.nvim_treesitter = {
             colors = { "#6c9ef8", "#d85896", "#b77fdb", "#ef5350", "#64b5f6", "#ffee58", "#ab47bc" }, -- table of hex strings
             -- termcolors = {}, -- table of colour name strings
         },
-        -- autotag = {
-            -- enable = true,
-        -- }
+        autotag = {
+            enable = true,
+        }
     },
     install = {
         prefer_git = false,

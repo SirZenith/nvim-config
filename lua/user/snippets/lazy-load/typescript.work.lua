@@ -211,8 +211,8 @@ local INIT_PANEL = {
 
 local INIT_TIPS = {
     "import { LOGGING } from 'script_logic/common/base/logging';",
-    "import { TipsTypeMap } from './tips_info_map';",
-    "import { UITipsWidgetBase } from './ui_tips_base';",
+    "import { TipsTypeMap } from 'script_logic/ui/ui_tips/tips_info_map';",
+    "import { UITipsWidgetBase } from 'script_logic/ui/ui_tips/ui_tips_base';",
     "",
     { "const Log = LOGGING.logger('",   1,           "');" },
     "",
