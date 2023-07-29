@@ -1,4 +1,5 @@
 local user = require "user"
+local ufo = require "ufo"
 
 user.option.o = {
     foldcolumn = '1', -- '0' is not bad
@@ -56,5 +57,5 @@ return function()
         }
     }
 
-    require("ufo").setup(user.plugin.nvim_ufo())
+    ufo.setup(user.plugin.nvim_ufo())
 end

@@ -17,13 +17,6 @@ local specs = {
     "lewis6991/gitsigns.nvim",
     "ggandor/leap.nvim", -- search & jump
     "numToStr/Comment.nvim",
-    --[[ {
-        "VonHeikemen/fine-cmdline.nvim",
-        requires = {
-            "MunifTanjim/nui.nvim",
-            "hrsh7th/nvim-cmp",
-        }
-    }, ]]
     {
         "folke/noice.nvim",
         requires = {
@@ -59,7 +52,7 @@ local specs = {
         "norcalli/nvim-colorizer.lua",
         __before_load = turn_on_true_color
     },
-    { "anuvyklack/pretty-fold.nvim", disable = true },
+    "anuvyklack/pretty-fold.nvim", -- folding style customization
 
     -- ------------------------------------------------------------------------
     -- Themes
@@ -102,7 +95,8 @@ local specs = {
     {
         -- folding support
         "kevinhwang91/nvim-ufo",
-        requires = "kevinhwang91/promise-async"
+        requires = "kevinhwang91/promise-async",
+        disable = true,
     },
     {
         "iamcco/markdown-preview.nvim",
