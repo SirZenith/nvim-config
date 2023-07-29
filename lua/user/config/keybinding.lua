@@ -324,38 +324,4 @@ return function()
     register_build_mapping({ "markdown", "markdown.*" }, "<cmd>Voom markdown<cr>")
     register_build_mapping("html", "<cmd>Voom html<cr>")
     register_build_mapping("voomtree", "<cmd>VoomToggle<cr>")
-
-    -- ------------------------------------------------------------------------
-    -- nvim-tree
-
-    nmap("<space>sb", "<cmd>NvimTreeToggle<cr>")
-    nmap("<leader>tr", "<cmd>NvimTreeRefresh<cr>")
-    nmap("<leader>tf", "<cmd>NvimTreeFindFile<cr>")
-
-    -- ------------------------------------------------------------------------
-    -- nvim-ufo
-
-    local ufo = require "ufo"
-    nmap("zR", ufo.openAllFolds)
-    nmap("zM", ufo.closeAllFolds)
-
-    -- ------------------------------------------------------------------------
-    -- Floaterm
-
-    for _, mode in ipairs { "n", "i", "t", "v" } do
-        map(mode, "<F12>", "<cmd>FloatermToggle<cr>")
-    end
-
-    -- ------------------------------------------------------------------------
-    -- Telescope
-
-    nmap("<leader>f", "<cmd>Telescope find_files<cr>")
-    nmap("<leader>/", "<cmd>Telescope current_buffer_fuzzy_find<cr>")
-
-    -- ------------------------------------------------------------------------
-    -- TSTree
-
-    -- playground
-    imap("<A-t>", "<cmd>TSPlaygroundToggle<cr>")
-    nmap("<A-t>", "<cmd>TSPlaygroundToggle<cr>")
 end

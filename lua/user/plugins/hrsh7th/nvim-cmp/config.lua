@@ -4,7 +4,7 @@ local snip_completion = require "user.snippets.cmd-snippet.cmp-source"
 local cmp = require "cmp"
 local luasnip = require "luasnip"
 local lspkind = require "lspkind"
-local mapping = require "user.plugins.hrsh7th.nvim-cmp.keybinding"
+local mapping = require "user.plugins.hrsh7th.nvim-cmp.mapping"
 
 user.plugin.nvim_cmp = {
     __new_entry = true,

@@ -36,8 +36,14 @@ local is_bootstrap, packer = require_packer()
 -- ----------------------------------------------------------------------------
 -- loading helpers
 
+---@param path string # plugin spec path
 local function get_config_name(path)
     return fs.path_join("user", "plugins", path, "config.lua")
+end
+
+---@param path string # plugin spec path
+local function get_keybinding_name(path)
+    return fs.path_join("user", "plugins", path, "keybinding.lua")
 end
 
 local function do_load(load_func, spec)
@@ -78,6 +84,15 @@ local M = {}
 M._is_bootstrap = is_bootstrap
 M._loaded_config_module = {}
 
+---@param name string # file path relative to user config home directory
+local function try_load_file(name)
+    local file = fs.path_join(user.env.CONFIG_HOME(), name)
+    if fn.filereadable(file) ~= 0 then
+        local module = import(name)
+        table.insert(M._loaded_config_module, module)
+    end
+end
+
 function M.load_config(spec)
     if M._is_bootstrap then return end
 
@@ -92,12 +107,10 @@ function M.load_config(spec)
     if not path or #path == 0 then return end
 
     local cfg_name = get_config_name(path)
-    local file = fs.path_join(user.env.CONFIG_HOME(), cfg_name)
+    try_load_file(cfg_name)
 
-    if fn.filereadable(file) ~= 0 then
-        local module = import(cfg_name)
-        table.insert(M._loaded_config_module, module)
-    end
+    local keybinding_name = get_keybinding_name(path)
+    try_load_file(keybinding_name)
 end
 
 function M.do_load(load_func, spec)
