@@ -161,6 +161,14 @@ local function global_search(target)
     api.nvim_command("cw")
 end
 
+---@param contents string[]
+local function append_to_eol(contents)
+    local pos = api.nvim_win_get_cursor(0);
+    local row = pos[1] - 1
+    local col = #vim.fn.getline(pos[1])
+    api.nvim_buf_set_text(0, row, col, row, col, contents)
+end
+
 ---@param filetype string|string[]
 ---@param mapto string|function
 local function register_build_mapping(filetype, mapto)
@@ -201,8 +209,12 @@ local n_common_keymap = {
     -- Editing
     ["<C-s>"] = "<cmd>w<cr>",
     ["dal"] = "0d$",
-    [";;"] = "<esc>A;<esc>",
-    [",,"] = "<esc>A,<esc>",
+    [";;"] = function()
+        append_to_eol { ";" }
+    end,
+    [",,"] = function()
+        append_to_eol { "," }
+    end,
     ["<A-up>"] = "ddkP",
     ["<A-down>"] = "ddp",
     -- Folding
@@ -211,7 +223,7 @@ local n_common_keymap = {
     ["<leader>b"] = ":buffer ",
     -- Searching
     ["<leader>sg"] = function()
-        local target = vim.fn.input("Global Search: ")
+        local target = vim.fn.input({ prompt = "Global Search: " })
         if not target or #target == 0 then return end
         global_search(target)
     end,
