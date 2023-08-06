@@ -44,6 +44,7 @@ user.plugin.nvim_treesitter = {
             "v",
             "vim",
             "yaml",
+            "zig",
         },
         -- Install languages synchronously (only applied to `ensure_installed`)
         sync_install = false,
