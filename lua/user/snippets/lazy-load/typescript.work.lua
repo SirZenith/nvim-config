@@ -366,6 +366,14 @@ cmd_snip.register {
             )
         end,
     },
+    ["import rolemodule"] = {
+        args = { "name" },
+        content = function(name)
+            return {
+                { "import { ", name:upper(), " } from 'script_logic/module/role/", name, "';" }
+            }
+        end,
+    },
     ["import util"] = {
         args = { "name" },
         content = function(name)
@@ -384,6 +392,27 @@ cmd_snip.register {
     },
     ["init panel"] = {
         content = INIT_PANEL,
+    },
+    ["init rolemodule"] = {
+        args = { "name" },
+        content = function(name)
+            return {
+                { "export namespace ", name:upper(), " {" },
+                "",
+                "    // --------- 通用玩家单例方法 begin-------",
+                "    export const onRoleDataReady = (): void => {};",
+                "",
+                "    export const onRoleEnterWorld = (): void => {};",
+                "",
+                "    export const onRoleQuitWorld = (): void => {};",
+                "",
+                "    export const onLoginStartReconnect = (): void => {};",
+                "",
+                "    export const onLoginStartConnect = (): void => {};",
+                "    // --------- 通用玩家单例方法 end-------",
+                "}",
+            }
+        end,
     },
     ["init sub_panel"] = {
         content = INIT_SUB_PANEL,
