@@ -29,6 +29,12 @@ local function to_camel(index)
     end, { index })
 end
 
+---@param str string
+---@return string
+local function first_char_upper(str)
+    return str:sub(1, 1):upper() .. str:sub(2)
+end
+
 -- ----------------------------------------------------------------------------
 
 ---@class ImportInfo
@@ -330,7 +336,7 @@ cmd_snip.register {
 
             local prefix = info.prefix
             if prefix then
-                variable = prefix .. variable:sub(1, 1):upper() .. variable:sub(2, #variable)
+                variable = prefix .. first_char_upper(variable)
             end
 
             if class_name == "" then
@@ -340,7 +346,7 @@ cmd_snip.register {
             return ("const %s = %s.getGameObject('${1}', %s);"):format(variable, object, class_name)
         end,
     },
-    ["import gm_cmd"] = {
+    ["import gm"] = {
         args = { "name" },
         content = function(name)
             return ("import * as %s from 'script_logic/common/wizcmd/cmds/%s'"):format(name:upper(), name)
@@ -458,8 +464,8 @@ cmd_snip.register {
         content = function(name, flag_name)
             flag_name = flag_name or name
             return {
-                { "private ",               name,      "(",  1, "): void {" },
-                { "    if (this.requested", flag_name, ") {" },
+                { "private do",             first_char_upper(name),      "(",  1, "): void {" },
+                { "    if (this.requested", first_char_upper(flag_name), ") {" },
                 "        return;",
                 "    }",
                 "",
@@ -490,6 +496,7 @@ cmd_snip.register {
     ["new timer"] = {
         args = { "name" },
         content = function(name)
+            name = first_char_upper(name)
             return {
                 "private init" .. name .. "Timer(): void {",
                 "    this.cancel" .. name .. "Timer();",
