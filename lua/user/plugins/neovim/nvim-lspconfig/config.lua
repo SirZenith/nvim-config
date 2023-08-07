@@ -53,6 +53,7 @@ user.plugin.nvim_lspconfig = {
         },
         "texlab",
         "vls",
+        "zls",
     },
 }
 
