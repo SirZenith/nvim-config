@@ -118,8 +118,8 @@ local DMFieldTypeInfo = {
     dict = { "idkey", "valueType", "customClass" },
     list = { "valueType", "customClass" },
     map = { "idtype", "valueType", "customClass" },
-    specNum = { "catetory" },
-    specDict = { "idkey", "valueType", "catetory" },
+    specNum = { "category" },
+    specDict = { "idkey", "valueType", "category" },
 }
 
 -- ----------------------------------------------------------------------------
@@ -194,7 +194,6 @@ local INIT_PANEL = {
     "",
     "/**",
     { " * ",                          2 },
-    " *",
     " */",
     "@uiRegister({",
     { "    panelName: '",                                    1, "'," },
@@ -279,17 +278,20 @@ cmd_snip.register {
         args = { "name", "index", "type" },
         content = function(name, index, type)
             index = tonumber(index) or 0
+            local buffer = {
+                name, ": { index: ", tostring(index), ", typ: '", type, ", ", 
+            }
+
             local extra_args = DMFieldTypeInfo[type] or {}
             local jump_index = 1
-            local buffer = {}
             for _, field in ipairs(extra_args) do
-                table.insert(buffer, " ")
+                table.insert(buffer, ", ")
                 table.insert(buffer, field)
-                table.insert(buffer, (": ${%d},"):format(jump_index))
+                table.insert(buffer, (": ${%d}"):format(jump_index))
                 jump_index = jump_index + 1
             end
 
-            return ("%s: { index: %d, typ: '%s',%s desc: '${%d}' },"):format(
+            return ("%s: { index: %d, typ: '%s', desc: '${%d}' },"):format(
                 name, index, type, table.concat(buffer), jump_index
             )
         end,
@@ -383,6 +385,29 @@ cmd_snip.register {
     },
     ["init data_model"] = {
         content = INIT_DATA_MODEL,
+    },
+    ["init event"] = {
+        args = { "name" },
+        content = function(name)
+            local event_name = name .. "_event"
+            return {
+                "import { CustomEventEmitter, EVENT_EMITTER, IEvent } from 'script_logic/common/base/event_emitter';",
+                "interface ICustomEvent extends IEvent {",
+                { "    name: '",      event_name,         "';" },
+                "    events: {};",
+                "}",
+                "",
+                "type TYPE_CUSTOM = CustomEventEmitter<ICustomEvent>;",
+                "",
+                { "export namespace ", event_name:upper(), " {" },
+                "    export type eventEmitterType = TYPE_CUSTOM;",
+                "",
+                "    export type eventType = ICustomEvent;",
+                "",
+                "    export const event: CustomEventEmitter<ICustomEvent> = EVENT_EMITTER.bindSingleon<ICustomEvent>();",
+                "}",
+            }
+        end,
     },
     ["init gm"] = {
         content = INIT_GM,
@@ -505,6 +530,7 @@ cmd_snip.register {
     ["new scroll"] = {
         args = { "name" },
         content = function(name)
+            name = first_char_upper(name)
             return {
                 "private update" .. name .. "Scroll(): void {",
                 { "    const scroll = this.getGameObject('", 1, "', UIScrollView);" },
