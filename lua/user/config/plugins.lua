@@ -15,7 +15,7 @@ local specs = {
     -- ------------------------------------------------------------------------
     -- General
     "lewis6991/gitsigns.nvim",
-    "ggandor/leap.nvim", -- search & jump
+    -- "ggandor/leap.nvim", -- search & jump
     "numToStr/Comment.nvim",
     {
         "folke/noice.nvim",

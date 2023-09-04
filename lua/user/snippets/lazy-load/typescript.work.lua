@@ -160,7 +160,7 @@ local INIT_LABEL_VIEW = {
     { "    panelName: '",                                    1, "'," },
     { "    panelDesc: '",                                    2, "'," },
     { "    prefabPath: '",                                   3, "'," },
-    { "    fullScreen: true," },
+    { "    fullScreen: ", 4, "," },
     { "    sortOrderType: UI_COMMON.CANVAS_SORT_ORDER.MENU," },
     "})",
     "// eslint-disable-next-line @typescript-eslint/no-unused-vars",
@@ -199,7 +199,7 @@ local INIT_PANEL = {
     { "    panelName: '",                                    1, "'," },
     { "    panelDesc: '",                                    2, "'," },
     { "    prefabPath: '",                                   3, "'," },
-    { "    fullScreen: true," },
+    { "    fullScreen: ", 4, "," },
     { "    sortOrderType: UI_COMMON.CANVAS_SORT_ORDER.MENU," },
     "})",
     "// eslint-disable-next-line @typescript-eslint/no-unused-vars",
@@ -328,8 +328,8 @@ cmd_snip.register {
     },
     gg = {
         -- get game object of type
-        args = { "variable", "object", "class-alias" },
-        content = function(variable, object, class_alias)
+        args = { "class-alias", "variable", "object" },
+        content = function(class_alias, variable, object)
             local info = game_object_name_map[class_alias]
             if not info then return nil end
 
