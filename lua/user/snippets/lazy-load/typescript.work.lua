@@ -499,6 +499,12 @@ cmd_snip.register {
     ["new label_info"] = {
         content = NEW_LABEL_INFO,
     },
+    ["new logger"] = {
+        args = { "name" },
+        content = function(name)
+            return "const Log = LOGGING.logger('" .. name .. "');"
+        end,
+    };
     ["new reddot"] = {
         args = { "name" },
         content = function(name)
