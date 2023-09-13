@@ -348,6 +348,13 @@ cmd_snip.register {
             return ("const %s = %s.getGameObject('${1}', %s);"):format(variable, object, class_name)
         end,
     },
+    ["import event"] = {
+        args = { "name" },
+        content = function(name)
+            local module_name = name .. "_event";
+            return ("import { %s } from 'script_logic/event/%s';"):format(module_name:upper(), module_name)
+        end,
+    },
     ["import gm"] = {
         args = { "name" },
         content = function(name)
