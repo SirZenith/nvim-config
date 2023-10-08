@@ -94,8 +94,8 @@ user.plugin.nvim_lspconfig = {
             "v_analyzer",
             install = {
                 "mkdir temp",
-                "curl 'https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh' -O temp/install.vsh",
-                "v -e temp/install.sh",
+                "curl 'https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh' -o temp/install.vsh",
+                "v temp/install.sh",
                 "rm -r temp",
             }
         },
