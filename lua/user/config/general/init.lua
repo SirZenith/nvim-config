@@ -167,7 +167,21 @@ user.general = {
             },
             {
                 name = "vlang",
-                pattern = { "%.v$", "%.vsh$" }
+                pattern = { "%.v$", "%.vsh$", ".*/v.mod$" },
+                override = true,
+                condition = function(match)
+                    local ok = false
+
+                    for path in vim.fs.parents(match) do
+                        local mod_file_path = vim.fs.joinpath(path, "v.mod")
+                        ok = vim.fn.filereadable(mod_file_path) == 1
+                        if ok then
+                            break
+                        end
+                    end
+
+                    return ok
+                end,
             },
             {
                 name = "xml",
@@ -215,6 +229,10 @@ local function setup_filetype(match)
         return match:match(p) ~= nil
     end
 
+    -- ------------------------------------------------------------------------
+
+    local override_type
+
     for _, map in user.general.filetype.mapping:pairs() do
         local is_match = false
         if type(map.pattern) == "string"
@@ -227,23 +245,46 @@ local function setup_filetype(match)
             is_match = true
         end
 
+        if is_match and map.condition then
+            is_match = map.condition(match)
+        end
+
         if is_match then
+            local name = map.name
+
             local target = map.secondary and secondary or primary
-            add_type(target, map.name)
+            add_type(target, name)
+
+            if map.override then
+                override_type = name
+                break
+            end
         end
     end
 
     if #primary + #secondary == 0 then return end
 
-    local old_types = vim.split(vim.opt_local.filetype:get(), ".", { plain = true })
-    for _, type in ipairs(old_types) do
-        add_type(primary, type)
+    -- ------------------------------------------------------------------------
+
+    local typename
+
+    if override_type then
+        typename = override_type
+    else
+        local old_types = vim.split(vim.opt_local.filetype:get(), ".", { plain = true })
+        for _, type in ipairs(old_types) do
+            add_type(primary, type)
+        end
+
+        local buffer = {}
+        table_utils.extend_list(buffer, primary)
+        table_utils.extend_list(buffer, secondary)
+        typename = table.concat(buffer, ".")
     end
 
-    local buffer = {}
-    table_utils.extend_list(buffer, primary)
-    table_utils.extend_list(buffer, secondary)
-    vim.opt_local.filetype = table.concat(buffer, ".")
+    print('set file type to', typename)
+
+    vim.opt_local.filetype = typename
 end
 
 return function()
