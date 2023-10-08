@@ -139,8 +139,8 @@ user.option = {
         shellcmdflag = "-c",
         shellquote = "",
         shellxquote = "",
-        shellpipe = "| save --raw",
-        shellredir = "| sed 's/\\033\\[[0-9;]*m//g' | save --raw",
+        shellpipe = "| ansi strip | save --raw",
+        shellredir = "| ansi strip | save --raw",
     },
     g = {
         python3_host_prog = vim.env.PYTHON_PATH,
