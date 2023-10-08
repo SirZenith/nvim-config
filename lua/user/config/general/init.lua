@@ -1,4 +1,5 @@
 local user = require "user"
+local fs = require "user.utils.fs"
 local table_utils = require "user.utils.table"
 local functional = require "user.utils.functional"
 
@@ -166,14 +167,14 @@ user.general = {
                 pattern = "%.nu$",
             },
             {
-                name = "vlang",
+                name = "v",
                 pattern = { "%.v$", "%.vsh$", ".*/v.mod$" },
                 override = true,
                 condition = function(match)
                     local ok = false
 
                     for path in vim.fs.parents(match) do
-                        local mod_file_path = vim.fs.joinpath(path, "v.mod")
+                        local mod_file_path = fs.path_join(path, "v.mod")
                         ok = vim.fn.filereadable(mod_file_path) == 1
                         if ok then
                             break
@@ -281,8 +282,6 @@ local function setup_filetype(match)
         table_utils.extend_list(buffer, secondary)
         typename = table.concat(buffer, ".")
     end
-
-    print('set file type to', typename)
 
     vim.opt_local.filetype = typename
 end
