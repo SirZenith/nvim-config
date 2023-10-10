@@ -282,6 +282,32 @@ function ConfigEntry.value(self)
     return table_utils.deep_copy(self:_get_value())
 end
 
+-- Delete current config entry from config table.
+function ConfigEntry:delete()
+    local segments = self:_get_key_segments()
+    local tail = table.remove(segments)
+    if not tail then
+        return
+    end
+
+    local tbl = self.__config_base
+    for i = 1, #segments do
+        tbl = tbl[segments[i]]
+
+        if type(tbl) ~= "table" then
+            error("trying to delete from a non-table config: " .. tostring(self.__key), 2)
+        elseif tbl == nil then
+            break
+        end
+    end
+
+    if not tbl then
+        return
+    end
+
+    tbl[tail] = nil
+end
+
 function ConfigEntry:append(value)
     local segments = self:_get_key_segments()
     local tbl = self:_get_tbl_by_segments(segments)
