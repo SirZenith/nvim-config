@@ -154,17 +154,16 @@ local INIT_LABEL_VIEW = {
     "",
     "/**",
     { " * ",                          2 },
-    " *",
     " */",
     "@uiRegister({",
     { "    panelName: '",                                    1, "'," },
     { "    panelDesc: '",                                    2, "'," },
     { "    prefabPath: '",                                   3, "'," },
-    { "    fullScreen: ", 4, "," },
+    { "    fullScreen: ",                                    4, "," },
     { "    sortOrderType: UI_COMMON.CANVAS_SORT_ORDER.MENU," },
     "})",
     "// eslint-disable-next-line @typescript-eslint/no-unused-vars",
-    { "class ", to_camel(1), " extends UILabelView {" },
+    { "export class ", to_camel(1), " extends UILabelView {" },
     "    protected onInit(): void {}",
     "",
     "    protected prepareLabelInfo(): void {",
@@ -177,7 +176,7 @@ local INIT_LABEL_VIEW = {
     "        this.defaultLabelType = null;",
     "    }",
     "",
-    "    protected initEvents(args: UI_COMMON.TYPE_SHOW_PANEL_ARGS): void {}",
+    "    protected initEvents(): void {}",
     "",
     "    protected onClose(): void {}",
     "}",
@@ -199,16 +198,16 @@ local INIT_PANEL = {
     { "    panelName: '",                                    1, "'," },
     { "    panelDesc: '",                                    2, "'," },
     { "    prefabPath: '",                                   3, "'," },
-    { "    fullScreen: ", 4, "," },
+    { "    fullScreen: ",                                    4, "," },
     { "    sortOrderType: UI_COMMON.CANVAS_SORT_ORDER.MENU," },
     "})",
     "// eslint-disable-next-line @typescript-eslint/no-unused-vars",
-    { "class ", to_camel(1), " extends UIBase {" },
+    { "export class ", to_camel(1), " extends UIBase {" },
     "    protected onInit(): void {}",
     "",
-    "    protected initEvents(args: UI_COMMON.TYPE_SHOW_PANEL_ARGS): void {}",
+    "    protected initEvents(): void {}",
     "",
-    "    protected onShow(args: UI_COMMON.TYPE_SHOW_PANEL_ARGS): void {}",
+    "    protected onShow(): void {}",
     "",
     "    protected onClose(): void {}",
     "}",
@@ -233,7 +232,6 @@ local INIT_TIPS = {
 
 local INIT_SUB_PANEL = {
     "import { LOGGING } from 'script_logic/common/base/logging';",
-    "import { UI_COMMON } from 'script_logic/base/ui_system/ui_common';",
     "import { UISubView } from 'script_logic/base/ui_system/label_view/ui_sub_view';",
     "",
     { "const Log = LOGGING.logger('", 1,           "');" },
@@ -241,9 +239,9 @@ local INIT_SUB_PANEL = {
     { "export class ",                to_camel(1), " extends UISubView {" },
     "    protected onInit(): void {}",
     "",
-    "    protected initEvents(args: UI_COMMON.TYPE_SHOW_PANEL_ARGS): void {}",
+    "    protected initEvents(): void {}",
     "",
-    "    protected onShow(args: UI_COMMON.TYPE_SHOW_PANEL_ARGS): void {}",
+    "    protected onShow(): void {}",
     "",
     "    protected onClose(): void {}",
     "}",
@@ -262,7 +260,7 @@ local NEW_LABEL_INFO = {
     { "    text: '",          4, "'," },
     { "    iconPath: '",      5, "'," },
     { "    iconPathUnSel: '", 6, "'," },
-    { "    showOrder: '",     7, "'," },
+    { "    showOrder: ",      7, "," },
     "},",
 }
 
@@ -279,7 +277,7 @@ cmd_snip.register {
         content = function(name, index, type)
             index = tonumber(index) or 0
             local buffer = {
-                name, ": { index: ", tostring(index), ", typ: '", type, ", ", 
+                name, ": { index: ", tostring(index), ", typ: '", type, ", ",
             }
 
             local extra_args = DMFieldTypeInfo[type] or {}
@@ -400,7 +398,7 @@ cmd_snip.register {
             return {
                 "import { CustomEventEmitter, EVENT_EMITTER, IEvent } from 'script_logic/common/base/event_emitter';",
                 "interface ICustomEvent extends IEvent {",
-                { "    name: '",      event_name,         "';" },
+                { "    name: '",       event_name,         "';" },
                 "    events: {};",
                 "}",
                 "",
@@ -460,13 +458,13 @@ cmd_snip.register {
             return modifier .. " " .. name .. "(${2}): ${1:void} {${3}}"
         end,
     },
-    ["new gm arg"] = {
+    ["gm arg"] = {
         args = { "name" },
         content = function(name)
             return ("{ name: '%s', typ: '${1}', default: ${2} }"):format(name)
         end,
     },
-    ["new gm cmd"] = {
+    ["gm cmd"] = {
         args = { { "type", is_optional = true } },
         content = function(type)
             type = type or "client"
@@ -481,14 +479,14 @@ cmd_snip.register {
                     "    server: (agent: IFakeAgent, cmdArgs: ICmdArgsMap, imports: importedMap): void => {",
                     "        // const { } = imports;",
                     "        // const role = agent.role;",
-                    "        // const argName = cmdArgs.argName;",
+                    "        // const { } = cmdArgs;",
                     "    },"
                 })
             elseif type == GmCmdType.Client then
                 table_utils.extend_list(buffer, {
                     "    client: (cmdArgs: ICmdArgsMap, imports: importedMap): void => {",
                     "        // const { } = imports;",
-                    "        // const argName = cmdArgs.argName;",
+                    "        // const { } = cmdArgs;",
                     "    },"
                 })
             else
@@ -511,7 +509,7 @@ cmd_snip.register {
         content = function(name)
             return "const Log = LOGGING.logger('" .. name .. "');"
         end,
-    };
+    },
     ["new reddot"] = {
         args = { "name" },
         content = function(name)
