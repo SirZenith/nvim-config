@@ -247,6 +247,73 @@ local INIT_SUB_PANEL = {
     "}",
 }
 
+local NEW_ADS = {
+    { "// #region ",                    2 },
+    "",
+    "/**",
+    " * @param role - 玩家数据",
+    { " * @returns 今天已经观看", 2, "广告的次数" },
+    " */",
+    { "export const get",                                          1, "CurCount = (role: Role): number => {" },
+    "// TODO",
+    { "    const cnt = SPAN_COUNTER.getDayCount(role as Role, ad", 1, "Flag);" },
+    "    return cnt;",
+    "};",
+    "",
+    "/**",
+    { " * @returns ",     2, "广告今日可看最大次数" },
+    " */",
+    { "export const get", 1, "MaxCnt = (): number => {" },
+    "// TODO",
+    { "    const maxCnt = GLOBAL_CONFIG.getConfigValue('') as number;" },
+    "    return maxCnt;",
+    "};",
+    "",
+    "/**",
+    " * @param role - 玩家数据",
+    { " * @returns ",                                                  2, "广告 CD 结束的时间" },
+    " */",
+    { "export const getNext",       1, "Ts = (role: Role): number => {" },
+    "    const adsData = role.adsData;",
+    "    if (!adsData) {",
+    "        return COMMON_CONST.ZERO;",
+    "    }",
+    "",
+    "    // TODO",
+    { "    const ts = adsData.get", 1, "Ts();" },
+    "    const cd = GLOBAL_CONFIG.getConfigValue('');",
+    "    return ts + cd;",
+    "};",
+    "",
+    "/**",
+    " * @param role - 玩家数据",
+    { " * @returns 玩家当前是否可以观看", 2, "广告" },
+    " */",
+    { "export const is",                            1, "CanPlayAd = (role: Role): IOkLocaleErrRet => {" },
+    "    const adsData = role.adsData;",
+    "    if (!adsData) {",
+    "        // 第一次看",
+    "        return { ok: true };",
+    "    }",
+    "",
+    { "    const cnt = get",    1, "CurCount(role);" },
+    { "    const maxCnt = get", 1, "MaxCnt();" },
+    "    if (cnt >= maxCnt) {",
+    "        return { ok: false };",
+    "    }",
+    "",
+    { "    const nextTs = getNext", 1, "Ts(role);" },
+    "    const now = TIMES.now();",
+    "    if (now < nextTs) {",
+    "        return { ok: false };",
+    "    }",
+    "",
+    "    return { ok: true };",
+    "};",
+    "",
+    { "// #endregion ",             2 },
+}
+
 local NEW_CLOSE_BTN = [[
 const btnClose = this.getGameObject('node_bg/panel/btn_close', UIButton);
 btnClose.setOnClick(this.close.bind(this));
@@ -277,7 +344,7 @@ cmd_snip.register {
         content = function(name, index, type)
             index = tonumber(index) or 0
             local buffer = {
-                name, ": { index: ", tostring(index), ", typ: '", type, ", ",
+                name, ": { index: ", tostring(index), ", typ: '", type, "'",
             }
 
             local extra_args = DMFieldTypeInfo[type] or {}
@@ -289,9 +356,9 @@ cmd_snip.register {
                 jump_index = jump_index + 1
             end
 
-            return ("%s: { index: %d, typ: '%s', desc: '${%d}' },"):format(
-                name, index, type, table.concat(buffer), jump_index
-            )
+            table.insert(buffer, (", desc: '${%d}' },"):format(jump_index))
+
+            return table.concat(buffer)
         end,
     },
     ["dm new"] = {
@@ -496,6 +563,15 @@ cmd_snip.register {
             table.insert(buffer, "},")
 
             return buffer
+        end,
+    },
+    ["new ads"] = {
+        args = { "ads_name", "ads_desc_name" },
+        content = function(ads_name, ads_desc_name)
+            return s.snippet_tbl_substitute(NEW_ADS, {
+                [1] = first_char_upper(ads_name),
+                [2] = ads_desc_name,
+            })
         end,
     },
     ["new close_btn"] = {

@@ -212,4 +212,38 @@ function M.init_conditional_load()
     end
 end
 
+-- Substitute jump index/string in snippet table with string in given translation table.
+---@param row string | number | SnippetNodeInfoTable
+---@param translate table<number | string, string>
+---@return string | number | SnippetNodeInfoTable
+function M.snippet_row_substitute(row, translate)
+    local result = nil
+
+    if translate[row] then
+        result = translate[row]
+    elseif type(row) == 'table' then
+        result = {}
+        for _, element in ipairs(row) do
+            local new_element = M.snippet_row_substitute(element, translate)
+            table.insert(result, new_element)
+        end
+    end
+
+    return result or row
+end
+
+---@param snippet_tbl SnippetNodeInfoTable[]
+---@param translate table<number | string, string>
+---@return SnippetNodeInfoTable[]
+function M.snippet_tbl_substitute(snippet_tbl, translate)
+    local result = {}
+
+    for _, row in ipairs(snippet_tbl) do
+        local new_row = M.snippet_row_substitute(row, translate)
+        table.insert(result, new_row)
+    end
+
+    return result
+end
+
 return M
