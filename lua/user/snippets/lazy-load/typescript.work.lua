@@ -373,7 +373,7 @@ cmd_snip.register {
             local modifier = name and modifier_or_name or ""
             name = name or modifier_or_name
 
-            local result = "const " .. name .. " = (${2}): ${1:void} => {${3}};"
+            local result = "const " .. name .. " = (${2}): ${1:void} => {};"
             if modifier then
                 result = modifier .. " " .. result
             end
@@ -517,14 +517,6 @@ cmd_snip.register {
     ["init tips"] = {
         content = INIT_TIPS,
     },
-    method = {
-        args = { "modifier-or-name", { "name", is_optional = true } },
-        content = function(modifier_or_name, name)
-            local modifier = name and modifier_or_name or "private"
-            name = name or modifier_or_name
-            return modifier .. " " .. name .. "(${2}): ${1:void} {${3}}"
-        end,
-    },
     ["gm arg"] = {
         args = { "name" },
         content = function(name)
@@ -563,6 +555,14 @@ cmd_snip.register {
             table.insert(buffer, "},")
 
             return buffer
+        end,
+    },
+    method = {
+        args = { "modifier-or-name", { "name", is_optional = true } },
+        content = function(modifier_or_name, name)
+            local modifier = name and modifier_or_name or "private"
+            name = name or modifier_or_name
+            return modifier .. " " .. name .. "(${2}): ${1:void} {}"
         end,
     },
     ["new ads"] = {
@@ -633,6 +633,13 @@ cmd_snip.register {
                 "",
                 "private update" .. name .. "Item(item: GameObject, index: number): void {}",
             }
+        end,
+    },
+    ["new textid"] = {
+        args = { "name" },
+        content = function(name)
+            local varName = 'textId' .. first_char_upper(name)
+            return "const " .. varName .. ": LOCALE.textIdType = '';"
         end,
     },
     ["new timer"] = {
