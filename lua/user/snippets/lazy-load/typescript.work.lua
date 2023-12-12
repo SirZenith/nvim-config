@@ -248,7 +248,7 @@ local INIT_SUB_PANEL = {
 }
 
 local NEW_ADS = {
-    { "// #region ",                    2 },
+    { "// #region ", 2 },
     "",
     "/**",
     " * @param role - 玩家数据",
@@ -261,7 +261,7 @@ local NEW_ADS = {
     "};",
     "",
     "/**",
-    { " * @returns ",     2, "广告今日可看最大次数" },
+    { " * @returns ", 2, "广告今日可看最大次数" },
     " */",
     { "export const get", 1, "MaxCnt = (): number => {" },
     "// TODO",
@@ -271,7 +271,7 @@ local NEW_ADS = {
     "",
     "/**",
     " * @param role - 玩家数据",
-    { " * @returns ",                                                  2, "广告 CD 结束的时间" },
+    { " * @returns ", 2, "广告 CD 结束的时间" },
     " */",
     { "export const getNext",       1, "Ts = (role: Role): number => {" },
     "    const adsData = role.adsData;",
@@ -289,7 +289,7 @@ local NEW_ADS = {
     " * @param role - 玩家数据",
     { " * @returns 玩家当前是否可以观看", 2, "广告" },
     " */",
-    { "export const is",                            1, "CanPlayAd = (role: Role): IOkLocaleErrRet => {" },
+    { "export const is", 1, "CanPlayAd = (role: Role): IOkLocaleErrRet => {" },
     "    const adsData = role.adsData;",
     "    if (!adsData) {",
     "        // 第一次看",
@@ -593,7 +593,7 @@ cmd_snip.register {
             local node_name = name .. "Node"
             return {
                 { "const ",  key_name,               " = ",                         1,        " + '", name, "';" },
-                { "const ",  node_name,              " = reddotMgr.addNodeByPath(", key_name, ");" },
+                { "const ",  node_name,              " = reddotMgr.addNodeByPath(", key_name, ", '",  2,    "');" },
                 { node_name, ".setCheckFunc(() => {" },
                 "    return false;",
                 "});",
