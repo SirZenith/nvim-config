@@ -21,6 +21,7 @@ user.plugin.nvim_treesitter = {
             "css",
             "dot",
             "gitignore",
+            "glsl",
             "go",
             "gomod",
             "haskell",
