@@ -28,13 +28,11 @@ return function()
 
     user.plugin.luasnip.ext_opts = {
         [types.choiceNode] = {
-            __new_entry = true,
             active = {
                 virt_text = { { "●", "LuaSnipChoiceHint" } },
             },
         },
         [types.insertNode] = {
-            __new_entry = true,
             active = {
                 virt_text = { { "●", "LuaSnipInsertHint" } }
             }
