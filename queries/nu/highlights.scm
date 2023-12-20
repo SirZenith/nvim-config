@@ -285,4 +285,3 @@
 
 (shebang) @comment
 (comment) @comment
-
