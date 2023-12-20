@@ -1,5 +1,5 @@
 local user = require "user"
-local noice = require "noice"
+local wrap_with_module = require "user.utils".wrap_with_module
 
 user.plugin.noice = {
     __new_entry = true,
@@ -201,6 +201,8 @@ user.plugin.noice = {
     format      = {}, --- @see section on formatting
 }
 
-return function()
-    noice.setup(user.plugin.noice())
+local function finalize(module)
+    module.setup(user.plugin.noice())
 end
+
+return wrap_with_module("noice", finalize)

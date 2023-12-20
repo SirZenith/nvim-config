@@ -1,10 +1,17 @@
 local user = require "user"
+local wrap_with_module = require "user.utils".wrap_with_module
 
 -- return false when nvim is started with name of file as arguments.
 local function check_need_open_tree()
     local output = vim.api.nvim_command_output "args"
     local cur_file = output:match("%[(.+)%]")
     return vim.fn.filereadable(cur_file) ~= 1
+end
+
+local function try_open_tree()
+    if check_need_open_tree() then
+        require("nvim-tree.api").tree.open()
+    end
 end
 
 user.plugin.nvim_tree = {
@@ -131,17 +138,16 @@ user.plugin.nvim_tree = {
     },
 }
 
-return function()
+local function finalize(module)
     local group_id = vim.api.nvim_create_augroup("user.plugin.nvim_tree", { clear = true })
+
     vim.api.nvim_create_autocmd("VimEnter", {
         group = group_id,
-        callback = function()
-            if check_need_open_tree() then
-                require("nvim-tree.api").tree.open()
-            end
-        end,
+        callback = try_open_tree,
     })
 
     vim.cmd "highlight NvimTreeFolderIcon guibg=blue"
-    require "nvim-tree".setup(user.plugin.nvim_tree())
+    module.setup(user.plugin.nvim_tree())
 end
+
+return wrap_with_module("nvim-tree", finalize)

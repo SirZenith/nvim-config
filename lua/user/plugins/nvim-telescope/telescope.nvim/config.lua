@@ -1,5 +1,5 @@
 local user = require "user"
-local previewers = require "telescope.previewers"
+local wrap_with_module = require "user.utils".wrap_with_module
 
 local check_exclude = function(filepath)
     local exclude = user.plugin.telescope_nvim.preview_exclude()
@@ -26,12 +26,13 @@ local previewer_maker = function(filepath, bufnr, opts)
         opts.use_ft_detect = not check_exclude(filepath);
     end
 
+    local previewers = require "telescope.previewers"
     previewers.buffer_previewer_maker(filepath, bufnr, opts)
 end
 
 user.plugin.telescope_nvim = {
     __new_entry = true,
-    -- turn of syntax highlighting for certain file name pattern.
+    -- turn off syntax highlighting for certain file name pattern.
     preview_exclude = { ".*%.meta", ".*%.prefab" },
     config = {
         defaults = {
@@ -40,6 +41,8 @@ user.plugin.telescope_nvim = {
     }
 }
 
-return function()
-    require("telescope").setup(user.plugin.telescope_nvim.config())
+local function finalize(module)
+    module.setup(user.plugin.telescope_nvim.config())
 end
+
+return wrap_with_module("telescope", finalize)

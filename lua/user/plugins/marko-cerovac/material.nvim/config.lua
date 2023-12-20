@@ -1,4 +1,5 @@
 local user = require "user"
+local wrap_with_module = require "user.utils".wrap_with_module
 
 local styles = {
     "darker",
@@ -44,6 +45,8 @@ user.plugin.material_nvim = {
     custom_highlights = {}   -- Overwrite highlights with your own
 }
 
-return function()
-    require('material').setup(user.plugin.material_nvim())
+local function finalize(module)
+    module.setup(user.plugin.material_nvim())
 end
+
+return wrap_with_module("material", finalize)

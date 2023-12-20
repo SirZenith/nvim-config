@@ -67,11 +67,15 @@ rawset(user, "finalize", function()
         config_home = user.env.CONFIG_HOME(),
     }
 
+    -- load plugins
     local plugin_specs = require "user.config.plugins"
+    local plugin_loader = require "user.plugins.loader"
+    plugin_loader.init_event_autocmd()
+    plugin_loader.setup(plugin_specs)
 
     local modules = {
-        -- load plugins first, make sure all config file can `require` them.
-        import "user.plugins.loader".setup(plugin_specs),
+        -- plugin config
+        plugin_loader,
 
         -- user config
         import "user.config.command",

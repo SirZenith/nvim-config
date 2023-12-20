@@ -63,17 +63,41 @@ end
 
 -- wrap require in xpcall, print traceback then return nil when failed.
 ---@param modname string
-function M.import(modname)
+---@param failed_msg? string
+function M.import(modname, failed_msg)
     local ok, result = xpcall(function() return require(modname) end, debug.traceback)
 
     local module
     if ok then
         module = result
     else
-        vim.notify(result)
+        if not failed_msg then
+            vim.notify(result)
+        elseif #failed_msg > 0 then
+            vim.notify(failed_msg)
+        end
     end
 
     return module
+end
+
+-- Wrap the task_func with a new func, which when called tries to import target module
+-- andcall task_func with that module.
+-- If loading process successed, wrapper function returns true, else returns false.
+---@param modname string
+---@param task_func fun(m: any)
+---@return fun(): boolean
+function M.wrap_with_module(modname, task_func)
+    return function()
+        local module = M.import(modname, "")
+        if not module then
+            return false
+        end
+
+        task_func(module)
+
+        return true
+    end
 end
 
 -- pass in loaded config modules, this function will finalize them in order.

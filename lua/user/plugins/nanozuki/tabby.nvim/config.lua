@@ -1,4 +1,5 @@
 local user = require "user"
+local wrap_with_module = require "user.utils".wrap_with_module
 
 local theme = {
     -- tab line background
@@ -36,9 +37,8 @@ local function str_digest(text, max_len)
     end
 end
 
-return function()
-    local tabline = require "tabby.tabline"
-    tabline.set(function(line)
+local function finalize(module)
+    module.set(function(line)
         return {
             {
                 { '  ', hl = theme.head },
@@ -82,3 +82,5 @@ return function()
         }
     end)
 end
+
+return wrap_with_module("tabby.tabline", finalize)

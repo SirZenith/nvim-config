@@ -1,9 +1,6 @@
 local user = require "user"
+local import = require "user.utils".import
 local table_utils = require "user.utils.table"
-
-local nts_configs = require "nvim-treesitter.configs"
-local nts_parsers = require "nvim-treesitter.parsers"
-local nts_install = require "nvim-treesitter.install"
 
 user.plugin.nvim_treesitter = {
     __new_entry = true,
@@ -100,8 +97,8 @@ user.plugin.nvim_treesitter = {
         rainbow = {
             enable = true,
             -- disable = { "jsx", "cpp" }, list of languages you want to disable the plugin for
-            extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
-            max_file_lines = nil, -- Do not enable for files with more than n lines, int
+            extended_mode = true,                                                                     -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
+            max_file_lines = nil,                                                                     -- Do not enable for files with more than n lines, int
             colors = { "#6c9ef8", "#d85896", "#b77fdb", "#ef5350", "#64b5f6", "#ffee58", "#ab47bc" }, -- table of hex strings
             -- termcolors = {}, -- table of colour name strings
         },
@@ -130,6 +127,17 @@ user.plugin.nvim_treesitter = {
 }
 
 return function()
+    local nts_configs = import("nvim-treesitter.configs", "")
+    local nts_parsers = import("nvim-treesitter.parsers", "")
+    local nts_install = import("nvim-treesitter.install", "")
+
+    if not nts_configs
+        or not nts_parsers
+        or not nts_install
+    then
+        return false
+    end
+
     local augroup = vim.api.nvim_create_augroup("user.plugin.nvim_treesitter", { clear = true })
     -- remote italic in markdown code block
     vim.api.nvim_create_autocmd("FileType", {
@@ -166,4 +174,6 @@ return function()
     for name, info in user.plugin.nvim_treesitter.parsers:pairs() do
         parser_config[name] = info
     end
+
+    return true
 end

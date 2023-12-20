@@ -1,5 +1,5 @@
 local user = require "user"
-local ufo = require "ufo"
+local wrap_with_module = require "user.utils".wrap_with_module
 
 user.option.o = {
     foldcolumn = '1', -- '0' is not bad
@@ -47,7 +47,7 @@ user.plugin.nvim_ufo = {
     }
 }
 
-return function()
+local function finalize(module)
     user.lsp.capabilities_settings:append {
         textDocument = {
             foldingRange = {
@@ -57,5 +57,7 @@ return function()
         }
     }
 
-    ufo.setup(user.plugin.nvim_ufo())
+    module.setup(user.plugin.nvim_ufo())
 end
+
+return wrap_with_module("ufo", finalize)

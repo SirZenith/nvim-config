@@ -1,5 +1,5 @@
 local user = require "user"
-local lsp_status = require "lsp-status"
+local wrap_with_module = require "user.utils".wrap_with_module
 
 user.plugin.lsp_status = {
     __new_entry = true,
@@ -20,13 +20,16 @@ user.plugin.lsp_status = {
     update_interval = 100
 }
 
-return function()
-    user.lsp.on_attach_callbacks:append(lsp_status.on_attach)
-    user.lsp.capabilities_settings:append(lsp_status.capabilities)
+local function finalize(module)
+    user.lsp.on_attach_callbacks:append(module.on_attach)
+    user.lsp.capabilities_settings:append(module.capabilities)
 
-    lsp_status.register_progress()
+    module.register_progress()
 
     local cfg = user.plugin.lsp_status()
     cfg.kind_labels = user.lsp.kind_label()
-    lsp_status.config(cfg)
+
+    module.config(cfg)
 end
+
+return wrap_with_module("lsp-status", finalize)

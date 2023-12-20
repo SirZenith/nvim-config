@@ -1,5 +1,5 @@
 local user = require "user"
-local prefab_cmp = require "prefab-cmp"
+local wrap_with_module = require "user.utils".wrap_with_module
 
 user.plugin.prefab_cmp = {
     __new_entry = true,
@@ -10,6 +10,8 @@ user.plugin.prefab_cmp = {
     prefab_loader = {},
 }
 
-return function()
-    prefab_cmp.setup(user.plugin.prefab_cmp())
+local function finalize(module)
+    module.setup(user.plugin.prefab_cmp())
 end
+
+return wrap_with_module("prefab-cmp", finalize)

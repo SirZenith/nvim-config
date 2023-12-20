@@ -39,13 +39,13 @@ end, {
 -- ----------------------------------------------------------------------------
 
 cmd("LspDebugOn", function()
-    ls.lsp_debug_on()
+    ls.lsp_server_debug_on()
 end, {
     desc = "turn on debug mode for LSP"
 })
 
 cmd("LspDebugOff", function()
-    ls.lsp_debug_off()
+    ls.lsp_server_debug_off()
 end, {
     desc = "turn off debug mode for LSP"
 })
