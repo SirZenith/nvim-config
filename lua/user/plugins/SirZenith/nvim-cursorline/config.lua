@@ -1,4 +1,5 @@
 local user = require "user"
+local wrap_with_module = require "user.utils".wrap_with_module
 
 user.plugin.nvim_cursorline = {
     __new_entry = true,
@@ -21,6 +22,8 @@ user.plugin.nvim_cursorline = {
     }
 }
 
-return function()
-    require('nvim-cursorline').setup(user.plugin.nvim_cursorline())
+local function finalize(module)
+    module.setup(user.plugin.nvim_cursorline())
 end
+
+return wrap_with_module("nvim-cursorline", finalize)

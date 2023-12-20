@@ -1,4 +1,5 @@
 local user = require "user"
+local wrap_with_module = require "user.utils".wrap_with_module
 
 user.plugin.gitsigns = {
     __new_entry                  = true,
@@ -44,6 +45,8 @@ user.plugin.gitsigns = {
     },
 }
 
-return function()
-    require('gitsigns').setup(user.plugin.gitsigns())
+local function finalize(module)
+    module.setup(user.plugin.gitsigns())
 end
+
+return wrap_with_module("gitsigns", finalize)

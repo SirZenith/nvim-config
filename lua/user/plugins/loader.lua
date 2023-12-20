@@ -82,14 +82,14 @@ end
 local M = {}
 
 M._is_bootstrap = is_bootstrap
-M._loaded_config_module = {}
+M._loaded_config_module = {} ---@type table<string, any>
 
 ---@param name string # file path relative to user config home directory
 local function try_load_file(name)
     local file = fs.path_join(user.env.CONFIG_HOME(), name)
     if fn.filereadable(file) ~= 0 then
         local module = import(name)
-        table.insert(M._loaded_config_module, module)
+        M._loaded_config_module[name] = module
     end
 end
 
@@ -146,19 +146,59 @@ function M.load_with_specs(sepcs)
     end
 end
 
+function M.init_event_autocmd()
+    local plugin_augroup = vim.api.nvim_create_augroup("user.plugin.load-config", { clear = true })
+
+    ---@type table<string, string | string[]>
+    local finalize_events = {
+        User = "PackerComplete",
+        FileType = "*",
+        BufRead = "*",
+    }
+
+    for event_name, pattern in pairs(finalize_events) do
+        vim.api.nvim_create_autocmd(event_name, {
+            group = plugin_augroup,
+            pattern = pattern,
+            callback = M.finalize,
+        })
+    end
+end
+
 function M.setup(specs)
     packer.startup(function()
         M.load_with_specs(specs)
     end)
-    return M
-end
 
-function M.finalize()
     if M._is_bootstrap then
         packer.sync()
     else
         packer.install()
-        utils.finalize(M._loaded_config_module)
+    end
+
+    return M
+end
+
+function M.finalize()
+    for name, module in pairs(M._loaded_config_module) do
+        local module_type = type(module)
+
+        local final
+        if module_type == "function" then
+            final = module
+        elseif module_type == "table" then
+            final = module.finalize
+        end
+
+        local ok = true
+        if type(final) == "function" then
+            ok = final()
+        end
+
+        -- ok is treated as `true` when has `nil` value
+        if ok ~= false then
+            M._loaded_config_module[name] = nil
+        end
     end
 end
 

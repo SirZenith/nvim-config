@@ -8,13 +8,44 @@ local function turn_on_true_color()
     end
 end
 
+---@param path string # path of a directory
+---@field boolen # if give path is a root directory of version control system
+local function check_is_vcs_root(path)
+    if vim.fn.isdirectory(path .. "/.git") == 1 then
+        return true
+    end
+
+    if vim.fn.isdirectory(path .. "/.svn") == 1 then
+        return true
+    end
+
+    return false
+end
+
 ---@type (packer.PluginSpec | string)[]
 local specs = {
     "wbthomason/packer.nvim",
 
     -- ------------------------------------------------------------------------
     -- General
-    "lewis6991/gitsigns.nvim",
+    {
+        "lewis6991/gitsigns.nvim",
+        cond = function()
+            local pwd = vim.fn.getcwd()
+
+            if vim.fn.isdirectory(pwd .. "/.git") == 1 then
+                return true;
+            end
+
+            for dir in vim.fs.parents(pwd) do
+                if vim.fn.isdirectory(dir .. "/.git") == 1 then
+                    return true;
+                end
+            end
+
+            return false
+        end,
+    },
     -- "ggandor/leap.nvim", -- search & jump
     "numToStr/Comment.nvim",
     {
@@ -35,6 +66,21 @@ local specs = {
     {
         "SirZenith/vcs-helper.nvim",
         requires = { "SirZenith/panelpal.nvim" },
+        cond = function()
+            local pwd = vim.fn.getcwd()
+
+            if check_is_vcs_root(pwd) then
+                return true;
+            end
+
+            for dir in vim.fs.parents(pwd) do
+                if check_is_vcs_root(dir) then
+                    return true;
+                end
+            end
+
+            return false
+        end,
     },
     {
         "nvim-telescope/telescope.nvim",
@@ -101,6 +147,7 @@ local specs = {
     {
         "iamcco/markdown-preview.nvim",
         run = function() vim.fn["mkdp#util#install"]() end,
+        ft = { "markdown" }
     },
     "neovim/nvim-lspconfig",
     {
@@ -131,7 +178,7 @@ local specs = {
     },
     {
         "vim-voom/VOoM",
-        ft = "markdown",
+        ft = { "markdown", "html" },
     },
 
     -- ------------------------------------------------------------------------
@@ -195,9 +242,7 @@ local specs = {
     },
     {
         "SirZenith/prefab-cmp",
-        requires = {
-            "hrsh7th/nvim-cmp",
-        },
+        requires = { "hrsh7th/nvim-cmp", },
     },
 }
 

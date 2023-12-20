@@ -13,6 +13,8 @@ local validate = vim.validate
 
 local M = {}
 
+---@param client lsp.Client
+---@param bufnr number
 local function lsp_on_attach(client, bufnr)
     -- Enable completion triggered by <c-x><c-o>
     vim.bo[bufnr].omnifunc = "v:lua.vim.lsp.omnifunc"
@@ -84,30 +86,38 @@ end
 ---@param user_config? table
 ---@return table
 function M.load(ls_name, user_config)
+    local config = {
+        flags = {
+            debounce_text_changes = 150,
+        },
+    }
+
+    -- set capabilities
     local capabilities = {}
     for _, cap in user.lsp.capabilities_settings:ipairs() do
         vim.tbl_extend("force", capabilities, cap)
     end
+    config.capabilities = capabilities
 
-    local base_config = {
-        capabilities = capabilities,
-        flags = {
-            debounce_text_changes = 150,
-        },
-        on_attach = lsp_on_attach,
-    }
-
+    -- lsp status plugin hook
     local ext = lsp_status.extensions[ls_name]
     if ext then
-        base_config.handlers = ext.setup()
+        config.handlers = ext.setup()
     end
 
-    local default_config = load_config_from_module(ls_name)
-
-    local config = {}
-    table_utils.update_table(config, base_config)
-    table_utils.update_table(config, default_config)
+    -- merging
+    table_utils.update_table(config, load_config_from_module(ls_name))
     table_utils.update_table(config, user_config or {})
+
+    -- wrapping on_attach
+    local on_attach = config.on_attach
+    config.on_attach = function(client, bufnr)
+        lsp_on_attach(client, bufnr)
+
+        if type(on_attach) == 'function' then
+            on_attach(client, bufnr)
+        end
+    end
 
     return config
 end

@@ -1,7 +1,5 @@
 local user = require "user"
-local ls_configs = require "user.language-server.configs"
-
-local nvim_lsp = require "lspconfig"
+local wrap_with_module = require "user.utils".wrap_with_module
 
 local function get_name(info)
     return type(info) == "string" and info or info[1]
@@ -109,7 +107,9 @@ user.plugin.nvim_lspconfig = {
     },
 }
 
-return function()
+local function finalize()
+    local ls_configs = require "user.language-server.configs"
+
     for _, info in user.plugin.nvim_lspconfig.lsp_servers:ipairs() do
         local server = get_name(info)
         ls_configs.setup_lsp(
@@ -118,3 +118,5 @@ return function()
         )
     end
 end
+
+return wrap_with_module("lspconfig", finalize)

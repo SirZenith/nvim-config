@@ -1,54 +1,62 @@
 local user = require "user"
 local snip_completion = require "user.snippets.cmd-snippet.cmp-source"
 
-local cmp = require "cmp"
-local luasnip = require "luasnip"
-local lspkind = require "lspkind"
-local mapping = require "user.plugins.hrsh7th.nvim-cmp.mapping"
-
-user.plugin.nvim_cmp = {
-    __new_entry = true,
-    window = {
-        completion = {
-            border = "shadow",
-            winhighlight = "Normal:Pmenu,FloatBorder:Pmenu,CursorLine:PmenuSel,Search:None",
-            col_offset = -1,
-            side_padding = 0,
-        },
-        documentation = {
-            border = "rounded",
-        }
-    },
-    formatting = {
-        fields = { "kind", "abbr", "menu" },
-    },
-    snippet = {
-        expand = function(args)
-            luasnip.lsp_expand(args.body)
-        end,
-    },
-    mapping = mapping,
-    sources = cmp.config.sources(
-        {
-            -- completion source registered in user configs
-            { name = snip_completion.name },
-        },
-        {
-            { name = "tree-sitter-grammar" },
-            { name = "prefab-completion" },
-        },
-        {
-            { name = "nvim_lsp" },
-            { name = "path" },
-            { name = "luasnip" },
-        },
-        {
-            { name = "buffer" },
-        }
-    )
-}
-
 return function()
+    local cmp = require "cmp"
+    local luasnip = require "luasnip"
+    local lspkind = require "lspkind"
+    local mapping = require "user.plugins.hrsh7th.nvim-cmp.mapping"
+
+    if not cmp
+        or not luasnip
+        or not lspkind
+        or not mapping
+    then
+        return false
+    end
+
+    user.plugin.nvim_cmp = {
+        __new_entry = true,
+        window = {
+            completion = {
+                border = "shadow",
+                winhighlight = "Normal:Pmenu,FloatBorder:Pmenu,CursorLine:PmenuSel,Search:None",
+                col_offset = -1,
+                side_padding = 0,
+            },
+            documentation = {
+                border = "rounded",
+            }
+        },
+        formatting = {
+            fields = { "kind", "abbr", "menu" },
+        },
+        snippet = {
+            expand = function(args)
+                luasnip.lsp_expand(args.body)
+            end,
+        },
+        mapping = mapping,
+        sources = cmp.config.sources(
+            {
+                -- completion source registered in user configs
+                { name = snip_completion.name },
+            },
+            {
+                { name = "tree-sitter-grammar" },
+                { name = "prefab-completion" },
+            },
+            {
+                { name = "nvim_lsp" },
+                { name = "path" },
+                { name = "luasnip" },
+            },
+            {
+                { name = "buffer" },
+            }
+        )
+    }
+
     -- LSP hook
     user.lsp.capabilities_settings:append(
         require("cmp_nvim_lsp").default_capabilities()
@@ -98,4 +106,6 @@ return function()
             { name = "cmdline" },
         })
     })
+
+    return true
 end
