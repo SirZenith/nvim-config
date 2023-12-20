@@ -8,20 +8,6 @@ local function turn_on_true_color()
     end
 end
 
----@param path string # path of a directory
----@field boolen # if give path is a root directory of version control system
-local function check_is_vcs_root(path)
-    if vim.fn.isdirectory(path .. "/.git") == 1 then
-        return true
-    end
-
-    if vim.fn.isdirectory(path .. "/.svn") == 1 then
-        return true
-    end
-
-    return false
-end
-
 ---@type (packer.PluginSpec | string)[]
 local specs = {
     "wbthomason/packer.nvim",
@@ -68,6 +54,19 @@ local specs = {
         requires = { "SirZenith/panelpal.nvim" },
         cond = function()
             local pwd = vim.fn.getcwd()
+
+            local function check_is_vcs_root(path)
+                if vim.fn.isdirectory(path .. "/.git") == 1 then
+                    return true
+                end
+
+                if vim.fn.isdirectory(path .. "/.svn") == 1 then
+                    return true
+                end
+
+                return false
+            end
+
 
             if check_is_vcs_root(pwd) then
                 return true;
