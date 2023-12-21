@@ -16,14 +16,8 @@ user.plugin.luasnip = {
 }
 
 return function()
-    local luasnip = import("luasnip", "")
-    local types = import("luasnip.util.types", "")
-
-    if not luasnip
-        or not types
-    then
-        return false
-    end
+    local luasnip = require "luasnip"
+    local types = require "luasnip.util.types"
 
     user.plugin.luasnip.ext_opts = {
         [types.choiceNode] = {

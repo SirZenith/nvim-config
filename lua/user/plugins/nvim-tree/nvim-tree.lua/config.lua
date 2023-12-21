@@ -1,5 +1,4 @@
 local user = require "user"
-local wrap_with_module = require "user.utils".wrap_with_module
 
 -- return false when nvim is started with name of file as arguments.
 local function check_need_open_tree()
@@ -138,7 +137,9 @@ user.plugin.nvim_tree = {
     },
 }
 
-local function finalize(module)
+return function()
+    local nvim_tree = require "nvim-tree"
+
     local group_id = vim.api.nvim_create_augroup("user.plugin.nvim_tree", { clear = true })
 
     vim.api.nvim_create_autocmd("VimEnter", {
@@ -147,7 +148,6 @@ local function finalize(module)
     })
 
     vim.cmd "highlight NvimTreeFolderIcon guibg=blue"
-    module.setup(user.plugin.nvim_tree())
-end
 
-return wrap_with_module("nvim-tree", finalize)
+    nvim_tree.setup(user.plugin.nvim_tree())
+end

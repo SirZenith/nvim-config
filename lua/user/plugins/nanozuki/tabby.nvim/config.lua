@@ -1,5 +1,4 @@
 local user = require "user"
-local wrap_with_module = require "user.utils".wrap_with_module
 
 local theme = {
     -- tab line background
@@ -24,7 +23,7 @@ local theme = {
     status_sign_active = "TabStatusSignActive",
 }
 
-local max_len = 12
+local MAX_LEN = 12
 
 ---@param text string
 ---@param max_len number
@@ -37,8 +36,8 @@ local function str_digest(text, max_len)
     end
 end
 
-local function finalize(module)
-    module.set(function(line)
+return function()
+    require "tabby.tabline".set(function(line)
         return {
             {
                 { '  ', hl = theme.head },
@@ -53,7 +52,7 @@ local function finalize(module)
                     line.sep('', hl, theme.fill),
                     { sign, hl = sign_hl, margin = ' ' },
                     tab.number(),
-                    str_digest(tab.name(), max_len),
+                    str_digest(tab.name(), MAX_LEN),
                     tab.close_btn(''),
                     line.sep(' ', hl, theme.fill),
                     hl = hl,
@@ -68,7 +67,7 @@ local function finalize(module)
                 return {
                     line.sep('', theme.status, theme.fill),
                     { sign, hl = sign_hl, margin = ' ' },
-                    str_digest(win.buf_name(), max_len),
+                    str_digest(win.buf_name(), MAX_LEN),
                     line.sep(' ', theme.status, theme.fill),
                     hl = theme.status,
                     margin = ' ',
@@ -82,5 +81,3 @@ local function finalize(module)
         }
     end)
 end
-
-return wrap_with_module("tabby.tabline", finalize)

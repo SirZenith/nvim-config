@@ -127,16 +127,9 @@ user.plugin.nvim_treesitter = {
 }
 
 return function()
-    local nts_configs = import("nvim-treesitter.configs", "")
-    local nts_parsers = import("nvim-treesitter.parsers", "")
-    local nts_install = import("nvim-treesitter.install", "")
-
-    if not nts_configs
-        or not nts_parsers
-        or not nts_install
-    then
-        return false
-    end
+    local nts_configs = require "nvim-treesitter.configs"
+    local nts_parsers = require "nvim-treesitter.parsers"
+    local nts_install = require "nvim-treesitter.install"
 
     local augroup = vim.api.nvim_create_augroup("user.plugin.nvim_treesitter", { clear = true })
     -- remote italic in markdown code block

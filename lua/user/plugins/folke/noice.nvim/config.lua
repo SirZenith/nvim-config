@@ -1,7 +1,9 @@
 local user = require "user"
-local wrap_with_module = require "user.utils".wrap_with_module
 
-local function finalize(module)
+return function()
+    local noice = require "noice"
+    local noice_util = require "noice.util"
+
     user.plugin.noice = {
         __new_entry = true,
         cmdline     = {
@@ -161,7 +163,7 @@ local function finalize(module)
         markdown    = {
             hover = {
                 ["|(%S-)|"] = vim.cmd.help,                   -- vim help links
-                ["%[.-%]%((%S-)%)"] = require("noice.util").open, -- markdown links
+                ["%[.-%]%((%S-)%)"] = noice_util.open, -- markdown links
             },
             highlights = {
                 ["|%S-|"] = "@text.reference",
@@ -202,7 +204,5 @@ local function finalize(module)
         format      = {}, --- @see section on formatting
     }
 
-    module.setup(user.plugin.noice())
+    noice.setup(user.plugin.noice())
 end
-
-return wrap_with_module("noice", finalize)

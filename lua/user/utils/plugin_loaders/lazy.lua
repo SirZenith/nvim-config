@@ -178,7 +178,7 @@ function M.try_finalize_plugin_configs()
         end
 
         if type(final) == "function" then
-            final()
+            xpcall(final, debug.traceback)
         end
 
         M._pending_finalizer[name] = nil

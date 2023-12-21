@@ -1,5 +1,4 @@
 local user = require "user"
-local wrap_with_module = require "user.utils".wrap_with_module
 
 user.plugin.pretty_fold = {
     __new_entry = true,
@@ -44,8 +43,6 @@ user.plugin.pretty_fold = {
     ft_ignore = { "neorg" },
 }
 
-local function finalize(module)
-    module.setup(user.plugin.pretty_fold())
+return function()
+    require "pretty-fold".setup(user.plugin.pretty_fold())
 end
-
-return wrap_with_module("pretty-fold", finalize)

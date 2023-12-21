@@ -1,5 +1,4 @@
 local user = require "user"
-local wrap_with_module = require "user.utils".wrap_with_module
 
 user.plugin.lualine = {
     __new_entry = true,
@@ -47,11 +46,11 @@ user.plugin.lualine = {
     extensions = {}
 }
 
-local function finalize(module)
+return function()
+    local lualine = require "lualine"
+
     local theme = user.theme.lualine_theme()
     user.plugin.lualine.options.theme = theme
 
-    module.setup(user.plugin.lualine())
+    lualine.setup(user.plugin.lualine())
 end
-
-return wrap_with_module("lualine", finalize)

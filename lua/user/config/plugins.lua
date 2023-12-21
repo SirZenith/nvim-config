@@ -3,7 +3,6 @@ if err then
     return {}
 end
 
-local utils = require "user.utils"
 local fs = require "user.utils.fs"
 
 local function turn_on_true_color()
@@ -18,8 +17,6 @@ end
 
 ---@type (lazy.PluginSpec | string)[]
 local specs = {
-    -- "wbthomason/packer.nvim",
-
     -- ------------------------------------------------------------------------
     -- General
     {

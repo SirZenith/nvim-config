@@ -1,5 +1,4 @@
 local user = require "user"
-local wrap_with_module = require "user.utils".wrap_with_module
 
 user.plugin.comment_nvim = {
     __new_entry = true,
@@ -46,8 +45,6 @@ user.plugin.comment_nvim = {
     post_hook = nil,
 }
 
-local function finalize(module)
-    module.setup(user.plugin.comment_nvim())
+return function()
+    require "Comment".setup(user.plugin.comment_nvim())
 end
-
-return wrap_with_module("Comment", finalize)

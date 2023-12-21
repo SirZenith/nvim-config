@@ -113,7 +113,7 @@ function M.finalize_module(module)
     end
 
     if type(final) == "function" then
-        final()
+        xpcall(final, debug.traceback)
     end
 end
 

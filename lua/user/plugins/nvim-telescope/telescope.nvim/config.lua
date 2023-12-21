@@ -1,5 +1,4 @@
 local user = require "user"
-local wrap_with_module = require "user.utils".wrap_with_module
 
 local check_exclude = function(filepath)
     local exclude = user.plugin.telescope_nvim.preview_exclude()
@@ -41,8 +40,6 @@ user.plugin.telescope_nvim = {
     }
 }
 
-local function finalize(module)
-    module.setup(user.plugin.telescope_nvim.config())
+return function()
+    require "telescope".setup(user.plugin.telescope_nvim.config())
 end
-
-return wrap_with_module("telescope", finalize)
