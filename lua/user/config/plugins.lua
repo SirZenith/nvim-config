@@ -129,7 +129,10 @@ local specs = {
     { "rakr/vim-two-firewatch",           enabled = false },
     {
         "nvim-lualine/lualine.nvim",
-        dependencies = { "kyazdani42/nvim-web-devicons", lazy = true },
+        dependencies = {
+            "EdenEast::nightfox.nvim::config",
+            "kyazdani42/nvim-web-devicons",
+        },
     },
     "nanozuki/tabby.nvim", -- tab line styling
 
