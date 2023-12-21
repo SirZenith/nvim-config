@@ -37,7 +37,7 @@ do
             "nvim/runtime",
             "LuaSnip",
             "nvim%-lspconfig",
-            "panelpal.nvim",
+            "panelpal%.nvim",
             "nvim%-cmp",
             "noice%.nvim",
         }
