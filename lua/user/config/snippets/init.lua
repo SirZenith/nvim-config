@@ -1,6 +1,6 @@
-require "luasnip"
-
 return function()
+    require "luasnip"
+
     local snip_utils = require "user.config.snippets.utils"
     local cmd_snip = require "user.config.snippets.cmd-snippet"
 

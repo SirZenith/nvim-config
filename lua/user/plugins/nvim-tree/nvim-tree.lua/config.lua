@@ -91,7 +91,6 @@ user.plugin.nvim_tree = {
         }
     },
     git = {
-        -- enable = vim.env.PLATFORM_MARK ~= "windows",
         enable = true,
         ignore = false,
         timeout = 1000,

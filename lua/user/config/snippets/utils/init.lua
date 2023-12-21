@@ -145,7 +145,7 @@ function M.load_snip(filename)
 end
 
 function M.load_autoload()
-    local snippet_dir = fs.path_join(user.env.CONFIG_HOME(), "user", "snippets", "auto-load")
+    local snippet_dir = fs.path_join(user.env.SNIPPET_ROOT(), "auto-load")
     local files = fs.listdir(snippet_dir)
 
     for _, filename in ipairs(files) do
@@ -155,7 +155,7 @@ end
 
 function M.init_lazy_load()
     local lazyload_group = vim.api.nvim_create_augroup("user.snippets.lazy-load", { clear = true })
-    local snippet_dir = fs.path_join(user.env.CONFIG_HOME(), "user", "snippets", "lazy-load")
+    local snippet_dir = fs.path_join(user.env.SNIPPET_ROOT(), "lazy-load")
     local files = fs.listdir(snippet_dir)
 
     for _, filename in ipairs(files) do
@@ -176,7 +176,7 @@ end
 
 function M.init_conditional_load()
     local conditional_group = vim.api.nvim_create_augroup("user.snippets.conditional-load", { clear = true })
-    local snippet_dir = fs.path_join(user.env.CONFIG_HOME(), "user", "snippets", "conditional-load")
+    local snippet_dir = fs.path_join(user.env.SNIPPET_ROOT(), "conditional-load")
     local files = fs.listdir(snippet_dir)
 
     for _, filename in ipairs(files) do

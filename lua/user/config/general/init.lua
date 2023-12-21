@@ -143,7 +143,7 @@ user.option = {
         shellredir = "| ansi strip | save --raw",
     },
     g = {
-        python3_host_prog = vim.env.PYTHON_PATH,
+        python3_host_prog = user.env.PYTHON_PATH(),
         loaded_netrwPlugin = 1, -- 禁用 Netrw
     }
 }

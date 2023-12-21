@@ -2,9 +2,7 @@ require "user.utils"
 
 local M = {}
 
-M.PATH_SEP = vim.env.PLATFORM_MARK:starts_with("windows")
-    and "\\"
-    or "/"
+M.PATH_SEP = vim.fn.has("WIN32") == 1 and "\\" or "/"
 
 -- concatenate multiple path component into one.
 ---@param path string

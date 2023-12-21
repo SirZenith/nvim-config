@@ -16,8 +16,8 @@ M.im_select = {
 
 user.platform.windows = {
     __new_entry = true,
-    nu_config_path = fs.path_join(vim.env.HOME, [[AppData\Roaming\nushell\config.nu]]),
-    nu_env_path = fs.path_join(vim.env.HOME, [[AppData\Roaming\nushell\env.nu]]),
+    nu_config_path = fs.path_join(user.env.HOME(), [[AppData\Roaming\nushell\config.nu]]),
+    nu_env_path = fs.path_join(user.env.HOME(), [[AppData\Roaming\nushell\env.nu]]),
 }
 user.general.im_select = M.im_select
 

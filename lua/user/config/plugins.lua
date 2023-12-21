@@ -280,7 +280,7 @@ local specs = {
     },
     {
         name = "local::snippets",
-        dir = fs.path_join(base_config.env.CONFIG_HOME, "user", "config", "snippets"),
+        dir = fs.path_join(base_config.env.SNIPPET_ROOT),
         dependencies = { "L3MON4D3/LuaSnip" },
     },
 

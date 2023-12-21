@@ -13,7 +13,7 @@ user.keybinding = {
         },
         ---@type fun(targert: string)
         make_cmd = function(target)
-            local platform = vim.env.PLATFORM_MARK
+            local platform = user.env.PLATFORM_MARK()
             local template_map = user.keybinding.global_search.cmd_template_map()
             local template = platform and template_map[platform] or template_map.default
 

@@ -65,6 +65,7 @@ local function on_plugins_loaded()
         import "user.config.command",
         import "user.config.general",
         import "user.config.keybinding",
+        import "user.config.snippets",
 
         -- platform specific config
         import "user.platforms",

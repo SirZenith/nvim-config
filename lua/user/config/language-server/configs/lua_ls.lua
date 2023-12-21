@@ -17,7 +17,7 @@ local workspace_path = workspace.get_workspace_path()
 local is_nvim_config_path = workspace_path:starts_with(user.env.NVIM_HOME())
     or vim.fs.basename(workspace_path) == workspace.WORKSPACE_CONFIG_DIR_NAME
     or workspace_path:starts_with(vim.fn.stdpath("data"))
-    or vim.env.LOAD_NVIM_RUNTIME
+    or user.env.LOAD_NVIM_RUNTIME()
 
 local runtime_version = is_nvim_config_path and "LuaJIT" or "Lua 5.4"
 
@@ -89,7 +89,7 @@ do
     end
 
     -- User defined EmmyLua
-    local emmylua_path = fs.path_join(vim.env.APP_PATH or "", "EmmyLua", "lua-lib-annotation")
+    local emmylua_path = fs.path_join(user.env.APP_PATH(), "EmmyLua", "lua-lib-annotation")
     tbl[#tbl + 1] = emmylua_path
 
     local lib = {}

@@ -108,7 +108,7 @@ user.plugin.nvim_treesitter = {
     },
     install = {
         prefer_git = false,
-        compilers = { vim.env.CC, "cl", "clang", "gcc", "cc", "zig" },
+        compilers = { user.env.CC(), "cl", "clang", "gcc", "cc", "zig" },
         command_extra_args = {
             cl = { "/nologo" },
             curl = { "-x", user.env.PROXY_URL() },
