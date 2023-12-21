@@ -39,7 +39,7 @@ user.plugin.nvim_tree = {
         }
     },
     renderer = {
-        group_empty = true,
+        group_empty = false,
         highlight_opened_files = "none",
         highlight_git = true,
         icons = {
