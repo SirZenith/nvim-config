@@ -46,6 +46,19 @@ local function get_keybinding_path(name)
     return fs.path_join("user", "plugins", name, "keybinding.lua")
 end
 
+-- Rune before command before adding plugin spec to load list
+---@param spec table
+local function handling_before_load_cmd(spec)
+    local before_load = spec.__before_load
+    local before_load_type = type(before_load)
+
+    if before_load_type == "string" then
+        vim.cmd(before_load)
+    elseif before_load_type == "function" then
+        before_load()
+    end
+end
+
 -- ----------------------------------------------------------------------------
 
 local M = {}
@@ -57,7 +70,7 @@ M._pending_finalizer = {} ---@type table<string, any>
 ---@param config_name string # name to use when display this plugin in lazy.nvim UI
 ---@param config_path string # file path relative to user config home directory
 ---@return lazy.PluginSpec? # plugin spec for loading configuration
-local function make_config_spec(plugin_name, config_name, config_path)
+function M._make_config_spec(plugin_name, config_name, config_path)
     local file = fs.path_join(user.env.CONFIG_HOME(), config_path)
     if fn.filereadable(file) == 0 then
         return nil
@@ -75,20 +88,9 @@ local function make_config_spec(plugin_name, config_name, config_path)
     }
 end
 
-local function handling_before_load_cmd(spec)
-    local before_load = spec.__before_load
-    local before_load_type = type(before_load)
-
-    if before_load_type == "string" then
-        vim.cmd(before_load)
-    elseif before_load_type == "function" then
-        before_load()
-    end
-end
-
 ---@param spec lazy.PluginSpec
 ---@return lazy.PluginSpec[] | nil
-local function load_config(spec)
+function M._load_config(spec)
     if M._is_bootstrap then return nil end
 
     local spec_type = type(spec)
@@ -107,17 +109,18 @@ local function load_config(spec)
 
     if not path or #path == 0 then return end
 
+    local qualified_path = path:gsub("/", "::")
     local results = {}
 
-    table.insert(results, make_config_spec(
+    table.insert(results, M._make_config_spec(
         path,
-        path .. "::config",
+        qualified_path .. "::config",
         get_config_path(path)
     ))
 
-    table.insert(results, make_config_spec(
+    table.insert(results, M._make_config_spec(
         path,
-        path .. "::keybinding",
+        qualified_path .. "::keybinding",
         get_keybinding_path(path)
     ))
 
@@ -142,13 +145,15 @@ function M.init_plugin_config_update_event()
 end
 
 function M.setup(specs)
+    if M._is_bootstrap then return end
+
     local targets = {}
     for _, spec in ipairs(specs) do
         table.insert(targets, spec)
 
         handling_before_load_cmd(spec)
 
-        local config_specs = load_config(spec)
+        local config_specs = M._load_config(spec)
         if config_specs then
             for _, config_spec in ipairs(config_specs) do
                 table.insert(targets, config_spec)
