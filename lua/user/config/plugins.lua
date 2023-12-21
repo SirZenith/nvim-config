@@ -6,8 +6,6 @@ end
 local utils = require "user.utils"
 local fs = require "user.utils.fs"
 
-local import = utils.import
-
 local function turn_on_true_color()
     if vim.fn.has "nvim" then
         vim.env.NVIM_TUI_ENABLE_TRUE_COLOR = 1
@@ -129,10 +127,7 @@ local specs = {
     { "rakr/vim-two-firewatch",           enabled = false },
     {
         "nvim-lualine/lualine.nvim",
-        dependencies = {
-            "EdenEast::nightfox.nvim::config",
-            "kyazdani42/nvim-web-devicons",
-        },
+        dependencies = { "kyazdani42/nvim-web-devicons" },
     },
     "nanozuki/tabby.nvim", -- tab line styling
 
