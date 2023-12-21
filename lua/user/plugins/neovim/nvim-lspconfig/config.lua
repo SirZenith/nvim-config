@@ -29,11 +29,15 @@ user.plugin.nvim_lspconfig = {
         },
         {
             "cssls",
-            install = "npm i -g vscode-langservers-extracted"
+            install = "npm i -g vscode-langservers-extracted",
+        },
+        {
+            "glsl_analyzer",
+            install = "GitHub release page https://github.com/nolanderc/glsl_analyzer/releases",
         },
         {
             "gopls",
-            install = "go install golang.org/x/tools/gopls@latest"
+            install = "go install golang.org/x/tools/gopls@latest",
         },
         {
             "hls",
