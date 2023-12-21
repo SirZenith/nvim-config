@@ -21,7 +21,6 @@ return function()
 
     if not luasnip
         or not types
-
     then
         return false
     end

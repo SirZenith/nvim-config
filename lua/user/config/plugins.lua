@@ -1,3 +1,13 @@
+local base_config, err = require "user.config"
+if err then
+    return {}
+end
+
+local utils = require "user.utils"
+local fs = require "user.utils.fs"
+
+local import = utils.import
+
 local function turn_on_true_color()
     if vim.fn.has "nvim" then
         vim.env.NVIM_TUI_ENABLE_TRUE_COLOR = 1
@@ -8,9 +18,9 @@ local function turn_on_true_color()
     end
 end
 
----@type (packer.PluginSpec | string)[]
+---@type (lazy.PluginSpec | string)[]
 local specs = {
-    "wbthomason/packer.nvim",
+    -- "wbthomason/packer.nvim",
 
     -- ------------------------------------------------------------------------
     -- General
@@ -36,7 +46,7 @@ local specs = {
     "numToStr/Comment.nvim",
     {
         "folke/noice.nvim",
-        requires = {
+        dependencies = {
             "MunifTanjim/nui.nvim",
             -- OPTIONAL:
             --   `nvim-notify` is only needed, if you want to use the notification view.
@@ -46,12 +56,12 @@ local specs = {
     },
     {
         "nvim-tree/nvim-tree.lua",
-        requires = { "nvim-tree/nvim-web-devicons" },
+        dependencies = { "nvim-tree/nvim-web-devicons" },
     },
     "SirZenith/panelpal.nvim",
     {
         "SirZenith/vcs-helper.nvim",
-        requires = { "SirZenith/panelpal.nvim" },
+        dependencies = { "SirZenith/panelpal.nvim" },
         cond = function()
             local pwd = vim.fn.getcwd()
 
@@ -83,7 +93,7 @@ local specs = {
     },
     {
         "nvim-telescope/telescope.nvim",
-        requires = { "nvim-lua/plenary.nvim" },
+        dependencies = { "nvim-lua/plenary.nvim" },
     },
     "voldikss/vim-floaterm",
 
@@ -103,36 +113,39 @@ local specs = {
     -- Themes
     {
         "catppuccin/nvim",
-        as = "catppuccin",
-        disable = true
+        name = "catppuccin",
+        enabled = false,
     },
-    { "marko-cerovac/material.nvim", disable = true },
-    { "kaicataldo/material.vim",     disable = true },
+    { "marko-cerovac/material.nvim", enabled = false },
+    { "kaicataldo/material.vim",     enabled = false },
     {
         "EdenEast/nightfox.nvim",
         __before_load = turn_on_true_color,
     },
-    { "shaunsingh/nord.nvim",             disable = true },
-    { "mhartington/oceanic-next",         disable = true },
-    { "JoosepAlviste/palenightfall.nvim", disable = true },
-    { "wadackel/vim-dogrun",              disable = true },
-    { "rakr/vim-two-firewatch",           disable = true },
+    { "shaunsingh/nord.nvim",             enabled = false },
+    { "mhartington/oceanic-next",         enabled = false },
+    { "JoosepAlviste/palenightfall.nvim", enabled = false },
+    { "wadackel/vim-dogrun",              enabled = false },
+    { "rakr/vim-two-firewatch",           enabled = false },
     {
         "nvim-lualine/lualine.nvim",
-        requires = { "kyazdani42/nvim-web-devicons", opt = true },
+        dependencies = { "kyazdani42/nvim-web-devicons", lazy = true },
     },
     "nanozuki/tabby.nvim", -- tab line styling
 
     -- ------------------------------------------------------------------------
     -- Syntax
-    "nvim-treesitter/nvim-treesitter",
+    {
+        "nvim-treesitter/nvim-treesitter",
+        build = ":TSUpdate",
+    },
     {
         "nvim-treesitter/playground",
-        requires = { "nvim-treesitter/nvim-treesitter" },
+        dependencies = { "nvim-treesitter/nvim-treesitter" },
     },
     {
         "p00f/nvim-ts-rainbow",
-        requires = { "nvim-treesitter/nvim-treesitter" },
+        dependencies = { "nvim-treesitter/nvim-treesitter" },
     },
 
     -- ------------------------------------------------------------------------
@@ -140,24 +153,27 @@ local specs = {
     {
         -- folding support
         "kevinhwang91/nvim-ufo",
-        requires = "kevinhwang91/promise-async",
-        disable = true,
+        dependencies = "kevinhwang91/promise-async",
+        enabled = false,
     },
     {
         "iamcco/markdown-preview.nvim",
-        run = function() vim.fn["mkdp#util#install"]() end,
+        build = function() vim.fn["mkdp#util#install"]() end,
         ft = { "markdown" }
     },
-    "neovim/nvim-lspconfig",
+    {
+        "neovim/nvim-lspconfig",
+        dependencies = { "local::language-server" }
+    },
     {
         -- LSP injection
         "jose-elias-alvarez/null-ls.nvim",
-        requires = { "nvim-lua/plenary.nvim" },
+        dependencies = { "nvim-lua/plenary.nvim" },
     },
     {
         -- Preview PlantUML in browser
         "weirongxu/plantuml-previewer.vim",
-        requires = {
+        dependencies = {
             "aklt/plantuml-syntax",
             "tyru/open-browser.vim",
         },
@@ -183,6 +199,7 @@ local specs = {
     -- ------------------------------------------------------------------------
     -- Completion
     "L3MON4D3/LuaSnip",
+
     "onsails/lspkind.nvim", -- LSP completion item kind icon for completion menu
     "windwp/nvim-autopairs",
     {
@@ -206,34 +223,36 @@ local specs = {
     },
     {
         "hrsh7th/nvim-cmp",
-        requires = {
+        dependencies = {
             "L3MON4D3/LuaSnip",
             "onsails/lspkind.nvim",
+            "local::language-server",
+            "local::snippets",
         },
     },
     {
         "hrsh7th/cmp-buffer",
-        requires = { "hrsh7th/nvim-cmp" },
+        dependencies = { "hrsh7th/nvim-cmp" },
     },
     {
         "hrsh7th/cmp-cmdline",
-        requires = { "hrsh7th/nvim-cmp" },
+        dependencies = { "hrsh7th/nvim-cmp" },
     },
     {
         "saadparwaiz1/cmp_luasnip",
-        requires = { "hrsh7th/nvim-cmp" },
+        dependencies = { "hrsh7th/nvim-cmp" },
     },
     {
         "hrsh7th/cmp-nvim-lsp",
-        requires = { "hrsh7th/nvim-cmp" },
+        dependencies = { "hrsh7th/nvim-cmp" },
     },
     {
         "hrsh7th/cmp-path",
-        requires = { "hrsh7th/nvim-cmp" },
+        dependencies = { "hrsh7th/nvim-cmp" },
     },
     {
         "SirZenith/ts-grammar-navigator",
-        requires = {
+        dependencies = {
             "SirZenith/panelpal.nvim",
             "hrsh7th/nvim-cmp",
         },
@@ -241,7 +260,7 @@ local specs = {
     },
     {
         "SirZenith/prefab-cmp",
-        requires = { "hrsh7th/nvim-cmp", },
+        dependencies = { "hrsh7th/nvim-cmp", },
         cond = function()
             local pwd = vim.fn.getcwd()
 
@@ -258,6 +277,43 @@ local specs = {
             return false
         end,
     },
+
+    {
+        name = "local::language-server",
+        dir = fs.path_join(base_config.env.CONFIG_HOME, "user", "config", "language-server"),
+        dependencies = { "SirZenith/panelpal.nvim" },
+    },
+    {
+        name = "local::snippets",
+        dir = fs.path_join(base_config.env.CONFIG_HOME, "user", "config", "snippets"),
+        dependencies = { "L3MON4D3/LuaSnip" },
+    },
+
+    {
+        name = "local::command",
+        dir = fs.path_join(base_config.env.CONFIG_HOME, "user", "config", "command"),
+        dependencies = {
+            "local::language-server",
+            "local::snippets"
+        },
+    },
+    {
+        name = "local::general",
+        dir = fs.path_join(base_config.env.CONFIG_HOME, "user", "config", "general"),
+    },
+    {
+        name = "local::keybinding",
+        dir = fs.path_join(base_config.env.CONFIG_HOME, "user", "config", "keybinding"),
+        dependencies = { "SirZenith/panelpal.nvim" },
+    },
+    {
+        name = "local::platforms",
+        dir = fs.path_join(base_config.env.CONFIG_HOME, "user", "platforms"),
+    },
+    {
+        name = "local::workspace",
+        dir = fs.path_join(base_config.env.CONFIG_HOME, "user", "workspace"),
+    }
 }
 
 return specs

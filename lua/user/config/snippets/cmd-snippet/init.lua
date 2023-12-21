@@ -1,7 +1,7 @@
-local cmp_source = require "user.snippets.cmd-snippet.cmp-source"
-local snip_cond = require "user.snippets.utils.cond"
+local cmp_source = require "user.config.snippets.cmd-snippet.cmp-source"
+local snip_cond = require "user.config.snippets.utils.cond"
 local luasnip = require "luasnip"
-local CmdItem = require "user.snippets.cmd-snippet.cmd-item"
+local CmdItem = require "user.config.snippets.cmd-snippet.cmd-item"
 
 local M = {}
 

@@ -44,7 +44,7 @@ local M = {
     fmta = require("luasnip.extras.fmt").fmta,
     types = require("luasnip.util.types"),
     conds = require("luasnip.extras.expand_conditions"),
-    conds_ext = require "user.snippets.utils.cond",
+    conds_ext = require "user.config.snippets.utils.cond",
 }
 
 -- ----------------------------------------------------------------------------

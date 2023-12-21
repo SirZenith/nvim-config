@@ -1,7 +1,7 @@
 local config_entry = require "user.utils.config_entry"
 local fs = require "user.utils.fs"
-local ls = require "user.language-server"
-local snip_utils = require "user.snippets.utils"
+local ls = require "user.config.language-server"
+local snip_utils = require "user.config.snippets.utils"
 
 local cmd = vim.api.nvim_create_user_command
 

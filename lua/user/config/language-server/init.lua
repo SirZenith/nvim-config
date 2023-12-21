@@ -1,5 +1,6 @@
-local user = require "user"
 local panelpal = require "panelpal"
+
+local user = require "user"
 
 local M = {}
 

@@ -100,23 +100,29 @@ function M.wrap_with_module(modname, task_func)
     end
 end
 
+-- Try to finalize a single module
+---@param module any
+function M.finalize_module(module)
+    local module_type = type(module)
+
+    local final
+    if module_type == "function" then
+        final = module
+    elseif module_type == "table" then
+        final = module.finalize
+    end
+
+    if type(final) == "function" then
+        final()
+    end
+end
+
 -- pass in loaded config modules, this function will finalize them in order.
 ---@param modules any[]
 function M.finalize(modules)
     for i = 1, #modules do
         local module = modules[i]
-        local module_type = type(module)
-
-        local final
-        if module_type == "function" then
-            final = module
-        elseif module_type == "table" then
-            final = module.finalize
-        end
-
-        if type(final) == "function" then
-            final()
-        end
+        M.finalize_module(module)
     end
 end
 

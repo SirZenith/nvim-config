@@ -112,7 +112,7 @@ user.plugin.nvim_lspconfig = {
 }
 
 local function finalize()
-    local ls_configs = require "user.language-server.configs"
+    local ls_configs = require "user.config.language-server.configs"
 
     for _, info in user.plugin.nvim_lspconfig.lsp_servers:ipairs() do
         local server = get_name(info)

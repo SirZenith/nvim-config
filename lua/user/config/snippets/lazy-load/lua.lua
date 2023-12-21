@@ -1,7 +1,7 @@
-local cmd_snip = require "user.snippets.cmd-snippet"
+local cmd_snip = require "user.config.snippets.cmd-snippet"
 
 local snip_filetype = "lua"
-local s = require("user.snippets.utils")
+local s = require("user.config.snippets.utils")
 local makers = s.snippet_makers(snip_filetype)
 -- local sp = makers.sp
 local asp = makers.asp

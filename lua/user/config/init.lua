@@ -2,7 +2,10 @@ local fs = require "user.utils.fs"
 
 local env_config_home = vim.env.CONFIG_HOME
 if not env_config_home then
-    return  nil, "failed to initialize, Can't find environment variable 'CONFIG_HOME'"
+    local err = "failed to initialize, Can't find environment variable 'CONFIG_HOME'"
+    vim.notify(err, vim.log.levels.ERROR)
+
+    return  {}, err
 end
 
 return {

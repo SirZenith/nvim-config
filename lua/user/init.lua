@@ -1,10 +1,6 @@
 local base_config, err = require "user.config"
 if err then
-    return {
-        finalize = function()
-            vim.notify(err, vim.log.levels.ERROR)
-        end
-    }
+    return { finalize = function() end }
 end
 
 local utils = require "user.utils"
@@ -52,6 +48,7 @@ local function chdir()
     end
 end
 
+-- dump user config Lua meta file to config home.
 local function dump_user_config_meta()
     local filepath = fs.path_join(user.env.CONFIG_HOME(), "user", "meta", "user_config.lua")
     config_entry.dump_signature(user --[[@as ConfigEntry]], filepath)
@@ -59,29 +56,15 @@ end
 
 -- ----------------------------------------------------------------------------
 
-rawset(user, "finalize", function()
-    chdir()
-
-    -- loading custom loader
-    require "user.utils.module_loaders".setup {
-        config_home = user.env.CONFIG_HOME(),
-    }
-
-    -- load plugins
-    local plugin_specs = require "user.config.plugins"
-    local plugin_loader = require "user.plugins.loader"
-    plugin_loader.init_event_autocmd()
-    plugin_loader.setup(plugin_specs)
-
+local function on_plugins_loaded()
     local modules = {
         -- plugin config
-        plugin_loader,
+        import "user.utils.plugin_loaders.lazy",
 
         -- user config
         import "user.config.command",
         import "user.config.general",
         import "user.config.keybinding",
-        import "user.snippets",
 
         -- platform specific config
         import "user.platforms",
@@ -97,6 +80,28 @@ rawset(user, "finalize", function()
     utils.finalize(modules)
 
     dump_user_config_meta()
+end
+
+rawset(user, "finalize", function()
+    chdir()
+
+    -- loading custom loader
+    require "user.utils.module_loaders".setup {
+        config_home = user.env.CONFIG_HOME(),
+    }
+
+    -- wait for plugins get loaded
+    local finalize_augroup = vim.api.nvim_create_augroup("user.finalize", { clear = true })
+    vim.api.nvim_create_autocmd("User", {
+        group = finalize_augroup,
+        pattern = "LazyDone",
+        callback = on_plugins_loaded,
+    })
+
+    -- load plugins
+    local plugin_specs = require "user.config.plugins"
+    local plugin_loader = require "user.utils.plugin_loaders.lazy"
+    plugin_loader.setup(plugin_specs)
 end)
 
 return user

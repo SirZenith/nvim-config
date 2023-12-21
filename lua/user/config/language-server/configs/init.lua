@@ -5,10 +5,6 @@ local table_utils = require "user.utils.table"
 
 local import = utils.import
 
-local lspconfig = import "lspconfig"
-local nvim_lsp_configs = import "lspconfig.configs"
-local lsp_status = import "lsp-status"
-
 local validate = vim.validate
 
 local M = {}
@@ -67,13 +63,13 @@ end
 ---@param ls_name string
 local function load_config_from_module(ls_name)
     local user_config_path = fs.path_join(
-        user.env.CONFIG_HOME(), "user", "language-server", "configs", ls_name
+        user.env.CONFIG_HOME(), "user", "config", "language-server", "configs", ls_name
     )
     local user_config
     if vim.fn.filereadable(user_config_path .. ".lua") == 0 then
         user_config = {}
     else
-        user_config = import("user.language-server.configs." .. ls_name) or {}
+        user_config = import("user.config.language-server.configs." .. ls_name) or {}
     end
 
     return user_config
@@ -86,6 +82,12 @@ end
 ---@param user_config? table
 ---@return table
 function M.load(ls_name, user_config)
+    local lsp_status = import "lsp-status"
+    if not lsp_status then
+        vim.notify("failed to load lsp-status", vim.log.levels.WARN)
+        return {}
+    end
+
     local config = {
         flags = {
             debounce_text_changes = 150,
@@ -129,6 +131,12 @@ end
 ---@param default_config table<string, any>
 ---@param extra_opts? table<string, any>
 function M.add_lsp_config(ls_name, default_config, extra_opts)
+    local nvim_lsp_configs = import "lspconfig.configs"
+    if not nvim_lsp_configs then
+        vim.notify("failed to load nvim-lspconfig.configs", vim.log.levels.WARN)
+        return
+    end
+
     validate {
         cmd = { default_config.cmd, { 't', 'f' } },
         filetypes = { default_config.filetypes, 't' },
@@ -144,7 +152,14 @@ end
 ---@param ls_name string # name of target language server.
 ---@param user_config? table
 function M.setup_lsp(ls_name, user_config)
+    local lspconfig = import "lspconfig"
+    if not lspconfig then
+        vim.notify("failed to load nvim-lspconfig", vim.log.levels.WARN)
+        return
+    end
+
     local config = M.load(ls_name, user_config)
+
     lspconfig[ls_name].setup(config)
 end
 
@@ -153,6 +168,12 @@ end
 ---@param lsp_name string # name of target language server.
 ---@param config? table
 function M.change_workspace_setting(lsp_name, config)
+    local lspconfig = import "lspconfig"
+    if not lspconfig then
+        vim.notify("failed to load nvim-lspconfig", vim.log.levels.WARN)
+        return
+    end
+
     local final_config = M.lsp_get_opt(lsp_name, config)
     local cfg_obj = lspconfig[lsp_name]
     local manager = cfg_obj.manager
