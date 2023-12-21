@@ -242,6 +242,21 @@ local specs = {
     {
         "SirZenith/prefab-cmp",
         requires = { "hrsh7th/nvim-cmp", },
+        cond = function()
+            local pwd = vim.fn.getcwd()
+
+            if vim.fn.isdirectory(pwd .. "/.creator") == 1 then
+                return true;
+            end
+
+            for dir in vim.fs.parents(pwd) do
+                if vim.fn.isdirectory(dir .. "/.creator") == 1 then
+                    return true;
+                end
+            end
+
+            return false
+        end,
     },
 }
 
