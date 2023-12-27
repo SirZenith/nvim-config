@@ -440,6 +440,15 @@ cmd_snip.register {
             )
         end,
     },
+    ["import ptl"] = {
+        args = { "name" },
+        content = function(name)
+            local module_name = utils.underscore_to_camel_case(name)
+            return {
+                { "import { } from 'script_logic/common/proto/define/c2s/", module_name, "';" }
+            }
+        end,
+    },
     ["import rolemodule"] = {
         args = { "name" },
         content = function(name)
@@ -495,7 +504,6 @@ cmd_snip.register {
         content = function(name)
             return {
                 { "export namespace ", name:upper(), " {" },
-                "",
                 "    // --------- 通用玩家单例方法 begin-------",
                 "    export const onRoleDataReady = (): void => {};",
                 "",

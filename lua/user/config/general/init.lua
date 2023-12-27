@@ -128,7 +128,7 @@ user.option = {
         -- concealcursor = "n", -- in these mode, also conceals cursorline
 
         -- setup LSP display
-        cmdheight = 2,    -- height for command display area
+        cmdheight = 1,    -- height for command display area
         updatetime = 300, -- after certain timeout in millisecond, swap file will be written to disk
         -- display debug/diagnostic symbol in gutter
         -- `number` means share space with line number, don't create extra column
