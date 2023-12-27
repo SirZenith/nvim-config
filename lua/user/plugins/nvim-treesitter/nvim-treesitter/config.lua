@@ -1,5 +1,4 @@
 local user = require "user"
-local import = require "user.utils".import
 local table_utils = require "user.utils.table"
 
 user.plugin.nvim_treesitter = {
@@ -41,6 +40,7 @@ user.plugin.nvim_treesitter = {
             "typescript",
             "v",
             "vim",
+            "vimdoc",
             "yaml",
             "zig",
         },
