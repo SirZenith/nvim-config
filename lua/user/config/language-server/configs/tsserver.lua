@@ -1,4 +1,4 @@
-local user =  require "user"
+local user = require "user"
 local fs = require "user.utils.fs"
 
 local M = {}
@@ -73,15 +73,13 @@ local formatting_pref = {
     placeOpenBraceOnNewLineForFunctions = false,
 }
 
----@param client lsp.Client
-function M.on_attach(client)
-    client.rpc.notify("workspace/didChangeConfiguration", {
-        settings = {
-            typescript = {
-                format = formatting_pref,
-            },
-        }
-    })
-end
+M.settings = {
+    typescript = {
+        format = formatting_pref,
+    },
+    javascript = {
+        format = formatting_pref,
+    }
+}
 
 return M
