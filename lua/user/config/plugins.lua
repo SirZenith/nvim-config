@@ -15,6 +15,44 @@ local function turn_on_true_color()
     end
 end
 
+-- Looing for a directory recrusively in parent
+---@param target_name string # target directory name
+---@return boolean is_found
+local function find_root_by_directory(target_name)
+    local pwd = vim.fn.getcwd()
+
+    if vim.fn.isdirectory(pwd .. "/" .. target_name) == 1 then
+        return true;
+    end
+
+    for dir in vim.fs.parents(pwd) do
+        if vim.fn.isdirectory(dir .. "/" .. target_name) == 1 then
+            return true;
+        end
+    end
+
+    return false
+end
+
+-- Looing for a file recrusively in parent
+---@param target_name string # target file name
+---@return boolean is_found
+local function find_root_by_file(target_name)
+    local pwd = vim.fn.getcwd()
+
+    if vim.fn.filereadable(pwd .. "/" .. target_name) == 1 then
+        return true;
+    end
+
+    for dir in vim.fs.parents(pwd) do
+        if vim.fn.filereadable(dir .. "/" .. target_name) == 1 then
+            return true;
+        end
+    end
+
+    return false
+end
+
 ---@type (lazy.PluginSpec | string)[]
 local specs = {
     -- ------------------------------------------------------------------------
@@ -22,19 +60,7 @@ local specs = {
     {
         "lewis6991/gitsigns.nvim",
         cond = function()
-            local pwd = vim.fn.getcwd()
-
-            if vim.fn.isdirectory(pwd .. "/.git") == 1 then
-                return true;
-            end
-
-            for dir in vim.fs.parents(pwd) do
-                if vim.fn.isdirectory(dir .. "/.git") == 1 then
-                    return true;
-                end
-            end
-
-            return false
+            return find_root_by_directory('.git')
         end,
     },
     -- "ggandor/leap.nvim", -- search & jump
@@ -58,32 +84,7 @@ local specs = {
         "SirZenith/vcs-helper.nvim",
         dependencies = { "SirZenith/panelpal.nvim" },
         cond = function()
-            local pwd = vim.fn.getcwd()
-
-            local function check_is_vcs_root(path)
-                if vim.fn.isdirectory(path .. "/.git") == 1 then
-                    return true
-                end
-
-                if vim.fn.isdirectory(path .. "/.svn") == 1 then
-                    return true
-                end
-
-                return false
-            end
-
-
-            if check_is_vcs_root(pwd) then
-                return true;
-            end
-
-            for dir in vim.fs.parents(pwd) do
-                if check_is_vcs_root(dir) then
-                    return true;
-                end
-            end
-
-            return false
+            return find_root_by_directory('.git') or find_root_by_directory('.svn')
         end,
     },
     {
@@ -175,6 +176,17 @@ local specs = {
         ft = "plantuml",
     },
     {
+        "pmizio/typescript-tools.nvim",
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+            "neovim/nvim-lspconfig",
+            "local::language-server",
+        },
+        cond = function()
+            return find_root_by_file('tsconfig.json')
+        end,
+    },
+    {
         "lervag/vimtex",
         ft = { "tex", "latex", "bibtex" },
     },
@@ -257,19 +269,7 @@ local specs = {
         "SirZenith/prefab-cmp",
         dependencies = { "hrsh7th/nvim-cmp", },
         cond = function()
-            local pwd = vim.fn.getcwd()
-
-            if vim.fn.isdirectory(pwd .. "/.creator") == 1 then
-                return true;
-            end
-
-            for dir in vim.fs.parents(pwd) do
-                if vim.fn.isdirectory(dir .. "/.creator") == 1 then
-                    return true;
-                end
-            end
-
-            return false
+            return find_root_by_directory('.creator')
         end,
     },
 

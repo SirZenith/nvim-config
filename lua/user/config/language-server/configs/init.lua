@@ -148,21 +148,6 @@ function M.add_lsp_config(ls_name, default_config, extra_opts)
     nvim_lsp_configs[ls_name] = config
 end
 
--- Load user config then setup a language server with nvim-lspconfig
----@param ls_name string # name of target language server.
----@param user_config? table
-function M.setup_lsp(ls_name, user_config)
-    local lspconfig = import "lspconfig"
-    if not lspconfig then
-        vim.notify("failed to load nvim-lspconfig", vim.log.levels.WARN)
-        return
-    end
-
-    local config = M.load(ls_name, user_config)
-
-    lspconfig[ls_name].setup(config)
-end
-
 -- Update workspace setting for a language server with config passed in and config
 -- in user config directory.
 ---@param lsp_name string # name of target language server.

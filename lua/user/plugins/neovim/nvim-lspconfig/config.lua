@@ -80,6 +80,7 @@ user.plugin.nvim_lspconfig = {
         },
         {
             "tsserver",
+            enable = false,
             desc = "TypeScript/JavaScript Server",
             install = "npm install -g typescript typescript-language-server",
         },
@@ -111,13 +112,19 @@ user.plugin.nvim_lspconfig = {
 }
 
 return function()
+    local lspconfig = require "lspconfig"
     local ls_configs = require "user.config.language-server.configs"
 
     for _, info in user.plugin.nvim_lspconfig.lsp_servers:ipairs() do
-        local server = get_name(info)
-        ls_configs.setup_lsp(
-            server,
-            user.plugin.nvim_lspconfig.config[server]() or {}
-        )
+        if info.enable ~= false then
+            local server = get_name(info)
+
+            local config = ls_configs.load(
+                server,
+                user.plugin.nvim_lspconfig.config[server]() or {}
+            )
+
+            lspconfig[server].setup(config)
+        end
     end
 end
