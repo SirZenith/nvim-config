@@ -98,7 +98,7 @@ user.plugin.typescript_tools = {
 }
 
 return function()
-    local ls_configs = require "user.config.language-server.configs"
+    local ls_configs = require "user-lsp.configs"
     local typescript_tools = require "typescript-tools"
 
     local server = "tsserver"

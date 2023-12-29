@@ -2,7 +2,6 @@ local user = require "user"
 local utils = require "user.utils"
 local import = utils.import
 local fs = require "user.utils.fs"
-local functional = require "user.utils.functional"
 
 local fn = vim.fn
 
@@ -44,7 +43,7 @@ local function get_plugin_name_from_spec(spec)
 
     local name
     if spec_type == "table" then
-        name = spec.enabled ~= false and spec[1] or nil
+        name = spec.enabled ~= false and spec[1] or spec.name
     elseif spec_type == "string" then
         name = spec
     end
@@ -82,15 +81,9 @@ local M = {}
 M._is_bootstrap = is_bootstrap
 M._pending_finalizer = {} ---@type table<string, LazyFinalizerState>
 
----@param plugin_name string # name of then plugin target config belongs to
----@param config_path string # file path relative to user config home directory
----@return lazy.PluginSpec? # plugin spec for loading configuration
-function M._add_config_to_pending_table(plugin_name, config_path)
-    local file = fs.path_join(user.env.CONFIG_HOME(), config_path)
-    if fn.filereadable(file) == 0 then
-        return nil
-    end
-
+---@param plugin_name string
+---@return LazyFinalizerState
+function M._get_pending_finalizer_state(plugin_name)
     local state = M._pending_finalizer[plugin_name]
     if not state then
         state = {
@@ -100,16 +93,34 @@ function M._add_config_to_pending_table(plugin_name, config_path)
         M._pending_finalizer[plugin_name] = state
     end
 
+    return state
+end
+
+---@param plugin_name string # name of then plugin target config belongs to
+---@param config_path string # file path relative to user config home directory
+function M._add_config_to_pending_table(plugin_name, config_path)
+    local file = fs.path_join(user.env.CONFIG_HOME(), config_path)
+    if fn.filereadable(file) == 0 then
+        return nil
+    end
+
+    local state = M._get_pending_finalizer_state(plugin_name)
+
     table.insert(state.modules, import(file))
 end
 
----@param spec lazy.PluginSpec
+---@param spec PluginSpec
 ---@return lazy.PluginSpec[] | nil
 function M._load_config(spec)
     if M._is_bootstrap then return nil end
 
     local plugin_name = get_plugin_name_from_spec(spec)
     if not plugin_name or #plugin_name == 0 then return end
+
+    if spec.finalize_module then
+        local state = M._get_pending_finalizer_state(plugin_name)
+        table.insert(state.modules, spec.finalize_module)
+    end
 
     local config_paths = {
         get_config_path(plugin_name),
@@ -143,13 +154,11 @@ function M.setup(specs)
 
     local targets = {}
     for _, spec in ipairs(specs) do
-        table.insert(targets, spec)
-
-        handling_before_load_cmd(spec)
-
         if type(spec) == "string" then
             spec = { spec }
         end
+
+        handling_before_load_cmd(spec)
 
         local old_config = spec.config
         spec.config = function(...)
@@ -164,6 +173,8 @@ function M.setup(specs)
         end
 
         M._load_config(spec)
+
+        table.insert(targets, spec)
     end
 
     manager.setup(targets)
@@ -184,7 +195,10 @@ end
 function M.try_finalize_plugin_configs()
     for name, state in pairs(M._pending_finalizer) do
         if state.loaded then
-            utils.finalize(state.modules)
+            for _, item in ipairs(state.modules) do
+                local module = type(item) == "string" and import(item) or item
+                utils.finalize_module(module)
+            end
             M._pending_finalizer[name] = nil
         end
     end

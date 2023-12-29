@@ -1,3 +1,3 @@
 ---@class LazyFinalizerState
 ---@field loaded boolean
----@field modules table[]
+---@field modules (string | fun() | table)[]

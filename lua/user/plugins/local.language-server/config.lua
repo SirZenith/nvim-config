@@ -4,10 +4,46 @@ local function get_name(info)
     return type(info) == "string" and info or info[1]
 end
 
-user.plugin.nvim_lspconfig = {
+user.lsp = {
     __new_entry = true,
-    config = {},
-    lsp_servers = {
+    log_update_method = "append",
+    log_scroll_method = "bottom",
+    on_attach_callbacks = {},
+    capabilities_settings = {
+        vim.lsp.protocol.make_client_capabilities()
+    },
+    format_args = {
+        async = true
+    },
+    kind_label = {
+        Text = "",
+        Method = "",
+        Function = "",
+        Constructor = "",
+        Field = "",
+        Variable = "",
+        Class = "",
+        Interface = "",
+        Module = "",
+        Property = "",
+        Unit = "",
+        Value = "",
+        Enum = "",
+        Keyword = "",
+        Snippet = "",
+        Color = "",
+        File = "",
+        Reference = "",
+        Folder = "",
+        EnumMember = "",
+        Constant = "",
+        Struct = "",
+        Event = "",
+        Operator = "",
+        TypeParameter = "",
+    },
+    server_config = {},
+    server_list = {
         {
             "bashls",
             install = "npm i -g bash-language-server",
@@ -112,16 +148,21 @@ user.plugin.nvim_lspconfig = {
 }
 
 return function()
+    local panelpal = require "panelpal"
     local lspconfig = require "lspconfig"
-    local ls_configs = require "user.config.language-server.configs"
+    local ls_configs = require "user-lsp.configs"
 
-    for _, info in user.plugin.nvim_lspconfig.lsp_servers:ipairs() do
+    user.lsp.log_update_method = panelpal.PanelContentUpdateMethod.append
+    user.lsp.log_scroll_method = panelpal.ScrollMethod.bottom
+
+
+    for _, info in user.lsp.server_list:ipairs() do
         if info.enable ~= false then
             local server = get_name(info)
 
             local config = ls_configs.load(
                 server,
-                user.plugin.nvim_lspconfig.config[server]() or {}
+                user.lsp.server_config[server]() or {}
             )
 
             lspconfig[server].setup(config)

@@ -1,7 +1,7 @@
-local cmp_source = require "user.config.snippets.cmd-snippet.cmp-source"
-local snip_cond = require "user.config.snippets.utils.cond"
+local cmp_source = require "user-snippet.cmd-snippet.cmp-source"
+local snip_cond = require "user-snippet.utils.cond"
 local luasnip = require "luasnip"
-local CmdItem = require "user.config.snippets.cmd-snippet.cmd-item"
+local CmdItem = require "user-snippet.cmd-snippet.cmd-item"
 
 local M = {}
 
@@ -109,10 +109,12 @@ function M.init()
     )
     luasnip.add_snippets("all", { cmd_snip }, { type = "autosnippets" })
 
-    cmp_source.init()
+    cmp_source.init(M.cmd_head_char)
     cmp_source.set_cmd_map(cmd_map)
 
     M.initialized = true
 end
+
+M.init()
 
 return M

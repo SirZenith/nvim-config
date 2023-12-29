@@ -64,6 +64,7 @@ end
 -- wrap require in xpcall, print traceback then return nil when failed.
 ---@param modname string
 ---@param failed_msg? string
+---@return any?
 function M.import(modname, failed_msg)
     local ok, result = xpcall(function() return require(modname) end, debug.traceback)
 

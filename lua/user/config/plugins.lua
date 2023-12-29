@@ -2,7 +2,6 @@ local base_config, err = require "user.config"
 if err then
     return {}
 end
-
 local fs = require "user.utils.fs"
 
 local function turn_on_true_color()
@@ -56,86 +55,6 @@ end
 ---@type (PluginSpec | string)[]
 local specs = {
     -- ------------------------------------------------------------------------
-    -- General
-    {
-        "lewis6991/gitsigns.nvim",
-        lazy = true,
-        event = "VeryLazy",
-        cond = function()
-            return find_root_by_directory('.git')
-        end,
-    },
-    -- "ggandor/leap.nvim", -- search & jump
-    {
-        "numToStr/Comment.nvim",
-        lazy = true,
-        event = "InsertEnter",
-    },
-    {
-        "folke/noice.nvim",
-        dependencies = {
-            "MunifTanjim/nui.nvim",
-            -- OPTIONAL:
-            --   `nvim-notify` is only needed, if you want to use the notification view.
-            --   If not available, we use `mini` as the fallback
-            "rcarriga/nvim-notify",
-        },
-    },
-    {
-        "nvim-tree/nvim-tree.lua",
-        dependencies = { "nvim-tree/nvim-web-devicons" },
-    },
-    "SirZenith/panelpal.nvim",
-    {
-        "SirZenith/vcs-helper.nvim",
-        dependencies = { "SirZenith/panelpal.nvim" },
-        lazy = true,
-        event = "VeryLazy",
-        cond = function()
-            return find_root_by_directory('.git') or find_root_by_directory('.svn')
-        end,
-    },
-    {
-        "nvim-telescope/telescope.nvim",
-        dependencies = { "nvim-lua/plenary.nvim" },
-        lazy = true,
-        event = "VeryLazy",
-    },
-    {
-        "voldikss/vim-floaterm",
-        lazy = true,
-        event = "VeryLazy",
-    },
-
-    -- ------------------------------------------------------------------------
-    -- Visual Assitance
-    {
-        "Yggdroot/indentline",
-        lazy = true,
-        event = "BufReadPre",
-    },
-    {
-        "nvim-lua/lsp-status.nvim",
-        lazy = true,
-        event = "BufReadPre",
-    },
-    {
-        "SirZenith/nvim-cursorline",
-        lazy = true,
-        event = "BufReadPre",
-    },
-    {
-        -- highlight color code with its color in vim
-        "norcalli/nvim-colorizer.lua",
-        before_load = turn_on_true_color
-    },
-    {
-        "anuvyklack/pretty-fold.nvim", -- folding style customization
-        lazy = true,
-        event = "VeryLazy",
-    },
-
-    -- ------------------------------------------------------------------------
     -- Themes
     {
         "catppuccin/nvim",
@@ -147,55 +66,150 @@ local specs = {
     {
         "EdenEast/nightfox.nvim",
         before_load = turn_on_true_color,
-        priority = 60,
     },
     { "shaunsingh/nord.nvim",             enabled = false },
     { "mhartington/oceanic-next",         enabled = false },
     { "JoosepAlviste/palenightfall.nvim", enabled = false },
     { "wadackel/vim-dogrun",              enabled = false },
     { "rakr/vim-two-firewatch",           enabled = false },
+
+
+    -- ------------------------------------------------------------------------
+    -- General
+    {
+        "lewis6991/gitsigns.nvim",
+        event = "BufReadPost",
+        cond = function()
+            return find_root_by_directory('.git')
+        end,
+    },
+    {
+        -- search & jump
+        "ggandor/leap.nvim",
+        enabled = false,
+        event = "BufReadPost",
+    },
+    {
+        "numToStr/Comment.nvim",
+        event = "BufReadPre",
+    },
+    {
+        "folke/noice.nvim",
+        dependencies = {
+            "MunifTanjim/nui.nvim",
+            -- OPTIONAL:
+            --   `nvim-notify` is only needed, if you want to use the notification view.
+            --   If not available, we use `mini` as the fallback
+            "rcarriga/nvim-notify",
+        },
+        event = "VeryLazy",
+    },
+    {
+        "nvim-tree/nvim-tree.lua",
+        dependencies = { "nvim-tree/nvim-web-devicons" },
+    },
+    "SirZenith/panelpal.nvim",
+    {
+        "SirZenith/vcs-helper.nvim",
+        dependencies = { "SirZenith/panelpal.nvim" },
+        event = "VeryLazy",
+        cond = function()
+            return find_root_by_directory('.git') or find_root_by_directory('.svn')
+        end,
+    },
+    {
+        "nvim-telescope/telescope.nvim",
+        dependencies = { "nvim-lua/plenary.nvim" },
+        event = "VeryLazy",
+    },
+    {
+        "voldikss/vim-floaterm",
+        keys = "<F12>",
+    },
+
+    -- ------------------------------------------------------------------------
+    -- Visual Assitance
+    {
+        "Yggdroot/indentline",
+        event = "BufReadPost",
+    },
     {
         "nvim-lualine/lualine.nvim",
         dependencies = { "kyazdani42/nvim-web-devicons" },
+        event = "VeryLazy",
     },
-    "nanozuki/tabby.nvim", -- tab line styling
+    {
+        "SirZenith/nvim-cursorline",
+        event = "BufReadPost",
+    },
+    {
+        -- highlight color code with its color in vim
+        "norcalli/nvim-colorizer.lua",
+        before_load = turn_on_true_color,
+        event = "BufReadPost",
+    },
+    {
+        -- folding support
+        "kevinhwang91/nvim-ufo",
+        enabled = false,
+        dependencies = "kevinhwang91/promise-async",
+        event = "BufReadPre",
+    },
+    {
+        -- folding style customization
+        "anuvyklack/pretty-fold.nvim",
+        event = "BufReadPre",
+    },
+    {
+        -- tab line styling
+        "nanozuki/tabby.nvim",
+        event = "VeryLazy",
+    },
 
     -- ------------------------------------------------------------------------
     -- Syntax
     {
         "nvim-treesitter/nvim-treesitter",
-        build = ":TSUpdate",
+        build = "<cmd>TSUpdate<cr>",
+        event = "VeryLazy",
     },
     {
         "nvim-treesitter/playground",
         dependencies = { "nvim-treesitter/nvim-treesitter" },
+        event = "BufReadPre",
     },
     {
         "p00f/nvim-ts-rainbow",
         dependencies = { "nvim-treesitter/nvim-treesitter" },
+        event = "BufReadPre",
+    },
+    {
+        "windwp/nvim-ts-autotag",
+        dependencies = { "nvim-treesitter/nvim-treesitter" },
+        ft = {
+            "astro",
+            "glimmer",
+            "handlebars",
+            "html",
+            "javascript",
+            "jsx",
+            "markdown",
+            "php",
+            "rescript",
+            "svelte",
+            "tsx",
+            "typescript",
+            "vue",
+            "xml",
+        },
     },
 
     -- ------------------------------------------------------------------------
     -- Language Support
     {
-        -- folding support
-        "kevinhwang91/nvim-ufo",
-        dependencies = "kevinhwang91/promise-async",
-        enabled = false,
-    },
-    {
         "iamcco/markdown-preview.nvim",
         build = function() vim.fn["mkdp#util#install"]() end,
         ft = { "markdown" },
-    },
-    {
-        "neovim/nvim-lspconfig",
-        dependencies = { "local::language-server" },
-    },
-    {
-        -- LSP injection
-        "jose-elias-alvarez/null-ls.nvim",
-        dependencies = { "nvim-lua/plenary.nvim" },
     },
     {
         -- Preview PlantUML in browser
@@ -205,17 +219,6 @@ local specs = {
             "tyru/open-browser.vim",
         },
         ft = "plantuml",
-    },
-    {
-        "pmizio/typescript-tools.nvim",
-        dependencies = {
-            "nvim-lua/plenary.nvim",
-            "neovim/nvim-lspconfig",
-            "local::language-server",
-        },
-        cond = function()
-            return find_root_by_file('tsconfig.json')
-        end,
     },
     {
         "lervag/vimtex",
@@ -235,68 +238,94 @@ local specs = {
     },
 
     -- ------------------------------------------------------------------------
-    -- Completion
-    "L3MON4D3/LuaSnip",
+    -- LSP
+    {
+        "nvim-lua/lsp-status.nvim",
+        event = "VeryLazy",
+    },
+    {
+        "neovim/nvim-lspconfig",
+        event = "VeryLazy",
+    },
+    {
+        -- LSP completion item kind icon for completion menu
+        "onsails/lspkind.nvim",
+        event = "BufReadPost",
+    },
+    {
+        -- LSP injection
+        "jose-elias-alvarez/null-ls.nvim",
+        dependencies = { "nvim-lua/plenary.nvim" },
+        event = "BufReadPre",
+    },
+    {
+        "pmizio/typescript-tools.nvim",
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+            "neovim/nvim-lspconfig",
+            "local.language-server",
+        },
+        cond = function()
+            return find_root_by_file('tsconfig.json')
+        end,
+        event = "VeryLazy",
+    },
 
     {
-        "onsails/lspkind.nvim", -- LSP completion item kind icon for completion menu
-        lazy = true,
+        name = "local.language-server",
+        dir = fs.path_join(base_config.env.CONFIG_HOME, "user-lsp"),
+        dependencies = {
+            "SirZenith/panelpal.nvim",
+            "nvim-lua/lsp-status.nvim",
+            "neovim/nvim-lspconfig",
+        },
+        config = function() require "user-lsp" end,
+        event = "VeryLazy",
+    },
+
+    -- ------------------------------------------------------------------------
+    -- Completion
+    {
+        "L3MON4D3/LuaSnip",
         event = "VeryLazy",
     },
     {
         "windwp/nvim-autopairs",
-        lazy = true,
         event = "InsertEnter",
-    },
-    {
-        "windwp/nvim-ts-autotag",
-        ft = {
-            "astro",
-            "glimmer",
-            "handlebars",
-            "html",
-            "javascript",
-            "jsx",
-            "markdown",
-            "php",
-            "rescript",
-            "svelte",
-            "tsx",
-            "typescript",
-            "vue",
-            "xml",
-        },
     },
     {
         "hrsh7th/nvim-cmp",
-        lazy = true,
-        event = "InsertEnter",
         dependencies = {
             "L3MON4D3/LuaSnip",
             "onsails/lspkind.nvim",
-            "local::language-server",
-            "local::snippets",
+            "local.language-server",
         },
+        lazy = true,
     },
     {
         "hrsh7th/cmp-buffer",
         dependencies = { "hrsh7th/nvim-cmp" },
+        event = "BufReadPost",
     },
     {
         "hrsh7th/cmp-cmdline",
         dependencies = { "hrsh7th/nvim-cmp" },
+        keys = ":",
     },
     {
         "saadparwaiz1/cmp_luasnip",
         dependencies = { "hrsh7th/nvim-cmp" },
+        event = "InsertEnter",
     },
     {
         "hrsh7th/cmp-nvim-lsp",
         dependencies = { "hrsh7th/nvim-cmp" },
+        event = "InsertEnter",
     },
     {
         "hrsh7th/cmp-path",
         dependencies = { "hrsh7th/nvim-cmp" },
+        event = "InsertEnter",
     },
     {
         "SirZenith/ts-grammar-navigator",
@@ -309,60 +338,54 @@ local specs = {
     {
         "SirZenith/prefab-cmp",
         dependencies = { "hrsh7th/nvim-cmp", },
+        event = "InsertEnter",
         cond = function()
             return find_root_by_directory('.creator')
         end,
     },
 
-    -- ------------------------------------------------------------------------
-    -- Local plugins
     {
-        name = "local::general",
+        name = "local.snippets",
+        dir = fs.path_join(base_config.env.SNIPPET_ROOT),
+        dependencies = {
+            "L3MON4D3/LuaSnip",
+            "hrsh7th/nvim-cmp",
+        },
+        config = function() require "user-snippet" end,
+        event = "VeryLazy",
+    },
+
+    -- ------------------------------------------------------------------------
+    -- Local configs
+    {
+        name = "local.general",
         dir = fs.path_join(base_config.env.CONFIG_HOME, "user", "config", "general"),
         config = function() require "user.config.general" end,
     },
     {
-        name = "local::keybinding",
+        name = "local.keybinding",
         dir = fs.path_join(base_config.env.CONFIG_HOME, "user", "config", "keybinding"),
         dependencies = {
             "SirZenith/panelpal.nvim",
-            "local::general",
+            "local.general",
         },
         config = function() require "user.config.keybinding" end,
     },
     {
-        name = "local::language-server",
-        dir = fs.path_join(base_config.env.CONFIG_HOME, "user", "config", "language-server"),
-        dependencies = {
-            "SirZenith/panelpal.nvim"
-        },
-        config = function() require "user.config.language-server" end,
-    },
-    {
-        name = "local::snippets",
-        dir = fs.path_join(base_config.env.SNIPPET_ROOT),
-        dependencies = { "L3MON4D3/LuaSnip" },
-        config = function() require "user.config.snippets" end,
-    },
-    {
-        name = "local::command",
+        name = "local.command",
         dir = fs.path_join(base_config.env.CONFIG_HOME, "user", "config", "command"),
-        dependencies = {
-            "local::language-server",
-            "local::snippets"
-        },
         config = function() require "user.config.command" end,
     },
     {
-        name = "local::platforms",
+        name = "local.platforms",
         dir = fs.path_join(base_config.env.CONFIG_HOME, "user", "config", "platforms"),
         dependencies = {
-            "local::general",
+            "local.general",
         },
         config = function() require "user.config.platforms" end,
     },
     {
-        name = "local::workspace",
+        name = "local.workspace",
         dir = fs.path_join(base_config.env.CONFIG_HOME, "user", "workspace"),
         config = function() require "user.workspace" end,
     },

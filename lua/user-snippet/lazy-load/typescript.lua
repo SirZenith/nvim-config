@@ -1,7 +1,7 @@
-local cmd_snip = require "user.config.snippets.cmd-snippet"
+local cmd_snip = require "user-snippet.cmd-snippet"
 
 local snip_filetype = "typescript"
-local s = require("user.config.snippets.utils")
+local s = require("user-snippet.utils")
 local makers = s.snippet_makers(snip_filetype)
 -- local sp = makers.sp
 -- local asp = makers.asp

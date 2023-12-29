@@ -6,16 +6,6 @@ return function()
     local lspkind = require "lspkind"
     local mapping = require "user.plugins.hrsh7th.nvim-cmp.mapping"
 
-    local snip_completion = require "user.config.snippets.cmd-snippet.cmp-source"
-
-    if not cmp
-        or not luasnip
-        or not lspkind
-        or not mapping
-    then
-        return false
-    end
-
     user.plugin.nvim_cmp = {
         __new_entry = true,
         window = {
@@ -41,7 +31,7 @@ return function()
         sources = cmp.config.sources(
             {
                 -- completion source registered in user configs
-                { name = snip_completion.name },
+                { name = "cmd-snip-cmp" },
             },
             {
                 { name = "tree-sitter-grammar" },

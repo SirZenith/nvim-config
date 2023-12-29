@@ -12,7 +12,7 @@ return {
     env = {
         NVIM_HOME = fs.path_join(env_config_home, "nvim"),
         CONFIG_HOME = fs.path_join(env_config_home, "nvim", "lua"),
-        SNIPPET_ROOT =fs.path_join(env_config_home, "nvim", "lua", "user", "config", "snippets"),
+        SNIPPET_ROOT =fs.path_join(env_config_home, "nvim", "lua", "user-snippet"),
 
         PROXY_URL = vim.env.PROXY_URL or "",
         PLATFORM_MARK = vim.env.PLATFORM_MARK or "",

@@ -1,5 +1,6 @@
-local import = require "user.utils".import
-local CmdItem = require "user.config.snippets.cmd-snippet.cmd-item"
+local cmp = require "cmp"
+
+local CmdItem = require "user-snippet.cmd-snippet.cmd-item"
 
 local M = {}
 
@@ -152,14 +153,11 @@ end
 
 -- ----------------------------------------------------------------------------
 
-function M.init()
-    local cmp = import "cmp"
-    if not cmp then return end
-
+---@param cmd_head_char string
+function M.init(cmd_head_char)
     cmp.register_source(M.name, M)
 
-    local cmd_snip = require "user.config.snippets.cmd-snippet"
-    M.cmd_head_char = cmd_snip.cmd_head_char
+    M.cmd_head_char = cmd_head_char
 end
 
 return M

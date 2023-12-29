@@ -1,7 +1,6 @@
 local config_entry = require "user.utils.config_entry"
+local import = require "user.utils".import
 local fs = require "user.utils.fs"
-local ls = require "user.config.language-server"
-local snip_utils = require "user.config.snippets.utils"
 
 local cmd = vim.api.nvim_create_user_command
 
@@ -38,21 +37,12 @@ end, {
 
 -- ----------------------------------------------------------------------------
 
-cmd("LspDebugOn", function()
-    ls.lsp_server_debug_on()
-end, {
-    desc = "turn on debug mode for LSP"
-})
-
-cmd("LspDebugOff", function()
-    ls.lsp_server_debug_off()
-end, {
-    desc = "turn off debug mode for LSP"
-})
-
 -- ----------------------------------------------------------------------------
 
-cmd("SnipList" , function()
+cmd("SnipList", function()
+    local snip_utils = import "user-snippet.utils"
+    if not snip_utils then return end
+
     local buffer = {}
     for filename in pairs(snip_utils.loaded_snippets_set) do
         local basename = vim.fs.basename(filename)

@@ -1,2 +1,3 @@
 ---@class PluginSpec : lazy.PluginSpec
 ---@field before_load? fun() # function to be called before any plugin spec is passed to plugin loader
+---@field finalize_module string # module path. given module will be finalized when finalizing this plugin

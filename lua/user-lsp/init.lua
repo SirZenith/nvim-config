@@ -46,7 +46,7 @@ function M.lsp_server_debug_on()
         vim.bo[buf].buftype = "nofile"
         vim.bo[buf].modifiable = true
 
-        local update_method = user.lsp.log_update_method()
+        local update_method = user.lsp.log_update_method() or panelpal.PanelContentUpdateMethod.append
         local log_level = LspLogLevel[result.type]
 
         panelpal.write_to_buf_with_highlight(
@@ -56,8 +56,9 @@ function M.lsp_server_debug_on()
         )
         panelpal.write_to_buf(buf, result.message, panelpal.PanelContentUpdateMethod.append)
         if win then
+            local scroll_method = user.lsp.log_scroll_method() or panelpal.ScrollMethod.bottom
             -- offset 1 for log timestamp line
-            panelpal.scroll_win(win, user.lsp.log_scroll_method(), 1)
+            panelpal.scroll_win(win, scroll_method, 1)
         end
 
         vim.bo[buf].modifiable = false
@@ -93,45 +94,19 @@ end
 
 -- ----------------------------------------------------------------------------
 
-user.lsp = {
-    __new_entry = true,
-    log_update_method = panelpal.PanelContentUpdateMethod.append,
-    log_scroll_method = panelpal.ScrollMethod.bottom,
-    on_attach_callbacks = {},
-    capabilities_settings = {
-        vim.lsp.protocol.make_client_capabilities()
-    },
-    format_args = {
-        async = true
-    },
-    kind_label = {
-        Text = "",
-        Method = "",
-        Function = "",
-        Constructor = "",
-        Field = "",
-        Variable = "",
-        Class = "",
-        Interface = "",
-        Module = "",
-        Property = "",
-        Unit = "",
-        Value = "",
-        Enum = "",
-        Keyword = "",
-        Snippet = "",
-        Color = "",
-        File = "",
-        Reference = "",
-        Folder = "",
-        EnumMember = "",
-        Constant = "",
-        Struct = "",
-        Event = "",
-        Operator = "",
-        TypeParameter = "",
-    }
-}
+local cmd = vim.api.nvim_create_user_command
+
+cmd("LspDebugOn", function()
+    M.lsp_server_debug_on()
+end, {
+    desc = "turn on debug mode for LSP"
+})
+
+cmd("LspDebugOff", function()
+    M.lsp_server_debug_off()
+end, {
+    desc = "turn off debug mode for LSP"
+})
 
 -- ----------------------------------------------------------------------------
 

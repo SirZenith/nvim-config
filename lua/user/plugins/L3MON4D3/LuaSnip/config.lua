@@ -34,6 +34,4 @@ return function()
 
     -- Every unspecified option will be set to the default.
     luasnip.config.set_config(user.plugin.luasnip())
-
-    return true
 end
