@@ -98,11 +98,11 @@ user.plugin.typescript_tools = {
 }
 
 return function()
-    local ls_configs = require "user-lsp.configs"
+    local loader = require "lsp-config-loader.loader"
     local typescript_tools = require "typescript-tools"
 
     local server = "tsserver"
-    local tsserver_config = ls_configs.load(
+    local tsserver_config = loader.load(
         server,
         user.lsp.server_config[server]()
     )
