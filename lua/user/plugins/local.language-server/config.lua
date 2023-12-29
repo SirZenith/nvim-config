@@ -160,12 +160,27 @@ return function()
         if info.enable ~= false then
             local server = get_name(info)
 
-            local config = ls_configs.load(
-                server,
-                user.lsp.server_config[server]() or {}
-            )
+            local stock_config = lspconfig[server]
+            local document_config = stock_config and stock_config.document_config
+            local default_config = document_config and document_config.default_config
+            local old_on_new_config = default_config and default_config.on_new_config
 
-            lspconfig[server].setup(config)
+            lspconfig[server].setup {
+                on_new_config = function(config, root_dir)
+                    if type(old_on_new_config) == "function" then
+                        old_on_new_config(config, root_dir)
+                    end
+
+                    local user_config = ls_configs.load(
+                        server,
+                        user.lsp.server_config[server]() or {}
+                    )
+
+                    for k, v in pairs(user_config) do
+                        config[k] = v
+                    end
+                end,
+            }
         end
     end
 end
