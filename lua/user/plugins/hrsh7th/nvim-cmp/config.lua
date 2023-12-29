@@ -48,11 +48,6 @@ return function()
         )
     }
 
-    -- LSP hook
-    user.lsp.capabilities_settings:append(
-        require("cmp_nvim_lsp").default_capabilities()
-    )
-
     local lspkind_cfg = user.plugin.lspkind()
     lspkind_cfg.maxwidth = 50
     lspkind_cfg.symbol_map = user.lsp.kind_label()
