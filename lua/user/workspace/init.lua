@@ -46,30 +46,29 @@ function M.get_workspace_config_require_path()
     )
 end
 
+M.finalize = function() end
+
 function M.load()
     local file_path = M.get_workspace_config_file_path()
     if vim.fn.filereadable(file_path) == 0 then return end
 
-    local module
     local result = import(M.get_workspace_config_require_path())
-    if result then
-        local result_type = type(result)
-        local finalize
-        if result_type == "function" then
-            finalize = result
-        elseif result_type == "table" then
-            finalize = module.finalize
-        end
-
-        module = {
-            finalize = function()
-                if finalize then finalize() end
-                vim.notify("workspace configuration loaded.")
-            end
-        }
+    if not result then
+        return
     end
 
-    return module
+    local result_type = type(result)
+    local finalize
+    if result_type == "function" then
+        finalize = result
+    elseif result_type == "table" then
+        finalize = result.finalize
+    end
+
+    M.finalize = function()
+        if finalize then finalize() end
+        vim.notify("workspace configuration loaded.")
+    end
 end
 
 return M

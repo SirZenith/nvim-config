@@ -5,7 +5,7 @@ local fs = require "user.utils.fs"
 local mark = user.env.PLATFORM_MARK()
 local platform_config = mark
     and fs.path_join(
-        user.env.CONFIG_HOME(), "user", "platforms", mark .. ".lua"
+        user.env.CONFIG_HOME(), "user", "config", "platforms", mark .. ".lua"
     )
     or ""
 

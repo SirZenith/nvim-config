@@ -66,19 +66,18 @@ local function on_plugins_loaded()
 
     -- finalize all loaded configs
     utils.finalize {
-        import "user.utils.plugin_loaders.lazy",
-
         -- user config
         import "user.config.general",
         import "user.config.keybinding",
         import "user.config.snippets",
         import "user.config.command",
-
-        -- platform specific config
-        import "user.platforms",
+        import "user.config.platforms",
 
         -- workspace config
         workspace,
+
+        -- plugins, get finalized after all user configurations are.
+        import "user.utils.plugin_loaders.lazy",
     }
 
     dump_user_config_meta()

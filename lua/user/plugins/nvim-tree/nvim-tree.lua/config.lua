@@ -146,7 +146,5 @@ return function()
         callback = try_open_tree,
     })
 
-    vim.cmd "highlight NvimTreeFolderIcon guibg=blue"
-
     nvim_tree.setup(user.plugin.nvim_tree())
 end

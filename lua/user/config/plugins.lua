@@ -315,11 +315,11 @@ local specs = {
     },
     {
         name = "local::platforms",
-        dir = fs.path_join(base_config.env.CONFIG_HOME, "user", "platforms"),
+        dir = fs.path_join(base_config.env.CONFIG_HOME, "user", "config", "platforms"),
         dependencies = {
             "local::general",
         },
-        config = function() require "user.platforms" end,
+        config = function() require "user.config.platforms" end,
     },
     {
         name = "local::workspace",

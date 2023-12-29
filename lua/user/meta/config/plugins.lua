@@ -1,3 +1,2 @@
 ---@class PluginSpec : lazy.PluginSpec
 ---@field before_load? fun() # function to be called before any plugin spec is passed to plugin loader
----@field finalize_group? string
