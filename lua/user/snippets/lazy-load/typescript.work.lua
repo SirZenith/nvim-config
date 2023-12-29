@@ -1,6 +1,6 @@
 local utils = require "user.utils"
 local table_utils = require "user.utils.table"
-local cmd_snip = require "snippet-loader.cmd-snippet"
+local cmd_snip = require "cmd-snippet"
 
 local snip_filetype = "typescript"
 local s = require("snippet-loader.utils")

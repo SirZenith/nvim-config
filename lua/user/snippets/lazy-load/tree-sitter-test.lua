@@ -1,5 +1,5 @@
 local utils = require "user.utils"
-local cmd_snip = require "snippet-loader.cmd-snippet"
+local cmd_snip = require "cmd-snippet"
 
 local arg_list_check = utils.arg_list_check
 
