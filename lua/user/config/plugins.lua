@@ -53,7 +53,7 @@ local function find_root_by_file(target_name)
     return false
 end
 
----@type (lazy.PluginSpec | string)[]
+---@type (PluginSpec | string)[]
 local specs = {
     -- ------------------------------------------------------------------------
     -- General
@@ -101,7 +101,7 @@ local specs = {
     {
         -- highlight color code with its color in vim
         "norcalli/nvim-colorizer.lua",
-        __before_load = turn_on_true_color
+        before_load = turn_on_true_color
     },
     "anuvyklack/pretty-fold.nvim", -- folding style customization
 
@@ -116,7 +116,8 @@ local specs = {
     { "kaicataldo/material.vim",     enabled = false },
     {
         "EdenEast/nightfox.nvim",
-        __before_load = turn_on_true_color,
+        before_load = turn_on_true_color,
+        priority = 60,
     },
     { "shaunsingh/nord.nvim",             enabled = false },
     { "mhartington/oceanic-next",         enabled = false },
@@ -273,17 +274,36 @@ local specs = {
         end,
     },
 
+    -- ------------------------------------------------------------------------
+    -- Local plugins
+    {
+        name = "local::general",
+        dir = fs.path_join(base_config.env.CONFIG_HOME, "user", "config", "general"),
+        config = function() require "user.config.general" end,
+    },
+    {
+        name = "local::keybinding",
+        dir = fs.path_join(base_config.env.CONFIG_HOME, "user", "config", "keybinding"),
+        dependencies = {
+            "SirZenith/panelpal.nvim",
+            "local::general",
+        },
+        config = function() require "user.config.keybinding" end,
+    },
     {
         name = "local::language-server",
         dir = fs.path_join(base_config.env.CONFIG_HOME, "user", "config", "language-server"),
-        dependencies = { "SirZenith/panelpal.nvim" },
+        dependencies = {
+            "SirZenith/panelpal.nvim"
+        },
+        config = function() require "user.config.language-server" end,
     },
     {
         name = "local::snippets",
         dir = fs.path_join(base_config.env.SNIPPET_ROOT),
         dependencies = { "L3MON4D3/LuaSnip" },
+        config = function() require "user.config.snippets" end,
     },
-
     {
         name = "local::command",
         dir = fs.path_join(base_config.env.CONFIG_HOME, "user", "config", "command"),
@@ -291,24 +311,21 @@ local specs = {
             "local::language-server",
             "local::snippets"
         },
-    },
-    {
-        name = "local::general",
-        dir = fs.path_join(base_config.env.CONFIG_HOME, "user", "config", "general"),
-    },
-    {
-        name = "local::keybinding",
-        dir = fs.path_join(base_config.env.CONFIG_HOME, "user", "config", "keybinding"),
-        dependencies = { "SirZenith/panelpal.nvim" },
+        config = function() require "user.config.command" end,
     },
     {
         name = "local::platforms",
         dir = fs.path_join(base_config.env.CONFIG_HOME, "user", "platforms"),
+        dependencies = {
+            "local::general",
+        },
+        config = function() require "user.platforms" end,
     },
     {
         name = "local::workspace",
         dir = fs.path_join(base_config.env.CONFIG_HOME, "user", "workspace"),
-    }
+        config = function() require "user.workspace" end,
+    },
 }
 
 return specs

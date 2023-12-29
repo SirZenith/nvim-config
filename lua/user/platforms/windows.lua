@@ -4,6 +4,7 @@ local fs = require "user.utils.fs"
 local M = {}
 
 M.im_select = {
+    __new_entry = true,
     check = "im-select.exe",
     on = "im-select.exe 2052",
     off = "im-select.exe 1033",

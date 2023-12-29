@@ -57,28 +57,29 @@ end
 -- ----------------------------------------------------------------------------
 
 local function on_plugins_loaded()
-    local modules = {
-        -- plugin config
-        import "user.utils.plugin_loaders.lazy",
+    local workspace = import "user.workspace"
 
-        -- user config
-        import "user.config.command",
-        import "user.config.general",
-        import "user.config.keybinding",
-        import "user.config.snippets",
-
-        -- platform specific config
-        import "user.platforms",
-
-        -- workspace config
-        import "user.workspace".load(),
-    }
+    workspace.load()
 
     -- settle vim variables.
     load_into_vim { "o", "g", "go" }
 
     -- finalize all loaded configs
-    utils.finalize(modules)
+    utils.finalize {
+        import "user.utils.plugin_loaders.lazy",
+
+        -- user config
+        import "user.config.general",
+        import "user.config.keybinding",
+        import "user.config.snippets",
+        import "user.config.command",
+
+        -- platform specific config
+        import "user.platforms",
+
+        -- workspace config
+        workspace,
+    }
 
     dump_user_config_meta()
 end

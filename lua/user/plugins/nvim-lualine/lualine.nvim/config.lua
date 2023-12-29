@@ -53,4 +53,5 @@ return function()
     user.plugin.lualine.options.theme = theme
 
     lualine.setup(user.plugin.lualine())
+
 end

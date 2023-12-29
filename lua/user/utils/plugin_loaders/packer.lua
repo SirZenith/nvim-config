@@ -49,7 +49,7 @@ end
 local function do_load(load_func, spec)
     if not load_func then return end
 
-    local before_load = spec.__before_load
+    local before_load = spec.before_load
     local before_load_type = type(before_load)
 
     if before_load_type == "string" then

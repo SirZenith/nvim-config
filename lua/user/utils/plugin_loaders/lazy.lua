@@ -2,6 +2,7 @@ local user = require "user"
 local utils = require "user.utils"
 local import = utils.import
 local fs = require "user.utils.fs"
+local functional = require "user.utils.functional"
 
 local fn = vim.fn
 
@@ -49,7 +50,7 @@ end
 -- Rune before command before adding plugin spec to load list
 ---@param spec table
 local function handling_before_load_cmd(spec)
-    local before_load = spec.__before_load
+    local before_load = spec.before_load
     local before_load_type = type(before_load)
 
     if before_load_type == "string" then

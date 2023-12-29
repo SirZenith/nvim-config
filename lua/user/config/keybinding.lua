@@ -5,6 +5,10 @@ local panelpal = require "panelpal"
 
 local USER_TERMINAL_PANEL_BUF_NAME = "user.terminal"
 
+user.option.g = {
+    mapleader = " ",
+}
+
 user.keybinding = {
     global_search = {
         ---@type table<string, string>
@@ -306,12 +310,6 @@ local common_keymap = {
     v = v_common_keymap,
     t = t_common_keymap,
     c = c_common_keymap,
-}
-
--- ----------------------------------------------------------------------------
-
-user.option.g = {
-    mapleader = " ",
 }
 
 -- ----------------------------------------------------------------------------
