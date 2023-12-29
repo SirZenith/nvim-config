@@ -17,7 +17,7 @@ module.exports = grammar({
 
 function M.setup()
     local snip_filetype = "all"
-    local s = require("user-snippet.utils")
+    local s = require("snippet-loader.utils")
     local makers = s.snippet_makers(snip_filetype)
     -- local sp = makers.sp
     -- local asp = makers.asp

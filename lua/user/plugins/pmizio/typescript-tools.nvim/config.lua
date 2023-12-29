@@ -104,7 +104,7 @@ return function()
     local server = "tsserver"
     local tsserver_config = ls_configs.load(
         server,
-        user.plugin.nvim_lspconfig.config[server]()
+        user.lsp.server_config[server]()
     )
 
     table_utils.update_table(tsserver_config, user.plugin.typescript_tools())

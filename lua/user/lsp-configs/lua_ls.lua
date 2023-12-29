@@ -31,7 +31,7 @@ do
 
     -- Vim
     if is_nvim_config_path then
-        tbl[#tbl + 1] = user.env.CONFIG_HOME()
+        tbl[#tbl + 1] = user.env.USER_RUNTIME_PATH()
 
         local patterns = {
             "nvim/runtime",

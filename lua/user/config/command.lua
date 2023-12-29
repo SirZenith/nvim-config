@@ -29,7 +29,7 @@ cmd("DumpConfigMeta", function()
     local user = require "user"
     user.finalize()
 
-    local filepath = fs.path_join(user.env.CONFIG_HOME(), "user", "meta", "user_config.lua")
+    local filepath = fs.path_join(user.env.USER_RUNTIME_PATH(), "user", "meta", "user_config.lua")
     config_entry.dump_signature(user --[[@as ConfigEntry]], filepath)
 end, {
     desc = "dump user config metadata to file."

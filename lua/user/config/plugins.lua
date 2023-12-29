@@ -263,7 +263,7 @@ local specs = {
         dependencies = {
             "nvim-lua/plenary.nvim",
             "neovim/nvim-lspconfig",
-            "local.language-server",
+            "SirZenith/lsp-config-loader",
         },
         cond = function()
             return find_root_by_file('tsconfig.json')
@@ -272,19 +272,25 @@ local specs = {
     },
 
     {
-        name = "local.language-server",
-        dir = fs.path_join(base_config.env.CONFIG_HOME, "user-lsp"),
+        "SirZenith/lsp-config-loader",
         dependencies = {
             "SirZenith/panelpal.nvim",
             "nvim-lua/lsp-status.nvim",
             "neovim/nvim-lspconfig",
         },
-        config = function() require "user-lsp" end,
         event = "VeryLazy",
     },
 
     -- ------------------------------------------------------------------------
     -- Completion
+    {
+        "SirZenith/cmd-snippet",
+        dependencies = {
+            "L3MON4D3/LuaSnip",
+            "hrsh7th/nvim-cmp",
+        },
+        event = "InsertEnter",
+    },
     {
         "L3MON4D3/LuaSnip",
         event = "VeryLazy",
@@ -298,7 +304,7 @@ local specs = {
         dependencies = {
             "L3MON4D3/LuaSnip",
             "onsails/lspkind.nvim",
-            "local.language-server",
+            "SirZenith/lsp-config-loader",
         },
         lazy = true,
     },
@@ -343,15 +349,12 @@ local specs = {
             return find_root_by_directory('.creator')
         end,
     },
-
     {
-        name = "local.snippets",
-        dir = fs.path_join(base_config.env.SNIPPET_ROOT),
+        "SirZenith/snippet-loader",
         dependencies = {
             "L3MON4D3/LuaSnip",
-            "hrsh7th/nvim-cmp",
+            "SirZenith/cmd-snippet",
         },
-        config = function() require "user-snippet" end,
         event = "VeryLazy",
     },
 
@@ -359,12 +362,12 @@ local specs = {
     -- Local configs
     {
         name = "local.general",
-        dir = fs.path_join(base_config.env.CONFIG_HOME, "user", "config", "general"),
+        dir = fs.path_join(base_config.env.USER_RUNTIME_PATH, "user", "config", "general"),
         config = function() require "user.config.general" end,
     },
     {
         name = "local.keybinding",
-        dir = fs.path_join(base_config.env.CONFIG_HOME, "user", "config", "keybinding"),
+        dir = fs.path_join(base_config.env.USER_RUNTIME_PATH, "user", "config", "keybinding"),
         dependencies = {
             "SirZenith/panelpal.nvim",
             "local.general",
@@ -373,12 +376,12 @@ local specs = {
     },
     {
         name = "local.command",
-        dir = fs.path_join(base_config.env.CONFIG_HOME, "user", "config", "command"),
+        dir = fs.path_join(base_config.env.USER_RUNTIME_PATH, "user", "config", "command"),
         config = function() require "user.config.command" end,
     },
     {
         name = "local.platforms",
-        dir = fs.path_join(base_config.env.CONFIG_HOME, "user", "config", "platforms"),
+        dir = fs.path_join(base_config.env.USER_RUNTIME_PATH, "user", "config", "platforms"),
         dependencies = {
             "local.general",
         },
@@ -386,7 +389,7 @@ local specs = {
     },
     {
         name = "local.workspace",
-        dir = fs.path_join(base_config.env.CONFIG_HOME, "user", "workspace"),
+        dir = fs.path_join(base_config.env.USER_RUNTIME_PATH, "user", "workspace"),
         config = function() require "user.workspace" end,
     },
 }

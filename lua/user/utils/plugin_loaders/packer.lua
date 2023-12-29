@@ -86,7 +86,7 @@ M._loaded_config_module = {} ---@type table<string, any>
 
 ---@param name string # file path relative to user config home directory
 local function try_load_file(name)
-    local file = fs.path_join(user.env.CONFIG_HOME(), name)
+    local file = fs.path_join(user.env.USER_RUNTIME_PATH(), name)
     if fn.filereadable(file) ~= 0 then
         local module = import(name)
         M._loaded_config_module[name] = module

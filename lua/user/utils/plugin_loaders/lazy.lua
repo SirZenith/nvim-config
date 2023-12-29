@@ -99,7 +99,7 @@ end
 ---@param plugin_name string # name of then plugin target config belongs to
 ---@param config_path string # file path relative to user config home directory
 function M._add_config_to_pending_table(plugin_name, config_path)
-    local file = fs.path_join(user.env.CONFIG_HOME(), config_path)
+    local file = fs.path_join(user.env.USER_RUNTIME_PATH(), config_path)
     if fn.filereadable(file) == 0 then
         return nil
     end

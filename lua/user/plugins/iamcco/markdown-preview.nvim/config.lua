@@ -1,7 +1,7 @@
 local user = require "user"
 local fs = require "user.utils.fs"
 
-local css_root = fs.path_join(user.env.CONFIG_HOME(), "iamcco", "css")
+local css_root = fs.path_join(user.env.USER_RUNTIME_PATH(), "iamcco", "css")
 
 user.option.g = {
     mkdp_open_to_the_world = true,

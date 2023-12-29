@@ -50,7 +50,7 @@ end
 
 -- dump user config Lua meta file to config home.
 local function dump_user_config_meta()
-    local filepath = fs.path_join(user.env.CONFIG_HOME(), "user", "meta", "user_config.lua")
+    local filepath = fs.path_join(user.env.USER_RUNTIME_PATH(), "user", "meta", "user_config.lua")
     config_entry.dump_signature(user --[[@as ConfigEntry]], filepath)
 end
 
@@ -87,7 +87,7 @@ rawset(user, "finalize", function()
 
     -- loading custom loader
     require "user.utils.module_loaders".setup {
-        config_home = user.env.CONFIG_HOME(),
+        config_home = user.env.USER_RUNTIME_PATH(),
     }
 
     -- wait for plugins get loaded

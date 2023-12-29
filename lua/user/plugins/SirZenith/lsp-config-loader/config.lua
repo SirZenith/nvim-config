@@ -1,11 +1,9 @@
 local user = require "user"
-
-local function get_name(info)
-    return type(info) == "string" and info or info[1]
-end
+local fs = require "user.utils.fs"
 
 user.lsp = {
     __new_entry = true,
+    root_path = fs.path_join(user.env.USER_RUNTIME_PATH(), "lsp-configs"),
     log_update_method = "append",
     log_scroll_method = "bottom",
     on_attach_callbacks = {},
@@ -149,38 +147,10 @@ user.lsp = {
 
 return function()
     local panelpal = require "panelpal"
-    local lspconfig = require "lspconfig"
-    local ls_configs = require "user-lsp.configs"
+    local lsp_config_loader = require "lsp-config-loader"
 
     user.lsp.log_update_method = panelpal.PanelContentUpdateMethod.append
     user.lsp.log_scroll_method = panelpal.ScrollMethod.bottom
 
-
-    for _, info in user.lsp.server_list:ipairs() do
-        if info.enable ~= false then
-            local server = get_name(info)
-
-            local stock_config = lspconfig[server]
-            local document_config = stock_config and stock_config.document_config
-            local default_config = document_config and document_config.default_config
-            local old_on_new_config = default_config and default_config.on_new_config
-
-            lspconfig[server].setup {
-                on_new_config = function(config, root_dir)
-                    if type(old_on_new_config) == "function" then
-                        old_on_new_config(config, root_dir)
-                    end
-
-                    local user_config = ls_configs.load(
-                        server,
-                        user.lsp.server_config[server]() or {}
-                    )
-
-                    for k, v in pairs(user_config) do
-                        config[k] = v
-                    end
-                end,
-            }
-        end
-    end
+    lsp_config_loader.setup(user.lsp())
 end

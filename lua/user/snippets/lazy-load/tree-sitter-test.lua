@@ -1,10 +1,10 @@
 local utils = require "user.utils"
-local cmd_snip = require "user-snippet.cmd-snippet"
+local cmd_snip = require "snippet-loader.cmd-snippet"
 
 local arg_list_check = utils.arg_list_check
 
 local snip_filetype = "tree-sitter-test"
-local s = require("user-snippet.utils")
+local s = require("snippet-loader.utils")
 local makers = s.snippet_makers(snip_filetype)
 -- local sp = makers.sp
 local asp = makers.asp
