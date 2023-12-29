@@ -1,0 +1,3 @@
+---@class LazyFinalizerState
+---@field loaded boolean
+---@field modules table[]

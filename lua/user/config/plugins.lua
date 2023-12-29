@@ -59,12 +59,18 @@ local specs = {
     -- General
     {
         "lewis6991/gitsigns.nvim",
+        lazy = true,
+        event = "VeryLazy",
         cond = function()
             return find_root_by_directory('.git')
         end,
     },
     -- "ggandor/leap.nvim", -- search & jump
-    "numToStr/Comment.nvim",
+    {
+        "numToStr/Comment.nvim",
+        lazy = true,
+        event = "InsertEnter",
+    },
     {
         "folke/noice.nvim",
         dependencies = {
@@ -73,7 +79,7 @@ local specs = {
             --   `nvim-notify` is only needed, if you want to use the notification view.
             --   If not available, we use `mini` as the fallback
             "rcarriga/nvim-notify",
-        }
+        },
     },
     {
         "nvim-tree/nvim-tree.lua",
@@ -83,6 +89,8 @@ local specs = {
     {
         "SirZenith/vcs-helper.nvim",
         dependencies = { "SirZenith/panelpal.nvim" },
+        lazy = true,
+        event = "VeryLazy",
         cond = function()
             return find_root_by_directory('.git') or find_root_by_directory('.svn')
         end,
@@ -90,20 +98,42 @@ local specs = {
     {
         "nvim-telescope/telescope.nvim",
         dependencies = { "nvim-lua/plenary.nvim" },
+        lazy = true,
+        event = "VeryLazy",
     },
-    "voldikss/vim-floaterm",
+    {
+        "voldikss/vim-floaterm",
+        lazy = true,
+        event = "VeryLazy",
+    },
 
     -- ------------------------------------------------------------------------
     -- Visual Assitance
-    "Yggdroot/indentline",
-    "nvim-lua/lsp-status.nvim",
-    "SirZenith/nvim-cursorline",
+    {
+        "Yggdroot/indentline",
+        lazy = true,
+        event = "BufReadPre",
+    },
+    {
+        "nvim-lua/lsp-status.nvim",
+        lazy = true,
+        event = "BufReadPre",
+    },
+    {
+        "SirZenith/nvim-cursorline",
+        lazy = true,
+        event = "BufReadPre",
+    },
     {
         -- highlight color code with its color in vim
         "norcalli/nvim-colorizer.lua",
         before_load = turn_on_true_color
     },
-    "anuvyklack/pretty-fold.nvim", -- folding style customization
+    {
+        "anuvyklack/pretty-fold.nvim", -- folding style customization
+        lazy = true,
+        event = "VeryLazy",
+    },
 
     -- ------------------------------------------------------------------------
     -- Themes
@@ -156,11 +186,11 @@ local specs = {
     {
         "iamcco/markdown-preview.nvim",
         build = function() vim.fn["mkdp#util#install"]() end,
-        ft = { "markdown" }
+        ft = { "markdown" },
     },
     {
         "neovim/nvim-lspconfig",
-        dependencies = { "local::language-server" }
+        dependencies = { "local::language-server" },
     },
     {
         -- LSP injection
@@ -208,8 +238,16 @@ local specs = {
     -- Completion
     "L3MON4D3/LuaSnip",
 
-    "onsails/lspkind.nvim", -- LSP completion item kind icon for completion menu
-    "windwp/nvim-autopairs",
+    {
+        "onsails/lspkind.nvim", -- LSP completion item kind icon for completion menu
+        lazy = true,
+        event = "VeryLazy",
+    },
+    {
+        "windwp/nvim-autopairs",
+        lazy = true,
+        event = "InsertEnter",
+    },
     {
         "windwp/nvim-ts-autotag",
         ft = {
@@ -231,6 +269,8 @@ local specs = {
     },
     {
         "hrsh7th/nvim-cmp",
+        lazy = true,
+        event = "InsertEnter",
         dependencies = {
             "L3MON4D3/LuaSnip",
             "onsails/lspkind.nvim",
