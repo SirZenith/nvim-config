@@ -3,7 +3,7 @@ local fs = require "user.utils.fs"
 
 user.lsp = {
     __new_entry = true,
-    root_path = fs.path_join(user.env.USER_RUNTIME_PATH(), "lsp-configs"),
+    root_path = fs.path_join(user.env.USER_RUNTIME_PATH(), "user", "lsp-configs"),
     log_update_method = "append",
     log_scroll_method = "bottom",
     on_attach_callbacks = {},
