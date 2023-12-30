@@ -87,7 +87,7 @@ user.plugin.nvim_tree = {
     filters = {
         dotfiles = true,
         custom = {
-            "**/*.meta"
+            "**/*\\.meta$"
         }
     },
     git = {
