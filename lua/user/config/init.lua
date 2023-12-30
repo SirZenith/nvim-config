@@ -17,6 +17,8 @@ return {
         PLATFORM_MARK = vim.env.PLATFORM_MARK or "",
         HOME = vim.env.HOME or "",
         APP_PATH = vim.env.APP_PATH or "",
+        DEV_PATH = vim.env.DEV_PATH or fs.path_join(vim.env.HOME, "Developer"),
+        PLUGIN_DEV_PATH = fs.path_join(vim.env.DEV_PATH, "nvim-plugins"),
 
         CC = vim.env.CC or "cc",
         PYTHON_PATH = vim.env.PYTHON_PATH or "python",
