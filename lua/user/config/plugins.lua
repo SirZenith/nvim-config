@@ -170,7 +170,7 @@ local specs = {
     -- Syntax
     {
         "nvim-treesitter/nvim-treesitter",
-        build = "<cmd>TSUpdate<cr>",
+        build = ":TSUpdate",
         event = "VeryLazy",
     },
     {
