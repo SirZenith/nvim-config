@@ -40,6 +40,7 @@ do
             "panelpal%.nvim",
             "nvim%-cmp",
             "noice%.nvim",
+            "snippet%-loader",
         }
 
         local list = vim.api.nvim_list_runtime_paths()
