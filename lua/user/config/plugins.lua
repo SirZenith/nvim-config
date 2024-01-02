@@ -55,6 +55,41 @@ end
 ---@type (PluginSpec | string)[]
 local specs = {
     -- ------------------------------------------------------------------------
+    -- Local configs
+    {
+        name = "local.general",
+        dir = fs.path_join(base_config.env.USER_RUNTIME_PATH, "user", "config", "general"),
+        config = function() require "user.config.general" end,
+    },
+    {
+        name = "local.keybinding",
+        dir = fs.path_join(base_config.env.USER_RUNTIME_PATH, "user", "config", "keybinding"),
+        dependencies = {
+            "SirZenith/panelpal.nvim",
+            "local.general",
+        },
+        config = function() require "user.config.keybinding" end,
+    },
+    {
+        name = "local.command",
+        dir = fs.path_join(base_config.env.USER_RUNTIME_PATH, "user", "config", "command"),
+        config = function() require "user.config.command" end,
+    },
+    {
+        name = "local.platforms",
+        dir = fs.path_join(base_config.env.USER_RUNTIME_PATH, "user", "config", "platforms"),
+        dependencies = {
+            "local.general",
+        },
+        config = function() require "user.config.platforms" end,
+    },
+    {
+        name = "local.workspace",
+        dir = fs.path_join(base_config.env.USER_RUNTIME_PATH, "user", "workspace"),
+        config = function() require "user.workspace" end,
+    },
+
+    -- ------------------------------------------------------------------------
     -- Themes
     {
         "catppuccin/nvim",
@@ -167,7 +202,7 @@ local specs = {
     },
 
     -- ------------------------------------------------------------------------
-    -- Syntax
+    -- tree-sitter
     {
         "nvim-treesitter/nvim-treesitter",
         build = ":TSUpdate",
@@ -205,52 +240,28 @@ local specs = {
     },
 
     -- ------------------------------------------------------------------------
-    -- Language Support
-    {
-        "iamcco/markdown-preview.nvim",
-        build = function() vim.fn["mkdp#util#install"]() end,
-        ft = { "markdown" },
-    },
-    {
-        -- Preview PlantUML in browser
-        "weirongxu/plantuml-previewer.vim",
-        dependencies = {
-            "aklt/plantuml-syntax",
-            "tyru/open-browser.vim",
-        },
-        ft = "plantuml",
-    },
-    {
-        "lervag/vimtex",
-        ft = { "tex", "latex", "bibtex" },
-    },
-    {
-        "stevearc/vim-arduino",
-        ft = "arduino",
-    },
-    {
-        "sudar/vim-arduino-syntax",
-        ft = "arduino",
-    },
-    {
-        "vim-voom/VOoM",
-        ft = { "markdown", "html" },
-    },
-
-    -- ------------------------------------------------------------------------
     -- LSP
     {
-        "nvim-lua/lsp-status.nvim",
+        "SirZenith/lsp-config-loader",
+        dependencies = {
+            "SirZenith/panelpal.nvim",
+            "nvim-lua/lsp-status.nvim",
+            "neovim/nvim-lspconfig",
+        },
         event = "VeryLazy",
     },
     {
-        "neovim/nvim-lspconfig",
+        "nvim-lua/lsp-status.nvim",
         event = "VeryLazy",
     },
     {
         -- LSP completion item kind icon for completion menu
         "onsails/lspkind.nvim",
         event = "BufReadPost",
+    },
+    {
+        "neovim/nvim-lspconfig",
+        event = "VeryLazy",
     },
     {
         -- LSP injection
@@ -268,16 +279,6 @@ local specs = {
         cond = function()
             return find_root_by_file('tsconfig.json')
         end,
-        event = "VeryLazy",
-    },
-
-    {
-        "SirZenith/lsp-config-loader",
-        dependencies = {
-            "SirZenith/panelpal.nvim",
-            "nvim-lua/lsp-status.nvim",
-            "neovim/nvim-lspconfig",
-        },
         event = "VeryLazy",
     },
 
@@ -359,39 +360,44 @@ local specs = {
     },
 
     -- ------------------------------------------------------------------------
-    -- Local configs
+    -- Language Support
     {
-        name = "local.general",
-        dir = fs.path_join(base_config.env.USER_RUNTIME_PATH, "user", "config", "general"),
-        config = function() require "user.config.general" end,
+        "lervag/vimtex",
+        ft = { "tex", "latex", "bibtex" },
     },
     {
-        name = "local.keybinding",
-        dir = fs.path_join(base_config.env.USER_RUNTIME_PATH, "user", "config", "keybinding"),
+        "stevearc/vim-arduino",
+        ft = "arduino",
+    },
+    {
+        "sudar/vim-arduino-syntax",
+        ft = "arduino",
+    },
+    {
+        "vim-voom/VOoM",
+        ft = { "markdown", "html" },
+    },
+
+    -- ------------------------------------------------------------------------
+    -- External Tools
+    {
+        "iamcco/markdown-preview.nvim",
+        build = function() vim.fn["mkdp#util#install"]() end,
+        ft = { "markdown" },
+    },
+    {
+        -- Preview PlantUML in browser
+        "weirongxu/plantuml-previewer.vim",
         dependencies = {
-            "SirZenith/panelpal.nvim",
-            "local.general",
+            "aklt/plantuml-syntax",
+            "tyru/open-browser.vim",
         },
-        config = function() require "user.config.keybinding" end,
+        ft = "plantuml",
     },
     {
-        name = "local.command",
-        dir = fs.path_join(base_config.env.USER_RUNTIME_PATH, "user", "config", "command"),
-        config = function() require "user.config.command" end,
-    },
-    {
-        name = "local.platforms",
-        dir = fs.path_join(base_config.env.USER_RUNTIME_PATH, "user", "config", "platforms"),
-        dependencies = {
-            "local.general",
-        },
-        config = function() require "user.config.platforms" end,
-    },
-    {
-        name = "local.workspace",
-        dir = fs.path_join(base_config.env.USER_RUNTIME_PATH, "user", "workspace"),
-        config = function() require "user.workspace" end,
-    },
+        "jrop/mongo.nvim",
+        cmd = "Mongoconnect",
+    }
 }
 
 return specs
