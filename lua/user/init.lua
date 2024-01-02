@@ -87,7 +87,7 @@ rawset(user, "finalize", function()
 
     -- loading custom loader
     require "user.utils.module_loaders".setup {
-        config_home = user.env.USER_RUNTIME_PATH(),
+        user_runtime_path = user.env.USER_RUNTIME_PATH(),
     }
 
     -- wait for plugins get loaded
