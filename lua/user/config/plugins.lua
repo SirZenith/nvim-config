@@ -57,41 +57,41 @@ local specs = {
     -- ------------------------------------------------------------------------
     -- Local configs
     {
-        name = "local.general",
-        dir = fs.path_join(base_config.env.USER_RUNTIME_PATH, "user", "config", "general"),
-        config = function() require "user.config.general" end,
+        name = "user.config.general",
+        dir = base_config.env.USER_RUNTIME_PATH,
+        config = function(spec) require(spec.name) end,
     },
     {
-        name = "local.keybinding",
-        dir = fs.path_join(base_config.env.USER_RUNTIME_PATH, "user", "config", "keybinding"),
+        name = "user.config.keybinding",
+        dir = base_config.env.USER_RUNTIME_PATH,
         dependencies = {
             "SirZenith/panelpal.nvim",
-            "local.general",
+            "user.config.general",
         },
-        config = function() require "user.config.keybinding" end,
+        config = function(spec) require(spec.name) end,
     },
     {
-        name = "local.command",
-        dir = fs.path_join(base_config.env.USER_RUNTIME_PATH, "user", "config", "command"),
-        config = function() require "user.config.command" end,
+        name = "user.config.command",
+        dir = base_config.env.USER_RUNTIME_PATH,
+        config = function(spec) require(spec.name) end,
     },
     {
-        name = "local.platforms",
-        dir = fs.path_join(base_config.env.USER_RUNTIME_PATH, "user", "config", "platforms"),
+        name = "user.config.platforms",
+        dir = base_config.env.USER_RUNTIME_PATH,
         dependencies = {
-            "local.general",
+            "user.config.general",
         },
-        config = function() require "user.config.platforms" end,
+        config = function(spec) require(spec.name) end,
     },
     {
-        name = "local.lsp",
-        dir = fs.path_join(base_config.env.USER_RUNTIME_PATH, "user", "config", "lsp"),
-        config = function() require "user.config.lsp" end,
+        name = "user.config.lsp",
+        dir = base_config.env.USER_RUNTIME_PATH,
+        config = function(spec) require(spec.name) end,
     },
     {
-        name = "local.workspace",
-        dir = fs.path_join(base_config.env.USER_RUNTIME_PATH, "user", "workspace"),
-        config = function() require "user.workspace" end,
+        name = "user.workspace",
+        dir = base_config.env.USER_RUNTIME_PATH,
+        config = function(spec) require(spec.name) end,
     },
 
     -- ------------------------------------------------------------------------
@@ -112,7 +112,6 @@ local specs = {
     { "JoosepAlviste/palenightfall.nvim", enabled = false },
     { "wadackel/vim-dogrun",              enabled = false },
     { "rakr/vim-two-firewatch",           enabled = false },
-
 
     -- ------------------------------------------------------------------------
     -- General

@@ -14,7 +14,7 @@
 --
 ---@field init? fun() # This function gets called on plugin startup
 ---@field opts? table # Config table that will be passed to config function
----@field config? fun(plugin, opts: table) # Executed when plugin loads.
+---@field config? fun(plugin, opts: table) | boolean # Executed when plugin loads.
 ---@field main? string # main module name of plugin
 ---@field build? string | string[] | fun() # Executed when plugin is installed or updated
 --
