@@ -70,6 +70,7 @@ local function on_plugins_loaded()
         import "user.config.general",
         import "user.config.keybinding",
         import "user.config.command",
+        import "user.config.lsp",
         import "user.config.platforms",
 
         -- workspace config

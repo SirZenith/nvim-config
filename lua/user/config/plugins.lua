@@ -84,6 +84,11 @@ local specs = {
         config = function() require "user.config.platforms" end,
     },
     {
+        name = "local.lsp",
+        dir = fs.path_join(base_config.env.USER_RUNTIME_PATH, "user", "config", "lsp"),
+        config = function() require "user.config.lsp" end,
+    },
+    {
         name = "local.workspace",
         dir = fs.path_join(base_config.env.USER_RUNTIME_PATH, "user", "workspace"),
         config = function() require "user.workspace" end,
