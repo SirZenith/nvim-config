@@ -2,11 +2,11 @@ local utils = require "user.utils"
 local table_utils = require "user.utils.table"
 local cmd_snip = require "cmd-snippet"
 
-local snip_filetype = "typescript"
+-- local snip_filetype = "typescript"
 local s = require("snippet-loader.utils")
-local makers = s.snippet_makers(snip_filetype)
+-- local makers = s.snippet_makers(snip_filetype)
 -- local sp = makers.sp
-local asp = makers.asp
+-- local asp = makers.asp
 -- local psp = makers.psp
 -- local apsp = makers.apsp
 
@@ -603,6 +603,20 @@ cmd_snip.register {
                 { "const ",  key_name,               " = ",                         1,        " + '", name, "';" },
                 { "const ",  node_name,              " = reddotMgr.addNodeByPath(", key_name, ", '",  2,    "');" },
                 { node_name, ".setCheckFunc(() => {" },
+                "    return false;",
+                "});",
+            }
+        end,
+    },
+    ["new reddot-root"] = {
+        content = function()
+            local name = "root"
+            local key_name = name .. "Key"
+            local node_name = name .. "Node"
+            return {
+                { "const ",  key_name,               " = localPrefix;" },
+                { "const ",  node_name,              " = reddotMgr.addNodeByPath(", key_name, ", '",  1,    "');" },
+                { node_name, ".setCheckOpenFunc(() => {" },
                 "    return false;",
                 "});",
             }
