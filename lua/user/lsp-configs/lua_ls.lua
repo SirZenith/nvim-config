@@ -17,6 +17,7 @@ local workspace_path = workspace.get_workspace_path()
 local is_nvim_config_path = workspace_path:starts_with(user.env.NVIM_HOME())
     or vim.fs.basename(workspace_path) == workspace.WORKSPACE_CONFIG_DIR_NAME
     or workspace_path:starts_with(vim.fn.stdpath("data"))
+    or workspace_path:starts_with(user.env.PLUGIN_DEV_PATH())
     or user.env.LOAD_NVIM_RUNTIME()
 
 local runtime_version = is_nvim_config_path and "LuaJIT" or "Lua 5.4"

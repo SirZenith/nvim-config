@@ -1,3 +1,5 @@
+local base_config = require "user.config"
+
 local user = require "user"
 local utils = require "user.utils"
 local import = utils.import
@@ -32,6 +34,12 @@ local function require_manager()
 end
 
 local is_bootstrap, manager = require_manager()
+
+local manager_config = {
+    dev = {
+        path = base_config.env.PLUGIN_DEV_PATH,
+    },
+}
 
 -- ----------------------------------------------------------------------------
 -- loading helpers
@@ -172,7 +180,7 @@ function M.setup(specs)
         table.insert(targets, spec)
     end
 
-    manager.setup(targets)
+    manager.setup(targets, manager_config)
 
     return M
 end
