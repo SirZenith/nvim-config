@@ -14,16 +14,17 @@ local function add_runtime_path(path_list, path)
 end
 
 local workspace_path = workspace.get_workspace_path()
-local is_nvim_config_path = workspace_path:starts_with(user.env.NVIM_HOME())
+local is_nvim_runtime_path = fs.is_subdir_of(workspace_path, user.env.NVIM_HOME())
     or vim.fs.basename(workspace_path) == workspace.WORKSPACE_CONFIG_DIR_NAME
-    or workspace_path:starts_with(vim.fn.stdpath("data"))
-    or workspace_path:starts_with(user.env.PLUGIN_DEV_PATH())
+    or fs.is_subdir_of(workspace_path, vim.fn.stdpath("data"))
+    or fs.is_subdir_of(workspace_path, user.env.PLUGIN_DEV_PATH())
     or user.env.LOAD_NVIM_RUNTIME()
 
-local runtime_version = is_nvim_config_path and "LuaJIT" or "Lua 5.4"
+local runtime_version = is_nvim_runtime_path and "LuaJIT" or "Lua 5.4"
 
--- pathes that are not in current workspace need also be
--- presenting in workspace.library setting.
+-- path list for looking for required module.
+-- pathes that are not in current workspace need also be presenting in
+-- workspace.library setting to enable loading definition from those paths
 local runtime_paths
 do
     local tbl = {
@@ -31,7 +32,7 @@ do
     }
 
     -- Vim
-    if is_nvim_config_path then
+    if is_nvim_runtime_path then
         tbl[#tbl + 1] = user.env.USER_RUNTIME_PATH()
 
         local patterns = {
@@ -58,6 +59,10 @@ do
         end)
 
         table_utils.extend_list(tbl, list_mapped)
+
+        if vim.fn.isdirectory("lua") then
+            tbl[#tbl + 1] = fs.path_join(workspace_path, "lua")
+        end
     end
 
     -- Lua Path
@@ -74,6 +79,8 @@ do
     runtime_paths = table_utils.remove_duplicates(runtime, lua_path)
 end
 
+-- path list for loading definition files.
+-- All runtime paths rather than pwd, should be in this list.
 local lib_paths
 do
     local tbl = {}
@@ -129,7 +136,7 @@ M.settings = {
         runtime = {
             version = runtime_version,
             special = {
-                import = is_nvim_config_path and "require" or nil
+                import = is_nvim_runtime_path and "require" or nil
             },
             path = runtime_paths,
         },

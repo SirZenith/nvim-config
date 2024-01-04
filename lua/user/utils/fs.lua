@@ -30,6 +30,16 @@ function M.path_join(path, ...)
     return path
 end
 
+-- check if `path` is a sub directory of `other`.
+---@param path string
+---@param other string
+---@return boolean
+function M.is_subdir_of(path, other)
+    path = vim.fs.normalize(path)
+    other = vim.fs.normalize(other)
+    return other == path:sub(1, #other)
+end
+
 ---@param path string
 ---@return string[]
 function M.listdir(path)
