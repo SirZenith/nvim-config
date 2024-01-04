@@ -2,7 +2,6 @@ local base_config, err = require "user.config"
 if err then
     return {}
 end
-local fs = require "user.utils.fs"
 
 local function turn_on_true_color()
     if vim.fn.has "nvim" then
@@ -165,6 +164,11 @@ local specs = {
         "voldikss/vim-floaterm",
         keys = "<F12>",
     },
+    {
+        "kylechui/nvim-surround",
+        dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },
+        event = "BufReadPre",
+    },
 
     -- ------------------------------------------------------------------------
     -- Visual Assitance
@@ -219,6 +223,11 @@ local specs = {
     },
     {
         "p00f/nvim-ts-rainbow",
+        dependencies = { "nvim-treesitter/nvim-treesitter" },
+        event = "BufReadPre",
+    },
+    {
+        "nvim-treesitter/nvim-treesitter-textobjects",
         dependencies = { "nvim-treesitter/nvim-treesitter" },
         event = "BufReadPre",
     },
