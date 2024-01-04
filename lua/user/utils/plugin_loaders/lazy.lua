@@ -117,11 +117,6 @@ function M._load_config(spec)
     local plugin_name = get_plugin_name_from_spec(spec)
     if not plugin_name or #plugin_name == 0 then return end
 
-    if spec.finalize_module then
-        local state = M._get_pending_finalizer_state(plugin_name)
-        table.insert(state.modules, spec.finalize_module)
-    end
-
     local config_paths = {
         get_config_path(plugin_name),
         get_keybinding_path(plugin_name),
