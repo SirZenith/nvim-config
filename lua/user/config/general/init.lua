@@ -201,6 +201,10 @@ user.general = {
                 },
                 secondary = true,
             },
+            {
+                name = "plantuml",
+                pattern = "%.puml$",
+            },
         },
     },
     im_select = {
