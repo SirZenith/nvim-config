@@ -408,7 +408,8 @@ local specs = {
         ft = "plantuml",
     },
     {
-        "jrop/mongo.nvim",
+        "SirZenith/mongo.nvim",
+        -- dev = true,
         cmd = "Mongoconnect",
     }
 }
