@@ -408,9 +408,9 @@ local specs = {
         ft = "plantuml",
     },
     {
-        "SirZenith/mongo.nvim",
+        "SirZenith/mongosh.nvim",
         -- dev = true,
-        cmd = "Mongoconnect",
+        cmd = "MongoConnect",
     }
 }
 
