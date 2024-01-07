@@ -43,6 +43,7 @@ do
             "nvim%-cmp",
             "noice%.nvim",
             "snippet%-loader",
+            "mongosh%.nvim",
         }
 
         local list = vim.api.nvim_list_runtime_paths()
