@@ -167,7 +167,7 @@ local specs = {
     },
     {
         "voldikss/vim-floaterm",
-        keys = "<F12>",
+        event = "VeryLazy",
     },
     {
         "kylechui/nvim-surround",
