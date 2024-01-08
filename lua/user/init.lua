@@ -106,7 +106,8 @@ rawset(user, "finalize", function()
         pattern = "LazyVimStarted",
         callback = function()
             local time = require("lazy").stats().startuptime
-            vim.print("startup time: " .. tostring(time) .. "ms")
+            local msg = "startup time: " .. tostring(time) .. "ms"
+            utils.notify(msg)
         end,
     })
 

@@ -159,4 +159,15 @@ function M.arg_list_check(args, ...)
     return nil, unpack(args)
 end
 
+-- notify shows notifycation.
+---@param msg string
+function M.notify(msg)
+    local notify = M.import "notify"
+    if notify then
+        notify(msg)
+    else
+        print(msg)
+    end
+end
+
 return M
