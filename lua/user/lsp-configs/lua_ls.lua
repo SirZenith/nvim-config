@@ -51,7 +51,7 @@ do
             path = vim.fs.normalize(path) ---@type string
 
             return functional.any(patterns, function(_, patt)
-                return path:match(patt) ~= nil
+                return not workspace_path:match(patt) and  path:match(patt) ~= nil
             end)
         end)
 
