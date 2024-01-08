@@ -50,6 +50,17 @@ end, {
     desc = "extract current buffer into new tab."
 })
 
+cmd("CloseAllBuffer", function()
+    vim.cmd "wa"
+
+    local bufs = api.nvim_list_bufs()
+    for _, buf in ipairs(bufs) do
+        api.nvim_buf_delete(buf, {})
+    end
+end, {
+    desc = "save & delete all buffers",
+})
+
 -- ----------------------------------------------------------------------------
 
 cmd("SnipList", function()

@@ -151,9 +151,13 @@ local specs = {
         dependencies = { "nvim-tree/nvim-web-devicons" },
         event = "VeryLazy",
     },
-    "SirZenith/panelpal.nvim",
+    {
+        "SirZenith/panelpal.nvim",
+        -- dev = true,
+    },
     {
         "SirZenith/vcs-helper.nvim",
+        -- dev = true,
         dependencies = { "SirZenith/panelpal.nvim" },
         event = "CmdlineEnter",
         cond = function()
