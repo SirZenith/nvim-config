@@ -86,6 +86,8 @@ end
 rawset(user, "finalize", function()
     chdir()
 
+    vim.g.loaded_netrwPlugin = 1 -- disable Netrw
+
     -- loading custom loader
     require "user.utils.module_loaders".setup {
         user_runtime_path = user.env.USER_RUNTIME_PATH(),
@@ -97,6 +99,15 @@ rawset(user, "finalize", function()
         group = finalize_augroup,
         pattern = "LazyDone",
         callback = on_plugins_loaded,
+    })
+
+    vim.api.nvim_create_autocmd("User", {
+        group = finalize_augroup,
+        pattern = "LazyVimStarted",
+        callback = function()
+            local time = require("lazy").stats().startuptime
+            vim.print("startup time: " .. tostring(time) .. "ms")
+        end,
     })
 
     -- load plugins

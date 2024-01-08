@@ -144,7 +144,7 @@ user.option = {
     },
     g = {
         python3_host_prog = user.env.PYTHON_PATH(),
-        loaded_netrwPlugin = 1, -- 禁用 Netrw
+        loaded_netrwPlugin = 1, -- disable Netrw
     }
 }
 
