@@ -8,6 +8,14 @@ M.WORKSPACE_CONFIG_INIT_FILE_BASENAME = "init"
 M.WORKSPACE_CONFIG_INIT_FILE_EXTENSION = ".lua"
 M.WORKSPACE_CONFIG_INIT_FILE_NAME = M.WORKSPACE_CONFIG_INIT_FILE_BASENAME .. M.WORKSPACE_CONFIG_INIT_FILE_EXTENSION
 
+local config_loaded = false
+
+-- is_workspace_confg_loaded checks whether workspace has been loaded.
+---@return boolean
+function M.is_workspace_confg_loaded()
+    return config_loaded
+end
+
 function M.init_workspace()
     local config_dir = M.get_workspace_config_dir_path()
     local config_file = M.get_workspace_config_file_path()
@@ -57,6 +65,8 @@ function M.load()
         return
     end
 
+    config_loaded = true
+
     local result_type = type(result)
     local finalize
     if result_type == "function" then
@@ -65,10 +75,7 @@ function M.load()
         finalize = result.finalize
     end
 
-    M.finalize = function()
-        if finalize then finalize() end
-        vim.notify("workspace configuration loaded.")
-    end
+    M.finalize = finalize
 end
 
 return M

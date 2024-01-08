@@ -407,7 +407,7 @@ end
 local function dump_signature(config_entry)
     ---@class DumpEnv
     local env = {
-        buffer = { "---@meta", ""},
+        buffer = { "---@meta", "" },
         pending = {},
     }
 
@@ -423,17 +423,25 @@ end
 ---@param config_entry ConfigEntry
 ---@param path string # path to output meta file
 function M.dump_signature(config_entry, path)
-    local file, err = io.open(path, "w")
-    if not file then
-        vim.notify(err or "")
-        return
-    end
+    local loop = vim.loop
 
-    local metadata = dump_signature(config_entry)
-    file:write(metadata)
-    file:close()
+    local permission = 480 -- 0o740
+    loop.fs_open(path, "w+", permission, function(open_err, fd)
+        if open_err or not fd then
+            vim.notify(open_err or "failed to open config meta file")
+            return
+        end
+
+        local metadata = dump_signature(config_entry)
+        loop.fs_write(fd, metadata, function(write_err)
+            if write_err then
+                vim.notify(write_err)
+                return
+            end
+
+            loop.fs_close(fd)
+        end)
+    end)
 end
-
-
 
 return M

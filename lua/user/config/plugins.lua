@@ -143,6 +143,10 @@ local specs = {
         event = { "CmdlineEnter" },
     },
     {
+        "rcarriga/nvim-notify",
+        event = "VeryLazy",
+    },
+    {
         "nvim-tree/nvim-tree.lua",
         dependencies = { "nvim-tree/nvim-web-devicons" },
         event = "VeryLazy",

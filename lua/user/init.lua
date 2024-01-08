@@ -83,6 +83,27 @@ local function on_plugins_loaded()
     dump_user_config_meta()
 end
 
+local function show_editor_state()
+    local msg_buffer = {}
+
+    local time = require("lazy").stats().startuptime
+    table.insert(msg_buffer, "startup time: " .. tostring(time) .. "ms")
+
+    local workspace = import "user.workspace"
+    if workspace and workspace.is_workspace_confg_loaded() then
+        table.insert(msg_buffer, "workspace configuration loaded.")
+    end
+
+    local msg = table.concat(msg_buffer, "\n")
+    utils.notify(msg, vim.log.levels.INFO, {
+        title = "Editor State",
+        timeout = 800,
+        animated = false,
+    })
+end
+
+-- ----------------------------------------------------------------------------
+
 rawset(user, "finalize", function()
     chdir()
 
@@ -104,11 +125,7 @@ rawset(user, "finalize", function()
     vim.api.nvim_create_autocmd("User", {
         group = finalize_augroup,
         pattern = "LazyVimStarted",
-        callback = function()
-            local time = require("lazy").stats().startuptime
-            local msg = "startup time: " .. tostring(time) .. "ms"
-            utils.notify(msg)
-        end,
+        callback = show_editor_state,
     })
 
     -- load plugins

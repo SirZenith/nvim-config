@@ -161,12 +161,14 @@ end
 
 -- notify shows notifycation.
 ---@param msg string
-function M.notify(msg)
+---@param level? string | integer # vim.log.levels
+---@param opt? table<string, any>
+function M.notify(msg, level, opt)
     local notify = M.import "notify"
     if notify then
-        notify(msg)
+        notify(msg, level, opt)
     else
-        print(msg)
+        vim.notify(msg)
     end
 end
 
