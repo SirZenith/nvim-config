@@ -116,7 +116,7 @@ local specs = {
     -- General
     {
         "lewis6991/gitsigns.nvim",
-        event = "BufReadPost",
+        event = "BufReadPre",
         cond = function()
             return find_root_by_directory('.git')
         end,
@@ -125,7 +125,7 @@ local specs = {
         -- search & jump
         "ggandor/leap.nvim",
         enabled = false,
-        event = "BufReadPost",
+        event = "BufReadPre",
     },
     {
         "numToStr/Comment.nvim",
@@ -140,7 +140,7 @@ local specs = {
             --   If not available, we use `mini` as the fallback
             "rcarriga/nvim-notify",
         },
-        event = "VeryLazy",
+        event = { "CmdlineEnter" },
     },
     {
         "nvim-tree/nvim-tree.lua",
@@ -150,7 +150,7 @@ local specs = {
     {
         "SirZenith/vcs-helper.nvim",
         dependencies = { "SirZenith/panelpal.nvim" },
-        event = "VeryLazy",
+        event = "CmdlineEnter",
         cond = function()
             return find_root_by_directory('.git') or find_root_by_directory('.svn')
         end,
@@ -174,7 +174,7 @@ local specs = {
     -- Visual Assitance
     {
         "Yggdroot/indentline",
-        event = "BufReadPost",
+        event = "BufReadPre",
     },
     {
         "nvim-lualine/lualine.nvim",
@@ -183,13 +183,13 @@ local specs = {
     },
     {
         "SirZenith/nvim-cursorline",
-        event = "BufReadPost",
+        event = "BufReadPre",
     },
     {
         -- highlight color code with its color in vim
         "norcalli/nvim-colorizer.lua",
         before_load = turn_on_true_color,
-        event = "BufReadPost",
+        event = "BufReadPre",
     },
     {
         -- folding support
@@ -214,7 +214,7 @@ local specs = {
     {
         "nvim-treesitter/nvim-treesitter",
         build = ":TSUpdate",
-        event = "VeryLazy",
+        event = "BufReadPre",
     },
     {
         "nvim-treesitter/playground",
@@ -261,20 +261,20 @@ local specs = {
             "nvim-lua/lsp-status.nvim",
             "neovim/nvim-lspconfig",
         },
-        event = "VeryLazy",
+        event = "BufReadPre",
     },
     {
         "nvim-lua/lsp-status.nvim",
-        event = "VeryLazy",
+        event = "BufReadPre",
     },
     {
         -- LSP completion item kind icon for completion menu
         "onsails/lspkind.nvim",
-        event = "BufReadPost",
+        event = "BufReadPre",
     },
     {
         "neovim/nvim-lspconfig",
-        event = "VeryLazy",
+        event = "BufReadPre",
     },
     {
         -- LSP injection
@@ -325,12 +325,12 @@ local specs = {
     {
         "hrsh7th/cmp-buffer",
         dependencies = { "hrsh7th/nvim-cmp" },
-        event = "BufReadPost",
+        event = "BufReadPre",
     },
     {
         "hrsh7th/cmp-cmdline",
         dependencies = { "hrsh7th/nvim-cmp" },
-        keys = ":",
+        keys = { "CmdlineEnter" },
     },
     {
         "saadparwaiz1/cmp_luasnip",
@@ -340,12 +340,12 @@ local specs = {
     {
         "hrsh7th/cmp-nvim-lsp",
         dependencies = { "hrsh7th/nvim-cmp" },
-        event = "VeryLazy",
+        event = "BufReadPre",
     },
     {
         "hrsh7th/cmp-path",
         dependencies = { "hrsh7th/nvim-cmp" },
-        event = "InsertEnter",
+        event = { "InsertEnter", "CmdlineEnter" },
     },
     {
         "SirZenith/ts-grammar-navigator",
