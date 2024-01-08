@@ -200,7 +200,13 @@ local n_common_keymap = {
         for _, win in ipairs(wins) do
             local buf = api.nvim_win_get_buf(win)
             local file = api.nvim_buf_get_name(buf)
-            if not record[file] and vim.fn.filewritable(file) == 1 then
+
+            local need_write = not record[file]
+            need_write = need_write and not vim.bo[buf].readonly
+            need_write = need_write and vim.bo[buf].modifiable
+            need_write = need_write and vim.fn.filewritable(file) ~= 0
+
+            if need_write  then
                 api.nvim_set_current_win(win)
                 vim.cmd "w"
                 record[file] = true
