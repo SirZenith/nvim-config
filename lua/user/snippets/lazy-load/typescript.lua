@@ -1,8 +1,8 @@
 local cmd_snip = require "cmd-snippet"
 
-local snip_filetype = "typescript"
-local s = require("snippet-loader.utils")
-local makers = s.snippet_makers(snip_filetype)
+-- local snip_filetype = "typescript"
+-- local s = require("snippet-loader.utils")
+-- local makers = s.snippet_makers(snip_filetype)
 -- local sp = makers.sp
 -- local asp = makers.asp
 -- local psp = makers.psp
@@ -19,6 +19,12 @@ local makers = s.snippet_makers(snip_filetype)
 -- local regapsp = makers.regapsp
 
 cmd_snip.register {
+    ["disable nextline"] = {
+        args = { "rule-name" },
+        content = function(rule_name)
+            return "// eslint-disable-next-line " .. rule_name
+        end,
+    },
     ["new doccom"] = {
         args = { "param-cnt" },
         content = function(param_cnt_str)

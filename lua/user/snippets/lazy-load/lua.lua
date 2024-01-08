@@ -4,7 +4,7 @@ local snip_filetype = "lua"
 local s = require("snippet-loader.utils")
 local makers = s.snippet_makers(snip_filetype)
 -- local sp = makers.sp
-local asp = makers.asp
+-- local asp = makers.asp
 -- local psp = makers.psp
 local apsp = makers.apsp
 
