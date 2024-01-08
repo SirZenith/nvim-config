@@ -1,4 +1,3 @@
--- local utils = require "user.utils"
 local cmd_snip = require "cmd-snippet"
 
 -- local snip_filetype = "tree-sitter-test"
