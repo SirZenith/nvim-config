@@ -38,7 +38,7 @@ user.keybinding = {
             "?.lua",
             "?.h",
             "?.hpp",
-            "user/plugins/?/config.lua",
+            "lua/user/plugins/?/config.lua",
         }
     },
 }
