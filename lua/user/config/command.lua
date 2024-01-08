@@ -2,7 +2,8 @@ local config_entry = require "user.utils.config_entry"
 local import = require "user.utils".import
 local fs = require "user.utils.fs"
 
-local cmd = vim.api.nvim_create_user_command
+local api = vim.api
+local cmd = api.nvim_create_user_command
 
 ---@param name string
 ---@param origin string
@@ -35,7 +36,19 @@ end, {
     desc = "dump user config metadata to file."
 })
 
--- ----------------------------------------------------------------------------
+cmd("ToTab", function()
+    local buf = api.nvim_win_get_buf(0)
+    if buf <= 0 then return end
+
+    local old_win = api.nvim_get_current_win()
+
+    vim.cmd "tabnew"
+    api.nvim_win_set_buf(0, buf)
+
+    api.nvim_win_hide(old_win)
+end, {
+    desc = "extract current buffer into new tab."
+})
 
 -- ----------------------------------------------------------------------------
 
