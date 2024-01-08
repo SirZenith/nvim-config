@@ -145,6 +145,7 @@ local specs = {
     {
         "nvim-tree/nvim-tree.lua",
         dependencies = { "nvim-tree/nvim-web-devicons" },
+        event = "VeryLazy",
     },
     "SirZenith/panelpal.nvim",
     {
@@ -330,7 +331,7 @@ local specs = {
     {
         "hrsh7th/cmp-cmdline",
         dependencies = { "hrsh7th/nvim-cmp" },
-        keys = { "CmdlineEnter" },
+        event = { "CmdlineEnter" },
     },
     {
         "saadparwaiz1/cmp_luasnip",
