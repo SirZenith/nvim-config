@@ -198,11 +198,12 @@ end
 function M.try_finalize_plugin_configs()
     for name, state in pairs(M._pending_finalizer) do
         if state.loaded then
+            M._pending_finalizer[name] = nil
+
             for _, item in ipairs(state.modules) do
                 local module = type(item) == "string" and import(item) or item
                 utils.finalize_module(module)
             end
-            M._pending_finalizer[name] = nil
         end
     end
 end

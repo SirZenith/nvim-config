@@ -141,10 +141,7 @@ return function()
 
     local group_id = vim.api.nvim_create_augroup("user.plugin.nvim_tree", { clear = true })
 
-    vim.api.nvim_create_autocmd("VimEnter", {
-        group = group_id,
-        callback = try_open_tree,
-    })
-
     nvim_tree.setup(user.plugin.nvim_tree())
+
+    try_open_tree()
 end
