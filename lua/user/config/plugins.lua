@@ -116,7 +116,7 @@ local specs = {
     -- General
     {
         "lewis6991/gitsigns.nvim",
-        event = "BufReadPre",
+        event = "BufReadPost",
         cond = function()
             return find_root_by_directory('.git')
         end,
@@ -125,11 +125,11 @@ local specs = {
         -- search & jump
         "ggandor/leap.nvim",
         enabled = false,
-        event = "BufReadPre",
+        event = "BufReadPost",
     },
     {
         "numToStr/Comment.nvim",
-        event = "BufReadPre",
+        event = "BufReadPost",
     },
     {
         "folke/noice.nvim",
@@ -176,14 +176,14 @@ local specs = {
     {
         "kylechui/nvim-surround",
         dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },
-        event = "BufReadPre",
+        event = "BufReadPost",
     },
 
     -- ------------------------------------------------------------------------
     -- Visual Assitance
     {
         "Yggdroot/indentline",
-        event = "BufReadPre",
+        event = "BufReadPost",
     },
     {
         "nvim-lualine/lualine.nvim",
@@ -192,25 +192,25 @@ local specs = {
     },
     {
         "SirZenith/nvim-cursorline",
-        event = "BufReadPre",
+        event = "BufReadPost",
     },
     {
         -- highlight color code with its color in vim
         "norcalli/nvim-colorizer.lua",
         before_load = turn_on_true_color,
-        event = "BufReadPre",
+        event = "BufReadPost",
     },
     {
         -- folding support
         "kevinhwang91/nvim-ufo",
         enabled = false,
         dependencies = "kevinhwang91/promise-async",
-        event = "BufReadPre",
+        event = "BufReadPost",
     },
     {
         -- folding style customization
         "anuvyklack/pretty-fold.nvim",
-        event = "BufReadPre",
+        event = "BufReadPost",
     },
     {
         -- tab line styling
@@ -223,7 +223,7 @@ local specs = {
     {
         "nvim-treesitter/nvim-treesitter",
         build = ":TSUpdate",
-        event = "BufReadPre",
+        event = "VeryLazy",
     },
     {
         "nvim-treesitter/playground",
@@ -270,26 +270,26 @@ local specs = {
             "nvim-lua/lsp-status.nvim",
             "neovim/nvim-lspconfig",
         },
-        event = "BufReadPre",
+        event = "VeryLazy",
     },
     {
         "nvim-lua/lsp-status.nvim",
-        event = "BufReadPre",
+        event = "VeryLazy",
     },
     {
         -- LSP completion item kind icon for completion menu
         "onsails/lspkind.nvim",
-        event = "BufReadPre",
+        event = "VeryLazy",
     },
     {
         "neovim/nvim-lspconfig",
-        event = "BufReadPre",
+        event = "VeryLazy",
     },
     {
         -- LSP injection
         "jose-elias-alvarez/null-ls.nvim",
         dependencies = { "nvim-lua/plenary.nvim" },
-        event = "BufReadPre",
+        event = "VeryLazy",
     },
     {
         "pmizio/typescript-tools.nvim",
@@ -334,7 +334,7 @@ local specs = {
     {
         "hrsh7th/cmp-buffer",
         dependencies = { "hrsh7th/nvim-cmp" },
-        event = "BufReadPre",
+        event = "BufReadPost",
     },
     {
         "hrsh7th/cmp-cmdline",
@@ -349,7 +349,7 @@ local specs = {
     {
         "hrsh7th/cmp-nvim-lsp",
         dependencies = { "hrsh7th/nvim-cmp" },
-        event = "BufReadPre",
+        event = "BufReadPost",
     },
     {
         "hrsh7th/cmp-path",
@@ -408,6 +408,11 @@ local specs = {
         ft = { "markdown" },
     },
     {
+        "SirZenith/mongosh.nvim",
+        -- dev = true,
+        cmd = "MongoConnect",
+    },
+    {
         -- Preview PlantUML in browser
         "weirongxu/plantuml-previewer.vim",
         dependencies = {
@@ -416,11 +421,6 @@ local specs = {
         },
         ft = "plantuml",
     },
-    {
-        "SirZenith/mongosh.nvim",
-        -- dev = true,
-        cmd = "MongoConnect",
-    }
 }
 
 return specs
