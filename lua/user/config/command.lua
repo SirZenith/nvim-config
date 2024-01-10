@@ -1,3 +1,4 @@
+local user = require "user"
 local config_entry = require "user.utils.config_entry"
 local import = require "user.utils".import
 local fs = require "user.utils.fs"
@@ -5,14 +6,18 @@ local fs = require "user.utils.fs"
 local api = vim.api
 local cmd = api.nvim_create_user_command
 
----@param name string
----@param origin string
-local function alias(name, origin)
-    vim.cmd(("cnoreabbrev %s %s"):format(name, origin))
-end
+-- ----------------------------------------------------------------------------
 
-alias("Help", "tab help")
-alias("tlsp", "Telescope")
+user.command = {
+    __new_entry = true,
+
+    ---@type table<string, string>
+    alias_map = {
+        Help = "tab help",
+        mongo = "Mongo",
+        tlsp = "Telescope",
+    },
+}
 
 -- ----------------------------------------------------------------------------
 
@@ -27,7 +32,6 @@ cmd("DumpConfigMeta", function()
         end
     end
 
-    local user = require "user"
     user.finalize()
 
     local filepath = fs.path_join(user.env.USER_RUNTIME_PATH(), "user", "meta", "user_config.lua")
@@ -82,3 +86,11 @@ cmd("SnipList", function()
 end, {
     desc = "list all loaded snippets"
 })
+
+-- ----------------------------------------------------------------------------
+
+return function()
+    for name, origin in user.command.alias_map:pairs() do
+        vim.cmd(("cnoreabbrev %s %s"):format(name, origin))
+    end
+end
