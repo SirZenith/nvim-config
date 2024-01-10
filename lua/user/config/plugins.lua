@@ -410,7 +410,7 @@ local specs = {
     {
         "SirZenith/mongosh.nvim",
         -- dev = true,
-        cmd = "MongoConnect",
+        cmd = "Mongo",
     },
     {
         -- Preview PlantUML in browser
