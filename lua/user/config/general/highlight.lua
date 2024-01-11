@@ -303,6 +303,41 @@ local highlight = vim.tbl_extend("keep", {
         fg = "#EED8DA",
         bg = color.pink.dark,
     },
+}, {
+    -- ------------------------------------------------------------------------
+    -- mongosh.nvim
+    MongoshNormal = {
+        fg = color.fg.normal,
+        bg = color.bg.dark,
+    },
+
+    MongoshHostName = {
+        fg = color.orange.normal,
+    },
+    MongoshHostSymbol = {
+        fg = color.orange.normal,
+    },
+
+    MongoshDatabaseName = {
+        fg = color.blue.normal,
+    },
+    MongoshDatabaseSymbol = {
+        fg = color.cyan.normal,
+    },
+
+    MongoshCollectionName = {
+        fg = color.fg.normal,
+    },
+    MongoshCollectionSymbol = {
+        fg = color.yellow.normal,
+    },
+
+    MongoshCollectionLoading = {
+        fg = color.fg.normal,
+    },
+    MongoshCollectionLoadingSymbol = {
+        fg = color.green.normal
+    },
 })
 
 return highlight
