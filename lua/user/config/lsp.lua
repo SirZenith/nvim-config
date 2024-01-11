@@ -36,7 +36,12 @@ user.lsp = {
         ["<space>wa"] = vim.lsp.buf.add_workspace_folder,
         ["<space>wr"] = vim.lsp.buf.remove_workspace_folder,
         ["<space>wl"] = function()
-            local msg = table.concat(vim.lsp.buf.list_workspace_folders(), ",\n")
+            local paths = {}
+            for _, path in ipairs(vim.lsp.buf.list_workspace_folders()) do
+                table.insert(paths, vim.fs.normalize(path))
+            end
+
+            local msg = table.concat(paths, ",\n")
             vim.notify(msg)
         end,
     },
