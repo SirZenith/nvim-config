@@ -51,7 +51,7 @@ do
             path = vim.fs.normalize(path) ---@type string
 
             return functional.any(patterns, function(_, patt)
-                return not workspace_path:match(patt) and  path:match(patt) ~= nil
+                return not workspace_path:match(patt) and path:match(patt) ~= nil
             end)
         end)
 
@@ -84,7 +84,7 @@ end
 -- All runtime paths rather than pwd, should be in this list.
 local lib_paths
 do
-    local tbl = {}
+    local tbl = { workspace_path }
 
     -- Loading runtime path
     for i = 1, #runtime_paths do
@@ -102,12 +102,34 @@ do
     local emmylua_path = fs.path_join(user.env.APP_PATH(), "EmmyLua", "lua-lib-annotation")
     tbl[#tbl + 1] = emmylua_path
 
-    local lib = {}
+    -- Dedup
     for i = 1, #tbl do
-        lib[i] = vim.fs.normalize(tbl[i])
+        tbl[i] = vim.fs.normalize(tbl[i])
     end
 
-    lib_paths = table_utils.remove_duplicates(lib)
+    table.sort(tbl, function(a, b)
+        return a:len() < b:len()
+    end)
+
+    local lib = {}
+    local dir_set = {}
+    for _, path in ipairs(tbl) do
+        local marked = false
+
+        for dir in vim.fs.parents(path) do
+            if dir_set[dir] then
+                marked = true
+                break
+            end
+        end
+
+        if not marked then
+            dir_set[path] = true
+            lib[#lib + 1] = path
+        end
+    end
+
+    lib_paths = lib
 end
 
 M.settings = {
