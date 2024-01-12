@@ -1,7 +1,10 @@
 local api = vim.api
 local user = require "user"
+local utils = require "user.utils"
 local functional = require "user.utils.functional"
 local panelpal = require "panelpal"
+
+local import = utils.import
 
 local USER_TERMINAL_PANEL_BUF_NAME = "user.terminal"
 
@@ -42,8 +45,6 @@ user.keybinding = {
         }
     },
 }
-
-local KEYBINDING_AUGROUP = api.nvim_create_augroup("user.keybinding", { clear = true })
 
 ---@param mode string
 ---@param from string
@@ -173,18 +174,6 @@ local function append_to_eol(contents)
     api.nvim_buf_set_text(0, row, col, row, col, contents)
 end
 
----@param filetype string|string[]
----@param mapto string|function
-local function register_build_mapping(filetype, mapto)
-    api.nvim_create_autocmd("FileType", {
-        group = KEYBINDING_AUGROUP,
-        pattern = filetype,
-        callback = function()
-            nmap("<A-b>", mapto, { buffer = true })
-        end
-    })
-end
-
 ---@alias KeyMap {[string]: string|function}
 
 ---@type KeyMap
@@ -206,7 +195,7 @@ local n_common_keymap = {
             need_write = need_write and vim.bo[buf].modifiable
             need_write = need_write and vim.fn.filewritable(file) ~= 0
 
-            if need_write  then
+            if need_write then
                 api.nvim_set_current_win(win)
                 vim.cmd "w"
                 record[file] = true
@@ -321,23 +310,11 @@ local common_keymap = {
 -- ----------------------------------------------------------------------------
 
 return function()
-    -- ------------------------------------------------------------------------
-    -- Common mapping
+    import "user.config.keybinding.build_system"
 
     for mode, map_tbl in pairs(common_keymap) do
         for from, to in pairs(map_tbl) do
             map(mode, from, to)
         end
     end
-
-    -- ------------------------------------------------------------------------
-    -- Build System
-
-    -- vimtex
-    register_build_mapping("tex", "<cmd>w<cr><cmd>VimtexCompile<cr>")
-
-    -- VOom
-    register_build_mapping({ "markdown", "markdown.*" }, "<cmd>Voom markdown<cr>")
-    register_build_mapping("html", "<cmd>Voom html<cr>")
-    register_build_mapping("voomtree", "<cmd>VoomToggle<cr>")
 end
