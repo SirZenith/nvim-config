@@ -7,6 +7,7 @@ user.plugin.mongosh_nvim = {
     __new_entry = true,
 
     query = {
+        use_typed_query = true,
         result_style = "card",
     },
 
