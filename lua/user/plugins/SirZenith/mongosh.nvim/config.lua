@@ -19,6 +19,10 @@ user.plugin.mongosh_nvim = {
             color.orange.normal,
             color.green.normal,
             color.red.normal
+        },
+
+        card = {
+            min_content_width = 50,
         }
     },
 }
