@@ -215,7 +215,7 @@ user.general = {
     },
 }
 
-user.theme.highlight = highlight
+user.theme.highlight = highlight.highlight
 
 -- ----------------------------------------------------------------------------
 

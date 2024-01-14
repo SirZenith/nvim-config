@@ -338,6 +338,48 @@ local highlight = vim.tbl_extend("keep", {
     MongoshCollectionLoadingSymbol = {
         fg = color.green.normal
     },
+
+    MongoshTreeNormal = {
+        fg = color.fg.normal,
+    },
+
+    MongoshValueTypeName = {
+        fg = color.fg.darker,
+    },
+
+    MongoshValueArray = {
+        fg = color.yellow.normal
+    },
+    MongoshValueBoolean = {
+        fg = color.orange.normal,
+    },
+    MongoshValueNull = {
+        fg = color.orange.normal,
+    },
+    MongoshValueNumber = {
+        fg = color.orange.normal,
+    },
+    MongoshValueString = {
+        fg = color.green.normal,
+    },
+    MongoshValueObject = {
+        fg = color.cyan.light,
+    },
+    MongoshValueOmited = {
+        fg = color.fg.ignorable,
+    },
+    MongoshValueRegex = {
+        fg = color.yellow.normal
+    },
+    MongoshValueUnknown = {
+        fg = color.white.normal,
+        bg = color.red.normal,
+    },
 })
 
-return highlight
+local M = {
+    color = color,
+    highlight = highlight,
+}
+
+return M
