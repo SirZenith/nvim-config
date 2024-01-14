@@ -7,17 +7,17 @@ user.plugin.mongosh_nvim = {
     __new_entry = true,
 
     query = {
-        result_style = "tree",
+        result_style = "card",
     },
 
-    tree_view = {
+    card_view = {
         indent_colors = {
             color.magenta.normal,
             color.blue.normal,
-            color.cyan.normal,
-            color.green.normal,
             color.yellow.normal,
+            color.cyan.normal,
             color.orange.normal,
+            color.green.normal,
             color.red.normal
         }
     },
