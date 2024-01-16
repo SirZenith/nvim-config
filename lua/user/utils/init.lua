@@ -66,7 +66,13 @@ end
 ---@param failed_msg? string
 ---@return any?
 function M.import(modname, failed_msg)
-    local ok, result = xpcall(function() return require(modname) end, debug.traceback)
+    local ok, result = xpcall(function()
+        return require(modname)
+    end, function(err)
+        local thread = coroutine.running()
+        local traceback = debug.traceback(thread, err)
+        vim.notify(traceback or err, vim.log.levels.ERROR)
+    end)
 
     local module
     if ok then
@@ -114,7 +120,11 @@ function M.finalize_module(module)
     end
 
     if type(final) == "function" then
-        xpcall(final, debug.traceback)
+        xpcall(final, function(err)
+            local thread = coroutine.running()
+            local traceback = debug.traceback(thread, err)
+            vim.notify(traceback or err, vim.log.levels.ERROR)
+        end)
     end
 end
 

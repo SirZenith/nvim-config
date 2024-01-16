@@ -60,10 +60,10 @@ local function do_load(load_func, spec)
 
     local ok = xpcall(
         function() load_func(spec) end,
-        function()
+        function(err)
             io.write("while loading: ")
             vim.print(spec)
-            vim.notify(debug.traceback())
+            vim.notify(debug.traceback() or err)
         end
     )
     return ok
