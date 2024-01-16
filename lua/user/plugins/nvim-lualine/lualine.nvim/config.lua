@@ -8,7 +8,7 @@ user.plugin.lualine = {
         component_separators = '|',
         section_separators = { left = '', right = '' },
         disabled_filetypes = {
-            statusline = {},
+            statusline = { 'NvimTree' },
             winbar = {},
         },
         ignore_focus = {},
@@ -53,5 +53,4 @@ return function()
     user.plugin.lualine.options.theme = theme
 
     lualine.setup(user.plugin.lualine())
-
 end
