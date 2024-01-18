@@ -37,14 +37,20 @@ do
 
         local patterns = {
             "nvim/runtime",
-            -- "LuaSnip",
-            -- "nvim%-lspconfig",
-            -- "panelpal%.nvim",
-            -- "nvim%-cmp",
-            -- "noice%.nvim",
-            -- "snippet%-loader",
-            -- "mongosh%.nvim",
         }
+
+        -- add plugin to runtime path if we are in NeoVim config directory.
+        if fs.is_subdir_of(workspace_path, user.env.USER_RUNTIME_PATH()) then
+            vim.list_extend(patterns, {
+                "LuaSnip",
+                "nvim%-lspconfig",
+                "panelpal%.nvim",
+                "nvim%-cmp",
+                "noice%.nvim",
+                "snippet%-loader",
+                "mongosh%.nvim",
+            })
+        end
 
         local list = vim.api.nvim_list_runtime_paths()
         list = functional.filter(list, function(_, path)
