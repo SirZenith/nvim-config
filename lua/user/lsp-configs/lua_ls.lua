@@ -1,3 +1,5 @@
+local lspconfig_util = require "lspconfig.util"
+
 local user = require "user"
 local fs = require "user.utils.fs"
 local functional = require "user.utils.functional"
@@ -27,9 +29,7 @@ local runtime_version = is_nvim_runtime_path and "LuaJIT" or "Lua 5.4"
 -- workspace.library setting to enable loading definition from those paths
 local runtime_paths
 do
-    local tbl = {
-        ".",
-    }
+    local tbl = {}
 
     -- Vim
     if is_nvim_runtime_path then
@@ -37,13 +37,13 @@ do
 
         local patterns = {
             "nvim/runtime",
-            "LuaSnip",
-            "nvim%-lspconfig",
-            "panelpal%.nvim",
-            "nvim%-cmp",
-            "noice%.nvim",
-            "snippet%-loader",
-            "mongosh%.nvim",
+            -- "LuaSnip",
+            -- "nvim%-lspconfig",
+            -- "panelpal%.nvim",
+            -- "nvim%-cmp",
+            -- "noice%.nvim",
+            -- "snippet%-loader",
+            -- "mongosh%.nvim",
         }
 
         local list = vim.api.nvim_list_runtime_paths()
@@ -60,10 +60,6 @@ do
         end)
 
         table_utils.extend_list(tbl, list_mapped)
-
-        if vim.fn.isdirectory("lua") then
-            tbl[#tbl + 1] = fs.path_join(workspace_path, "lua")
-        end
     end
 
     -- Lua Path
@@ -77,7 +73,13 @@ do
         add_runtime_path(runtime, tbl[i])
     end
 
+    runtime[#runtime + 1] = "?.lua"
+    runtime[#runtime + 1] = "?/init.lua"
+
     runtime_paths = table_utils.remove_duplicates(runtime, lua_path)
+    table.sort(runtime_paths, function(a, b)
+        return a:len() < b:len()
+    end)
 end
 
 -- path list for loading definition files.
@@ -123,6 +125,14 @@ M.settings = {
                 "vim"
             },
         },
+        doc = {
+            privateName = {
+                "__[%w_]+"
+            },
+            protectedName = {
+                "_%w[%w_]*",
+            },
+        },
         format = {
             enable = true,
             -- Put format options here
@@ -136,12 +146,16 @@ M.settings = {
             viewNumber = true,
             viewString = true,
         },
+        misc = {
+            parameters = { "--loglevel", "info" },
+        },
         runtime = {
-            version = runtime_version,
+            path = runtime_paths,
+            pathStrict = true,
             special = {
                 import = is_nvim_runtime_path and "require" or nil
             },
-            path = runtime_paths,
+            version = runtime_version,
         },
         workspace = {
             checkThirdParty = false,
@@ -154,8 +168,28 @@ M.settings = {
     }
 }
 
-M.root_dir = function()
-    return vim.fn.getcwd()
+local root_files = {
+    '.luarc.json',
+    '.luarc.jsonc',
+    '.luacheckrc',
+    '.stylua.toml',
+    'stylua.toml',
+    'selene.toml',
+    'selene.yml',
+}
+
+M.root_dir = function(fname)
+    local root = lspconfig_util.root_pattern(unpack(root_files))(fname)
+    if root and root ~= vim.env.HOME then
+        return root
+    end
+
+    root = lspconfig_util.root_pattern 'lua/' (fname)
+    if root then
+        return root .. '/lua'
+    end
+
+    return lspconfig_util.find_git_ancestor(fname)
 end
 
 return M
