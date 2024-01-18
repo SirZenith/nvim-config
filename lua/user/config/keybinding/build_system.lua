@@ -17,6 +17,8 @@ end
 -- Lua File
 register_build_mapping("lua", function()
     vim.ui.input({ prompt = "Run script in NeoVim? (Y/N) " }, function(input)
+        if not input then return end
+
         if vim.bo.buftype ~= "" then
             vim.notify("Lau build only works on normal buffer")
             return
