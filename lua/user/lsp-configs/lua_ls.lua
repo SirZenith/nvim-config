@@ -81,17 +81,20 @@ do
 end
 
 -- path list for loading definition files.
--- All runtime paths rather than pwd, should be in this list.
+-- Note:
+-- - All runtime paths rather than pwd, should be in this list.
+-- - workspace path shouldn't be in lib path, some LSP features such as renaming
+--   are turned of on file under lib path.
 local lib_paths
 do
-    local tbl = { workspace_path }
+    local tbl = {}
 
     -- Loading runtime path
     for i = 1, #runtime_paths do
         local path = runtime_paths[i]
 
         local dir = vim.fs.dirname(path)
-        while #dir > 0 and dir ~= "." and vim.fs.basename(dir) == "?" do
+        while dir ~= "" and dir ~= "." and vim.fs.basename(dir) == "?" do
             dir = vim.fs.dirname(dir)
         end
 
@@ -102,34 +105,11 @@ do
     local emmylua_path = fs.path_join(user.env.APP_PATH(), "EmmyLua", "lua-lib-annotation")
     tbl[#tbl + 1] = emmylua_path
 
-    -- Dedup
-    for i = 1, #tbl do
-        tbl[i] = vim.fs.normalize(tbl[i])
-    end
-
-    table.sort(tbl, function(a, b)
-        return a:len() < b:len()
+    tbl = functional.filter(tbl, function(_, path)
+        return not fs.is_subdir_of(path, workspace_path)
     end)
 
-    local lib = {}
-    local dir_set = {}
-    for _, path in ipairs(tbl) do
-        local marked = false
-
-        for dir in vim.fs.parents(path) do
-            if dir_set[dir] then
-                marked = true
-                break
-            end
-        end
-
-        if not marked then
-            dir_set[path] = true
-            lib[#lib + 1] = path
-        end
-    end
-
-    lib_paths = lib
+    lib_paths = fs.path_list_dedup(tbl)
 end
 
 M.settings = {

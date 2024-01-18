@@ -24,9 +24,11 @@ function M.init_workspace()
     vim.cmd "w"
 end
 
+-- Return normalized absolute workspace path.
 ---@return string path
 function M.get_workspace_path()
-    return vim.fn.getcwd()
+    local cwd = vim.fn.getcwd()
+    return vim.fs.normalize(cwd)
 end
 
 ---@return string path
