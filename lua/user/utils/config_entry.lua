@@ -308,6 +308,7 @@ function ConfigEntry:delete()
     tbl[tail] = nil
 end
 
+-- Assuming current config entry is a list, append a new element to its end.
 function ConfigEntry:append(value)
     local segments = self:_get_key_segments()
     local tbl = self:_get_tbl_by_segments(segments)
@@ -316,6 +317,17 @@ function ConfigEntry:append(value)
     end
 
     tbl[#tbl + 1] = value
+end
+
+-- Assuming current config entry is a list, prepend a new element to its beginning.
+function ConfigEntry:prepend(value)
+    local segments = self:_get_key_segments()
+    local tbl = self:_get_tbl_by_segments(segments)
+    if not tbl then
+        error("trying to append to a non-table value " .. self.__key)
+    end
+
+    table.insert(tbl, 1, value)
 end
 
 -- return ipairs iterator of config in current entry for `for` loop.
