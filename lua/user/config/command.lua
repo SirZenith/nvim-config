@@ -13,8 +13,7 @@ user.command = {
 
     ---@type table<string, string>
     alias_map = {
-        Help = "tab help",
-        mongo = "Mongo",
+        thelp = "tab help",
         tlsp = "Telescope",
     },
 }
