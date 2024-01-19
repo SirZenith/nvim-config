@@ -33,9 +33,8 @@ return function()
     local mongosh = require "mongosh-nvim"
     local mongosh_status = require "mongosh-nvim.ui.status"
 
-    local status_section = user.plugin.lualine.sections.lualine_x()
-    table.insert(status_section, 1, mongosh_status.status)
-    user.plugin.lualine.sections.lualine_x = status_section
+    user.plugin.lualine.sections.lualine_x:prepend(mongosh_status.status)
+    user.plugin.lualine.inactive_sections.lualine_x:prepend(mongosh_status.status)
 
     mongosh.setup(user.plugin.mongosh_nvim())
     lualine.setup(user.plugin.lualine())

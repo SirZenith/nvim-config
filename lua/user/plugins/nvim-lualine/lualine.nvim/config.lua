@@ -11,7 +11,7 @@ user.plugin.lualine = {
             statusline = {},
             winbar = {},
         },
-        ignore_focus = { "NvimTree" },
+        ignore_focus = { "NvimTree", "MongoshNvimDBSideBar" },
         always_divide_middle = true,
         globalstatus = false,
         refresh = {
