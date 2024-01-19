@@ -265,6 +265,7 @@ local specs = {
     -- LSP
     {
         "SirZenith/lsp-config-loader",
+        dev = true,
         dependencies = {
             "SirZenith/panelpal.nvim",
             "nvim-lua/lsp-status.nvim",
@@ -410,6 +411,9 @@ local specs = {
     {
         "SirZenith/mongosh.nvim",
         -- dev = true,
+        dependencies = {
+            "nvim-lualine/lualine.nvim",
+        },
         cmd = "Mongo",
     },
     {
