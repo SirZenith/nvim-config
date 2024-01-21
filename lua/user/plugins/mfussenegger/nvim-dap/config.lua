@@ -8,6 +8,15 @@ user.plugin.nvim_dap = {
     __new_entry = true,
     adapters = {
         firefox = {
+            -- Following options should be pay attention to before using this adaptor
+            -- set those options in `about:config` page.
+            --
+            -- - devtools.debugger.remote-enabled, required to be `true`.
+            -- - devtools.chrome.enabled, required to be `true`,
+            -- - devtools.debugger.prompt-connection, recommanded to be `false`.
+            -- - devtools.debugger.force-local, set to `true` only when you need
+            --   debug your program from another machine.
+
             type = "executable",
             command = "node",
             args = {
@@ -47,7 +56,18 @@ user.plugin.nvim_dap = {
         },
         typescript = {
             {
-                name = "Debug with Firefox",
+                -- To use debugger in attach mode, you need to start firefox with
+                -- remote debuging flag.
+                -- ```
+                -- firefox.exe -start-debugger-server
+                -- ```
+
+                name = "Attach to Firefox",
+                type = "firefox",
+                request = "attach",
+            },
+            {
+                name = "Launch Firefox Instance",
                 type = "firefox",
                 request = "launch",
                 reAttach = true,
@@ -55,7 +75,7 @@ user.plugin.nvim_dap = {
                 webRoot = "${workspaceFolder}",
                 firefoxExecutable = "",
             },
-        }
+        },
     },
     signs = {
         DapBreakpoint          = { text = "●", texthl = "DapBreakpoint" },
