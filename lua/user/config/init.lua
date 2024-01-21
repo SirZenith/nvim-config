@@ -24,8 +24,10 @@ return {
         PLUGIN_DEV_PATH = fs.path_join(DEV_PATH, "nvim-plugins"),
 
         CC = vim.env.CC or "cc",
+        FIREFOX_PATH = "",
         PYTHON_PATH = vim.env.PYTHON_PATH or "python",
         TS_LIB_PATH = vim.env.TS_LIB_PATH or "",
+
         APPDATA = vim.env.APPDATA or "",
 
         LOAD_NVIM_RUNTIME = vim.env.LOAD_NVIM_RUNTIME or false,

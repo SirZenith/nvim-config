@@ -1,11 +1,19 @@
 local user = require "user"
 local fs = require "user.utils.fs"
 
-local local_lua_root = fs.path_join(user.env.LANG_PATH(), "Lua", "local-lua-debugger-vscode")
+local dap_root = fs.path_join(user.env.APP_PATH(), "DAP")
+local local_lua_root = fs.path_join(dap_root, "local-lua-debugger-vscode")
 
 user.plugin.nvim_dap = {
     __new_entry = true,
     adapters = {
+        firefox = {
+            type = "executable",
+            command = "node",
+            args = {
+                fs.path_join(dap_root, "vscode-firefox-debug", "dist", "adapter.bundle.js"),
+            },
+        },
         local_lua = {
             type = "executable",
             command = "node",
@@ -37,6 +45,17 @@ user.plugin.nvim_dap = {
                 args = {},
             },
         },
+        typescript = {
+            {
+                name = "Debug with Firefox",
+                type = "firefox",
+                request = "launch",
+                reAttach = true,
+                url = "http://localhost:3000",
+                webRoot = "${workspaceFolder}",
+                firefoxExecutable = "",
+            },
+        }
     },
     signs = {
         DapBreakpoint          = { text = "●", texthl = "DapBreakpoint" },
@@ -55,6 +74,15 @@ return function()
         vim.notify("no config entry found for nvim-dap", vim.log.levels.WARN)
         return
     end
+
+    -- update firefox config
+    local ts_configs = config.configurations.typescript()
+    for _, cfg in ipairs(ts_configs) do
+        if cfg.firefoxExecutable == "" then
+            cfg.firefoxExecutable = user.env.FIREFOX_PATH()
+        end
+    end
+    config.configurations.typescript = ts_configs
 
     for key, value in config.adapters:pairs() do
         dap.adapters[key] = value

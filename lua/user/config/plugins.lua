@@ -415,6 +415,14 @@ local specs = {
         cmd = "Dap",
     },
     {
+        "LiadOz/nvim-dap-repl-highlights",
+        dependencies = {
+            "nvim-treesitter/nvim-treesitter",
+            "mfussenegger/nvim-dap",
+        },
+        cmd = "Dap",
+    },
+    {
         "rcarriga/nvim-dap-ui",
         dependencies = {
             "nvim-treesitter/nvim-treesitter",
