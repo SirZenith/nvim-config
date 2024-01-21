@@ -402,6 +402,37 @@ local specs = {
     },
 
     -- ------------------------------------------------------------------------
+    -- Debugger
+    {
+        "rcarriga/cmp-dap",
+        dependencies = {
+            "mfussenegger/nvim-dap",
+        },
+        cmd = "Dap",
+    },
+    {
+        "mfussenegger/nvim-dap",
+        cmd = "Dap",
+    },
+    {
+        "rcarriga/nvim-dap-ui",
+        dependencies = {
+            "nvim-treesitter/nvim-treesitter",
+            "mfussenegger/nvim-dap",
+        },
+        cmd = "Dap",
+    },
+    {
+        -- Display inline variable infomation with virtual text.
+        "theHamsta/nvim-dap-virtual-text",
+        dependencies = {
+            "nvim-treesitter/nvim-treesitter",
+            "mfussenegger/nvim-dap",
+        },
+        cmd = "Dap",
+    },
+
+    -- ------------------------------------------------------------------------
     -- External Tools
     {
         "iamcco/markdown-preview.nvim",

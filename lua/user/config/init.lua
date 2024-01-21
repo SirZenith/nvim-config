@@ -20,6 +20,7 @@ return {
         HOME = vim.env.HOME or "",
         APP_PATH = vim.env.APP_PATH or "",
         DEV_PATH = DEV_PATH,
+        LANG_PATH = vim.env.LANG_PATH or "",
         PLUGIN_DEV_PATH = fs.path_join(DEV_PATH, "nvim-plugins"),
 
         CC = vim.env.CC or "cc",
