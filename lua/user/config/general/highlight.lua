@@ -375,6 +375,27 @@ local highlight = vim.tbl_extend("keep", {
         fg = color.white.normal,
         bg = color.red.normal,
     },
+}, {
+    -- ------------------------------------------------------------------------
+    -- nvim-dap
+    DapBreakpoint = {
+        fg = color.yellow.normal,
+    },
+    DapBreakpointCondition = {
+        fg = color.orange.normal,
+    },
+    DapLogPoint = {
+        fg = color.blue.normal,
+    },
+    DapStopped = {
+        fg = color.green.normal,
+    },
+    DapStoppedLine = {
+        bg = color.sel.darker,
+    },
+    DapBreakpointRejected = {
+        fg = color.red.normal,
+    },
 })
 
 local M = {
