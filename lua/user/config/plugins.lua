@@ -265,7 +265,7 @@ local specs = {
     -- LSP
     {
         "SirZenith/lsp-config-loader",
-        dev = true,
+        -- dev = true,
         dependencies = {
             "SirZenith/panelpal.nvim",
             "nvim-lua/lsp-status.nvim",
