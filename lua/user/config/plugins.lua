@@ -475,7 +475,7 @@ local specs = {
     },
     {
         "SirZenith/mongosh.nvim",
-        dev = true,
+        -- dev = true,
         dependencies = {
             "nvim-lualine/lualine.nvim",
         },
