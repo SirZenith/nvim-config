@@ -157,6 +157,11 @@ local specs = {
         event = "VeryLazy",
     },
     {
+        "kylechui/nvim-surround",
+        dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },
+        event = "BufReadPost",
+    },
+    {
         "nvim-tree/nvim-tree.lua",
         dependencies = { "nvim-tree/nvim-web-devicons" },
         event = "VeryLazy",
@@ -164,6 +169,19 @@ local specs = {
     {
         "SirZenith/panelpal.nvim",
         -- dev = true,
+    },
+    {
+        "startup-nvim/startup.nvim",
+        dependencies = {
+            "nvim-telescope/telescope.nvim",
+            "nvim-lua/plenary.nvim"
+        },
+        event = "VeryLazy",
+    },
+    {
+        "nvim-telescope/telescope.nvim",
+        dependencies = { "nvim-lua/plenary.nvim" },
+        event = "VeryLazy",
     },
     {
         "SirZenith/vcs-helper.nvim",
@@ -175,24 +193,15 @@ local specs = {
         end,
     },
     {
-        "nvim-telescope/telescope.nvim",
-        dependencies = { "nvim-lua/plenary.nvim" },
-        event = "VeryLazy",
-    },
-    {
         "voldikss/vim-floaterm",
         event = "VeryLazy",
-    },
-    {
-        "kylechui/nvim-surround",
-        dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },
-        event = "BufReadPost",
     },
 
     -- ------------------------------------------------------------------------
     -- Visual Assitance
     {
-        "Yggdroot/indentline",
+        "lukas-reineke/indent-blankline.nvim",
+        main = "ibl",
         event = "BufReadPost",
     },
     {
@@ -466,7 +475,7 @@ local specs = {
     },
     {
         "SirZenith/mongosh.nvim",
-        -- dev = true,
+        dev = true,
         dependencies = {
             "nvim-lualine/lualine.nvim",
         },

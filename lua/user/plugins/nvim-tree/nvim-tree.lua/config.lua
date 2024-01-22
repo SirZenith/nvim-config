@@ -25,8 +25,8 @@ user.plugin.nvim_tree = {
     update_cwd = true,
     hijack_unnamed_buffer_when_opening = false,
     hijack_directories = {
-        enable = true,
-        auto_open = true,
+        enable = false,
+        auto_open = false,
     },
     diagnostics = {
         enable = true,
@@ -139,9 +139,5 @@ user.plugin.nvim_tree = {
 return function()
     local nvim_tree = require "nvim-tree"
 
-    local group_id = vim.api.nvim_create_augroup("user.plugin.nvim_tree", { clear = true })
-
     nvim_tree.setup(user.plugin.nvim_tree())
-
-    try_open_tree()
 end

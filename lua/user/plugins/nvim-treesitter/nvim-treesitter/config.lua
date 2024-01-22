@@ -1,10 +1,11 @@
 local user = require "user"
+local highlight = require "user.config.general.highlight"
 local table_utils = require "user.utils.table"
 
 user.plugin.nvim_treesitter = {
     __new_entry = true,
     configs = {
-        -- One of "all", "maintained" (parsers with maintainers), or a list of languages
+        ---@type "all" | "maintained" | string[]
         ensure_installed = {
             "bash",
             "bibtex",
@@ -45,16 +46,26 @@ user.plugin.nvim_treesitter = {
             "yaml",
             "zig",
         },
-        -- Install languages synchronously (only applied to `ensure_installed`)
-        sync_install = false,
-        -- List of parsers to ignore installing
-        -- ignore_install = { "javascript" },
 
-        highlight = {
-            -- `false` will disable the whole extension
+        -- Install languages synchronously (only applied to `ensure_installed`)
+        ---@type boolean
+        sync_install = false,
+
+        -- List of parsers to ignore installing
+        ---@type string[]
+        ignore_install = {},
+
+        -- --------------------------------------------------------------------
+        -- Extensions
+        autotag = {
             enable = true,
+        },
+        highlight = {
+            enable = true,
+
             -- list of language that will be disabled
-            -- disable = { "latex" },
+            ---@type string[]
+            disable = {},
 
             -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
             -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
@@ -64,8 +75,9 @@ user.plugin.nvim_treesitter = {
         },
         incremental_selection = {
             enable = true,
+            -- set keymap value to `false` to disable mappings
+            ---@type table<string, string | false>
             keymaps = {
-                -- set to `false` to disable one of the mappings
                 init_selection = "<Backspace>g",
                 node_incremental = "gj",
                 node_decremental = "gk",
@@ -73,7 +85,7 @@ user.plugin.nvim_treesitter = {
             },
         },
         indent = {
-            -- enable = true,
+            enable = true,
         },
         playground = {
             enable = true,
@@ -97,15 +109,26 @@ user.plugin.nvim_treesitter = {
         },
         rainbow = {
             enable = true,
-            -- disable = { "jsx", "cpp" }, list of languages you want to disable the plugin for
-            extended_mode = true,                                                                     -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
-            max_file_lines = nil,                                                                     -- Do not enable for files with more than n lines, int
-            colors = { "#6c9ef8", "#d85896", "#b77fdb", "#ef5350", "#64b5f6", "#ffee58", "#ab47bc" }, -- table of hex strings
-            -- termcolors = {}, -- table of colour name strings
+            -- list of languages you want to disable the plugin for
+            ---@type string[]
+            disable = {},
+            -- Also highlight non-bracket delimiters like html tags, takes
+            -- boolean or table: lang -> boolean
+            ---@type boolean | table<string, boolean>
+            extended_mode = true,
+            -- Minimum number of lines to disable this extension.
+            ---@type integer
+            max_file_lines = 2000,
+            -- table of hex strings
+            ---@type string[]
+            colors = highlight.rainbow_colors,
+            -- table of colour name strings
+            ---@type string[]
+            -- termcolors = {},
         },
-        autotag = {
+        textobjects = {
             enable = true,
-        }
+        },
     },
     install = {
         prefer_git = false,

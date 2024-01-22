@@ -183,6 +183,15 @@ local n_common_keymap = {
     ["<C-n>"] = "<cmd>tabnew<cr>",
     -- close tab
     ["<A-w>"] = function()
+        local all_wins = api.nvim_list_wins()
+        local win_cnt = 0
+        for _, win in ipairs(all_wins) do
+            if vim.api.nvim_win_get_config(win).relative == '' then
+                -- only counts non-floating window.
+                win_cnt = win_cnt + 1
+            end
+        end
+
         local wins = api.nvim_tabpage_list_wins(0)
 
         local record = {}
@@ -193,17 +202,21 @@ local n_common_keymap = {
             local need_write = not record[file]
             need_write = need_write and not vim.bo[buf].readonly
             need_write = need_write and vim.bo[buf].modifiable
+            need_write = need_write and vim.fn.isdirectory(file) == 0
             need_write = need_write and vim.fn.filewritable(file) ~= 0
 
             if need_write then
-                api.nvim_set_current_win(win)
-                vim.cmd "w"
+                api.nvim_win_call(win, function()
+                    vim.cmd "w"
+                end)
                 record[file] = true
             end
-        end
 
-        local tabpages = api.nvim_list_tabpages()
-        vim.cmd(#tabpages > 1 and "tabclose" or "q")
+            if win_cnt > 1 then
+                win_cnt = win_cnt - 1
+                api.nvim_win_hide(win)
+            end
+        end
     end,
     -- Editing
     ["<C-s>"] = "<cmd>w<cr>",

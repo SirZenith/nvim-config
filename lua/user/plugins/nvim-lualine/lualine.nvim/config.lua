@@ -8,7 +8,9 @@ user.plugin.lualine = {
         component_separators = "|",
         section_separators = { left = "", right = "" },
         disabled_filetypes = {
-            statusline = {},
+            statusline = {
+                "startup"
+            },
             winbar = {},
         },
         ignore_focus = {

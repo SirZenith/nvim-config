@@ -6,10 +6,10 @@ return function()
 
     user.plugin.noice = {
         __new_entry = true,
-        cmdline     = {
-            enabled = true,     -- enables the Noice cmdline UI
+        cmdline = {
+            enabled = true,         -- enables the Noice cmdline UI
             view = "cmdline_popup", -- view for rendering the cmdline. Change to `cmdline` to get a classic cmdline at the bottom
-            opts = {},          -- global options for the cmdline. See section on views
+            opts = {},              -- global options for the cmdline. See section on views
             ---@type table<string, CmdlineFormat>
             format = {
                 -- conceal: (default=true) This will hide the text in the cmdline that matches the pattern.
@@ -17,27 +17,56 @@ return function()
                 -- opts: any options passed to the view
                 -- icon_hl_group: optional hl_group for the icon
                 -- title: set to anything or empty string to hide
-                cmdline = { pattern = "^:", icon = "", lang = "vim" },
-                search_down = { kind = "search", pattern = "^/", icon = " ", lang = "regex" },
-                search_up = { kind = "search", pattern = "^%?", icon = " ", lang = "regex" },
-                filter = { pattern = "^:%s*!", icon = "$", lang = "bash" },
-                lua = { pattern = { "^:%s*lua%s+", "^:%s*lua%s*=%s*", "^:%s*=%s*" }, icon = "", lang = "lua" },
-                help = { pattern = "^:%s*he?l?p?%s+", icon = "" },
+
+                -- to disable a format, set to its value to `false`
+                cmdline = {
+                    pattern = "^:",
+                    icon = "",
+                    lang = "vim"
+                },
+                search_down = {
+                    kind = "search",
+                    pattern = "^/",
+                    icon = " ",
+                    lang = "regex"
+                },
+                search_up = {
+                    kind = "search",
+                    pattern = "^%?",
+                    icon = " ",
+                    lang = "regex"
+                },
+                filter = {
+                    pattern = "^:%s*!",
+                    icon = "$",
+                    lang = "bash"
+                },
+                lua = {
+                    pattern = { "^:%s*lua%s+" },
+                    icon = "",
+                    lang = "lua"
+                },
+                help = {
+                    pattern = {
+                        "^:%s*he?l?p?%s+",
+                        "^:%s*tab%s+he?l?p?%s+"
+                    },
+                    icon = ""
+                },
                 input = {}, -- Used by input()
-                -- lua = false, -- to disable a format, set to `false`
             },
         },
-        messages    = {
+        messages = {
             -- NOTE: If you enable messages, then the cmdline is enabled automatically.
             -- This is a current Neovim limitation.
-            enabled = false,         -- enables the Noice messages UI
-            view = "notify",         -- default view for messages
-            view_error = "notify",   -- view for errors
-            view_warn = "notify",    -- view for warnings
-            view_history = "messages", -- view for :messages
+            enabled = false,             -- enables the Noice messages UI
+            view = "notify",             -- default view for messages
+            view_error = "notify",       -- view for errors
+            view_warn = "notify",        -- view for warnings
+            view_history = "messages",   -- view for :messages
             view_search = "virtualtext", -- view for search count messages. Set to `false` to disable
         },
-        popupmenu   = {
+        popupmenu = {
             enabled = false, -- enables the Noice popupmenu UI
             ---@type 'nui'|'cmp'
             backend = "nui", -- backend to use to show regular cmdline completions
@@ -48,13 +77,13 @@ return function()
         -- default options for require('noice').redirect
         -- see the section on Command Redirection
         ---@type NoiceRouteConfig
-        redirect    = {
+        redirect = {
             view = "popup",
             filter = { event = "msg_show" },
         },
         -- You can add any custom commands below that will be available with `:Noice command`
         ---@type table<string, NoiceCommand>
-        commands    = {
+        commands = {
             history = {
                 -- options for the message history that you get with `:Noice`
                 view = "split",
@@ -93,7 +122,7 @@ return function()
                 filter_opts = { reverse = true },
             },
         },
-        notify      = {
+        notify = {
             -- Noice can be used as `vim.notify` so you can route any notification like other messages
             -- Notification messages have their level and other properties set.
             -- event is always "notify" and kind can be any log level as a string
@@ -102,7 +131,7 @@ return function()
             enabled = false,
             view = "notify",
         },
-        lsp         = {
+        lsp = {
             progress = {
                 enabled = false,
                 -- Lsp Progress is formatted using the builtins for lsp_progress. See config.format.builtin
@@ -125,9 +154,9 @@ return function()
             hover = {
                 enabled = true,
                 silent = true, -- set to true to not show a message if hover is not available
-                view = nil, -- when nil, use defaults from documentation
+                view = nil,    -- when nil, use defaults from documentation
                 ---@type NoiceViewOptions
-                opts = {}, -- merged with defaults from documentation
+                opts = {},     -- merged with defaults from documentation
             },
             signature = {
                 enabled = true,
@@ -135,11 +164,11 @@ return function()
                     enabled = true,
                     trigger = true, -- Automatically show signature help when typing a trigger character from the LSP
                     luasnip = true, -- Will open signature help when jumping to Luasnip insert nodes
-                    throttle = 50, -- Debounce lsp signature help request by 50ms
+                    throttle = 50,  -- Debounce lsp signature help request by 50ms
                 },
-                view = nil,     -- when nil, use defaults from documentation
+                view = nil,         -- when nil, use defaults from documentation
                 ---@type NoiceViewOptions
-                opts = {},      -- merged with defaults from documentation
+                opts = {},          -- merged with defaults from documentation
             },
             message = {
                 -- Messages shown by lsp servers
@@ -160,9 +189,9 @@ return function()
                 },
             },
         },
-        markdown    = {
+        markdown = {
             hover = {
-                ["|(%S-)|"] = vim.cmd.help,                   -- vim help links
+                ["|(%S-)|"] = vim.cmd.help,            -- vim help links
                 ["%[.-%]%((%S-)%)"] = noice_util.open, -- markdown links
             },
             highlights = {
@@ -174,34 +203,34 @@ return function()
                 ["{%S-}"] = "@parameter",
             },
         },
-        health      = {
+        health = {
             checker = true, -- Disable if you don't want health checks to run
         },
-        smart_move  = {
+        smart_move = {
             -- noice tries to move out of the way of existing floating windows.
             enabled = true, -- you can disable this behaviour here
             -- add any filetypes here, that shouldn't trigger smart move.
             excluded_filetypes = { "cmp_menu", "cmp_docs", "notify" },
         },
         ---@type NoicePresets
-        presets     = {
+        presets = {
             -- you can enable a preset by setting it to true, or a table that will override the preset config
             -- you can also add custom presets that you can enable/disable with enabled=true
-            bottom_search = false,     -- use a classic bottom cmdline for search
-            command_palette = false,   -- position the cmdline and popupmenu together
+            bottom_search = false,         -- use a classic bottom cmdline for search
+            command_palette = false,       -- position the cmdline and popupmenu together
             long_message_to_split = false, -- long messages will be sent to a split
-            inc_rename = false,        -- enables an input dialog for inc-rename.nvim
-            lsp_doc_border = false,    -- add a border to hover docs and signature help
+            inc_rename = false,            -- enables an input dialog for inc-rename.nvim
+            lsp_doc_border = false,        -- add a border to hover docs and signature help
         },
-        throttle    = 1000 / 30,       -- how frequently does Noice need to check for ui updates? This has no effect when in blocking mode.
+        throttle = 1000 / 30,              -- how frequently does Noice need to check for ui updates? This has no effect when in blocking mode.
         ---@type NoiceConfigViews
-        views       = {}, ---@see section on views
+        views = {}, ---@see section on views
         ---@type NoiceRouteConfig[]
-        routes      = {}, --- @see section on routes
+        routes = {}, --- @see section on routes
         ---@type table<string, NoiceFilter>
-        status      = {}, --- @see section on statusline components
+        status = {}, --- @see section on statusline components
         ---@type NoiceFormatOptions
-        format      = {}, --- @see section on formatting
+        format = {}, --- @see section on formatting
     }
 
     noice.setup(user.plugin.noice())

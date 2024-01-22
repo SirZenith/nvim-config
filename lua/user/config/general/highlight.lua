@@ -396,11 +396,53 @@ local highlight = vim.tbl_extend("keep", {
     DapBreakpointRejected = {
         fg = color.red.normal,
     },
+}, {
+    -- ------------------------------------------------------------------------
+    -- indent-blankline.nvim
+    RainbowRed = {
+        fg = color.red.dark,
+    },
+    RainbowYellow = {
+        fg = color.yellow.dark,
+    },
+    RainbowBlue = {
+        fg = color.blue.dark,
+    },
+    RainbowOrange = {
+        fg = color.orange.dark,
+    },
+    RainbowGreen = {
+        fg = color.green.dark,
+    },
+    RainbowViolet = {
+        fg = color.magenta.dark,
+    },
+    RainbowCyan = {
+        fg = color.cyan.dark,
+    },
 })
+
+local rainbow_hl_groups = {
+    "RainbowBlue",
+    "RainbowGreen",
+    "RainbowYellow",
+    "RainbowOrange",
+    "RainbowViolet",
+    "RainbowCyan",
+    "RainbowRed",
+}
+
+local rainbow_colors = {}
+for _, name in ipairs(rainbow_hl_groups) do
+    local cfg = highlight[name]
+    rainbow_colors[#rainbow_colors + 1] = cfg.fg or "#FFFFFF"
+end
 
 local M = {
     color = color,
     highlight = highlight,
+    rainbow_hl_groups = rainbow_hl_groups,
+    rainbow_colors = rainbow_colors,
 }
 
 return M
