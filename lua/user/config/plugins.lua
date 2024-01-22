@@ -14,41 +14,51 @@ local function turn_on_true_color()
 end
 
 -- Looing for a directory recrusively in parent
----@param target_name string # target directory name
+---@param target_names string[] # target directory name
 ---@return boolean is_found
-local function find_root_by_directory(target_name)
+local function find_root_by_directory(target_names)
     local pwd = vim.fn.getcwd()
 
-    if vim.fn.isdirectory(pwd .. "/" .. target_name) == 1 then
-        return true;
-    end
+    local is_found = false
+    for _, target_name in ipairs(target_names) do
+        if vim.fn.isdirectory(pwd .. "/" .. target_name) == 1 then
+            is_found = true
+            break
+        end
 
-    for dir in vim.fs.parents(pwd) do
-        if vim.fn.isdirectory(dir .. "/" .. target_name) == 1 then
-            return true;
+        for dir in vim.fs.parents(pwd) do
+            if vim.fn.isdirectory(dir .. "/" .. target_name) == 1 then
+                is_found = true
+                break
+            end
         end
     end
 
-    return false
+    return is_found
 end
 
 -- Looing for a file recrusively in parent
----@param target_name string # target file name
+---@param target_names string[] # target file name
 ---@return boolean is_found
-local function find_root_by_file(target_name)
+local function find_root_by_file(target_names)
     local pwd = vim.fn.getcwd()
 
-    if vim.fn.filereadable(pwd .. "/" .. target_name) == 1 then
-        return true;
-    end
+    local is_found = false
+    for _, target_name in ipairs(target_names) do
+        if vim.fn.filereadable(pwd .. "/" .. target_name) == 1 then
+            is_found = true
+            break
+        end
 
-    for dir in vim.fs.parents(pwd) do
-        if vim.fn.filereadable(dir .. "/" .. target_name) == 1 then
-            return true;
+        for dir in vim.fs.parents(pwd) do
+            if vim.fn.filereadable(dir .. "/" .. target_name) == 1 then
+                is_found = true
+                break
+            end
         end
     end
 
-    return false
+    return is_found
 end
 
 ---@type (PluginSpec | string)[]
@@ -118,7 +128,7 @@ local specs = {
         "lewis6991/gitsigns.nvim",
         event = "BufReadPost",
         cond = function()
-            return find_root_by_directory('.git')
+            return find_root_by_directory { ".git" }
         end,
     },
     {
@@ -161,7 +171,7 @@ local specs = {
         dependencies = { "SirZenith/panelpal.nvim" },
         event = "CmdlineEnter",
         cond = function()
-            return find_root_by_directory('.git') or find_root_by_directory('.svn')
+            return find_root_by_directory { ".git", ".svn" }
         end,
     },
     {
@@ -300,7 +310,10 @@ local specs = {
             "SirZenith/lsp-config-loader",
         },
         cond = function()
-            return find_root_by_file('tsconfig.json')
+            return find_root_by_file {
+                "tsconfig.json",
+                "client/tsconfig.json",
+            }
         end,
         event = "VeryLazy",
     },
@@ -367,10 +380,14 @@ local specs = {
     },
     {
         "SirZenith/prefab-cmp",
+        -- dev = true,
         dependencies = { "hrsh7th/nvim-cmp", },
         event = "InsertEnter",
         cond = function()
-            return find_root_by_directory('.creator')
+            return find_root_by_directory {
+                ".creator",
+                "client/.creator",
+            }
         end,
     },
     {

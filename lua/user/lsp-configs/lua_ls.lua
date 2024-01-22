@@ -39,19 +39,6 @@ do
             "nvim/runtime",
         }
 
-        -- add plugin to runtime path if we are in NeoVim config directory.
-        if fs.is_subdir_of(workspace_path, user.env.USER_RUNTIME_PATH()) then
-            vim.list_extend(patterns, {
-                "LuaSnip",
-                "nvim%-lspconfig",
-                "panelpal%.nvim",
-                "nvim%-cmp",
-                "noice%.nvim",
-                "snippet%-loader",
-                "mongosh%.nvim",
-            })
-        end
-
         local list = vim.api.nvim_list_runtime_paths()
         list = functional.filter(list, function(_, path)
             path = vim.fs.normalize(path) ---@type string
@@ -60,6 +47,24 @@ do
                 return not workspace_path:match(patt) and path:match(patt) ~= nil
             end)
         end)
+
+        -- add plugin to runtime path if we are in NeoVim config directory.
+        if fs.is_subdir_of(workspace_path, user.env.USER_RUNTIME_PATH()) then
+            local plugin_root = fs.path_join(vim.fn.stdpath("data"), "lazy")
+            local plugins = {
+                "LuaSnip",
+                "nvim-lspconfig",
+                "panelpal.nvim",
+                "nvim-cmp",
+                "noice.nvim",
+                "snippet-loader",
+                "mongosh.nvim",
+            }
+            for i = 1, #plugins do
+                local name = plugins[i]
+                list[#list + 1] = fs.path_join(plugin_root, name)
+            end
+        end
 
         local list_mapped = functional.map(list, function(_, path)
             return fs.path_join(path, "lua")

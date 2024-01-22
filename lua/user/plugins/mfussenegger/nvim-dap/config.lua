@@ -8,6 +8,11 @@ user.plugin.nvim_dap = {
     __new_entry = true,
     adapters = {
         firefox = {
+            -- git clone https://github.com/firefox-devtools/vscode-firefox-debug.git
+            -- cd vscode-firefox-debug
+            -- npm install
+            -- npm run
+            --
             -- Following options should be pay attention to before using this adaptor
             -- set those options in `about:config` page.
             --
@@ -24,6 +29,11 @@ user.plugin.nvim_dap = {
             },
         },
         local_lua = {
+            -- git clone https://github.com/tomblind/local-lua-debugger-vscode
+            -- cd local-lua-debugger-vscode
+            -- npm install
+            -- npm run build
+
             type = "executable",
             command = "node",
             args = {
