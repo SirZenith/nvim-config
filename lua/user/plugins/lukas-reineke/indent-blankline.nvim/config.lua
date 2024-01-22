@@ -5,6 +5,7 @@ user.plugin.indent_blankline_nvim = {
     __new_entry = true,
     scope = {
         highlight = highlight.rainbow_hl_groups,
+        show_end = false,
     },
 }
 
