@@ -71,7 +71,7 @@ function M.import(modname, failed_msg)
     end, function(err)
         local thread = coroutine.running()
         local traceback = debug.traceback(thread, err)
-        vim.notify(traceback or err, vim.log.levels.ERROR)
+        vim.notify(traceback or err, vim.log.levels.WARN)
     end)
 
     local module
@@ -80,7 +80,7 @@ function M.import(modname, failed_msg)
     else
         if not failed_msg then
             vim.notify(result)
-        elseif #failed_msg > 0 then
+        elseif failed_msg ~= "" then
             vim.notify(failed_msg)
         end
     end
@@ -123,7 +123,7 @@ function M.finalize_module(module)
         xpcall(final, function(err)
             local thread = coroutine.running()
             local traceback = debug.traceback(thread, err)
-            vim.notify(traceback or err, vim.log.levels.ERROR)
+            vim.notify(traceback or err, vim.log.levels.WARN)
         end)
     end
 end

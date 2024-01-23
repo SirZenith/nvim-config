@@ -173,6 +173,7 @@ local specs = {
     {
         "startup-nvim/startup.nvim",
         dependencies = {
+            "user.config.general",
             "nvim-telescope/telescope.nvim",
             "nvim-lua/plenary.nvim"
         },
@@ -202,6 +203,9 @@ local specs = {
     {
         "lukas-reineke/indent-blankline.nvim",
         main = "ibl",
+        dependencies = {
+            "user.config.general",
+        },
         event = "BufReadPost",
     },
     {
@@ -241,6 +245,9 @@ local specs = {
     -- tree-sitter
     {
         "nvim-treesitter/nvim-treesitter",
+        dependencies = {
+            "user.config.general",
+        },
         build = ":TSUpdate",
         event = "VeryLazy",
     },
