@@ -195,6 +195,7 @@ local n_common_keymap = {
         local wins = api.nvim_tabpage_list_wins(0)
 
         local record = {}
+        local ask_for_quit = false
         for _, win in ipairs(wins) do
             local buf = api.nvim_win_get_buf(win)
             local file = api.nvim_buf_get_name(buf)
@@ -215,7 +216,19 @@ local n_common_keymap = {
             if win_cnt > 1 then
                 win_cnt = win_cnt - 1
                 api.nvim_win_hide(win)
+            else
+                ask_for_quit = true
             end
+        end
+
+        if ask_for_quit then
+            vim.ui.input({ prompt = "Close last window and quit? (Y/N) " },
+                function(input)
+                    if input and input:lower() == "y" then
+                        vim.cmd "q"
+                    end
+                end
+            )
         end
     end,
     -- Editing
