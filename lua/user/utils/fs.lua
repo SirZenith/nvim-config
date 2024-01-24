@@ -160,4 +160,34 @@ function M.path_list_dedup(list)
     return paths
 end
 
+-- Remove extension name from path
+---@param path string
+function M.remove_ext(path)
+    local index = 0
+    for i = #path, 0, -1 do
+        local char = path:sub(i, i)
+
+        if char == "/" or char == "\\" then
+            break
+        elseif char == "." then
+            local next_char = path:sub(i - 1, i - 1)
+
+            if next_char ~= ""
+                and next_char ~= "/"
+                and next_char ~= "\\"
+            then
+                index = i - 1
+            end
+
+            break
+        end
+    end
+
+    if index > 0 then
+        path = path:sub(1, index)
+    end
+
+    return path
+end
+
 return M
