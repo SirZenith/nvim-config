@@ -505,6 +505,44 @@ cmd_snip.register {
             }
         end,
     },
+    ["init popup"] = {
+        content = function()
+            local index = snip_utils.new_jump_index()
+            local panel_name, class_name = get_panel_name_from_file_name(index)
+            local desc_index = index()
+
+            return {
+                "import { S } from 'script_logic/base/global/singleton';",
+                "import { UIMenuBase } from 'script_logic/base/ui_system/ui_menu_base';",
+                "import { uiRegister } from 'script_logic/base/ui_system/ui_class_map';",
+                "import { UI_COMMON } from 'script_logic/base/ui_system/ui_common';",
+                "import { LOGGING } from 'script_logic/common/base/logging';",
+                "",
+                { "const Log = LOGGING.logger('", panel_name, "');" },
+                "",
+                "/**",
+                { " * ",                          desc_index },
+                " */",
+                "@uiRegister({",
+                { "    panelName: '",                                    panel_name, "'," },
+                { "    panelDesc: '",                                    desc_index, "'," },
+                { "    prefabPath: '",                                   index(),    "'," },
+                { "    fullScreen: ",                                    index(),    "," },
+                { "    sortOrderType: UI_COMMON.CANVAS_SORT_ORDER.MENU," },
+                "})",
+                "// eslint-disable-next-line @typescript-eslint/no-unused-vars",
+                { "export class ", class_name, " extends UIMenuBase {" },
+                "    protected onInit(): void {}",
+                "",
+                "    protected initEvents(): void {}",
+                "",
+                "    protected onShow(): void {}",
+                "",
+                "    protected onClose(): void {}",
+                "}",
+            }
+        end,
+    },
     ["init rolemodule"] = {
         args = {
             { "name", is_optional = true },
