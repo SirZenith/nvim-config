@@ -49,16 +49,17 @@ do
         end)
 
         -- add plugin to runtime path if we are in NeoVim config directory.
-        if fs.is_subdir_of(workspace_path, user.env.USER_RUNTIME_PATH()) then
+        if fs.is_subdir_of(workspace_path, user.env.NVIM_HOME()) then
             local plugin_root = fs.path_join(vim.fn.stdpath("data"), "lazy")
             local plugins = {
+                "cmd-snippet",
                 "LuaSnip",
-                "nvim-lspconfig",
-                "panelpal.nvim",
-                "nvim-cmp",
                 "noice.nvim",
-                "snippet-loader",
+                "nvim-cmp",
+                "nvim-lspconfig",
                 "mongosh.nvim",
+                "panelpal.nvim",
+                "snippet-loader",
             }
             for i = 1, #plugins do
                 local name = plugins[i]
