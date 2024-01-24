@@ -6,7 +6,7 @@ local function check_need_open_tree()
     local output = vim.api.nvim_exec2("args", { output = true }).output or ""
 
     local cur_file = output:match("%[(.+)%]")
-    if not cur_file then return end
+    if not cur_file then return false end
 
     return vim.fn.isdirectory(cur_file) == 1
 end
