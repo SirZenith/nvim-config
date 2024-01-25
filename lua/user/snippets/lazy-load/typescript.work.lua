@@ -470,8 +470,8 @@ cmd_snip.register {
                 "@uiRegister({",
                 { "    panelName: '",                                    panel_name, "'," },
                 { "    panelDesc: '",                                    desc_index, "'," },
-                { "    prefabPath: '",                                   3,          "'," },
-                { "    fullScreen: ",                                    4,          "," },
+                { "    prefabPath: '",                                   index(),          "'," },
+                { "    fullScreen: ",                                    index(),          "," },
                 { "    sortOrderType: UI_COMMON.CANVAS_SORT_ORDER.MENU," },
                 "})",
                 "// eslint-disable-next-line @typescript-eslint/no-unused-vars",
@@ -599,7 +599,7 @@ cmd_snip.register {
             }
         end,
     },
-    ["init sub_panel"] = {
+    ["init sub-view"] = {
         content = function()
             local index = snip_utils.new_jump_index()
             local panel_name, class_name = get_panel_name_from_file_name(index)
