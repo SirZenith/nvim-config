@@ -150,6 +150,28 @@ local DMFieldTypeInfo = {
 
 -- ----------------------------------------------------------------------------
 
+local HANDLER_ROLE_INFOCACHE_UPATE = {
+    "private onUpdateInfoCache(updateIdTbl: Record<string, boolean>): void {",
+    "    for (const id of list) {",
+    "        if (updateIdTbl[id]) {",
+    "            // do something",
+    "            return;",
+    "        }",
+    "    }",
+    "}",
+}
+
+local HANDLER_CLAN_INFOCACHE_UPATE = {
+    "private onUpdateClanInfoCache(updateIdTbl: Record<string, boolean>): void {",
+    "    for (const id of list) {",
+    "        if (updateIdTbl[id]) {",
+    "            // do something",
+    "            return;",
+    "        }",
+    "    }",
+    "}",
+}
+
 local INIT_DATA_MODEL = {
     "import { setDataModel } from '../base/struct_helper';",
     "",
@@ -331,6 +353,12 @@ cmd_snip.register {
             return ("const %s = %s.getGameObject('${1}', %s);"):format(variable, object, class_name)
         end,
     },
+    ["handler role-infocache-update"] = {
+        content = HANDLER_ROLE_INFOCACHE_UPATE,
+    },
+    ["handler clan-infocache-update"] = {
+        content = HANDLER_CLAN_INFOCACHE_UPATE,
+    },
     ["import event"] = {
         args = { "name" },
         content = function(name)
@@ -381,7 +409,7 @@ cmd_snip.register {
             return ("import { %s } from 'script_logic/common/utils/%s';"):format(symbol, name)
         end,
     },
-    ["init data_model"] = {
+    ["init data-model"] = {
         content = INIT_DATA_MODEL,
     },
     ["init event"] = {
@@ -417,7 +445,7 @@ cmd_snip.register {
     ["init gm"] = {
         content = INIT_GM,
     },
-    ["init label_view"] = {
+    ["init label-view"] = {
         content = function()
             local index = snip_utils.new_jump_index()
             local panel_name, class_name = get_panel_name_from_file_name(index)
@@ -658,6 +686,10 @@ cmd_snip.register {
     method = {
         args = { "modifier-or-name", { "name", is_optional = true } },
         content = function(modifier_or_name, name)
+            if modifier_or_name == "protected" and not name then
+                return "protected ${1}(): void {}"
+            end
+
             local modifier = name and modifier_or_name or "private"
             name = name or modifier_or_name
             return modifier .. " " .. name .. "(${2}): ${1:void} {}"
@@ -672,10 +704,10 @@ cmd_snip.register {
             })
         end,
     },
-    ["new close_btn"] = {
+    ["new close-btn"] = {
         content = NEW_CLOSE_BTN,
     },
-    ["new label_info"] = {
+    ["new label-info"] = {
         content = NEW_LABEL_INFO,
     },
     ["new logger"] = {
@@ -683,6 +715,11 @@ cmd_snip.register {
         content = function(name)
             return "const Log = LOGGING.logger('" .. name .. "');"
         end,
+    },
+    ["new module-event"] = {
+        content = {
+            { "this.registerModuleListener('", 1, "', '", 2, "', this.on", 2, ".bind(this));" },
+        }
     },
     ["new reddot"] = {
         args = { "name" },
@@ -773,7 +810,7 @@ cmd_snip.register {
             }
         end,
     },
-    ["new touch_close"] = {
+    ["new touch-close"] = {
         content = NEW_TOUCH_CLOSE_LAYER,
     },
     ["spine new"] = {
