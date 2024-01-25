@@ -125,6 +125,14 @@ local specs = {
     -- ------------------------------------------------------------------------
     -- General
     {
+        "stevearc/dressing.nvim",
+        -- enabled = false,
+        dependencies = {
+            "nvim-telescope/telescope.nvim",
+        },
+        event = "VeryLazy",
+    },
+    {
         "lewis6991/gitsigns.nvim",
         event = "BufReadPost",
         cond = function()
@@ -149,8 +157,9 @@ local specs = {
             --   `nvim-notify` is only needed, if you want to use the notification view.
             --   If not available, we use `mini` as the fallback
             "rcarriga/nvim-notify",
+            "user.config.lsp",
         },
-        event = { "CmdlineEnter" },
+        event = "CmdlineEnter",
     },
     {
         "rcarriga/nvim-notify",

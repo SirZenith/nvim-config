@@ -1,4 +1,5 @@
 local user = require "user"
+local config_const = require "user.config.constant"
 
 user.plugin.lspkind = {
     __new_entry = true,
@@ -17,31 +18,5 @@ user.plugin.lspkind = {
     -- override preset symbols
     --
     -- default: {}
-    symbol_map = {
-        Text = "",
-        Method = "",
-        Function = "",
-        Constructor = "",
-        Field = "",
-        Variable = "",
-        Class = "",
-        Interface = "",
-        Module = "",
-        Property = "",
-        Unit = "",
-        Value = "",
-        Enum = "",
-        Keyword = "",
-        Snippet = "",
-        Color = "",
-        File = "",
-        Reference = "",
-        Folder = "",
-        EnumMember = "",
-        Constant = "",
-        Struct = "",
-        Event = "",
-        Operator = "",
-        TypeParameter = "",
-    },
+    symbol_map = config_const.KIND_LABEL,
 }

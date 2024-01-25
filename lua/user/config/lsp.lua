@@ -1,4 +1,5 @@
 local user = require "user"
+local config_const = require "user.config.constant"
 local fs = require "user.utils.fs"
 
 user.lsp = {
@@ -45,33 +46,7 @@ user.lsp = {
             vim.notify(msg)
         end,
     },
-    kind_label = {
-        Text = "",
-        Method = "",
-        Function = "",
-        Constructor = "",
-        Field = "",
-        Variable = "",
-        Class = "",
-        Interface = "",
-        Module = "",
-        Property = "",
-        Unit = "",
-        Value = "",
-        Enum = "",
-        Keyword = "",
-        Snippet = "",
-        Color = "",
-        File = "",
-        Reference = "",
-        Folder = "",
-        EnumMember = "",
-        Constant = "",
-        Struct = "",
-        Event = "",
-        Operator = "",
-        TypeParameter = "",
-    },
+    kind_label = config_const.KIND_LABEL,
     server_config = {},
     server_list = {
         {

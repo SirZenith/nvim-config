@@ -88,14 +88,6 @@ return function()
 
     -- File type scpecific completion
 
-    cmp.setup.filetype("FineCmdlinePrompt", {
-        sources = cmp.config.sources({
-            { name = "path" },
-        }, {
-            { name = "cmdline" },
-        })
-    })
-
     cmp.setup.filetype({ "dap-repl", "dapui_watches", "dapui_hover" }, {
         sources = {
             { name = "dap" },
