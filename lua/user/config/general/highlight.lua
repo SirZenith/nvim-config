@@ -400,25 +400,25 @@ local highlight = vim.tbl_extend("keep", {
     -- ------------------------------------------------------------------------
     -- indent-blankline.nvim
     RainbowRed = {
-        fg = color.red.dark,
+        fg = color.red.normal,
     },
     RainbowYellow = {
-        fg = color.yellow.dark,
+        fg = color.yellow.normal,
     },
     RainbowBlue = {
-        fg = color.blue.dark,
+        fg = color.blue.normal,
     },
     RainbowOrange = {
-        fg = color.orange.dark,
+        fg = color.orange.normal,
     },
     RainbowGreen = {
-        fg = color.green.dark,
+        fg = color.green.normal,
     },
     RainbowViolet = {
-        fg = color.magenta.dark,
+        fg = color.magenta.normal,
     },
     RainbowCyan = {
-        fg = color.cyan.dark,
+        fg = color.cyan.normal,
     },
 })
 

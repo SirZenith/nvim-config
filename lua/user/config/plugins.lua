@@ -266,11 +266,6 @@ local specs = {
         event = "BufReadPre",
     },
     {
-        "p00f/nvim-ts-rainbow",
-        dependencies = { "nvim-treesitter/nvim-treesitter" },
-        event = "BufReadPre",
-    },
-    {
         "nvim-treesitter/nvim-treesitter-textobjects",
         dependencies = { "nvim-treesitter/nvim-treesitter" },
         event = "BufReadPre",
@@ -294,6 +289,10 @@ local specs = {
             "vue",
             "xml",
         },
+    },
+    {
+        "hiphish/rainbow-delimiters.nvim",
+        dependencies = { "nvim-treesitter/nvim-treesitter" },
     },
 
     -- ------------------------------------------------------------------------

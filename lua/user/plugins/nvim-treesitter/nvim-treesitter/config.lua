@@ -107,25 +107,6 @@ user.plugin.nvim_treesitter = {
             use_virtual_text = true,
             lint_events = { "BufWrite", "CursorHold" },
         },
-        rainbow = {
-            enable = true,
-            -- list of languages you want to disable the plugin for
-            ---@type string[]
-            disable = {},
-            -- Also highlight non-bracket delimiters like html tags, takes
-            -- boolean or table: lang -> boolean
-            ---@type boolean | table<string, boolean>
-            extended_mode = true,
-            -- Minimum number of lines to disable this extension.
-            ---@type integer
-            max_file_lines = 2000,
-            -- table of hex strings
-            ---@type string[]
-            colors = highlight.rainbow_colors,
-            -- table of colour name strings
-            ---@type string[]
-            -- termcolors = {},
-        },
         textobjects = {
             enable = true,
         },
