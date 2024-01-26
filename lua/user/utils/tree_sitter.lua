@@ -26,10 +26,11 @@ function M.visit_node(context, node)
 end
 
 ---@param bufnr integer
+---@param filetype string
 ---@param handler_map user.utils.TSNodeHandlerMap
 ---@return any
-function M.visit_node_in_buffer(bufnr, handler_map)
-    local parser = ts.get_parser(bufnr, "typescript")
+function M.visit_node_in_buffer(bufnr, filetype, handler_map)
+    local parser = ts.get_parser(bufnr, filetype)
     local tree = parser:parse()[1]
     local root = tree:root()
 

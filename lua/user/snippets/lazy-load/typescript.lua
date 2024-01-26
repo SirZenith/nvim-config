@@ -176,7 +176,7 @@ cmd_snip.register {
                     table.insert(result, { " * @param ", index() })
                 end
             else
-                local param_list = ts_util.visit_node_in_buffer(0, param_extraction_handler_map)
+                local param_list = ts_util.visit_node_in_buffer(0, "typescript", param_extraction_handler_map)
                 if param_list then
                     for _, name in ipairs(param_list) do
                         table.insert(result, { " * @param " .. name, " - ", index() })
@@ -189,6 +189,18 @@ cmd_snip.register {
             table.insert(result, " */")
 
             return result
+        end,
+    },
+    ["new loop"] = {
+        args = { "iter-name", "bound-name" },
+        content = function(iter_name, bound_name)
+            return {
+                ("for (let %s = 0; %s < %s; %s++) {"):format(
+                    iter_name, iter_name, bound_name, iter_name
+                ),
+                "",
+                "}"
+            }
         end,
     },
 }
