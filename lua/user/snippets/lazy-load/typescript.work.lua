@@ -313,6 +313,7 @@ cmd_snip.register {
             return ("setDataModel('%s', '%s', {});"):format(name, desc)
         end,
     },
+
     fn = {
         args = { "modifier-or-name", { "name", is_optional = true } },
         content = function(modifier_or_name, name)
@@ -327,6 +328,7 @@ cmd_snip.register {
             return result
         end,
     },
+
     ["get keys"] = {
         content = {
             { "const keys = Object.keys(", 1, ");" },
@@ -337,6 +339,7 @@ cmd_snip.register {
             { "const values = Object.values(", 1, ");" },
         }
     },
+
     gg = {
         -- get game object of type
         args = { "class-alias", "variable", "object" },
@@ -359,12 +362,14 @@ cmd_snip.register {
             return ("const %s = %s.getGameObject('${1}', %s);"):format(variable, object, class_name)
         end,
     },
+
     ["handler role-infocache-update"] = {
         content = HANDLER_ROLE_INFOCACHE_UPATE,
     },
     ["handler clan-infocache-update"] = {
         content = HANDLER_CLAN_INFOCACHE_UPATE,
     },
+
     ["import event"] = {
         args = { "name" },
         content = function(name)
@@ -415,6 +420,7 @@ cmd_snip.register {
             return ("import { %s } from 'script_logic/common/utils/%s';"):format(symbol, name)
         end,
     },
+
     ["init data-model"] = {
         content = INIT_DATA_MODEL,
     },
@@ -463,10 +469,9 @@ cmd_snip.register {
                 "import { LOGGING } from 'script_logic/common/base/logging';",
                 "import { UILabelView } from 'script_logic/base/ui_system/label_view/ui_label_view';",
                 "import { ILabelInfo } from 'script_logic/base/ui_system/label_view/label_view_interface';",
+                "import { COMMON_CONST } from 'script_logic/common/common_const';",
                 "",
                 { "const Log = LOGGING.logger('", panel_name, "');" },
-                "",
-                "const enum LabelType {}",
                 "",
                 "const LABEL_INFO_LIST: ILabelInfo[] = [];",
                 "",
@@ -487,7 +492,13 @@ cmd_snip.register {
                 "    protected prepareLabelInfo(): void {",
                 "        this._labelInfoDict = new Map<number, ILabelInfo>();",
                 "",
-                "        for (const labelInfo of LABEL_INFO_LIST) {",
+                "        const totalCnt = LABEL_INFO_LIST.length;",
+                "        for (let index = 0; index < totalCnt; index++) {",
+                "            const baseInfo = LABEL_INFO_LIST[index];",
+                "            const labelInfo = {",
+                "                ...baseInfo,",
+                "                showOrder: index + COMMON_CONST.ONE,",
+                "            };",
                 "            this._labelInfoDict.set(labelInfo.labelType!, labelInfo);",
                 "        }",
                 "",
@@ -649,6 +660,7 @@ cmd_snip.register {
             }
         end,
     },
+
     ["gm arg"] = {
         args = { "name" },
         content = function(name)
@@ -689,6 +701,7 @@ cmd_snip.register {
             return buffer
         end,
     },
+
     method = {
         args = { "modifier-or-name", { "name", is_optional = true } },
         content = function(modifier_or_name, name)
@@ -703,6 +716,7 @@ cmd_snip.register {
             return "private " .. modifier_or_name .. "(${2}): ${1:void} {}"
         end,
     },
+
     ["new ads"] = {
         args = { "ads_name", "ads_desc_name" },
         content = function(ads_name, ads_desc_name)
@@ -821,6 +835,7 @@ cmd_snip.register {
     ["new touch-close"] = {
         content = NEW_TOUCH_CLOSE_LAYER,
     },
+
     ["spine new"] = {
         content = {
             { "const panelModel = this.getGameObject('", 1, "');" },
