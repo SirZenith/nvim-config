@@ -54,41 +54,6 @@ local function map(mode, from, to, opt)
     vim.keymap.set(mode, from, to, opt)
 end
 
----@param from string
----@param to string|function
----@param opt? table
-local function nmap(from, to, opt)
-    map("n", from, to, opt)
-end
-
----@param from string
----@param to string|function
----@param opt? table
-local function imap(from, to, opt)
-    map("i", from, to, opt)
-end
-
----@param from string
----@param to string|function
----@param opt? table
-local function vmap(from, to, opt)
-    map("v", from, to, opt)
-end
-
----@param from string
----@param to string|function
----@param opt? table
-local function tmap(from, to, opt)
-    map("t", from, to, opt)
-end
-
----@param from string
----@param to string|function
----@param opt? table
-local function cmap(from, to, opt)
-    map("c", from, to, opt)
-end
-
 local function toggle_quickfix()
     local wins = api.nvim_tabpage_list_wins(0)
     local target
@@ -183,6 +148,56 @@ local function append_to_eol(contents)
     api.nvim_buf_set_text(0, row, col, row, col, contents)
 end
 
+local function close_all_win_in_cur_tab()
+    local all_wins = api.nvim_list_wins()
+    local win_cnt = 0
+    for _, win in ipairs(all_wins) do
+        if vim.api.nvim_win_get_config(win).relative == '' then
+            -- only counts non-floating window.
+            win_cnt = win_cnt + 1
+        end
+    end
+
+    local wins = api.nvim_tabpage_list_wins(0)
+
+    local record = {}
+    local ask_for_quit = false
+    for _, win in ipairs(wins) do
+        local buf = api.nvim_win_get_buf(win)
+        local file = api.nvim_buf_get_name(buf)
+
+        local need_write = not record[file]
+        need_write = need_write and not vim.bo[buf].readonly
+        need_write = need_write and vim.bo[buf].modifiable
+        need_write = need_write and vim.fn.isdirectory(file) == 0
+        need_write = need_write and vim.fn.filewritable(file) ~= 0
+
+        if need_write then
+            api.nvim_win_call(win, function()
+                vim.cmd "w"
+            end)
+            record[file] = true
+        end
+
+        if win_cnt > 1 then
+            win_cnt = win_cnt - 1
+            api.nvim_win_hide(win)
+        else
+            ask_for_quit = true
+        end
+    end
+
+    if ask_for_quit then
+        vim.ui.input({ prompt = "Close last window and quit? (Y/N) " },
+            function(input)
+                if input and input:lower() == "y" then
+                    vim.cmd "q"
+                end
+            end
+        )
+    end
+end
+
 ---@alias KeyMap {[string]: string|function}
 
 ---@type KeyMap
@@ -191,55 +206,7 @@ local n_common_keymap = {
     -- new tab
     ["<C-n>"] = "<cmd>tabnew<cr>",
     -- close tab
-    ["<A-w>"] = function()
-        local all_wins = api.nvim_list_wins()
-        local win_cnt = 0
-        for _, win in ipairs(all_wins) do
-            if vim.api.nvim_win_get_config(win).relative == '' then
-                -- only counts non-floating window.
-                win_cnt = win_cnt + 1
-            end
-        end
-
-        local wins = api.nvim_tabpage_list_wins(0)
-
-        local record = {}
-        local ask_for_quit = false
-        for _, win in ipairs(wins) do
-            local buf = api.nvim_win_get_buf(win)
-            local file = api.nvim_buf_get_name(buf)
-
-            local need_write = not record[file]
-            need_write = need_write and not vim.bo[buf].readonly
-            need_write = need_write and vim.bo[buf].modifiable
-            need_write = need_write and vim.fn.isdirectory(file) == 0
-            need_write = need_write and vim.fn.filewritable(file) ~= 0
-
-            if need_write then
-                api.nvim_win_call(win, function()
-                    vim.cmd "w"
-                end)
-                record[file] = true
-            end
-
-            if win_cnt > 1 then
-                win_cnt = win_cnt - 1
-                api.nvim_win_hide(win)
-            else
-                ask_for_quit = true
-            end
-        end
-
-        if ask_for_quit then
-            vim.ui.input({ prompt = "Close last window and quit? (Y/N) " },
-                function(input)
-                    if input and input:lower() == "y" then
-                        vim.cmd "q"
-                    end
-                end
-            )
-        end
-    end,
+    ["<A-w>"] = close_all_win_in_cur_tab,
     -- Editing
     ["<C-s>"] = "<cmd>w<cr>",
     ["dal"] = "0d$",
