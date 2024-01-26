@@ -148,6 +148,12 @@ local DMFieldTypeInfo = {
     specDict = { "idkey", "valueType", "category" },
 }
 
+local ACCESS_MODIFIER_SET = {
+    private = true,
+    protected = true,
+    public = true,
+}
+
 -- ----------------------------------------------------------------------------
 
 local HANDLER_ROLE_INFOCACHE_UPATE = {
@@ -470,8 +476,8 @@ cmd_snip.register {
                 "@uiRegister({",
                 { "    panelName: '",                                    panel_name, "'," },
                 { "    panelDesc: '",                                    desc_index, "'," },
-                { "    prefabPath: '",                                   index(),          "'," },
-                { "    fullScreen: ",                                    index(),          "," },
+                { "    prefabPath: '",                                   index(),    "'," },
+                { "    fullScreen: ",                                    index(),    "," },
                 { "    sortOrderType: UI_COMMON.CANVAS_SORT_ORDER.MENU," },
                 "})",
                 "// eslint-disable-next-line @typescript-eslint/no-unused-vars",
@@ -686,13 +692,15 @@ cmd_snip.register {
     method = {
         args = { "modifier-or-name", { "name", is_optional = true } },
         content = function(modifier_or_name, name)
-            if modifier_or_name == "protected" and not name then
-                return "protected ${1}(): void {}"
+            if name then
+                return modifier_or_name .. " " .. name .. "(${2}): ${1:void} {}"
             end
 
-            local modifier = name and modifier_or_name or "private"
-            name = name or modifier_or_name
-            return modifier .. " " .. name .. "(${2}): ${1:void} {}"
+            if ACCESS_MODIFIER_SET[modifier_or_name] then
+                return modifier_or_name .. " ${1}(): void {}"
+            end
+
+            return "private " .. modifier_or_name .. "(${2}): ${1:void} {}"
         end,
     },
     ["new ads"] = {
