@@ -820,12 +820,31 @@ cmd_snip.register(snip_filetype, {
             return {
                 "private init" .. name .. "Timer(): void {",
                 "    this.cancel" .. name .. "Timer();",
-                { "    this.timer" .. name .. " = TIMER.", 1, "();" },
+                { "    this.timer" .. name .. " = TIMER.addTimer();" },
                 "}",
                 "",
                 "private cancel" .. name .. "Timer(): void {",
                 "    if (this.timer" .. name .. ") {",
                 "        TIMER.clearTimer(this.timer" .. name .. ");",
+                "        this.timer" .. name .. " = null;",
+                "    }",
+                "}",
+            }
+        end,
+    },
+    ["new repeat-timer"] = {
+        args = { "name" },
+        content = function(name)
+            name = first_char_upper(name)
+            return {
+                "private init" .. name .. "Timer(): void {",
+                "    this.cancel" .. name .. "Timer();",
+                { "    this.timer" .. name .. " = TIMER.addRepeatTimer();" },
+                "}",
+                "",
+                "private cancel" .. name .. "Timer(): void {",
+                "    if (this.timer" .. name .. ") {",
+                "        TIMER.clearRepteatTimer(this.timer" .. name .. ");",
                 "        this.timer" .. name .. " = null;",
                 "    }",
                 "}",
