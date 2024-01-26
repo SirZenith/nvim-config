@@ -90,11 +90,20 @@ local function cmap(from, to, opt)
 end
 
 local function toggle_quickfix()
-    local is_visible = functional.any(
-        panelpal.list_visible_buf(0),
-        function(_, buf) return vim.bo[buf].filetype == "qf" end
-    )
-    vim.cmd(is_visible and "cclose" or "copen")
+    local wins = api.nvim_tabpage_list_wins(0)
+    local target
+    for _, win in ipairs(wins) do
+        local buf = api.nvim_win_get_buf(win)
+        if vim.bo[buf].filetype == "qf" then
+            target = win
+        end
+    end
+
+    if target then
+        api.nvim_win_hide(target)
+    else
+        vim.cmd "copen"
+    end
 end
 
 local function toggle_terminal()
