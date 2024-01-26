@@ -224,6 +224,7 @@ local specs = {
     },
     {
         "SirZenith/nvim-cursorline",
+        -- dev = true,
         event = "BufReadPost",
     },
     {
@@ -346,6 +347,7 @@ local specs = {
     -- Completion
     {
         "SirZenith/cmd-snippet",
+        -- dev = true,
         dependencies = {
             "L3MON4D3/LuaSnip",
             "hrsh7th/nvim-cmp",
@@ -396,6 +398,7 @@ local specs = {
     },
     {
         "SirZenith/ts-grammar-navigator",
+        -- dev = true,
         dependencies = {
             "SirZenith/panelpal.nvim",
             "hrsh7th/nvim-cmp",
@@ -416,6 +419,7 @@ local specs = {
     },
     {
         "SirZenith/snippet-loader",
+        -- dev = true,
         dependencies = {
             "L3MON4D3/LuaSnip",
             "SirZenith/cmd-snippet",
