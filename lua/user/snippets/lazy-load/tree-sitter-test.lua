@@ -1,6 +1,6 @@
 local cmd_snip = require "cmd-snippet"
 
--- local snip_filetype = "tree-sitter-test"
+local snip_filetype = "tree-sitter-test"
 -- local s = require("snippet-loader.utils")
 -- local makers = s.snippet_makers(snip_filetype)
 -- local sp = makers.sp
@@ -18,7 +18,7 @@ local cmd_snip = require "cmd-snippet"
 -- local regpsp = makers.regpsp
 -- local regapsp = makers.regapsp
 
-cmd_snip.register {
+cmd_snip.register(snip_filetype, {
     ["new test"] = {
         args = { "name" },
         content = function(name)
@@ -37,4 +37,4 @@ cmd_snip.register {
             }
         end,
     },
-}
+})

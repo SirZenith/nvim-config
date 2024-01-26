@@ -5,7 +5,7 @@ local ts_util = require "user.utils.tree_sitter"
 
 local ts = vim.treesitter
 
--- local snip_filetype = "typescript"
+local snip_filetype = "typescript"
 -- local s = require("snippet-loader.utils")
 -- local makers = s.snippet_makers(snip_filetype)
 -- local sp = makers.sp
@@ -149,13 +149,14 @@ param_extraction_handler_map.property_identifier = param_extraction_handler_map.
 
 -- ----------------------------------------------------------------------------
 
-cmd_snip.register {
+cmd_snip.register(snip_filetype, {
     ["disable nextline"] = {
         args = { "rule-name" },
         content = function(rule_name)
             return "// eslint-disable-next-line " .. rule_name
         end,
     },
+
     ["new doccom"] = {
         args = { { "param-cnt", is_optional = true } },
         content = function(param_cnt_str)
@@ -203,4 +204,4 @@ cmd_snip.register {
             }
         end,
     },
-}
+})

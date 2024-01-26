@@ -48,7 +48,7 @@ apsp("emme", "---@meta")
 
 -- ----------------------------------------------------------------------------
 
-cmd_snip.register {
+cmd_snip.register(snip_filetype, {
     argcheck = {
         args = { { "name", is_varg = true } },
         content = function(...)
@@ -66,4 +66,4 @@ cmd_snip.register {
             }
         end,
     }
-}
+})

@@ -4,7 +4,7 @@ local snip_utils = require "user.utils.snippet"
 local table_utils = require "user.utils.table"
 local cmd_snip = require "cmd-snippet"
 
--- local snip_filetype = "typescript"
+local snip_filetype = "typescript"
 local s = require("snippet-loader.utils")
 -- local makers = s.snippet_makers(snip_filetype)
 -- local sp = makers.sp
@@ -284,7 +284,7 @@ layer.setTouchEvent(this.close.bind(this));
 
 -- ----------------------------------------------------------------------------
 
-cmd_snip.register {
+cmd_snip.register(snip_filetype, {
     ["dm fd"] = {
         args = { "name", "index", "type" },
         content = function(name, index, type)
@@ -863,4 +863,4 @@ cmd_snip.register {
             "});",
         },
     },
-}
+})
