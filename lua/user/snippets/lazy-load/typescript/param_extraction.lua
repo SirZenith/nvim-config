@@ -1,29 +1,8 @@
-local cmd_snip = require "cmd-snippet"
-
-local snip_util = require "user.utils.snippet"
 local ts_util = require "user.utils.tree_sitter"
 
 local ts = vim.treesitter
 
-local snip_filetype = "typescript"
--- local s = require("snippet-loader.utils")
--- local makers = s.snippet_makers(snip_filetype)
--- local sp = makers.sp
--- local asp = makers.asp
--- local psp = makers.psp
--- local apsp = makers.apsp
-
--- local condsp = makers.condsp
--- local condasp = makers.condasp
--- local condpsp = makers.condpsp
--- local condapsp = makers.condapsp
-
--- local regsp = makers.regsp
--- local regasp = makers.regasp
--- local regpsp = makers.regpsp
--- local regapsp = makers.regapsp
-
--- ----------------------------------------------------------------------------
+local M = {}
 
 ---@type table<string, boolean>
 local param_extraction_start_set = {
@@ -36,7 +15,7 @@ local param_extraction_start_set = {
 }
 
 ---@type user.utils.TSNodeHandlerMap
-local param_extraction_handler_map = {
+local handler_map = {
     accessibility_modifier = function(visit_func, context, node)
         local parent = node:parent()
         if not parent then return end
@@ -141,67 +120,14 @@ local param_extraction_handler_map = {
     end,
 }
 
-param_extraction_handler_map.arrow_function = param_extraction_handler_map.function_declaration
-param_extraction_handler_map.method_definition = param_extraction_handler_map.function_declaration
+handler_map.arrow_function = handler_map.function_declaration
+handler_map.method_definition = handler_map.function_declaration
 
-param_extraction_handler_map.property_identifier = param_extraction_handler_map.accessibility_modifier
+handler_map.property_identifier = handler_map.accessibility_modifier
 
+---@return string[]?
+function M.extract_param()
+    return ts_util.visit_node_in_buffer(0, "typescript", handler_map)
+end
 
--- ----------------------------------------------------------------------------
-
-cmd_snip.register(snip_filetype, {
-    ["disable nextline"] = {
-        args = { "rule-name" },
-        content = function(rule_name)
-            return "// eslint-disable-next-line " .. rule_name
-        end,
-    },
-
-    ["new doccom"] = {
-        args = { { "param-cnt", is_optional = true } },
-        content = function(param_cnt_str)
-            local index = snip_util.new_jump_index()
-
-            local param_cnt
-            if param_cnt_str then
-                param_cnt = tonumber(param_cnt_str)
-                if not param_cnt then
-                    vim.notify("invalid number: " .. param_cnt_str, vim.log.levels.WARN)
-                    return;
-                end
-            end
-
-            local result = { "/**", " * " }
-            if param_cnt then
-                for _ = 1, param_cnt do
-                    table.insert(result, { " * @param ", index() })
-                end
-            else
-                local param_list = ts_util.visit_node_in_buffer(0, "typescript", param_extraction_handler_map)
-                if param_list then
-                    for _, name in ipairs(param_list) do
-                        table.insert(result, { " * @param " .. name, " - ", index() })
-                    end
-                end
-            end
-
-            table.insert(result, { " * @returns ", index() })
-
-            table.insert(result, " */")
-
-            return result
-        end,
-    },
-    ["new loop"] = {
-        args = { "iter-name", "bound-name" },
-        content = function(iter_name, bound_name)
-            return {
-                ("for (let %s = 0; %s < %s; %s++) {"):format(
-                    iter_name, iter_name, bound_name, iter_name
-                ),
-                "",
-                "}"
-            }
-        end,
-    },
-})
+return  M
