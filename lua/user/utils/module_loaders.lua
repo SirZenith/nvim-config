@@ -1,6 +1,8 @@
 local fs = require "user.utils.fs"
 local workspace = require "user.workspace"
 
+package.path = package.path .. "?.lua;?/init.lua"
+
 local M = {}
 M.user_runtime_path = nil
 
@@ -17,7 +19,7 @@ M.loaders = {
                 local content = assert(file:read("*a"))
                 return assert(loadstring(content, filename))
             end
-            errmsg = err_template:format(errmsg, path)
+            errmsg = err_template:format(errmsg, filename)
         end
         return errmsg
     end,
