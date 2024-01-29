@@ -106,6 +106,7 @@ return function()
         server,
         user.lsp.server_config[server]()
     )
+    tsserver_config.on_new_config = nil
 
     table_utils.update_table(tsserver_config, user.plugin.typescript_tools())
 
