@@ -151,6 +151,7 @@ local specs = {
     },
     {
         "folke/noice.nvim",
+        -- enabled = false,
         dependencies = {
             "MunifTanjim/nui.nvim",
             -- OPTIONAL:
