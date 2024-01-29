@@ -23,4 +23,24 @@ function M.add_lsp_config(ls_name, default_config, extra_opts)
     lspconfigs_configs[ls_name] = config
 end
 
+---@param config table
+---@param dot_path string
+---@param value any
+function M.upsert_config_entry(config, dot_path, value)
+    local segments = vim.split(dot_path, ".", { plain = true })
+    local tail = table.remove(segments)
+
+    local walker = config
+    for _, seg in ipairs(segments) do
+        local next_step = walker[seg]
+        if not next_step then
+            next_step = {}
+            walker[seg] = next_step
+        end
+        walker = next_step
+    end
+
+    walker[tail] = value
+end
+
 return M

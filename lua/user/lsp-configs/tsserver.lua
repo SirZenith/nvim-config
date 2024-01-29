@@ -3,38 +3,6 @@ local fs = require "user.utils.fs"
 
 local M = {}
 
-local tslib_path = user.env.TS_LIB_PATH()
-if not tslib_path or #tslib_path == 0 then
-    local npm_prefix = vim.fn.has("WIN32") == 1 and user.env.APPDATA() or "/usr/local"
-    tslib_path = fs.path_join(npm_prefix, "npm", "node_modules", "typescript", "lib")
-end
-
-M.cmd = {
-    "typescript-language-server",
-    "--stdio",
-    "--tsserver-path",
-    tslib_path,
-}
-
-M.init_options = {
-    plugins = {
-        { name = "typescript-eslint-language-service" },
-    },
-    preferences = {
-        quotePreference = "single",
-
-        importModuleSpecifierPreference = "non-relative",
-
-        includeInlayParameterNameHints = "none",
-        includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-        includeInlayFunctionParameterTypeHints = false,
-        includeInlayVariableTypeHints = true,
-        includeInlayPropertyDeclarationTypeHints = false,
-        includeInlayFunctionLikeReturnTypeHints = false,
-        includeInlayEnumMemberValueHints = true,
-    },
-}
-
 local formatting_pref = {
     baseIndentSize = 0,
     indentSize = 4,
@@ -73,6 +41,36 @@ local formatting_pref = {
     placeOpenBraceOnNewLineForFunctions = false,
 }
 
+local function get_ts_lib_path()
+    local tslib_path = user.env.TS_LIB_PATH()
+
+    if not tslib_path or #tslib_path == 0 then
+        local npm_prefix = vim.fn.has("WIN32") == 1 and user.env.APPDATA() or "/usr/local"
+        tslib_path = fs.path_join(npm_prefix, "npm", "node_modules", "typescript", "lib")
+    end
+
+    return tslib_path
+end
+
+M.init_options = {
+    plugins = {
+        { name = "typescript-eslint-language-service" },
+    },
+    preferences = {
+        quotePreference = "single",
+
+        importModuleSpecifierPreference = "non-relative",
+
+        includeInlayParameterNameHints = "none",
+        includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+        includeInlayFunctionParameterTypeHints = false,
+        includeInlayVariableTypeHints = true,
+        includeInlayPropertyDeclarationTypeHints = false,
+        includeInlayFunctionLikeReturnTypeHints = false,
+        includeInlayEnumMemberValueHints = true,
+    },
+}
+
 M.settings = {
     typescript = {
         format = formatting_pref,
@@ -81,5 +79,14 @@ M.settings = {
         format = formatting_pref,
     }
 }
+
+function M.on_new_config(config)
+    config.cmd = {
+        "typescript-language-server",
+        "--stdio",
+        "--tsserver-path",
+        get_ts_lib_path(),
+    }
+end
 
 return M
