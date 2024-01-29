@@ -9,19 +9,6 @@ local paths = require "user.lsp-configs.lua_ls.paths"
 
 local M = {}
 
----@return boolean
-local function check_in_nvim_runtime_path()
-    local workspace_path = workspace.get_workspace_path()
-
-    local is_nvim_runtime_path = fs.is_subdir_of(workspace_path, user.env.NVIM_HOME())
-        or vim.fs.basename(workspace_path) == workspace.WORKSPACE_CONFIG_DIR_NAME
-        or fs.is_subdir_of(workspace_path, vim.fn.stdpath("data"))
-        or fs.is_subdir_of(workspace_path, user.env.PLUGIN_DEV_PATH())
-        or user.env.LOAD_NVIM_RUNTIME()
-
-    return is_nvim_runtime_path
-end
-
 M.settings = {
     Lua = {
         completion = {
@@ -74,19 +61,19 @@ M.settings = {
     }
 }
 
-function M.on_new_config(config)
+function M.on_new_config(config, root_dir)
     local settings = config.settings
     if not settings then
         settings = {}
         config.settings = settings
     end
 
-    local is_in_runtime_path = check_in_nvim_runtime_path()
+    local is_in_runtime_path = paths.check_in_nvim_runtime_path(root_dir)
 
     lsp_util.upsert_config_entry(settings, "Lua.runtime.version", is_in_runtime_path and "LuaJIT" or "Lua 5.4")
     lsp_util.upsert_config_entry(settings, "Lua.runtime.special.import", is_in_runtime_path and "require" or nil)
 
-    local runtime_paths, library_paths = paths.get_path_setting(is_in_runtime_path)
+    local runtime_paths, library_paths = paths.get_path_setting(root_dir)
     lsp_util.upsert_config_entry(settings, "Lua.runtime.path", runtime_paths)
     lsp_util.upsert_config_entry(settings, "Lua.workspace.library", library_paths)
 end

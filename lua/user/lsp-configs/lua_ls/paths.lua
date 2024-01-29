@@ -36,7 +36,7 @@ local function get_import_paths(is_in_nvim_runtime_path)
         local plugin_root = fs.path_join(vim.fn.stdpath("data"), "lazy")
         local plugins = {
             "cmd-snippet",
-            "LuaSnip",#
+            "LuaSnip",
             "noice.nvim",
             "nvim-cmp",
             "nvim-lspconfig",
@@ -79,8 +79,18 @@ end
 -- path list for looking for required module.
 -- pathes that are not in current workspace need also be presenting in
 -- workspace.library setting to enable loading definition from those paths
-local function get_runtime_paths(is_in_nvim_runtime_path)
+---@param root_dir string
+---@param is_in_nvim_runtime_path boolean
+local function get_runtime_paths(root_dir, is_in_nvim_runtime_path)
     local import_paths = get_import_paths(is_in_nvim_runtime_path)
+
+    if is_in_nvim_runtime_path then
+        local local_lua_dir = fs.path_join(root_dir, "lua")
+
+        if vim.fn.isdirectory(local_lua_dir) == 1 then
+            import_paths[#import_paths + 1] = local_lua_dir
+        end
+    end
 
     local paths = { "?.lua", "?/init.lua" }
     for i = 1, #import_paths do
@@ -97,6 +107,7 @@ end
 -- - All runtime paths rather than pwd, should be in this list.
 -- - workspace path shouldn't be in lib path, some LSP features such as renaming
 --   are turned of on file under lib path.
+---@param is_in_nvim_runtime_path boolean
 local function get_library_paths(is_in_nvim_runtime_path)
     local paths = {}
 
@@ -119,11 +130,25 @@ local function get_library_paths(is_in_nvim_runtime_path)
     return paths
 end
 
+---@param root_dir string
+---@return boolean
+function M.check_in_nvim_runtime_path(root_dir)
+    local is_nvim_runtime_path = fs.is_subdir_of(root_dir, user.env.NVIM_HOME())
+        or vim.fs.basename(root_dir) == workspace.WORKSPACE_CONFIG_DIR_NAME
+        or fs.is_subdir_of(root_dir, vim.fn.stdpath("data"))
+        or fs.is_subdir_of(root_dir, user.env.PLUGIN_DEV_PATH())
+        or user.env.LOAD_NVIM_RUNTIME()
+
+    return is_nvim_runtime_path
+end
+
+---@param root_dir string
 ---@return string[] runtime_paths
 ---@return string[] library_paths
-function M.get_path_setting(is_in_nvim_runtime_path)
-    local runtime_paths = get_runtime_paths(is_in_nvim_runtime_path)
-    local library_paths = get_library_paths(is_in_nvim_runtime_path)
+function M.get_path_setting(root_dir)
+    local is_runtime_path = M.check_in_nvim_runtime_path(root_dir)
+    local runtime_paths = get_runtime_paths(root_dir, is_runtime_path)
+    local library_paths = get_library_paths(is_runtime_path)
     return runtime_paths, library_paths
 end
 
