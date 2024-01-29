@@ -1,5 +1,4 @@
 local user = require "user"
-local highlight = require "user.config.general.highlight"
 local table_utils = require "user.utils.table"
 
 user.plugin.nvim_treesitter = {

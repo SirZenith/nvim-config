@@ -256,9 +256,6 @@ local specs = {
     -- tree-sitter
     {
         "nvim-treesitter/nvim-treesitter",
-        dependencies = {
-            "user.config.general",
-        },
         build = ":TSUpdate",
         event = "VeryLazy",
     },
@@ -294,8 +291,11 @@ local specs = {
     },
     {
         "hiphish/rainbow-delimiters.nvim",
-        dependencies = { "nvim-treesitter/nvim-treesitter" },
-        event = "BufReadPre",
+        dependencies = {
+            "nvim-treesitter/nvim-treesitter",
+            "user.config.general",
+        },
+        event = "VeryLazy",
     },
 
     -- ------------------------------------------------------------------------
