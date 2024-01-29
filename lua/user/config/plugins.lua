@@ -74,7 +74,6 @@ local specs = {
         name = "user.config.keybinding",
         dir = base_config.env.USER_RUNTIME_PATH,
         dependencies = {
-            "SirZenith/panelpal.nvim",
             "user.config.general",
         },
         config = function(spec) require(spec.name) end,
@@ -179,6 +178,7 @@ local specs = {
     {
         "SirZenith/panelpal.nvim",
         -- dev = true,
+        event = "VeryLazy",
     },
     {
         "startup-nvim/startup.nvim",
@@ -295,6 +295,7 @@ local specs = {
     {
         "hiphish/rainbow-delimiters.nvim",
         dependencies = { "nvim-treesitter/nvim-treesitter" },
+        event = "BufReadPre",
     },
 
     -- ------------------------------------------------------------------------

@@ -1,8 +1,6 @@
 local api = vim.api
 local user = require "user"
 local utils = require "user.utils"
-local functional = require "user.utils.functional"
-local panelpal = require "panelpal"
 
 local import = utils.import
 
@@ -72,6 +70,8 @@ local function toggle_quickfix()
 end
 
 local function toggle_terminal()
+    local panelpal = require "panelpal"
+
     local name = USER_TERMINAL_PANEL_BUF_NAME
     local buf_num, win_num = panelpal.find_buf_with_name(name)
 
@@ -279,6 +279,8 @@ local v_common_keymap = {
     ["<leader>k"] = "-",
     -- Searching
     ["<leader>sg"] = function()
+        local panelpal = require "panelpal"
+
         local target = panelpal.visual_selection_text()
         if not target or #target == 0 then return end
         global_search(target)
