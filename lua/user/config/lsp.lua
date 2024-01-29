@@ -121,7 +121,7 @@ user.lsp = {
         },
         {
             "tsserver",
-            enable = false,
+            enabled = false,
             desc = "TypeScript/JavaScript Server",
             install = "npm install -g typescript typescript-language-server",
         },

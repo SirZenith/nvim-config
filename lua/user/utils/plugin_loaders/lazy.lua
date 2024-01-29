@@ -38,6 +38,7 @@ local is_bootstrap, manager = require_manager()
 local manager_config = {
     dev = {
         path = base_config.env.PLUGIN_DEV_PATH,
+        fallback = false,
     },
 }
 
