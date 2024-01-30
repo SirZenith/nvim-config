@@ -6,3 +6,4 @@ if not windows then
     return
 end
 
+user.general.locale = nil
