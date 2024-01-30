@@ -120,6 +120,13 @@ user.lsp = {
             }
         },
         {
+            "taplo",
+            desc = {
+                "Language server for Taplo, a TOML toolkit",
+            },
+            install = "cargo install --features lsp --locked taplo-cli",
+        },
+        {
             "tsserver",
             enabled = false,
             desc = "TypeScript/JavaScript Server",
