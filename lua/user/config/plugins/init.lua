@@ -1,119 +1,25 @@
-local base_config, err = require "user.config"
-if err then
-    return {}
-end
+local putl = require "user.config.plugins.utils"
 
-local function turn_on_true_color()
-    if vim.fn.has "nvim" then
-        vim.env.NVIM_TUI_ENABLE_TRUE_COLOR = 1
-    end
+local ucs = putl.user_config_spec
 
-    if vim.fn.has "termguicolors" then
-        vim.o.termguicolors = true
-    end
-end
-
--- Looing for a directory recrusively in parent
----@param target_names string[] # target directory name
----@return boolean is_found
-local function find_root_by_directory(target_names)
-    local pwd = vim.fn.getcwd()
-
-    local is_found = false
-    for _, target_name in ipairs(target_names) do
-        if vim.fn.isdirectory(pwd .. "/" .. target_name) == 1 then
-            is_found = true
-            break
-        end
-
-        for dir in vim.fs.parents(pwd) do
-            if vim.fn.isdirectory(dir .. "/" .. target_name) == 1 then
-                is_found = true
-                break
-            end
-        end
-    end
-
-    return is_found
-end
-
--- Looing for a file recrusively in parent
----@param target_names string[] # target file name
----@return boolean is_found
-local function find_root_by_file(target_names)
-    local pwd = vim.fn.getcwd()
-
-    local is_found = false
-    for _, target_name in ipairs(target_names) do
-        if vim.fn.filereadable(pwd .. "/" .. target_name) == 1 then
-            is_found = true
-            break
-        end
-
-        for dir in vim.fs.parents(pwd) do
-            if vim.fn.filereadable(dir .. "/" .. target_name) == 1 then
-                is_found = true
-                break
-            end
-        end
-    end
-
-    return is_found
-end
-
----@type (PluginSpec | string)[]
+---@type (user.plugin.PluginSpec | string)[]
 local specs = {
     -- ------------------------------------------------------------------------
     -- Local configs
-    {
-        name = "user.config.general",
-        dir = base_config.env.USER_RUNTIME_PATH,
-        config = function(spec) require(spec.name) end,
-    },
-    {
-        name = "user.config.keybinding",
-        dir = base_config.env.USER_RUNTIME_PATH,
-        dependencies = {
-            "user.config.general",
-        },
-        config = function(spec) require(spec.name) end,
-    },
-    {
-        name = "user.config.command",
-        dir = base_config.env.USER_RUNTIME_PATH,
-        config = function(spec) require(spec.name) end,
-    },
-    {
-        name = "user.config.platforms",
-        dir = base_config.env.USER_RUNTIME_PATH,
-        dependencies = {
-            "user.config.general",
-        },
-        config = function(spec) require(spec.name) end,
-    },
-    {
-        name = "user.config.lsp",
-        dir = base_config.env.USER_RUNTIME_PATH,
-        config = function(spec) require(spec.name) end,
-    },
-    {
-        name = "user.workspace",
-        dir = base_config.env.USER_RUNTIME_PATH,
-        config = function(spec) require(spec.name) end,
-    },
+    ucs "user.config.general",
+    ucs "user.config.keybinding",
+    ucs "user.config.command",
+    ucs "user.config.platforms",
+    ucs "user.config.lsp",
+    ucs "user.workspace",
 
     -- ------------------------------------------------------------------------
     -- Themes
-    {
-        "catppuccin/nvim",
-        name = "catppuccin",
-        enabled = false,
-    },
     { "marko-cerovac/material.nvim", enabled = false },
     { "kaicataldo/material.vim",     enabled = false },
     {
         "EdenEast/nightfox.nvim",
-        before_load = turn_on_true_color,
+        before_load = putl.turn_on_true_color,
     },
     { "shaunsingh/nord.nvim",             enabled = false },
     { "mhartington/oceanic-next",         enabled = false },
@@ -125,7 +31,6 @@ local specs = {
     -- General
     {
         "stevearc/dressing.nvim",
-        -- enabled = false,
         dependencies = {
             "nvim-telescope/telescope.nvim",
         },
@@ -134,14 +39,12 @@ local specs = {
     {
         "lewis6991/gitsigns.nvim",
         event = "BufReadPost",
-        cond = function()
-            return find_root_by_directory { ".git" }
-        end,
+        cond = putl.root_directory_cond { ".git" },
     },
     {
         -- search & jump
         "ggandor/leap.nvim",
-        enabled = false,
+        -- enabled = false,
         event = "BufReadPost",
     },
     {
@@ -199,9 +102,7 @@ local specs = {
         -- dev = true,
         dependencies = { "SirZenith/panelpal.nvim" },
         event = "CmdlineEnter",
-        cond = function()
-            return find_root_by_directory { ".git", ".svn" }
-        end,
+        cond = putl.root_directory_cond { ".git", ".svn" },
     },
     {
         "voldikss/vim-floaterm",
@@ -231,7 +132,7 @@ local specs = {
     {
         -- highlight color code with its color in vim
         "norcalli/nvim-colorizer.lua",
-        before_load = turn_on_true_color,
+        before_load = putl.turn_on_true_color,
         event = "BufReadPost",
     },
     {
@@ -336,12 +237,10 @@ local specs = {
             "neovim/nvim-lspconfig",
             "SirZenith/lsp-config-loader",
         },
-        cond = function()
-            return find_root_by_file {
-                "tsconfig.json",
-                "client/tsconfig.json",
-            }
-        end,
+        cond = putl.root_file_cond {
+            "tsconfig.json",
+            "client/tsconfig.json",
+        },
         event = "VeryLazy",
     },
 
@@ -412,12 +311,10 @@ local specs = {
         -- dev = true,
         dependencies = { "hrsh7th/nvim-cmp", },
         event = "InsertEnter",
-        cond = function()
-            return find_root_by_directory {
-                ".creator",
-                "client/.creator",
-            }
-        end,
+        cond = putl.root_directory_cond {
+            ".creator",
+            "client/.creator",
+        },
     },
     {
         "SirZenith/snippet-loader",

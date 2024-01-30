@@ -118,7 +118,7 @@ function M._add_config_to_pending_table(plugin_name, config_path)
     table.insert(state.modules, import(file))
 end
 
----@param spec PluginSpec
+---@param spec user.plugin.PluginSpec
 ---@return lazy.PluginSpec[] | nil
 function M._load_config(spec)
     if M._is_bootstrap then return nil end
