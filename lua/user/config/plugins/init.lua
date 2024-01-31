@@ -197,6 +197,7 @@ local specs = {
     -- tree-sitter
     {
         "code-biscuits/nvim-biscuits",
+        enabled = false,
         dependencies = { "nvim-treesitter/nvim-treesitter" },
         event = "VeryLazy",
     },
