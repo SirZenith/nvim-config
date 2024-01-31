@@ -9,6 +9,7 @@ user.plugin.indent_blankline_nvim = {
     scope = {
         char = "│",
         highlight = highlight.rainbow_hl_groups,
+        show_end = false,
     },
 }
 
