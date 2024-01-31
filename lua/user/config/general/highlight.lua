@@ -23,11 +23,16 @@ local color = {
 
     bg      = {
         darker   = "#15181e",
-        dark     = "#232831", -- Dark bg (status line and float)
-        normal   = "#2e3440", -- Default bg
-        light    = "#39404f", -- Lighter bg (colorcolm folds)
-        lighter  = "#444c5e", -- Lighter bg (cursor line)
-        lightest = "#5a657d", -- Conceal, border fg
+        -- Dark bg (status line and float)
+        dark     = "#232831",
+        -- Default bg
+        normal   = "#2e3440",
+        -- Lighter bg (colorcolm folds)
+        light    = "#39404f",
+        -- Lighter bg (cursor line)
+        lighter  = "#444c5e",
+        -- Conceal, border fg
+        lightest = "#5a657d",
     },
 
     fg      = {
@@ -425,6 +430,25 @@ local highlight = vim.tbl_extend("keep", {
     -- nvim-biscuit
     BiscuitColor = {
         fg = color.fg.ignorable,
+    },
+}, {
+    -- ------------------------------------------------------------------------
+    -- lsp-status
+    IndicatorHint = {
+        fg = color.green.normal,
+        bg = color.bg.dark,
+    },
+    IndicatorInfo = {
+        fg = color.blue.normal,
+        bg = color.bg.dark,
+    },
+    IndicatorWarnings = {
+        fg = color.yellow.normal,
+        bg = color.bg.dark,
+    },
+    IndicatorErrors = {
+        fg = color.red.normal,
+        bg = color.bg.dark,
     },
 })
 
