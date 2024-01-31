@@ -149,7 +149,7 @@ user.option = {
 }
 
 user.general = {
-    locale = "zh_CN.UTF-8",
+    -- locale = "zh_CN.UTF-8",
     filetype = {
         -- disable soft tab for listed file types
         no_soft_tab = { "go", "make", "plantuml", "vlang" },
