@@ -293,7 +293,19 @@ user.plugin.noice = {
 
     ---@type NoiceConfigViews
     ---@see section on views
-    views = {},
+    views = {
+        cmdline_popup = {
+            position = {
+                row = 5,
+                col = "50%",
+            },
+            size = {
+                min_width = 60,
+                width = "auto",
+                height = "auto",
+            },
+        },
+    },
 
     ---@type NoiceRouteConfig[]
     --- @see section on routes
