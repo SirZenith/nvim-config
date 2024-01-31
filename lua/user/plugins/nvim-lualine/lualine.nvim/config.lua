@@ -1,5 +1,7 @@
 local user = require "user"
 
+local comp_maco = require "user/plugins/nvim-lualine/lualine.nvim/component_macro"
+
 user.plugin.lualine = {
     __new_entry = true,
     options = {
@@ -36,6 +38,7 @@ user.plugin.lualine = {
     sections = {
         lualine_a = {
             { "mode", separator = { left = "" }, right_padding = 2 },
+            comp_maco,
         },
         lualine_b = { "branch", "diff", "filename" },
         lualine_c = { 'require "lsp-status".status()' },

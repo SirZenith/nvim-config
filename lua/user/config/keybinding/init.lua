@@ -196,6 +196,7 @@ local function close_all_win_in_cur_tab()
 
         if win_cnt > 1 then
             win_cnt = win_cnt - 1
+            api.nvim_win_hide(win)
         else
             ask_for_quit = true
         end

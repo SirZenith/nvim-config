@@ -139,7 +139,7 @@ local specs = {
             "rcarriga/nvim-notify",
             "user.config.lsp",
         },
-        event = "CmdlineEnter",
+        event = "VeryLazy",
     },
     {
         "startup-nvim/startup.nvim",
