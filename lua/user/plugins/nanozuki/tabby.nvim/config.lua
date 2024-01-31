@@ -9,7 +9,7 @@ local theme = {
     tail = "TabIcon",
     -- active tab
     active = "TabActive",
-    --inactive tab
+    -- inactive tab
     inactive = "TabInactive",
     -- symbol for inactive tab
     sign = "TabSign",

@@ -15,7 +15,7 @@ user.plugin.nvim_treesitter = {
             "cpp",
             "c_sharp",
             "css",
-            "dap_repl",
+            -- "dap_repl",
             "dot",
             "gitignore",
             "glsl",
