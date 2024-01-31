@@ -80,14 +80,22 @@ local function toggle_terminal()
         vim.cmd("vsplit | terminal")
         vim.cmd("keepalt file " .. name)
         vim.cmd "startinsert"
+        win_num = api.nvim_get_current_win()
     elseif not win_num then
         -- not visible
         vim.cmd("vsplit")
-        local win = api.nvim_get_current_win()
-        api.nvim_win_set_buf(win, buf_num)
+        win_num = api.nvim_get_current_win()
+        api.nvim_win_set_buf(win_num, buf_num)
         vim.cmd "startinsert"
     else
         api.nvim_win_hide(win_num)
+        win_num = nil
+    end
+
+    if win_num then
+        local wo = vim.wo[win_num]
+        wo.number = false
+        wo.relativenumber = false
     end
 end
 
@@ -220,8 +228,6 @@ local n_common_keymap = {
     ["<A-down>"] = "ddp",
     -- Folding
     ["<Tab>"] = "za",
-    -- Buffer switching
-    ["<leader>b"] = ":buffer ",
     -- Searching
     ["<leader>sg"] = function()
         local target = vim.fn.input({ prompt = "Global Search: " })

@@ -30,6 +30,7 @@ local specs = {
     -- ------------------------------------------------------------------------
     -- General
     {
+        -- vim.ui.input and vim.ui.select UI delegate.
         "stevearc/dressing.nvim",
         dependencies = {
             "nvim-telescope/telescope.nvim",
@@ -37,18 +38,18 @@ local specs = {
         event = "VeryLazy",
     },
     {
-        "lewis6991/gitsigns.nvim",
-        event = "BufReadPost",
-        cond = putl.root_directory_cond { ".git" },
-    },
-    {
-        -- search & jump
+        -- Jump to anywhere with a few key strokes
         "ggandor/leap.nvim",
         -- enabled = false,
         event = "BufReadPost",
     },
     {
         "numToStr/Comment.nvim",
+        event = "BufReadPost",
+    },
+    {
+        -- Show bookmark symbols in gutter column.
+        "chentoast/marks.nvim",
         event = "BufReadPost",
     },
     {
@@ -63,6 +64,16 @@ local specs = {
             "user.config.lsp",
         },
         event = "CmdlineEnter",
+    },
+    {
+        -- Clipboard history manager
+        "AckslD/nvim-neoclip.lua",
+        requires = {
+            -- you'll need at least one of these
+            "nvim-telescope/telescope.nvim",
+            -- "ibhagwan/fzf-lua",
+        },
+        event = "BufReadPost",
     },
     {
         "rcarriga/nvim-notify",
@@ -84,6 +95,14 @@ local specs = {
         event = "VeryLazy",
     },
     {
+        -- Global Search & Replace
+        "nvim-pack/nvim-spectre",
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+        },
+        event = "CmdlineEnter",
+    },
+    {
         "startup-nvim/startup.nvim",
         dependencies = {
             "user.config.general",
@@ -98,15 +117,9 @@ local specs = {
         event = "VeryLazy",
     },
     {
-        "SirZenith/vcs-helper.nvim",
-        -- dev = true,
-        dependencies = { "SirZenith/panelpal.nvim" },
-        event = "CmdlineEnter",
-        cond = putl.root_directory_cond { ".git", ".svn" },
-    },
-    {
-        "voldikss/vim-floaterm",
+        "akinsho/toggleterm.nvim",
         event = "VeryLazy",
+        dependencies = { "user.config.general" },
     },
 
     -- ------------------------------------------------------------------------
@@ -130,12 +143,6 @@ local specs = {
         event = "BufReadPost",
     },
     {
-        -- highlight color code with its color in vim
-        "norcalli/nvim-colorizer.lua",
-        before_load = putl.turn_on_true_color,
-        event = "BufReadPost",
-    },
-    {
         -- folding support
         "kevinhwang91/nvim-ufo",
         enabled = false,
@@ -146,6 +153,11 @@ local specs = {
         -- folding style customization
         "anuvyklack/pretty-fold.nvim",
         event = "BufReadPost",
+    },
+    {
+        "winston0410/range-highlight.nvim",
+        dependencies = { "winston0410/cmd-parser.nvim" },
+        event = "CmdlineEnter",
     },
     {
         -- tab line styling
@@ -382,6 +394,35 @@ local specs = {
             "mfussenegger/nvim-dap",
         },
         cmd = "Dap",
+    },
+
+    -- ------------------------------------------------------------------------
+    -- Version Control System
+    {
+        "lewis6991/gitsigns.nvim",
+        event = "BufReadPost",
+        cond = putl.root_directory_cond { ".git" },
+    },
+    {
+        "SirZenith/vcs-helper.nvim",
+        -- dev = true,
+        dependencies = { "SirZenith/panelpal.nvim" },
+        event = "CmdlineEnter",
+        cond = putl.root_directory_cond { ".git", ".svn" },
+    },
+
+    -- ------------------------------------------------------------------------
+    -- Color
+    {
+        -- Create Color Code, color picker in NeoVim
+        "uga-rosa/ccc.nvim",
+        event = "CmdlineEnter",
+    },
+    {
+        -- highlight color code with its color in vim
+        "norcalli/nvim-colorizer.lua",
+        before_load = putl.turn_on_true_color,
+        event = "BufReadPost",
     },
 
     -- ------------------------------------------------------------------------

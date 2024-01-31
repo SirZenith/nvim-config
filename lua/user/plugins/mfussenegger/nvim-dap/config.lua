@@ -93,7 +93,7 @@ user.plugin.nvim_dap = {
         DapLogPoint            = { text = "●", texthl = "DapLogPoint" },
         DapStopped             = { text = "→", texthl = "DapStopped", linehl = "DapStoppedLine" },
         DapBreakpointRejected  = { text = "●", texthl = "DapBreakpointRejected" },
-    }
+    },
 }
 
 return function()
