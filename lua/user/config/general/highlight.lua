@@ -434,20 +434,32 @@ local highlight = vim.tbl_extend("keep", {
 }, {
     -- ------------------------------------------------------------------------
     -- lsp-status
-    IndicatorHint = {
+    LspStatusIndicatorHint = {
         fg = color.green.normal,
         bg = color.bg.dark,
     },
-    IndicatorInfo = {
+    LspStatusIndicatorInfo = {
         fg = color.blue.normal,
         bg = color.bg.dark,
     },
-    IndicatorWarnings = {
+    LspStatusIndicatorWarnings = {
         fg = color.yellow.normal,
         bg = color.bg.dark,
     },
-    IndicatorErrors = {
+    LspStatusIndicatorErrors = {
         fg = color.red.normal,
+        bg = color.bg.dark,
+    },
+    LspStatusSpinner1 = {
+        fg = color.green.normal,
+        bg = color.bg.dark,
+    },
+    LspStatusSpinner2 = {
+        fg = color.yellow.normal,
+        bg = color.bg.dark,
+    },
+    LspStatusSpinner3 = {
+        fg = color.blue.normal,
         bg = color.bg.dark,
     },
 })
