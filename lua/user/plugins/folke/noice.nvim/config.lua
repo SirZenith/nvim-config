@@ -296,6 +296,10 @@ user.plugin.noice = {
     views = {
         cmdline = {
             timeout = 2000,
+            position = {
+                row = -1,
+                col = 0,
+            },
         },
         cmdline_popup = {
             position = {
