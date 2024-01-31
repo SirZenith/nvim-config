@@ -56,9 +56,12 @@ local function toggle_quickfix()
     local wins = api.nvim_tabpage_list_wins(0)
     local target
     for _, win in ipairs(wins) do
-        local buf = api.nvim_win_get_buf(win)
-        if vim.bo[buf].filetype == "qf" then
-            target = win
+        if api.nvim_win_is_valid(win) then
+            local buf = api.nvim_win_get_buf(win)
+
+            if vim.bo[buf].filetype == "qf" then
+                target = win
+            end
         end
     end
 
@@ -171,6 +174,10 @@ local function close_all_win_in_cur_tab()
     local record = {}
     local ask_for_quit = false
     for _, win in ipairs(wins) do
+        if not api.nvim_win_is_valid(win) then
+            goto continue
+        end
+
         local buf = api.nvim_win_get_buf(win)
         local file = api.nvim_buf_get_name(buf)
 
@@ -189,13 +196,11 @@ local function close_all_win_in_cur_tab()
 
         if win_cnt > 1 then
             win_cnt = win_cnt - 1
-
-            if api.nvim_win_is_valid(win) then
-                api.nvim_win_hide(win)
-            end
         else
             ask_for_quit = true
         end
+
+        ::continue::
     end
 
     if ask_for_quit then
