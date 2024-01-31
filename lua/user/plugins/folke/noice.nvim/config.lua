@@ -76,12 +76,12 @@ user.plugin.noice = {
         -- NOTE: If you enable messages, then the cmdline is enabled automatically.
         -- This is a current Neovim limitation.
         -- enables the Noice messages UI
-        enabled = false,
+        enabled = true,
 
         -- default view for messages
-        view = "notify",
+        view = "cmdline",
         -- view for errors
-        view_error = "split",
+        view_error = "cmdline",
         -- view for warnings
         view_warn = "cmdline",
         -- view for :messages
@@ -294,6 +294,9 @@ user.plugin.noice = {
     ---@type NoiceConfigViews
     ---@see section on views
     views = {
+        cmdline = {
+            timeout = 2000,
+        },
         cmdline_popup = {
             position = {
                 row = 5,
