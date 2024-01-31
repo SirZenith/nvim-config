@@ -147,11 +147,11 @@ local highlight = vim.tbl_extend("keep", {
         bg = color.blue.normal,
     },
     TabSign = {
-        fg = color.fg.light,
+        fg = color.fg.darker,
         bg = color.bg.dark,
     },
     TabSignActive = {
-        fg = color.fg.light,
+        fg = color.bg.normal,
         bg = color.blue.normal,
     },
     TabStatusSign = {

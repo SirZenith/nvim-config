@@ -153,6 +153,7 @@ local specs = {
     {
         -- tab line styling
         "nanozuki/tabby.nvim",
+        dependencies = { "nvim-tree/nvim-web-devicons" },
         event = "VeryLazy",
     },
 
