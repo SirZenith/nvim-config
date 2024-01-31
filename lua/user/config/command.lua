@@ -64,26 +64,10 @@ end, {
     desc = "save & delete all buffers",
 })
 
--- ----------------------------------------------------------------------------
-
-cmd("SnipList", function()
-    local snip_utils = import "user-snippet.utils"
-    if not snip_utils then return end
-
-    local buffer = {}
-    for filename in pairs(snip_utils.loaded_snippets_set) do
-        local basename = vim.fs.basename(filename)
-        local name = basename:sub(-4) == ".lua"
-            and basename:sub(1, -5)
-            or basename
-        table.insert(buffer, name)
-    end
-
-    table.sort(buffer)
-    local msg = table.concat(buffer, "\n")
-    vim.notify(msg)
+cmd("SearchAndReplace", function()
+    vim.cmd "Spectre"
 end, {
-    desc = "list all loaded snippets"
+    desc = "alias for Spectre"
 })
 
 -- ----------------------------------------------------------------------------

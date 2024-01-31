@@ -2,6 +2,8 @@ local putl = require "user.config.plugins.utils"
 
 local ucs = putl.user_config_spec
 
+putl.turn_on_true_color()
+
 ---@type (user.plugin.PluginSpec | string)[]
 local specs = {
     -- ------------------------------------------------------------------------
@@ -15,12 +17,9 @@ local specs = {
 
     -- ------------------------------------------------------------------------
     -- Themes
-    { "marko-cerovac/material.nvim", enabled = false },
-    { "kaicataldo/material.vim",     enabled = false },
-    {
-        "EdenEast/nightfox.nvim",
-        before_load = putl.turn_on_true_color,
-    },
+    { "marko-cerovac/material.nvim",      enabled = false },
+    { "kaicataldo/material.vim",          enabled = false },
+    { "EdenEast/nightfox.nvim" },
     { "shaunsingh/nord.nvim",             enabled = false },
     { "mhartington/oceanic-next",         enabled = false },
     { "JoosepAlviste/palenightfall.nvim", enabled = false },
@@ -30,12 +29,8 @@ local specs = {
     -- ------------------------------------------------------------------------
     -- General
     {
-        -- vim.ui.input and vim.ui.select UI delegate.
-        "stevearc/dressing.nvim",
-        dependencies = {
-            "nvim-telescope/telescope.nvim",
-        },
-        event = "VeryLazy",
+        "numToStr/Comment.nvim",
+        event = "BufReadPost",
     },
     {
         -- Jump to anywhere with a few key strokes
@@ -44,26 +39,9 @@ local specs = {
         event = "BufReadPost",
     },
     {
-        "numToStr/Comment.nvim",
-        event = "BufReadPost",
-    },
-    {
         -- Show bookmark symbols in gutter column.
         "chentoast/marks.nvim",
         event = "BufReadPost",
-    },
-    {
-        "folke/noice.nvim",
-        -- enabled = false,
-        dependencies = {
-            "MunifTanjim/nui.nvim",
-            -- OPTIONAL:
-            --   `nvim-notify` is only needed, if you want to use the notification view.
-            --   If not available, we use `mini` as the fallback
-            "rcarriga/nvim-notify",
-            "user.config.lsp",
-        },
-        event = "CmdlineEnter",
     },
     {
         -- Clipboard history manager
@@ -100,6 +78,54 @@ local specs = {
         dependencies = {
             "nvim-lua/plenary.nvim",
         },
+        cmd = {
+            "SearchAndReplace",
+            "Spectre",
+        },
+    },
+    {
+        "nvim-telescope/telescope.nvim",
+        dependencies = { "nvim-lua/plenary.nvim" },
+        event = "VeryLazy",
+    },
+    {
+        "akinsho/toggleterm.nvim",
+        event = "VeryLazy",
+        dependencies = { "user.config.general" },
+    },
+    {
+        -- Markup language heading outline sidebar.
+        "vim-voom/VOoM",
+        ft = { "markdown", "html" },
+    },
+
+    -- ------------------------------------------------------------------------
+    -- Appearance
+    {
+        -- vim.ui.input and vim.ui.select UI delegate.
+        "stevearc/dressing.nvim",
+        dependencies = {
+            "nvim-telescope/telescope.nvim",
+        },
+        event = "VeryLazy",
+    },
+    {
+        "nvim-lualine/lualine.nvim",
+        dependencies = { "kyazdani42/nvim-web-devicons" },
+        event = "VeryLazy",
+    },
+    {
+        -- Experimental UI for input, select, notification and more.
+        "folke/noice.nvim",
+        -- enabled = false,
+        dependencies = {
+            "MunifTanjim/nui.nvim",
+            -- OPTIONAL:
+            --   `nvim-notify` is only needed, if you want to use the notification view.
+            --   If not available, we use `mini` as the fallback
+            "rcarriga/nvim-notify",
+            "user.config.lsp",
+        },
         event = "CmdlineEnter",
     },
     {
@@ -112,19 +138,15 @@ local specs = {
         event = "VeryLazy",
     },
     {
-        "nvim-telescope/telescope.nvim",
-        dependencies = { "nvim-lua/plenary.nvim" },
+        -- tab line styling
+        "nanozuki/tabby.nvim",
         event = "VeryLazy",
-    },
-    {
-        "akinsho/toggleterm.nvim",
-        event = "VeryLazy",
-        dependencies = { "user.config.general" },
     },
 
     -- ------------------------------------------------------------------------
     -- Visual Assitance
     {
+        -- Indent level visualization.
         "lukas-reineke/indent-blankline.nvim",
         main = "ibl",
         dependencies = {
@@ -133,36 +155,28 @@ local specs = {
         event = "BufReadPost",
     },
     {
-        "nvim-lualine/lualine.nvim",
-        dependencies = { "kyazdani42/nvim-web-devicons" },
-        event = "VeryLazy",
-    },
-    {
+        -- Highlight line and word under cursor.
         "SirZenith/nvim-cursorline",
         -- dev = true,
         event = "BufReadPost",
     },
     {
-        -- folding support
+        -- Folding support
         "kevinhwang91/nvim-ufo",
         enabled = false,
         dependencies = "kevinhwang91/promise-async",
         event = "BufReadPost",
     },
     {
-        -- folding style customization
+        -- Folding style customization
         "anuvyklack/pretty-fold.nvim",
         event = "BufReadPost",
     },
     {
+        -- Highlight range argument in command line.
         "winston0410/range-highlight.nvim",
         dependencies = { "winston0410/cmd-parser.nvim" },
         event = "CmdlineEnter",
-    },
-    {
-        -- tab line styling
-        "nanozuki/tabby.nvim",
-        event = "VeryLazy",
     },
 
     -- ------------------------------------------------------------------------
@@ -224,6 +238,7 @@ local specs = {
         event = "VeryLazy",
     },
     {
+        -- LSP status component for Lualine
         "nvim-lua/lsp-status.nvim",
         event = "VeryLazy",
     },
@@ -243,6 +258,7 @@ local specs = {
         event = "VeryLazy",
     },
     {
+        -- tsserer adapter for NeoVim
         "pmizio/typescript-tools.nvim",
         dependencies = {
             "nvim-lua/plenary.nvim",
@@ -352,10 +368,6 @@ local specs = {
         "sudar/vim-arduino-syntax",
         ft = "arduino",
     },
-    {
-        "vim-voom/VOoM",
-        ft = { "markdown", "html" },
-    },
 
     -- ------------------------------------------------------------------------
     -- Debugger
@@ -419,9 +431,8 @@ local specs = {
         event = "CmdlineEnter",
     },
     {
-        -- highlight color code with its color in vim
+        -- Highlight color code with its color in vim
         "norcalli/nvim-colorizer.lua",
-        before_load = putl.turn_on_true_color,
         event = "BufReadPost",
     },
 
