@@ -33,6 +33,19 @@ local specs = {
         event = "BufReadPost",
     },
     {
+        -- Collaborative edit support
+        "jbyuki/instant.nvim",
+        cmd = {
+            "InstantStartServer",
+
+            "InstantStartSingle",
+            "InstantJoinSingle",
+
+            "InstantStartSession",
+            "InstantJoinSession",
+        }
+    },
+    {
         -- Jump to anywhere with a few key strokes
         "ggandor/leap.nvim",
         -- enabled = false,
@@ -182,14 +195,14 @@ local specs = {
     -- ------------------------------------------------------------------------
     -- tree-sitter
     {
-        "nvim-treesitter/nvim-treesitter",
-        build = ":TSUpdate",
+        "code-biscuits/nvim-biscuits",
+        dependencies = { "nvim-treesitter/nvim-treesitter" },
         event = "VeryLazy",
     },
     {
-        "nvim-treesitter/playground",
-        dependencies = { "nvim-treesitter/nvim-treesitter" },
-        event = "BufReadPre",
+        "nvim-treesitter/nvim-treesitter",
+        build = ":TSUpdate",
+        event = "VeryLazy",
     },
     {
         "nvim-treesitter/nvim-treesitter-textobjects",
@@ -215,6 +228,11 @@ local specs = {
             "vue",
             "xml",
         },
+    },
+    {
+        "nvim-treesitter/playground",
+        dependencies = { "nvim-treesitter/nvim-treesitter" },
+        event = "BufReadPre",
     },
     {
         "hiphish/rainbow-delimiters.nvim",

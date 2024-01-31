@@ -420,6 +420,12 @@ local highlight = vim.tbl_extend("keep", {
     RainbowCyan = {
         fg = color.cyan.normal,
     },
+}, {
+    -- ------------------------------------------------------------------------
+    -- nvim-biscuit
+    BiscuitColor = {
+        fg = color.fg.ignorable,
+    },
 })
 
 local rainbow_hl_groups = {
