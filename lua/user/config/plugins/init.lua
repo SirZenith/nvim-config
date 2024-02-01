@@ -177,13 +177,14 @@ local specs = {
     {
         -- Folding support
         "kevinhwang91/nvim-ufo",
-        enabled = false,
+        -- enabled = false,
         dependencies = "kevinhwang91/promise-async",
-        event = "BufReadPost",
+        event = "VeryLazy",
     },
     {
         -- Folding style customization
         "anuvyklack/pretty-fold.nvim",
+        enabled = false,
         event = "BufReadPost",
     },
     {

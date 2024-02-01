@@ -88,8 +88,8 @@ user.option = {
         autoindent = true,
         cindent = true,
         -- Folding
-        foldmethod = "expr",
-        foldexpr = "nvim_treesitter#foldexpr()",
+        foldmethod = "manual",
+        -- foldexpr = "nvim_treesitter#foldexpr()",
         foldenable = true,
         foldnestmax = 4,
         -- set behaviour when buffer becomes invisible

@@ -9,7 +9,14 @@ user.lsp = {
     log_scroll_method = "bottom",
     on_attach_callbacks = {},
     capabilities_settings = {
-        vim.lsp.protocol.make_client_capabilities()
+        {
+            textDocument = {
+                foldingRange = {
+                    dynamicRegistration = false,
+                    lineFoldingOnly = true,
+                },
+            },
+        },
     },
     format_args = {
         async = true
