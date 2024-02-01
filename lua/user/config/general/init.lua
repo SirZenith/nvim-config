@@ -133,8 +133,6 @@ user.option = {
         -- display debug/diagnostic symbol in gutter
         -- `number` means share space with line number, don't create extra column
         signcolumn = "number",
-
-        laststatus = 3,
     },
     go = {
         shell = "nu",

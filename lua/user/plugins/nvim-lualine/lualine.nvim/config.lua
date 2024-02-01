@@ -28,7 +28,7 @@ user.plugin.lualine = {
             "MongoshNvimDBSideBar"
         },
         always_divide_middle = true,
-        globalstatus = false,
+        globalstatus = true,
         refresh = {
             statusline = 100,
             tabline = 1000,
