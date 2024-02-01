@@ -5,5 +5,3 @@ local windows = import "user.config.platforms.windows"
 if not windows then
     return
 end
-
-user.general.locale = nil
