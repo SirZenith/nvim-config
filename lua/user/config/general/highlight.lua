@@ -128,12 +128,16 @@ local highlight = vim.tbl_extend("keep", {
     -- ------------------------------------------------------------------------
     -- Tab Line Style
     TabBar = {
-        bg = color.bg.dark,
+        bg = color.bg.darker,
     },
 
     TabHeader = {
         fg = color.fg.dark,
         bg = color.bg.light,
+    },
+    TabHeaderInverse = {
+        fg = color.fg.dark,
+        bg = color.yellow.normal,
     },
     TabFooter = {
         fg = color.fg.dark,
@@ -142,7 +146,7 @@ local highlight = vim.tbl_extend("keep", {
 
     TabInactive = {
         fg = color.fg.darker,
-        bg = color.bg.normal,
+        bg = color.bg.darker,
     },
     TabActive = {
         fg = color.bg.dark,
@@ -151,29 +155,29 @@ local highlight = vim.tbl_extend("keep", {
     },
 
     TabSide = {
-        fg = color.bg.normal,
-        bg = color.bg.dark,
+        fg = color.bg.lightest,
+        bg = color.bg.darker,
     },
     TabSideInverse = {
-        fg = color.bg.normal,
+        fg = color.bg.darker,
         bg = color.yellow.normal,
     },
     TabSideActive = {
         fg = color.yellow.normal,
-        bg = color.bg.dark,
+        bg = color.bg.darker,
     },
     TabSideActiveInverse = {
         fg = color.yellow.normal,
-        bg = color.bg.dark,
+        bg = color.bg.darker,
     },
     TabSideContinous = {
         fg = color.bg.lightest,
-        bg = color.bg.normal,
+        bg = color.bg.darker,
     },
 
     TabIcon = {
         fg = color.fg.darker,
-        bg = color.bg.normal,
+        bg = color.bg.darker,
     },
     TabIconActive = {
         fg = color.bg.dark,

@@ -6,6 +6,7 @@ local theme = {
 
     -- header icon
     head = "TabHeader",
+    head_inverse = "TabHeaderInverse",
     -- footer icon
     tail = "TabFooter",
 
@@ -54,19 +55,22 @@ end
 
 ---@param tnum integer
 ---@param active_tnum integer
-local function get_tab_side_right(tnum, active_tnum, tab_cnt)
-    local tab_side_right = { "" }
+local function get_tab_side(tnum, active_tnum, tab_cnt)
+    local tab_side_right = {}
 
     if tnum == active_tnum then
+        tab_side_right[1] = ""
         tab_side_right.hl = tnum == tab_cnt
             and theme.side_active
             or theme.side_active_inverse
     elseif tnum == active_tnum - 1 then
+        tab_side_right[1] = ""
         tab_side_right.hl = theme.side_inverse
     elseif tnum ~= tab_cnt then
         tab_side_right[1] = ""
         tab_side_right.hl = theme.side_continous
     else
+        tab_side_right[1] = ""
         tab_side_right.hl = theme.side
     end
 
@@ -88,7 +92,7 @@ return function()
         return {
             {
                 { "  ", hl = theme.head },
-                line.sep("", theme.head, theme.fill),
+                line.sep("", theme.head, cur_active == 1 and theme.head_inverse or theme.fill),
             },
             tabs.foreach(function(tab)
                 local tnum = tab.number()
@@ -96,18 +100,14 @@ return function()
 
                 local hl = is_current and theme.active or theme.inactive
 
-                local tab_side_hl = is_current and theme.side_active or theme.side
-                local tab_side = { tnum == 1 and "" or "", hl = tab_side_hl }
-
                 local sign_hl = is_current and theme.icon_active or theme.icon
                 local sign = { " ", tab.current_win().file_icon(), "  ", hl = sign_hl }
 
                 return {
-                    tab_side,
                     sign,
                     str_digest(tab.name(), MAX_LEN),
                     tab.close_btn(" 󰅙 "),
-                    get_tab_side_right(tnum, cur_active, tab_cnt),
+                    get_tab_side(tnum, cur_active, tab_cnt),
                     hl = hl,
                 }
             end),
