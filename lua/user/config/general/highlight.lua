@@ -130,35 +130,69 @@ local highlight = vim.tbl_extend("keep", {
     TabBar = {
         bg = color.bg.dark,
     },
-    TabIcon = {
-        fg = color.fg.darker,
+
+    TabHeader = {
+        fg = color.fg.dark,
         bg = color.bg.light,
     },
-    TabStatus = {
+    TabFooter = {
         fg = color.fg.dark,
-        bg = color.bg.lighter,
+        bg = color.bg.light,
     },
+
     TabInactive = {
         fg = color.fg.darker,
-        bg = color.bg.dark,
+        bg = color.bg.normal,
     },
     TabActive = {
-        fg = color.bg.normal,
-        bg = color.blue.normal,
+        fg = color.bg.dark,
+        bg = color.yellow.normal,
+        bold = true,
     },
-    TabSign = {
-        fg = color.fg.darker,
+
+    TabSide = {
+        fg = color.bg.normal,
         bg = color.bg.dark,
     },
-    TabSignActive = {
+    TabSideInverse = {
         fg = color.bg.normal,
-        bg = color.blue.normal,
+        bg = color.yellow.normal,
     },
-    TabStatusSign = {
-        fg = color.fg.dark,
+    TabSideActive = {
+        fg = color.yellow.normal,
+        bg = color.bg.dark,
+    },
+    TabSideActiveInverse = {
+        fg = color.yellow.normal,
+        bg = color.bg.dark,
+    },
+    TabSideContinous = {
+        fg = color.bg.lightest,
+        bg = color.bg.normal,
+    },
+
+    TabIcon = {
+        fg = color.fg.darker,
+        bg = color.bg.normal,
+    },
+    TabIconActive = {
+        fg = color.bg.dark,
+        bg = color.yellow.normal,
+    },
+
+    TabWinTab = {
+        fg = color.fg.darker,
+        bg = color.bg.normal,
+    },
+    TabWinTabActive = {
+        fg = color.fg.normal,
         bg = color.bg.lighter,
     },
-    TabStatusSignActive = {
+    TabWinTabIcon = {
+        fg = color.fg.darker,
+        bg = color.bg.normal,
+    },
+    TabWinTabIconActive = {
         fg = color.fg.light,
         bg = color.bg.lighter,
     },
