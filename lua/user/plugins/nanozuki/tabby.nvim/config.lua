@@ -67,10 +67,10 @@ local function get_tab_side(tnum, active_tnum, tab_cnt)
         tab_side_right[1] = ""
         tab_side_right.hl = theme.side_inverse
     elseif tnum ~= tab_cnt then
-        tab_side_right[1] = ""
+        tab_side_right[1] = "╱"
         tab_side_right.hl = theme.side_continous
     else
-        tab_side_right[1] = ""
+        tab_side_right[1] = ""
         tab_side_right.hl = theme.side
     end
 
@@ -92,7 +92,7 @@ return function()
         return {
             {
                 { "  ", hl = theme.head },
-                line.sep("", theme.head, cur_active == 1 and theme.head_inverse or theme.fill),
+                line.sep("", theme.head, cur_active == 1 and theme.head_inverse or theme.inactive),
             },
             tabs.foreach(function(tab)
                 local tnum = tab.number()
@@ -101,7 +101,7 @@ return function()
                 local hl = is_current and theme.active or theme.inactive
 
                 local sign_hl = is_current and theme.icon_active or theme.icon
-                local sign = { " ", tab.current_win().file_icon(), "  ", hl = sign_hl }
+                local sign = { "  ", tab.current_win().file_icon(), "  ", hl = sign_hl }
 
                 return {
                     sign,

@@ -146,7 +146,7 @@ local highlight = vim.tbl_extend("keep", {
 
     TabInactive = {
         fg = color.fg.darker,
-        bg = color.bg.darker,
+        bg = color.bg.dark,
     },
     TabActive = {
         fg = color.bg.dark,
@@ -155,11 +155,11 @@ local highlight = vim.tbl_extend("keep", {
     },
 
     TabSide = {
-        fg = color.bg.lightest,
+        fg = color.bg.dark,
         bg = color.bg.darker,
     },
     TabSideInverse = {
-        fg = color.bg.darker,
+        fg = color.bg.dark,
         bg = color.yellow.normal,
     },
     TabSideActive = {
@@ -172,12 +172,12 @@ local highlight = vim.tbl_extend("keep", {
     },
     TabSideContinous = {
         fg = color.bg.lightest,
-        bg = color.bg.darker,
+        bg = color.bg.dark,
     },
 
     TabIcon = {
-        fg = color.fg.darker,
-        bg = color.bg.darker,
+        fg = color.fg.dark,
+        bg = color.bg.dark,
     },
     TabIconActive = {
         fg = color.bg.dark,
