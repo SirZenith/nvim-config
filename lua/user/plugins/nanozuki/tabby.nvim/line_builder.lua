@@ -153,7 +153,7 @@ end
 local function format_header(context)
     local side_fg = context.cur_tab_index == 1 and theme.tab_active.bg or theme.tab.bg;
     return {
-        { "  ", hl = theme.header },
+        { "  ", hl = theme.header },
         { "", hl = { fg = side_fg, bg = theme.header.bg } },
     }
 end
@@ -214,10 +214,10 @@ end
 
 ---@param context user.plugin.tabby.Context
 local function format_footer(context)
-    local side_fg = context.cur_win_index == context.win_cnt and theme.win_tab_active.bg or theme.win_tab.bg;
+    local side_bg = context.cur_win_index == context.win_cnt and theme.win_tab_active.bg or theme.win_tab.bg;
     return {
-        { "", hl = { fg = side_fg, bg = theme.header.bg } },
-        { " 󱂬 ", hl = theme.header },
+        { "", hl = { fg = theme.footer.bg, bg = side_bg } },
+        { " 󱂬 ", hl = theme.footer },
     }
 end
 

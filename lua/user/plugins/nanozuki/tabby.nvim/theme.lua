@@ -6,8 +6,12 @@ return {
     line_bg = color.bg.darker,
 
     header = {
-        fg = color.fg.dark,
-        bg = color.bg.light,
+        fg = color.white.normal,
+        bg = color.magenta.dark,
+    },
+    footer = {
+        fg = color.black.normal,
+        bg = color.orange.light,
     },
 
     tab = {
