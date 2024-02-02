@@ -187,7 +187,6 @@ end
 local function format_win_tabs(context)
     local wins = context.wins
     local cur_win_index = context.cur_win_index
-    local win_cnt = context.win_cnt
 
     local result = {}
 
