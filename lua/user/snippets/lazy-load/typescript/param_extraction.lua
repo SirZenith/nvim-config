@@ -72,6 +72,15 @@ local handler_map = {
         return visit_func(context, child_node)
     end,
 
+    optional_parameter = function(visit_func, context, node)
+        local pattern_node = node:field("pattern")[1]
+        if not pattern_node then
+            return nil
+        end
+
+        return visit_func(context, pattern_node)
+    end,
+
     program = function(visit_func, context, node)
         local pos = vim.api.nvim_win_get_cursor(0)
         local row, col = pos[1], pos[2]
@@ -130,4 +139,4 @@ function M.extract_param()
     return ts_util.visit_node_in_buffer(0, "typescript", handler_map)
 end
 
-return  M
+return M
