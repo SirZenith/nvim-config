@@ -42,7 +42,7 @@ user.plugin.toggleterm = {
     ---@type boolean
     persist_size = true,
     -- Remeber last used mode in terminal buffer until next time it gets opened.
-    persist_mode = true,
+    persist_mode = false,
 
     -- When neovim changes CWD, automatically change PWD of terminal on next
     -- time it gets opened.
