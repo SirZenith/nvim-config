@@ -292,6 +292,9 @@ local i_common_keymap = {
 ---@type KeyMap
 local v_common_keymap = {
     ["<C-y>"] = "<esc>",
+    -- Editing
+    ["<leader>p"] = "\"_dp",
+    ["<leader>d"] = "\"_d",
     -- Movement
     ["<leader>h"] = "^",
     ["<leader>l"] = "$",
