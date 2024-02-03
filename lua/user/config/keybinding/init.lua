@@ -265,6 +265,11 @@ local n_common_keymap = {
     ["<leader>l"] = "$",
     ["<leader>j"] = "+",
     ["<leader>k"] = "-",
+    -- page movement
+    ["<C-d>"] = "<C-d>zz",
+    ["<C-u>"] = "<C-u>zz",
+    ["<C-f>"] = "<C-d>zz",
+    ["<C-b>"] = "<C-b>zz",
     -- Jumping
     -- jumping in history position
     ["<C-h>"] = "<C-o>",
