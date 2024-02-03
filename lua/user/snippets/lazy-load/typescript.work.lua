@@ -733,8 +733,14 @@ cmd_snip.register(snip_filetype, {
         content = NEW_LABEL_INFO,
     },
     ["new logger"] = {
-        args = { "name" },
+        args = { { "name", is_optional = true } },
         content = function(name)
+            if not name then
+                local file_name = vim.api.nvim_buf_get_name(0)
+                file_name = vim.fs.basename(file_name) or ""
+                name = fs.remove_ext(file_name)
+            end
+
             return "const Log = LOGGING.logger('" .. name .. "');"
         end,
     },
