@@ -107,6 +107,10 @@ local specs = {
         dependencies = { "user.config.general" },
     },
     {
+        'ThePrimeagen/vim-be-good',
+        cmd = "VimBeGood",
+    },
+    {
         -- Markup language heading outline sidebar.
         "vim-voom/VOoM",
         ft = { "markdown", "html" },
