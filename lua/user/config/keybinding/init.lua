@@ -293,7 +293,7 @@ local i_common_keymap = {
 local v_common_keymap = {
     ["<C-y>"] = "<esc>",
     -- Editing
-    ["<leader>p"] = "\"_dp",
+    ["<leader>p"] = "\"_dP",
     ["<leader>d"] = "\"_d",
     -- Movement
     ["<leader>h"] = "^",
