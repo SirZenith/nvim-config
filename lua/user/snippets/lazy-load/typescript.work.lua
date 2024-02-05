@@ -424,6 +424,39 @@ cmd_snip.register(snip_filetype, {
     ["init data-model"] = {
         content = INIT_DATA_MODEL,
     },
+    ["init dialog"] = {
+        args = {
+            { "name", is_optional = true },
+        },
+        content = function(name)
+            if not name then
+                name = vim.api.nvim_buf_get_name(0)
+                name = fs.remove_ext(name)
+                name = vim.fs.basename(name) or ""
+            end
+
+            local panel_name = utils.underscore_to_camel_case(name)
+
+            return {
+                "import { UIText } from 'script_logic/base/ui_system/uiext/ui_text';",
+                "import { DialogTypeMap } from 'script_logic/ui/ui_dialog/dialog_info_map';",
+                "import { UIDialogBase } from 'script_logic/ui/ui_dialog/ui_dialog_base';",
+                "",
+                { "type ArgType = DialogTypeMap['", name,       "']['args'];" },
+                { "export class ",                 panel_name, " extends UIDialogBase<ArgType> {" },
+                "    protected initDialog(): void {",
+                "        super.initDialog();",
+                "",
+                "        const panelCheck = this.getGameObject('panel/panel_layout/item_check');",
+                "        panelCheck.setVisible(false);",
+                "",
+                "        const textDesc = this.getGameObject('panel/panel_layout/item_text/text_content', UIText);",
+                "        textDesc.setText(this.args.desc);",
+                "    }",
+                "}",
+            }
+        end,
+    },
     ["init event"] = {
         args = {
             { "name", is_optional = true },
