@@ -572,7 +572,7 @@ cmd_snip.register(snip_filetype, {
                 { "    panelName: '",                                    panel_name, "'," },
                 { "    panelDesc: '",                                    desc_index, "'," },
                 { "    prefabPath: '",                                   index(),    "'," },
-                { "    fullScreen: ",                                    index(),    "," },
+                { "    fullScreen: false," },
                 { "    sortOrderType: UI_COMMON.CANVAS_SORT_ORDER.MENU," },
                 "})",
                 "// eslint-disable-next-line @typescript-eslint/no-unused-vars",
