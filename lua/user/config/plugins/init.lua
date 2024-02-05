@@ -143,6 +143,7 @@ local specs = {
     },
     {
         "startup-nvim/startup.nvim",
+        enabled = false,
         dependencies = {
             "user.config.general",
             "nvim-telescope/telescope.nvim",
