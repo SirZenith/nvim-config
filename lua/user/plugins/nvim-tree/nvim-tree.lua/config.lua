@@ -145,5 +145,5 @@ return function()
 
     nvim_tree.setup(user.plugin.nvim_tree())
 
-    try_open_tree()
+    -- try_open_tree()
 end

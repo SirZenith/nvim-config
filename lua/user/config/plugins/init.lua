@@ -77,7 +77,13 @@ local specs = {
     },
     {
         "nvim-tree/nvim-tree.lua",
+        -- enabled = false,
         dependencies = { "nvim-tree/nvim-web-devicons" },
+        event = "VeryLazy",
+    },
+    {
+        -- A file explorer that allows you edit your file system as vim buffer.
+        "stevearc/oil.nvim",
         event = "VeryLazy",
     },
     {
@@ -105,6 +111,11 @@ local specs = {
         "akinsho/toggleterm.nvim",
         event = "VeryLazy",
         dependencies = { "user.config.general" },
+    },
+    {
+        -- Undo tree visualizer.
+        "mbbill/undotree",
+        event = "BufReadPre",
     },
     {
         'ThePrimeagen/vim-be-good',

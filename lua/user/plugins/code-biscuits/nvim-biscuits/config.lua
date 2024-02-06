@@ -31,6 +31,12 @@ user.plugin.nvim_biscuits = {
         "CursorHold",
         "CursorHoldI",
     },
+
+    language_config = {
+        help = {
+            disabled = true,
+        },
+    },
 }
 
 return function()
