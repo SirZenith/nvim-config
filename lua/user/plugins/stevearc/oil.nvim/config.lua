@@ -75,26 +75,29 @@ user.plugin.oil_nvim = {
     -- See :help oil-actions for a list of all available actions
     ---@type table<string, string | function | false>
     keymaps = {
-        ["<leader>?"] = "actions.show_help",
         ["<leader><esc>"] = "actions.close",
-        ["<leaser>s"] = "actions.change_sort",
-        ["<leader>\\"] = "actions.toggle_trash",
+        ["<leader>?"] = "actions.show_help",
+        ["<leader>s"] = "actions.change_sort",
         ["H"] = "actions.toggle_hidden",
-
-        ["<CR>"] = "actions.select",
-        ["<A-s>"] = "actions.select_vsplit",
-        ["<A-h>"] = "actions.select_split",
-        ["<A-t>"] = "actions.select_tab",
-
-        ["<A-p>"] = "actions.preview",
-        ["<leader>o"] = "actions.open_external",
-
         ["<C-l>"] = "actions.refresh",
 
+        ["Y"] = "actions.copy_entry_path",
+
+        -- Directory Naviagtion
         ["-"] = "actions.parent",
         ["<leader>."] = "actions.open_cwd",
         ["`"] = "actions.cd",
         ["~"] = "actions.tcd",
+
+        -- Open File
+        ["<CR>"] = "actions.select",
+        ["<A-s>"] = "actions.select_vsplit",
+        ["<A-h>"] = "actions.select_split",
+        ["<C-t>"] = "actions.select_tab",
+
+        ["<A-p>"] = "actions.preview",
+        ["<leader>x"] = "actions.open_external",
+        ["<leader>\\"] = "actions.toggle_trash",
     },
 
     -- Set to false to disable all of the above keymaps
