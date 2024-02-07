@@ -87,13 +87,6 @@ user.plugin.nvim_dap = {
             },
         },
     },
-    signs = {
-        DapBreakpoint          = { text = "●", texthl = "DapBreakpoint" },
-        DapBreakpointCondition = { text = "●", texthl = "DapBreakpointCondition" },
-        DapLogPoint            = { text = "●", texthl = "DapLogPoint" },
-        DapStopped             = { text = "→", texthl = "DapStopped", linehl = "DapStoppedLine" },
-        DapBreakpointRejected  = { text = "●", texthl = "DapBreakpointRejected" },
-    },
 }
 
 return function()
@@ -120,9 +113,5 @@ return function()
 
     for key, value in config.configurations:pairs() do
         dap.configurations[key] = value
-    end
-
-    for name, cfg in config.signs:pairs() do
-        vim.fn.sign_define(name, cfg)
     end
 end

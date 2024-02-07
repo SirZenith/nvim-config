@@ -4,6 +4,7 @@ local table_utils = require "user.utils.table"
 local functional = require "user.utils.functional"
 
 local highlight = require "user.config.general.highlight"
+local sign = require "user.config.general.sign"
 
 local augroup_id = vim.api.nvim_create_augroup("user.general", { clear = true })
 
@@ -215,6 +216,8 @@ user.general = {
     },
 }
 
+user.sign = sign
+
 user.theme.highlight = highlight.highlight
 
 -- ----------------------------------------------------------------------------
@@ -309,6 +312,10 @@ return function()
 
     for group, config in user.theme.highlight:pairs() do
         vim.api.nvim_set_hl(0, group, config)
+    end
+
+    for name, cfg in user.sign:pairs() do
+        vim.fn.sign_define(name, cfg)
     end
 
     -- disable all auto commenting.
