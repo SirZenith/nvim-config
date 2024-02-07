@@ -15,6 +15,8 @@ M.im_select = {
 
 -- ----------------------------------------------------------------------------
 
+user.env.FIREFOX_PATH = "C:/Program Files/Mozilla Firefox/firefox.exe"
+
 user.platform.windows = {
     __new_entry = true,
     nu_config_path = fs.path_join(user.env.HOME(), [[AppData\Roaming\nushell\config.nu]]),

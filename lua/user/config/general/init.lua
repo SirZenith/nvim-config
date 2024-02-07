@@ -88,8 +88,8 @@ user.option = {
         autoindent = true,
         cindent = true,
         -- Folding
-        foldmethod = "expr",
-        foldexpr = "nvim_treesitter#foldexpr()",
+        foldmethod = "manual",
+        -- foldexpr = "nvim_treesitter#foldexpr()",
         foldenable = true,
         foldnestmax = 4,
         -- set behaviour when buffer becomes invisible
@@ -128,7 +128,7 @@ user.option = {
         -- concealcursor = "n", -- in these mode, also conceals cursorline
 
         -- setup LSP display
-        cmdheight = 1,    -- height for command display area
+        cmdheight = 2,    -- height for command display area
         updatetime = 300, -- after certain timeout in millisecond, swap file will be written to disk
         -- display debug/diagnostic symbol in gutter
         -- `number` means share space with line number, don't create extra column
@@ -144,12 +144,12 @@ user.option = {
     },
     g = {
         python3_host_prog = user.env.PYTHON_PATH(),
-        loaded_netrwPlugin = 1, -- 禁用 Netrw
+        loaded_netrwPlugin = 1, -- disable Netrw
     }
 }
 
 user.general = {
-    locale = "zh_CN.UTF-8",
+    -- locale = "zh_CN.UTF-8",
     filetype = {
         -- disable soft tab for listed file types
         no_soft_tab = { "go", "make", "plantuml", "vlang" },
@@ -201,6 +201,10 @@ user.general = {
                 },
                 secondary = true,
             },
+            {
+                name = "plantuml",
+                pattern = "%.puml$",
+            },
         },
     },
     im_select = {
@@ -211,7 +215,7 @@ user.general = {
     },
 }
 
-user.theme.highlight = highlight
+user.theme.highlight = highlight.highlight
 
 -- ----------------------------------------------------------------------------
 

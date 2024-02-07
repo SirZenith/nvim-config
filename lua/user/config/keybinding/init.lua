@@ -1,7 +1,8 @@
 local api = vim.api
 local user = require "user"
-local functional = require "user.utils.functional"
-local panelpal = require "panelpal"
+local utils = require "user.utils"
+
+local import = utils.import
 
 local USER_TERMINAL_PANEL_BUF_NAME = "user.terminal"
 
@@ -38,12 +39,10 @@ user.keybinding = {
             "?.lua",
             "?.h",
             "?.hpp",
-            "user/plugins/?/config.lua",
+            "lua/user/plugins/?/config.lua",
         }
     },
 }
-
-local KEYBINDING_AUGROUP = api.nvim_create_augroup("user.keybinding", { clear = true })
 
 ---@param mode string
 ---@param from string
@@ -53,50 +52,29 @@ local function map(mode, from, to, opt)
     vim.keymap.set(mode, from, to, opt)
 end
 
----@param from string
----@param to string|function
----@param opt? table
-local function nmap(from, to, opt)
-    map("n", from, to, opt)
-end
-
----@param from string
----@param to string|function
----@param opt? table
-local function imap(from, to, opt)
-    map("i", from, to, opt)
-end
-
----@param from string
----@param to string|function
----@param opt? table
-local function vmap(from, to, opt)
-    map("v", from, to, opt)
-end
-
----@param from string
----@param to string|function
----@param opt? table
-local function tmap(from, to, opt)
-    map("t", from, to, opt)
-end
-
----@param from string
----@param to string|function
----@param opt? table
-local function cmap(from, to, opt)
-    map("c", from, to, opt)
-end
-
 local function toggle_quickfix()
-    local is_visible = functional.any(
-        panelpal.list_visible_buf(0),
-        function(_, buf) return vim.bo[buf].filetype == "qf" end
-    )
-    vim.cmd(is_visible and "cclose" or "copen")
+    local wins = api.nvim_tabpage_list_wins(0)
+    local target
+    for _, win in ipairs(wins) do
+        if api.nvim_win_is_valid(win) then
+            local buf = api.nvim_win_get_buf(win)
+
+            if vim.bo[buf].filetype == "qf" then
+                target = win
+            end
+        end
+    end
+
+    if target then
+        api.nvim_win_hide(target)
+    else
+        vim.cmd "copen"
+    end
 end
 
 local function toggle_terminal()
+    local panelpal = require "panelpal"
+
     local name = USER_TERMINAL_PANEL_BUF_NAME
     local buf_num, win_num = panelpal.find_buf_with_name(name)
 
@@ -105,14 +83,22 @@ local function toggle_terminal()
         vim.cmd("vsplit | terminal")
         vim.cmd("keepalt file " .. name)
         vim.cmd "startinsert"
+        win_num = api.nvim_get_current_win()
     elseif not win_num then
         -- not visible
         vim.cmd("vsplit")
-        local win = api.nvim_get_current_win()
-        api.nvim_win_set_buf(win, buf_num)
+        win_num = api.nvim_get_current_win()
+        api.nvim_win_set_buf(win_num, buf_num)
         vim.cmd "startinsert"
     else
         api.nvim_win_hide(win_num)
+        win_num = nil
+    end
+
+    if win_num then
+        local wo = vim.wo[win_num]
+        wo.number = false
+        wo.relativenumber = false
     end
 end
 
@@ -173,16 +159,60 @@ local function append_to_eol(contents)
     api.nvim_buf_set_text(0, row, col, row, col, contents)
 end
 
----@param filetype string|string[]
----@param mapto string|function
-local function register_build_mapping(filetype, mapto)
-    api.nvim_create_autocmd("FileType", {
-        group = KEYBINDING_AUGROUP,
-        pattern = filetype,
-        callback = function()
-            nmap("<A-b>", mapto, { buffer = true })
+local function close_all_win_in_cur_tab()
+    local all_wins = api.nvim_list_wins()
+    local win_cnt = 0
+    for _, win in ipairs(all_wins) do
+        if vim.api.nvim_win_get_config(win).relative == '' then
+            -- only counts non-floating window.
+            win_cnt = win_cnt + 1
         end
-    })
+    end
+
+    local wins = api.nvim_tabpage_list_wins(0)
+
+    local record = {}
+    local ask_for_quit = false
+    for _, win in ipairs(wins) do
+        if not api.nvim_win_is_valid(win) then
+            goto continue
+        end
+
+        local buf = api.nvim_win_get_buf(win)
+        local file = api.nvim_buf_get_name(buf)
+
+        local need_write = not record[file]
+        need_write = need_write and not vim.bo[buf].readonly
+        need_write = need_write and vim.bo[buf].modifiable
+        need_write = need_write and vim.fn.isdirectory(file) == 0
+        need_write = need_write and vim.fn.filewritable(file) ~= 0
+
+        if need_write then
+            api.nvim_win_call(win, function()
+                vim.cmd "w"
+            end)
+            record[file] = true
+        end
+
+        if win_cnt > 1 then
+            win_cnt = win_cnt - 1
+            api.nvim_win_hide(win)
+        else
+            ask_for_quit = true
+        end
+
+        ::continue::
+    end
+
+    if ask_for_quit then
+        vim.ui.input({ prompt = "Close last window and quit? (Y/N) " },
+            function(input)
+                if input and input:lower() == "y" then
+                    vim.cmd "q"
+                end
+            end
+        )
+    end
 end
 
 ---@alias KeyMap {[string]: string|function}
@@ -193,23 +223,7 @@ local n_common_keymap = {
     -- new tab
     ["<C-n>"] = "<cmd>tabnew<cr>",
     -- close tab
-    ["<A-w>"] = function()
-        local wins = api.nvim_tabpage_list_wins(0)
-
-        local record = {}
-        for _, win in ipairs(wins) do
-            local buf = api.nvim_win_get_buf(win)
-            local file = api.nvim_buf_get_name(buf)
-            if not record[file] and vim.fn.filewritable(file) == 1 then
-                api.nvim_set_current_win(win)
-                vim.cmd "w"
-                record[file] = true
-            end
-        end
-
-        local tabpages = api.nvim_list_tabpages()
-        vim.cmd(#tabpages > 1 and "tabclose" or "q")
-    end,
+    ["<A-w>"] = close_all_win_in_cur_tab,
     -- Editing
     ["<C-s>"] = "<cmd>w<cr>",
     ["dal"] = "0d$",
@@ -223,8 +237,6 @@ local n_common_keymap = {
     ["<A-down>"] = "ddp",
     -- Folding
     ["<Tab>"] = "za",
-    -- Buffer switching
-    ["<leader>b"] = ":buffer ",
     -- Searching
     ["<leader>sg"] = function()
         local target = vim.fn.input({ prompt = "Global Search: " })
@@ -253,6 +265,11 @@ local n_common_keymap = {
     ["<leader>l"] = "$",
     ["<leader>j"] = "+",
     ["<leader>k"] = "-",
+    -- page movement
+    ["<C-d>"] = "<C-d>zz",
+    ["<C-u>"] = "<C-u>zz",
+    ["<C-f>"] = "<C-d>zz",
+    ["<C-b>"] = "<C-b>zz",
     -- Jumping
     -- jumping in history position
     ["<C-h>"] = "<C-o>",
@@ -275,6 +292,9 @@ local i_common_keymap = {
 ---@type KeyMap
 local v_common_keymap = {
     ["<C-y>"] = "<esc>",
+    -- Editing
+    ["<leader>p"] = "\"_dP",
+    ["<leader>d"] = "\"_d",
     -- Movement
     ["<leader>h"] = "^",
     ["<leader>l"] = "$",
@@ -282,6 +302,8 @@ local v_common_keymap = {
     ["<leader>k"] = "-",
     -- Searching
     ["<leader>sg"] = function()
+        local panelpal = require "panelpal"
+
         local target = panelpal.visual_selection_text()
         if not target or #target == 0 then return end
         global_search(target)
@@ -315,23 +337,11 @@ local common_keymap = {
 -- ----------------------------------------------------------------------------
 
 return function()
-    -- ------------------------------------------------------------------------
-    -- Common mapping
+    import "user.config.keybinding.build_system"
 
     for mode, map_tbl in pairs(common_keymap) do
         for from, to in pairs(map_tbl) do
             map(mode, from, to)
         end
     end
-
-    -- ------------------------------------------------------------------------
-    -- Build System
-
-    -- vimtex
-    register_build_mapping("tex", "<cmd>w<cr><cmd>VimtexCompile<cr>")
-
-    -- VOom
-    register_build_mapping({ "markdown", "markdown.*" }, "<cmd>Voom markdown<cr>")
-    register_build_mapping("html", "<cmd>Voom html<cr>")
-    register_build_mapping("voomtree", "<cmd>VoomToggle<cr>")
 end

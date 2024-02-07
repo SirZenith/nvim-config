@@ -66,7 +66,13 @@ end
 ---@param failed_msg? string
 ---@return any?
 function M.import(modname, failed_msg)
-    local ok, result = xpcall(function() return require(modname) end, debug.traceback)
+    local ok, result = xpcall(function()
+        return require(modname)
+    end, function(err)
+        local thread = coroutine.running()
+        local traceback = debug.traceback(thread, err)
+        vim.notify(traceback or err, vim.log.levels.WARN)
+    end)
 
     local module
     if ok then
@@ -74,7 +80,7 @@ function M.import(modname, failed_msg)
     else
         if not failed_msg then
             vim.notify(result)
-        elseif #failed_msg > 0 then
+        elseif failed_msg ~= "" then
             vim.notify(failed_msg)
         end
     end
@@ -114,7 +120,11 @@ function M.finalize_module(module)
     end
 
     if type(final) == "function" then
-        xpcall(final, debug.traceback)
+        xpcall(final, function(err)
+            local thread = coroutine.running()
+            local traceback = debug.traceback(thread, err)
+            vim.notify(traceback or err, vim.log.levels.WARN)
+        end)
     end
 end
 
@@ -157,6 +167,19 @@ function M.arg_list_check(args, ...)
     end
 
     return nil, unpack(args)
+end
+
+-- notify shows notifycation.
+---@param msg string
+---@param level? string | integer # vim.log.levels
+---@param opt? table<string, any>
+function M.notify(msg, level, opt)
+    local notify = M.import "notify"
+    if notify then
+        notify(msg, level, opt)
+    else
+        vim.notify(msg)
+    end
 end
 
 return M

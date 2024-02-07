@@ -22,7 +22,7 @@ return {
         else
             fallback()
         end
-    end, { "i", "s" }),
+    end, { "c", "i", "s" }),
     ["<S-tab>"] = cmp.mapping(function(fallback)
         if cmp.visible() then
             cmp.select_prev_item()
@@ -31,7 +31,7 @@ return {
         else
             fallback()
         end
-    end, { "i", "s" }),
+    end, { "c", "i", "s" }),
     -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
     ["<cr>"] = cmp.mapping.confirm { select = true },
     ["<C-b>"] = cmp.mapping(cmp.mapping.scroll_docs(-4), { "i", "c" }),

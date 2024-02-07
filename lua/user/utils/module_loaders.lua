@@ -2,13 +2,13 @@ local fs = require "user.utils.fs"
 local workspace = require "user.workspace"
 
 local M = {}
-M.config_home = nil
+M.user_runtime_path = nil
 
 M.loaders = {
     ---@param modulename string
     no_dot_substiting_loader = function(modulename)
-        local errmsg = ""
-        local err_template = "%s\n\tno file '%s' (no dot-sub loader)"
+        local errmsg = { "" }
+        local err_template = "no file '%s' (no dot-sub loader)"
 
         for path in string.gmatch(package.path, "([^;]+)") do
             local filename = string.gsub(path, "%?", modulename)
@@ -17,23 +17,24 @@ M.loaders = {
                 local content = assert(file:read("*a"))
                 return assert(loadstring(content, filename))
             end
-            errmsg = err_template:format(errmsg, path)
+            table.insert(errmsg, err_template:format(filename))
         end
-        return errmsg
+
+        return table.concat(errmsg, "\n\t")
     end,
 
     ---@param modulename string
     plugin_config_loader = function(modulename)
-        local config_home = M.config_home
+        local user_runtime_path = M.user_runtime_path
 
-        local errmsg = ""
-        local err_template = "%s\n\tno file '%s' (plugin config loader)"
+        local errmsg = { "" }
+        local err_template = "no file '%s' (plugin config loader)"
 
         local paths = {
             fs.path_join(modulename),
-            fs.path_join(config_home, modulename),
-            fs.path_join(config_home, modulename .. ".lua"),
-            fs.path_join(config_home, modulename, "init.lua"),
+            fs.path_join(user_runtime_path, modulename),
+            fs.path_join(user_runtime_path, modulename .. ".lua"),
+            fs.path_join(user_runtime_path, modulename, "init.lua"),
         }
 
         for i = 1, #paths do
@@ -43,21 +44,21 @@ M.loaders = {
                 local content = assert(file:read("*a"))
                 return assert(loadstring(content, path))
             end
-            errmsg = err_template:format(errmsg, path)
+            table.insert(errmsg, err_template:format(path))
         end
 
-        return errmsg
+        return table.concat(errmsg, "\n\t")
     end,
 
     ---@param raw_modulename string
     workspace_loader = function(raw_modulename)
         local dirname = workspace.WORKSPACE_CONFIG_DIR_NAME
         if raw_modulename:sub(1, #dirname) ~= dirname then
-            return "\n\tworkspace loader only works for modules under .nvim namespace."
+            return "\n\tnot a module under .nvim directory (workspace loader)"
         end
 
-        local errmsg = ""
-        local err_template = "%s\n\tno file '%s' (workspace loader)"
+        local errmsg = { "" }
+        local err_template = "no file '%s' (workspace loader)"
 
         local modulename = raw_modulename:gsub("%.", fs.PATH_SEP)
         do
@@ -78,15 +79,15 @@ M.loaders = {
             if file then
                 return assert(loadstring(assert(file:read("*a")), path))
             end
-            errmsg = err_template:format(errmsg, path)
+            table.insert(errmsg, err_template:format(path))
         end
 
-        return errmsg
+        return table.concat(errmsg, "\n\t")
     end,
 }
 
 function M.setup(options)
-    M.config_home = options.config_home
+    M.user_runtime_path = options.user_runtime_path
 
     for _, loader in pairs(M.loaders) do
         table.insert(package.loaders, loader)

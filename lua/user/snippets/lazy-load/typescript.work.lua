@@ -1,12 +1,14 @@
 local utils = require "user.utils"
+local fs = require "user.utils.fs"
+local snip_utils = require "user.utils.snippet"
 local table_utils = require "user.utils.table"
 local cmd_snip = require "cmd-snippet"
 
 local snip_filetype = "typescript"
 local s = require("snippet-loader.utils")
-local makers = s.snippet_makers(snip_filetype)
+-- local makers = s.snippet_makers(snip_filetype)
 -- local sp = makers.sp
-local asp = makers.asp
+-- local asp = makers.asp
 -- local psp = makers.psp
 -- local apsp = makers.apsp
 
@@ -22,7 +24,10 @@ local asp = makers.asp
 
 ---@class Node
 
+-- Make a function snipppet node which converts content of given index node to
+-- camel case.
 ---@param index number
+---@return any
 local function to_camel(index)
     return s.f(function(args)
         return utils.underscore_to_camel_case(args[1][1])
@@ -33,6 +38,27 @@ end
 ---@return string
 local function first_char_upper(str)
     return str:sub(1, 1):upper() .. str:sub(2)
+end
+
+-- Generate panel name and class name by file name.
+---@param index_gen fun(): integer # index generator
+---@return  string | integer panel_name
+---@return string | any class_name
+local function get_panel_name_from_file_name(index_gen)
+    local file_name = vim.api.nvim_buf_get_name(0)
+    file_name = fs.remove_ext(file_name)
+    file_name = vim.fs.basename(file_name) or ""
+
+    local panel_name, class_name
+    if file_name ~= "" then
+        panel_name = file_name
+        class_name = utils.underscore_to_camel_case(panel_name)
+    else
+        panel_name = index_gen()
+        class_name = to_camel(panel_name)
+    end
+
+    return panel_name, class_name
 end
 
 -- ----------------------------------------------------------------------------
@@ -122,7 +148,35 @@ local DMFieldTypeInfo = {
     specDict = { "idkey", "valueType", "category" },
 }
 
+local ACCESS_MODIFIER_SET = {
+    private = true,
+    protected = true,
+    public = true,
+}
+
 -- ----------------------------------------------------------------------------
+
+local HANDLER_ROLE_INFOCACHE_UPATE = {
+    "private onUpdateInfoCache(updateIdTbl: Record<string, boolean>): void {",
+    "    for (const id of list) {",
+    "        if (updateIdTbl[id]) {",
+    "            // do something",
+    "            return;",
+    "        }",
+    "    }",
+    "}",
+}
+
+local HANDLER_CLAN_INFOCACHE_UPATE = {
+    "private onUpdateClanInfoCache(updateIdTbl: Record<string, boolean>): void {",
+    "    for (const id of list) {",
+    "        if (updateIdTbl[id]) {",
+    "            // do something",
+    "            return;",
+    "        }",
+    "    }",
+    "}",
+}
 
 local INIT_DATA_MODEL = {
     "import { setDataModel } from '../base/struct_helper';",
@@ -137,114 +191,6 @@ local INIT_GM = {
     { "    rootKey: '", 1, "'," },
     "    childrens: {},",
     "};",
-}
-
-local INIT_LABEL_VIEW = {
-    "import { uiRegister } from 'script_logic/base/ui_system/ui_class_map';",
-    "import { UI_COMMON } from 'script_logic/base/ui_system/ui_common';",
-    "import { LOGGING } from 'script_logic/common/base/logging';",
-    "import { UILabelView } from 'script_logic/base/ui_system/label_view/ui_label_view';",
-    "import { ILabelInfo } from 'script_logic/base/ui_system/label_view/label_view_interface';",
-    "",
-    { "const Log = LOGGING.logger('", 1, "');" },
-    "",
-    "const enum LabelType {}",
-    "",
-    "const LABEL_INFO_LIST: ILabelInfo[] = [];",
-    "",
-    "/**",
-    { " * ",                          2 },
-    " */",
-    "@uiRegister({",
-    { "    panelName: '",                                    1, "'," },
-    { "    panelDesc: '",                                    2, "'," },
-    { "    prefabPath: '",                                   3, "'," },
-    { "    fullScreen: ",                                    4, "," },
-    { "    sortOrderType: UI_COMMON.CANVAS_SORT_ORDER.MENU," },
-    "})",
-    "// eslint-disable-next-line @typescript-eslint/no-unused-vars",
-    { "export class ", to_camel(1), " extends UILabelView {" },
-    "    protected onInit(): void {}",
-    "",
-    "    protected prepareLabelInfo(): void {",
-    "        this._labelInfoDict = new Map<number, ILabelInfo>();",
-    "",
-    "        for (const labelInfo of LABEL_INFO_LIST) {",
-    "            this._labelInfoDict.set(labelInfo.labelType!, labelInfo);",
-    "        }",
-    "",
-    "        this.defaultLabelType = null;",
-    "    }",
-    "",
-    "    protected initEvents(): void {}",
-    "",
-    "    protected onClose(): void {}",
-    "}",
-}
-
-local INIT_PANEL = {
-    "import { S } from 'script_logic/base/global/singleton';",
-    "import { UIBase } from 'script_logic/base/ui_system/ui_base';",
-    "import { uiRegister } from 'script_logic/base/ui_system/ui_class_map';",
-    "import { UI_COMMON } from 'script_logic/base/ui_system/ui_common';",
-    "import { LOGGING } from 'script_logic/common/base/logging';",
-    "",
-    { "const Log = LOGGING.logger('", 1, "');" },
-    "",
-    "/**",
-    { " * ",                          2 },
-    " */",
-    "@uiRegister({",
-    { "    panelName: '",                                    1, "'," },
-    { "    panelDesc: '",                                    2, "'," },
-    { "    prefabPath: '",                                   3, "'," },
-    { "    fullScreen: ",                                    4, "," },
-    { "    sortOrderType: UI_COMMON.CANVAS_SORT_ORDER.MENU," },
-    "})",
-    "// eslint-disable-next-line @typescript-eslint/no-unused-vars",
-    { "export class ", to_camel(1), " extends UIBase {" },
-    "    protected onInit(): void {}",
-    "",
-    "    protected initEvents(): void {}",
-    "",
-    "    protected onShow(): void {}",
-    "",
-    "    protected onClose(): void {}",
-    "}",
-}
-
-local INIT_TIPS = {
-    "import { LOGGING } from 'script_logic/common/base/logging';",
-    "import { TipsTypeMap } from 'script_logic/ui/ui_tips/tips_info_map';",
-    "import { UITipsWidgetBase } from 'script_logic/ui/ui_tips/ui_tips_base';",
-    "",
-    { "const Log = LOGGING.logger('",   1,           "');" },
-    "",
-    { "type UITipsArg = TipsTypeMap['", 1,           "']['args'];" },
-    { "export class ",                  to_camel(1), " extends UITipsWidgetBase<UITipsArg> {" },
-    "    public getCustomPreloadAssetList(): string[] {",
-    "        return [];",
-    "    }",
-    "",
-    "    protected initTips(): void {}",
-    "}",
-}
-
-local INIT_SUB_PANEL = {
-    "import { LOGGING } from 'script_logic/common/base/logging';",
-    "import { UISubView } from 'script_logic/base/ui_system/label_view/ui_sub_view';",
-    "",
-    { "const Log = LOGGING.logger('", 1,           "');" },
-    "",
-    { "export class ",                to_camel(1), " extends UISubView {" },
-    "    protected onInit(): void {}",
-    "",
-    "    protected initEvents(): void {}",
-    "",
-    "    protected onShow(): void {}",
-    "",
-    "    protected onClose(): void {}",
-    "}",
 }
 
 local NEW_ADS = {
@@ -338,7 +284,7 @@ layer.setTouchEvent(this.close.bind(this));
 
 -- ----------------------------------------------------------------------------
 
-cmd_snip.register {
+cmd_snip.register(snip_filetype, {
     ["dm fd"] = {
         args = { "name", "index", "type" },
         content = function(name, index, type)
@@ -367,6 +313,7 @@ cmd_snip.register {
             return ("setDataModel('%s', '%s', {});"):format(name, desc)
         end,
     },
+
     fn = {
         args = { "modifier-or-name", { "name", is_optional = true } },
         content = function(modifier_or_name, name)
@@ -381,6 +328,7 @@ cmd_snip.register {
             return result
         end,
     },
+
     ["get keys"] = {
         content = {
             { "const keys = Object.keys(", 1, ");" },
@@ -391,6 +339,7 @@ cmd_snip.register {
             { "const values = Object.values(", 1, ");" },
         }
     },
+
     gg = {
         -- get game object of type
         args = { "class-alias", "variable", "object" },
@@ -413,11 +362,18 @@ cmd_snip.register {
             return ("const %s = %s.getGameObject('${1}', %s);"):format(variable, object, class_name)
         end,
     },
+
+    ["handler role-infocache-update"] = {
+        content = HANDLER_ROLE_INFOCACHE_UPATE,
+    },
+    ["handler clan-infocache-update"] = {
+        content = HANDLER_CLAN_INFOCACHE_UPATE,
+    },
+
     ["import event"] = {
         args = { "name" },
         content = function(name)
-            local module_name = name .. "_event";
-            return ("import { %s } from 'script_logic/event/%s';"):format(module_name:upper(), module_name)
+            return ("import { %s } from 'script_logic/event/%s';"):format(name:upper(), name)
         end,
     },
     ["import gm"] = {
@@ -464,23 +420,64 @@ cmd_snip.register {
             return ("import { %s } from 'script_logic/common/utils/%s';"):format(symbol, name)
         end,
     },
-    ["init data_model"] = {
+
+    ["init data-model"] = {
         content = INIT_DATA_MODEL,
     },
-    ["init event"] = {
-        args = { "name" },
+    ["init dialog"] = {
+        args = {
+            { "name", is_optional = true },
+        },
         content = function(name)
-            local event_name = name .. "_event"
+            if not name then
+                name = vim.api.nvim_buf_get_name(0)
+                name = fs.remove_ext(name)
+                name = vim.fs.basename(name) or ""
+            end
+
+            local panel_name = utils.underscore_to_camel_case(name)
+
+            return {
+                "import { UIText } from 'script_logic/base/ui_system/uiext/ui_text';",
+                "import { DialogTypeMap } from 'script_logic/ui/ui_dialog/dialog_info_map';",
+                "import { UIDialogBase } from 'script_logic/ui/ui_dialog/ui_dialog_base';",
+                "",
+                { "type ArgType = DialogTypeMap['", name,       "']['args'];" },
+                { "export class ",                 panel_name, " extends UIDialogBase<ArgType> {" },
+                "    protected initDialog(): void {",
+                "        super.initDialog();",
+                "",
+                "        const panelCheck = this.getGameObject('panel/panel_layout/item_check');",
+                "        panelCheck.setVisible(false);",
+                "",
+                "        const textDesc = this.getGameObject('panel/panel_layout/item_text/text_content', UIText);",
+                "        textDesc.setText(this.args.desc);",
+                "    }",
+                "}",
+            }
+        end,
+    },
+    ["init event"] = {
+        args = {
+            { "name", is_optional = true },
+        },
+        content = function(name)
+            if not name then
+                name = vim.api.nvim_buf_get_name(0)
+                name = fs.remove_ext(name)
+                name = vim.fs.basename(name) or ""
+            end
+
             return {
                 "import { CustomEventEmitter, EVENT_EMITTER, IEvent } from 'script_logic/common/base/event_emitter';",
                 "interface ICustomEvent extends IEvent {",
-                { "    name: '",       event_name,         "';" },
+                { "    name: '",       name,         "';" },
                 "    events: {};",
                 "}",
                 "",
                 "type TYPE_CUSTOM = CustomEventEmitter<ICustomEvent>;",
                 "",
-                { "export namespace ", event_name:upper(), " {" },
+                { "export namespace ", name:upper(), " {" },
                 "    export type eventEmitterType = TYPE_CUSTOM;",
                 "",
                 "    export type eventType = ICustomEvent;",
@@ -493,15 +490,148 @@ cmd_snip.register {
     ["init gm"] = {
         content = INIT_GM,
     },
-    ["init label_view"] = {
-        content = INIT_LABEL_VIEW,
+    ["init label-view"] = {
+        content = function()
+            local index = snip_utils.new_jump_index()
+            local panel_name, class_name = get_panel_name_from_file_name(index)
+            local desc_index = index()
+
+            return {
+                "import { uiRegister } from 'script_logic/base/ui_system/ui_class_map';",
+                "import { UI_COMMON } from 'script_logic/base/ui_system/ui_common';",
+                "import { LOGGING } from 'script_logic/common/base/logging';",
+                "import { UILabelView } from 'script_logic/base/ui_system/label_view/ui_label_view';",
+                "import { ILabelInfo } from 'script_logic/base/ui_system/label_view/label_view_interface';",
+                "import { COMMON_CONST } from 'script_logic/common/common_const';",
+                "",
+                { "const Log = LOGGING.logger('", panel_name, "');" },
+                "",
+                "const LABEL_INFO_LIST: ILabelInfo[] = [];",
+                "",
+                "/**",
+                { " * ",                          desc_index },
+                " */",
+                "@uiRegister({",
+                { "    panelName: '",                                    panel_name, "'," },
+                { "    panelDesc: '",                                    desc_index, "'," },
+                { "    prefabPath: '",                                   index(),    "'," },
+                { "    fullScreen: ",                                    index(),    "," },
+                { "    sortOrderType: UI_COMMON.CANVAS_SORT_ORDER.MENU," },
+                "})",
+                "// eslint-disable-next-line @typescript-eslint/no-unused-vars",
+                { "export class ", class_name, " extends UILabelView {" },
+                "    protected onInit(): void {}",
+                "",
+                "    protected prepareLabelInfo(): void {",
+                "        this._labelInfoDict = new Map<number, ILabelInfo>();",
+                "",
+                "        const totalCnt = LABEL_INFO_LIST.length;",
+                "        for (let index = 0; index < totalCnt; index++) {",
+                "            const baseInfo = LABEL_INFO_LIST[index];",
+                "            const labelInfo = {",
+                "                ...baseInfo,",
+                "                showOrder: index + COMMON_CONST.ONE,",
+                "            };",
+                "            this._labelInfoDict.set(labelInfo.labelType!, labelInfo);",
+                "        }",
+                "",
+                "        this.defaultLabelType = null;",
+                "    }",
+                "",
+                "    protected initEvents(): void {}",
+                "",
+                "    protected onClose(): void {}",
+                "}",
+            }
+        end,
     },
     ["init panel"] = {
-        content = INIT_PANEL,
+        content = function()
+            local index = snip_utils.new_jump_index()
+            local panel_name, class_name = get_panel_name_from_file_name(index)
+            local desc_index = index()
+
+            return {
+                "import { S } from 'script_logic/base/global/singleton';",
+                "import { UIBase } from 'script_logic/base/ui_system/ui_base';",
+                "import { uiRegister } from 'script_logic/base/ui_system/ui_class_map';",
+                "import { UI_COMMON } from 'script_logic/base/ui_system/ui_common';",
+                "import { LOGGING } from 'script_logic/common/base/logging';",
+                "",
+                { "const Log = LOGGING.logger('", panel_name, "');" },
+                "",
+                "/**",
+                { " * ",                          desc_index },
+                " */",
+                "@uiRegister({",
+                { "    panelName: '",                                    panel_name, "'," },
+                { "    panelDesc: '",                                    desc_index, "'," },
+                { "    prefabPath: '",                                   index(),    "'," },
+                { "    fullScreen: ",                                    index(),    "," },
+                { "    sortOrderType: UI_COMMON.CANVAS_SORT_ORDER.MENU," },
+                "})",
+                "// eslint-disable-next-line @typescript-eslint/no-unused-vars",
+                { "export class ", class_name, " extends UIBase {" },
+                "    protected onInit(): void {}",
+                "",
+                "    protected initEvents(): void {}",
+                "",
+                "    protected onShow(): void {}",
+                "",
+                "    protected onClose(): void {}",
+                "}",
+            }
+        end,
+    },
+    ["init popup"] = {
+        content = function()
+            local index = snip_utils.new_jump_index()
+            local panel_name, class_name = get_panel_name_from_file_name(index)
+            local desc_index = index()
+
+            return {
+                "import { S } from 'script_logic/base/global/singleton';",
+                "import { UIMenuBase } from 'script_logic/base/ui_system/ui_menu_base';",
+                "import { uiRegister } from 'script_logic/base/ui_system/ui_class_map';",
+                "import { UI_COMMON } from 'script_logic/base/ui_system/ui_common';",
+                "import { LOGGING } from 'script_logic/common/base/logging';",
+                "",
+                { "const Log = LOGGING.logger('", panel_name, "');" },
+                "",
+                "/**",
+                { " * ",                          desc_index },
+                " */",
+                "@uiRegister({",
+                { "    panelName: '",                                    panel_name, "'," },
+                { "    panelDesc: '",                                    desc_index, "'," },
+                { "    prefabPath: '",                                   index(),    "'," },
+                { "    fullScreen: false," },
+                { "    sortOrderType: UI_COMMON.CANVAS_SORT_ORDER.MENU," },
+                "})",
+                "// eslint-disable-next-line @typescript-eslint/no-unused-vars",
+                { "export class ", class_name, " extends UIMenuBase {" },
+                "    protected onInit(): void {}",
+                "",
+                "    protected initEvents(): void {}",
+                "",
+                "    protected onShow(): void {}",
+                "",
+                "    protected onClose(): void {}",
+                "}",
+            }
+        end,
     },
     ["init rolemodule"] = {
-        args = { "name" },
+        args = {
+            { "name", is_optional = true },
+        },
         content = function(name)
+            if not name then
+                name = vim.api.nvim_buf_get_name(0)
+                name = fs.remove_ext(name)
+                name = vim.fs.basename(name) or ""
+            end
+
             return {
                 { "export namespace ", name:upper(), " {" },
                 "    // --------- 通用玩家单例方法 begin-------",
@@ -519,12 +649,51 @@ cmd_snip.register {
             }
         end,
     },
-    ["init sub_panel"] = {
-        content = INIT_SUB_PANEL,
+    ["init sub-view"] = {
+        content = function()
+            local index = snip_utils.new_jump_index()
+            local panel_name, class_name = get_panel_name_from_file_name(index)
+            return {
+                "import { LOGGING } from 'script_logic/common/base/logging';",
+                "import { UISubView } from 'script_logic/base/ui_system/label_view/ui_sub_view';",
+                "",
+                { "const Log = LOGGING.logger('", panel_name, "');" },
+                "",
+                { "export class ",                class_name, " extends UISubView {" },
+                "    protected onInit(): void {}",
+                "",
+                "    protected initEvents(): void {}",
+                "",
+                "    protected onShow(): void {}",
+                "",
+                "    protected onClose(): void {}",
+                "}",
+            }
+        end,
     },
     ["init tips"] = {
-        content = INIT_TIPS,
+        content = function()
+            local index = snip_utils.new_jump_index()
+            local panel_name, class_name = get_panel_name_from_file_name(index)
+            return {
+                "import { LOGGING } from 'script_logic/common/base/logging';",
+                "import { TipsTypeMap } from 'script_logic/ui/ui_tips/tips_info_map';",
+                "import { UITipsWidgetBase } from 'script_logic/ui/ui_tips/ui_tips_base';",
+                "",
+                { "const Log = LOGGING.logger('",   panel_name, "');" },
+                "",
+                { "type UITipsArg = TipsTypeMap['", panel_name, "']['args'];" },
+                { "export class ",                  class_name, " extends UITipsWidgetBase<UITipsArg> {" },
+                "    public getCustomPreloadAssetList(): string[] {",
+                "        return [];",
+                "    }",
+                "",
+                "    protected initTips(): void {}",
+                "}",
+            }
+        end,
     },
+
     ["gm arg"] = {
         args = { "name" },
         content = function(name)
@@ -565,14 +734,22 @@ cmd_snip.register {
             return buffer
         end,
     },
+
     method = {
         args = { "modifier-or-name", { "name", is_optional = true } },
         content = function(modifier_or_name, name)
-            local modifier = name and modifier_or_name or "private"
-            name = name or modifier_or_name
-            return modifier .. " " .. name .. "(${2}): ${1:void} {}"
+            if name then
+                return modifier_or_name .. " " .. name .. "(${2}): ${1:void} {}"
+            end
+
+            if ACCESS_MODIFIER_SET[modifier_or_name] then
+                return modifier_or_name .. " ${1}(): void {}"
+            end
+
+            return "private " .. modifier_or_name .. "(${2}): ${1:void} {}"
         end,
     },
+
     ["new ads"] = {
         args = { "ads_name", "ads_desc_name" },
         content = function(ads_name, ads_desc_name)
@@ -582,17 +759,28 @@ cmd_snip.register {
             })
         end,
     },
-    ["new close_btn"] = {
+    ["new close-btn"] = {
         content = NEW_CLOSE_BTN,
     },
-    ["new label_info"] = {
+    ["new label-info"] = {
         content = NEW_LABEL_INFO,
     },
     ["new logger"] = {
-        args = { "name" },
+        args = { { "name", is_optional = true } },
         content = function(name)
+            if not name then
+                local file_name = vim.api.nvim_buf_get_name(0)
+                file_name = vim.fs.basename(file_name) or ""
+                name = fs.remove_ext(file_name)
+            end
+
             return "const Log = LOGGING.logger('" .. name .. "');"
         end,
+    },
+    ["new module-event"] = {
+        content = {
+            { "this.registerModuleListener('", 1, "', '", 2, "', this.on", 2, ".bind(this));" },
+        }
     },
     ["new reddot"] = {
         args = { "name" },
@@ -603,6 +791,20 @@ cmd_snip.register {
                 { "const ",  key_name,               " = ",                         1,        " + '", name, "';" },
                 { "const ",  node_name,              " = reddotMgr.addNodeByPath(", key_name, ", '",  2,    "');" },
                 { node_name, ".setCheckFunc(() => {" },
+                "    return false;",
+                "});",
+            }
+        end,
+    },
+    ["new reddot-root"] = {
+        content = function()
+            local name = "root"
+            local key_name = name .. "Key"
+            local node_name = name .. "Node"
+            return {
+                { "const ",  key_name,                   " = localPrefix;" },
+                { "const ",  node_name,                  " = reddotMgr.addNodeByPath(", key_name, ", '", 1, "');" },
+                { node_name, ".setCheckOpenFunc(() => {" },
                 "    return false;",
                 "});",
             }
@@ -657,7 +859,7 @@ cmd_snip.register {
             return {
                 "private init" .. name .. "Timer(): void {",
                 "    this.cancel" .. name .. "Timer();",
-                { "    this.timer" .. name .. " = TIMER.", 1, "();" },
+                { "    this.timer" .. name .. " = TIMER.addTimer();" },
                 "}",
                 "",
                 "private cancel" .. name .. "Timer(): void {",
@@ -669,9 +871,29 @@ cmd_snip.register {
             }
         end,
     },
-    ["new touch_close"] = {
+    ["new repeat-timer"] = {
+        args = { "name" },
+        content = function(name)
+            name = first_char_upper(name)
+            return {
+                "private init" .. name .. "Timer(): void {",
+                "    this.cancel" .. name .. "Timer();",
+                { "    this.timer" .. name .. " = TIMER.addRepeatTimer();" },
+                "}",
+                "",
+                "private cancel" .. name .. "Timer(): void {",
+                "    if (this.timer" .. name .. ") {",
+                "        TIMER.clearRepteatTimer(this.timer" .. name .. ");",
+                "        this.timer" .. name .. " = null;",
+                "    }",
+                "}",
+            }
+        end,
+    },
+    ["new touch-close"] = {
         content = NEW_TOUCH_CLOSE_LAYER,
     },
+
     ["spine new"] = {
         content = {
             { "const panelModel = this.getGameObject('", 1, "');" },
@@ -699,4 +921,4 @@ cmd_snip.register {
             "});",
         },
     },
-}
+})

@@ -1,5 +1,9 @@
 local user = require "user"
 
+user.plugin.nvim_cmp = {
+    __new_entry = true,
+}
+
 return function()
     local cmp = require "cmp"
     local luasnip = require "luasnip"
@@ -7,7 +11,6 @@ return function()
     local mapping = require "user.plugins.hrsh7th.nvim-cmp.mapping"
 
     user.plugin.nvim_cmp = {
-        __new_entry = true,
         window = {
             completion = {
                 border = "shadow",
@@ -85,13 +88,17 @@ return function()
 
     -- File type scpecific completion
 
-    cmp.setup.filetype("FineCmdlinePrompt", {
-        sources = cmp.config.sources({
-            { name = "path" },
-        }, {
-            { name = "cmdline" },
-        })
+    cmp.setup.filetype({ "dap-repl", "dapui_watches", "dapui_hover" }, {
+        sources = {
+            { name = "dap" },
+        },
     })
+    --[[ -- cmp_dap
+    cmp.setup {
+        enabled = function()
+            return vim.bo.buftype ~= "prompt" or require("cmp_dap").is_dap_buffer()
+        end
+    } ]]
 
     return true
 end

@@ -70,6 +70,7 @@ local function on_plugins_loaded()
         import "user.config.general",
         import "user.config.keybinding",
         import "user.config.command",
+        import "user.config.lsp",
         import "user.config.platforms",
 
         -- workspace config
@@ -82,12 +83,35 @@ local function on_plugins_loaded()
     dump_user_config_meta()
 end
 
+local function show_editor_state()
+    local msg_buffer = {}
+
+    local time = require("lazy").stats().startuptime
+    table.insert(msg_buffer, "startup time: " .. tostring(time) .. "ms")
+
+    local workspace = import "user.workspace"
+    if workspace and workspace.is_workspace_confg_loaded() then
+        table.insert(msg_buffer, "workspace configuration loaded.")
+    end
+
+    local msg = table.concat(msg_buffer, "\n")
+    utils.notify(msg, vim.log.levels.INFO, {
+        title = "Editor State",
+        timeout = 800,
+        animated = false,
+    })
+end
+
+-- ----------------------------------------------------------------------------
+
 rawset(user, "finalize", function()
     chdir()
 
+    vim.g.loaded_netrwPlugin = 1 -- disable Netrw
+
     -- loading custom loader
     require "user.utils.module_loaders".setup {
-        config_home = user.env.USER_RUNTIME_PATH(),
+        user_runtime_path = user.env.USER_RUNTIME_PATH(),
     }
 
     -- wait for plugins get loaded
@@ -96,6 +120,12 @@ rawset(user, "finalize", function()
         group = finalize_augroup,
         pattern = "LazyDone",
         callback = on_plugins_loaded,
+    })
+
+    vim.api.nvim_create_autocmd("User", {
+        group = finalize_augroup,
+        pattern = "LazyVimStarted",
+        callback = show_editor_state,
     })
 
     -- load plugins

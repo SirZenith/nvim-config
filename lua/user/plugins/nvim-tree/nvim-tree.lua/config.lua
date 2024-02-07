@@ -1,10 +1,14 @@
 local user = require "user"
 
--- return false when nvim is started with name of file as arguments.
+-- Return `true` when nvim is started with one directory path as argument.
+---@return boolean need_open
 local function check_need_open_tree()
-    local output = vim.api.nvim_command_output "args"
+    local output = vim.api.nvim_exec2("args", { output = true }).output or ""
+
     local cur_file = output:match("%[(.+)%]")
-    return vim.fn.filereadable(cur_file) ~= 1
+    if not cur_file then return false end
+
+    return vim.fn.isdirectory(cur_file) == 1
 end
 
 local function try_open_tree()
@@ -25,8 +29,8 @@ user.plugin.nvim_tree = {
     update_cwd = true,
     hijack_unnamed_buffer_when_opening = false,
     hijack_directories = {
-        enable = true,
-        auto_open = true,
+        enable = false,
+        auto_open = false,
     },
     diagnostics = {
         enable = true,
@@ -139,12 +143,7 @@ user.plugin.nvim_tree = {
 return function()
     local nvim_tree = require "nvim-tree"
 
-    local group_id = vim.api.nvim_create_augroup("user.plugin.nvim_tree", { clear = true })
-
-    vim.api.nvim_create_autocmd("VimEnter", {
-        group = group_id,
-        callback = try_open_tree,
-    })
-
     nvim_tree.setup(user.plugin.nvim_tree())
+
+    -- try_open_tree()
 end

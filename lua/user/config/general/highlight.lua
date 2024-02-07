@@ -23,11 +23,16 @@ local color = {
 
     bg      = {
         darker   = "#15181e",
-        dark     = "#232831", -- Dark bg (status line and float)
-        normal   = "#2e3440", -- Default bg
-        light    = "#39404f", -- Lighter bg (colorcolm folds)
-        lighter  = "#444c5e", -- Lighter bg (cursor line)
-        lightest = "#5a657d", -- Conceal, border fg
+        -- Dark bg (status line and float)
+        dark     = "#232831",
+        -- Default bg
+        normal   = "#2e3440",
+        -- Lighter bg (colorcolm folds)
+        light    = "#39404f",
+        -- Lighter bg (cursor line)
+        lighter  = "#444c5e",
+        -- Conceal, border fg
+        lightest = "#5a657d",
     },
 
     fg      = {
@@ -118,44 +123,6 @@ local highlight = vim.tbl_extend("keep", {
     },
     PanelpalUnselect = {
         fg = color.sel.light,
-    },
-}, {
-    -- ------------------------------------------------------------------------
-    -- Tab Line Style
-    TabBar = {
-        bg = color.bg.dark,
-    },
-    TabIcon = {
-        fg = color.fg.darker,
-        bg = color.bg.light,
-    },
-    TabStatus = {
-        fg = color.fg.dark,
-        bg = color.bg.lighter,
-    },
-    TabInactive = {
-        fg = color.fg.darker,
-        bg = color.bg.dark,
-    },
-    TabActive = {
-        fg = color.bg.normal,
-        bg = color.blue.normal,
-    },
-    TabSign = {
-        fg = color.fg.light,
-        bg = color.bg.dark,
-    },
-    TabSignActive = {
-        fg = color.fg.light,
-        bg = color.blue.normal,
-    },
-    TabStatusSign = {
-        fg = color.fg.dark,
-        bg = color.bg.lighter,
-    },
-    TabStatusSignActive = {
-        fg = color.fg.light,
-        bg = color.bg.lighter,
     },
 }, {
     -- ------------------------------------------------------------------------
@@ -303,6 +270,183 @@ local highlight = vim.tbl_extend("keep", {
         fg = "#EED8DA",
         bg = color.pink.dark,
     },
+}, {
+    -- ------------------------------------------------------------------------
+    -- mongosh.nvim
+    MongoshNormal = {
+        fg = color.fg.normal,
+        bg = color.bg.dark,
+    },
+
+    MongoshHostName = {
+        fg = color.orange.normal,
+    },
+    MongoshHostSymbol = {
+        fg = color.orange.normal,
+    },
+
+    MongoshDatabaseName = {
+        fg = color.blue.normal,
+    },
+    MongoshDatabaseSymbol = {
+        fg = color.cyan.normal,
+    },
+
+    MongoshCollectionName = {
+        fg = color.fg.normal,
+    },
+    MongoshCollectionSymbol = {
+        fg = color.yellow.normal,
+    },
+
+    MongoshCollectionLoading = {
+        fg = color.fg.normal,
+    },
+    MongoshCollectionLoadingSymbol = {
+        fg = color.green.normal
+    },
+
+    MongoshTreeNormal = {
+        fg = color.fg.normal,
+    },
+
+    MongoshValueTypeName = {
+        fg = color.fg.darker,
+    },
+
+    MongoshValueArray = {
+        fg = color.yellow.normal
+    },
+    MongoshValueBoolean = {
+        fg = color.orange.normal,
+    },
+    MongoshValueNull = {
+        fg = color.orange.normal,
+    },
+    MongoshValueNumber = {
+        fg = color.orange.normal,
+    },
+    MongoshValueString = {
+        fg = color.green.normal,
+    },
+    MongoshValueObject = {
+        fg = color.cyan.light,
+    },
+    MongoshValueOmited = {
+        fg = color.fg.ignorable,
+    },
+    MongoshValueRegex = {
+        fg = color.yellow.normal
+    },
+    MongoshValueUnknown = {
+        fg = color.white.normal,
+        bg = color.red.normal,
+    },
+}, {
+    -- ------------------------------------------------------------------------
+    -- nvim-dap
+    DapBreakpoint = {
+        fg = color.yellow.normal,
+    },
+    DapBreakpointCondition = {
+        fg = color.orange.normal,
+    },
+    DapLogPoint = {
+        fg = color.blue.normal,
+    },
+    DapStopped = {
+        fg = color.green.normal,
+    },
+    DapStoppedLine = {
+        bg = color.sel.darker,
+    },
+    DapBreakpointRejected = {
+        fg = color.red.normal,
+    },
+}, {
+    -- ------------------------------------------------------------------------
+    -- indent-blankline.nvim
+    RainbowRed = {
+        fg = color.red.normal,
+    },
+    RainbowYellow = {
+        fg = color.yellow.normal,
+    },
+    RainbowBlue = {
+        fg = color.blue.normal,
+    },
+    RainbowOrange = {
+        fg = color.orange.normal,
+    },
+    RainbowGreen = {
+        fg = color.green.normal,
+    },
+    RainbowViolet = {
+        fg = color.magenta.normal,
+    },
+    RainbowCyan = {
+        fg = color.cyan.normal,
+    },
+}, {
+    -- ------------------------------------------------------------------------
+    -- nvim-biscuit
+    BiscuitColor = {
+        fg = color.fg.ignorable,
+    },
+}, {
+    -- ------------------------------------------------------------------------
+    -- lsp-status
+    LspStatusIndicatorHint = {
+        fg = color.green.normal,
+        bg = color.bg.dark,
+    },
+    LspStatusIndicatorInfo = {
+        fg = color.blue.normal,
+        bg = color.bg.dark,
+    },
+    LspStatusIndicatorWarnings = {
+        fg = color.yellow.normal,
+        bg = color.bg.dark,
+    },
+    LspStatusIndicatorErrors = {
+        fg = color.red.normal,
+        bg = color.bg.dark,
+    },
+    LspStatusSpinner1 = {
+        fg = color.green.normal,
+        bg = color.bg.dark,
+    },
+    LspStatusSpinner2 = {
+        fg = color.yellow.normal,
+        bg = color.bg.dark,
+    },
+    LspStatusSpinner3 = {
+        fg = color.blue.normal,
+        bg = color.bg.dark,
+    },
 })
 
-return highlight
+local rainbow_hl_groups = {
+    "RainbowBlue",
+    "RainbowGreen",
+    "RainbowYellow",
+    "RainbowOrange",
+    "RainbowViolet",
+    "RainbowCyan",
+    "RainbowRed",
+}
+
+local rainbow_colors = {}
+for _, name in ipairs(rainbow_hl_groups) do
+    local cfg = highlight[name]
+    rainbow_colors[#rainbow_colors + 1] = cfg.fg or "#FFFFFF"
+end
+
+local M = {
+    color = color,
+    highlight = highlight,
+    rainbow_hl_groups = rainbow_hl_groups,
+    rainbow_colors = rainbow_colors,
+}
+
+return M
