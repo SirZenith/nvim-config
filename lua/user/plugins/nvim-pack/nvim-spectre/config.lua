@@ -185,5 +185,5 @@ user.plugin.nvim_spectre = {
 }
 
 return function()
-    require('spectre').setup(user.plugin.nvim_spectre())
+    require "spectre".setup(user.plugin.nvim_spectre())
 end
