@@ -79,7 +79,7 @@ function M.import(modname, failed_msg)
         module = result
     else
         if not failed_msg then
-            vim.notify(result)
+            vim.notify(tostring(result))
         elseif failed_msg ~= "" then
             vim.notify(failed_msg)
         end

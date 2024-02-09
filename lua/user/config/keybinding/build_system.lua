@@ -1,6 +1,6 @@
 local api = vim.api
 
-local BUILD_SYSTEM_AUGROUP = api.nvim_create_augroup("user.keybinding", { clear = true })
+local BUILD_SYSTEM_AUGROUP = api.nvim_create_augroup("user.keybinding.build_system", { clear = true })
 
 ---@param filetype string|string[]
 ---@param mapto string|function

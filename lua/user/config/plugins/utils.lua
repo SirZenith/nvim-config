@@ -31,7 +31,6 @@ function M.user_config_spec(module_name)
         spec.dependencies = { base_module }
     end
 
-
     return spec
 end
 
