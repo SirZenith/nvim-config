@@ -80,6 +80,9 @@ user.lsp = {
         },
         {
             "glsl_analyzer",
+            desc = {
+                "Language Server for OpenGL Shading Language",
+            },
             install = "GitHub release page https://github.com/nolanderc/glsl_analyzer/releases",
         },
         {
@@ -88,11 +91,12 @@ user.lsp = {
         },
         {
             "hls",
-            install = "ghcup install hls",
             desc = {
+                "Haskell Language Server",
                 "installation guide at:",
                 "https://haskell-language-server.readthedocs.io/en/latest/installation.html",
             },
+            install = "ghcup install hls",
         },
         {
             "html",
@@ -149,16 +153,25 @@ user.lsp = {
         -- "vls",
         {
             "v_analyzer",
+            desc = "V Language Server",
             install = {
-                "mkdir temp",
-                "curl 'https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh' -o temp/install.vsh",
-                "v temp/install.sh",
-                "rm -r temp",
+                from_binary = {
+                    "mkdir temp",
+                    "curl 'https://raw.githubusercontent.com/vlang/v-analyzer/main/install.vsh' -o temp/install.vsh",
+                    "v temp/install.sh",
+                    "rm -r temp",
+                },
+                from_source = {
+                    "git clone --recurse-submodules 'https://github.com/vlang/v-analyzer.git'",
+                    "cd v-analyzer",
+                    "v build.vsh release",
+                },
             }
         },
         {
             "zls",
             desc = {
+                "Zig Language Server",
                 "installation guide at:",
                 "https://github.com/zigtools/zls#installation",
             },
