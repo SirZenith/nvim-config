@@ -97,7 +97,7 @@ user.plugin.oil_nvim = {
 
         ["<A-p>"] = "actions.preview",
         ["<leader>x"] = "actions.open_external",
-        ["<leader>\\"] = "actions.toggle_trash",
+        ["<leader><backspace>"] = "actions.toggle_trash",
     },
 
     -- Set to false to disable all of the above keymaps

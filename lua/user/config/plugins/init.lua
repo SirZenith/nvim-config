@@ -77,7 +77,7 @@ local specs = {
     },
     {
         "nvim-tree/nvim-tree.lua",
-        -- enabled = false,
+        enabled = false,
         dependencies = { "nvim-tree/nvim-web-devicons" },
         event = "VeryLazy",
     },
