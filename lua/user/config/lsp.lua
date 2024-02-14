@@ -177,4 +177,5 @@ user.lsp = {
             },
         },
     },
+    load_extra_plugins = {},
 }

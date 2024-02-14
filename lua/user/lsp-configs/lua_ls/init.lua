@@ -1,6 +1,7 @@
 local lspconfig_util = require "lspconfig.util"
 
 local lsp_util = require "user.utils.lsp"
+local workspace = require "user.workspace"
 
 local paths = require "user.lsp-configs.lua_ls.paths"
 
@@ -13,9 +14,7 @@ M.settings = {
             requireSeparator = ".",
         },
         diagnostics = {
-            globals = {
-                "vim"
-            },
+            globals = {},
         },
         doc = {
             privateName = {
@@ -67,6 +66,7 @@ function M.on_new_config(config, root_dir)
 
     local is_in_runtime_path = paths.check_in_nvim_runtime_path(root_dir)
 
+    lsp_util.upsert_config_entry(settings, "Lua.diagnostics.globals", is_in_runtime_path and "vim" or nil)
     lsp_util.upsert_config_entry(settings, "Lua.runtime.version", is_in_runtime_path and "LuaJIT" or "Lua 5.4")
     lsp_util.upsert_config_entry(settings, "Lua.runtime.special.import", is_in_runtime_path and "require" or nil)
 
@@ -76,6 +76,11 @@ function M.on_new_config(config, root_dir)
 end
 
 function M.root_dir(fname)
+    local dir = vim.fs.dirname(fname)
+    if vim.fs.basename(dir) == workspace.WORKSPACE_CONFIG_DIR_NAME then
+        return dir
+    end
+
     local root_files = {
         ".luarc.json",
         ".luarc.jsonc",
