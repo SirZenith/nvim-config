@@ -29,7 +29,7 @@ user.plugin.oil_nvim = {
     ---@type table<string, any>
     win_options = {
         wrap = false,
-        signcolumn = "no",
+        signcolumn = "number",
         cursorcolumn = false,
         foldcolumn = "0",
         spell = false,

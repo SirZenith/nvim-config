@@ -87,6 +87,15 @@ local specs = {
         event = "VeryLazy",
     },
     {
+        "SirZenith/oil-vcs-status.nvim",
+        dev = true,
+        dependencies = {
+            "stevearc/oil.nvim",
+        },
+        ft = "oil",
+        cond = putl.root_directory_cond { ".git" },
+    },
+    {
         "SirZenith/panelpal.nvim",
         -- dev = true,
         event = "VeryLazy",
