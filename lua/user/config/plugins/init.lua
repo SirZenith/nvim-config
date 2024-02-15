@@ -87,6 +87,7 @@ local specs = {
         event = "VeryLazy",
     },
     {
+        -- Display VCS status symbol in oil.nvim buffer's signcolumn
         "SirZenith/oil-vcs-status.nvim",
         dev = true,
         dependencies = {
