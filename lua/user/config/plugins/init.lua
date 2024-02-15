@@ -94,7 +94,7 @@ local specs = {
             "stevearc/oil.nvim",
         },
         ft = "oil",
-        cond = putl.root_directory_cond { ".git" },
+        cond = putl.root_directory_cond { ".git", ".svn" },
     },
     {
         "SirZenith/panelpal.nvim",
