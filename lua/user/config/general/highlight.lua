@@ -424,6 +424,88 @@ local highlight = vim.tbl_extend("keep", {
         fg = color.blue.normal,
         bg = color.bg.dark,
     },
+}, {
+    -- ------------------------------------------------------------------------
+    -- oil-vcs-status
+    -- Work tree highlight groups
+    OilVcsStatusAdded = {
+        fg = color.green.normal,
+        bg = color.bg.normal,
+    },
+    OilVcsStatusCopied = {
+        fg = color.blue.normal,
+        bg = color.bg.normal,
+    },
+    OilVcsStatusDeleted = {
+        fg = color.red.normal,
+        bg = color.bg.normal,
+    },
+    OilVcsStatusIgnored = {
+        fg = color.comment,
+        bg = color.bg.normal,
+    },
+    OilVcsStatusModified = {
+        fg = color.yellow.normal,
+        bg = color.bg.normal,
+    },
+    OilVcsStatusRenamed = {
+        fg = color.blue.normal,
+        bg = color.bg.normal,
+    },
+    OilVcsStatusTypeChanged = {
+        fg = color.magenta.normal,
+        bg = color.bnormalark,
+    },
+    OilVcsStatusUnmodified = {
+        link = "Normal",
+    },
+    OilVcsStatusUnmerged = {
+        fg = color.orange.normal,
+        bg = color.bg.normal,
+    },
+    OilVcsStatusUntracked = {
+        fg = color.green.light,
+        bg = color.bg.normal,
+    },
+
+    -- Upstream highlight groups
+    OilVcsStatusUpstreamAdded = {
+        fg = color.green.normal,
+        bg = color.bg.normal,
+    },
+    OilVcsStatusUpstreamCopied = {
+        fg = color.blue.normal,
+        bg = color.bg.normal,
+    },
+    OilVcsStatusUpstreamDeleted = {
+        fg = color.red.normal,
+        bg = color.bg.normal,
+    },
+    OilVcsStatusUpstreamIgnored = {
+        link = "Normal",
+    },
+    OilVcsStatusUpstreamModified = {
+        fg = color.yellow.normal,
+        bg = color.bg.normal,
+    },
+    OilVcsStatusUpstreamRenamed = {
+        fg = color.blue.normal,
+        bg = color.bg.normal,
+    },
+    OilVcsStatusUpstreamTypeChanged = {
+        fg = color.magenta.normal,
+        bg = color.bg.normal,
+    },
+    OilVcsStatusUpstreamUnmodified = {
+        link = "Normal",
+    },
+    OilVcsStatusUpstreamUnmerged = {
+        fg = color.orange.normal,
+        bg = color.bg.normal,
+    },
+    OilVcsStatusUpstreamUntracked = {
+        link = "Normal",
+    },
 })
 
 local rainbow_hl_groups = {
