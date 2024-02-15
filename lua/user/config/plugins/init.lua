@@ -89,7 +89,7 @@ local specs = {
     {
         -- Display VCS status symbol in oil.nvim buffer's signcolumn
         "SirZenith/oil-vcs-status.nvim",
-        dev = true,
+        -- dev = true,
         dependencies = {
             "stevearc/oil.nvim",
         },
