@@ -28,7 +28,7 @@ function M.toggle_quickfix()
     end
 
     if target then
-        api.nvim_win_hide(target)
+        api.nvim_win_close(target, false)
     else
         vim.cmd "copen"
     end
@@ -53,7 +53,7 @@ function M.toggle_terminal()
         api.nvim_win_set_buf(win_num, buf_num)
         vim.cmd "startinsert"
     else
-        api.nvim_win_hide(win_num)
+        api.nvim_win_close(win_num, false)
         win_num = nil
     end
 
@@ -158,7 +158,7 @@ function M.close_all_win_in_cur_tab()
 
         if win_cnt > 1 then
             win_cnt = win_cnt - 1
-            api.nvim_win_hide(win)
+            api.nvim_win_close(win, false)
         else
             ask_for_quit = true
         end

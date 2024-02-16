@@ -48,7 +48,7 @@ cmd("ToTab", function()
     vim.cmd "tabnew"
     api.nvim_win_set_buf(0, buf)
 
-    api.nvim_win_hide(old_win)
+    api.nvim_win_close(old_win, false)
 end, {
     desc = "extract current buffer into new tab."
 })
