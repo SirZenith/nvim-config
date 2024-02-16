@@ -85,7 +85,7 @@ user.plugin.oil_nvim = {
 
         -- Directory Naviagtion
         ["-"] = "actions.parent",
-        ["<leader>."] = "actions.open_cwd",
+        ["<leader><cr>"] = "actions.open_cwd",
         ["`"] = "actions.cd",
         ["~"] = "actions.tcd",
 
