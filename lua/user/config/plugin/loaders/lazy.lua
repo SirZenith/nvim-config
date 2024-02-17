@@ -333,14 +333,14 @@ function M._on_autocmd_triggered(event, args)
     local set = M._custom_autocmd_listener[event]
     if not set then return end
 
-    log_util.trace("plugin event:", event)
+    log_util.trace("+ plugin event:", event)
 
     local is_empty = true
     for spec in pairs(set) do
         local ok = spec.autocmd_load_checker(spec, args)
         if ok then
             local full_name = get_plugin_name_from_spec(spec)
-            log_util.trace("  +", full_name or "<unknown>")
+            log_util.trace("  +", full_name or spec)
             if full_name then
                 local segments = vim.split(full_name, "/")
                 local name = segments[#segments]
@@ -354,9 +354,11 @@ function M._on_autocmd_triggered(event, args)
     end
 
     if is_empty then
+        log_util.trace("-", event, "\n", set)
         M._custom_autocmd_listener[event] = nil
         return
     end
+    log_util.trace("*", event)
 end
 
 ---@param event string
@@ -389,6 +391,11 @@ end
 -- `lazy = true` and `event` field will be removed.
 ---@param spec user.plugin.PluginSpec
 function M._try_setup_spec_autocmd(spec)
+    local plugin_name = get_plugin_name_from_spec(spec)
+    if not plugin_name then
+        return
+    end
+
     if not spec.autocmd_load_checker then
         return false
     end
@@ -494,7 +501,7 @@ function M._on_plugin_loaded(spec)
 end
 
 ---@param spec string | user.plugin.PluginSpec
-function M._plugin_spec_prepocess(spec)
+function M._plugin_spec_preprocess(spec)
     if type(spec) == "string" then
         spec = { spec }
     end
@@ -515,7 +522,7 @@ function M.setup(specs)
     local targets = {}
 
     for _, spec in ipairs(specs) do
-        M._plugin_spec_prepocess(spec)
+        M._plugin_spec_preprocess(spec)
         table.insert(targets, spec)
     end
 
