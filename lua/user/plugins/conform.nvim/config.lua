@@ -53,7 +53,7 @@ user.plugin.conform_nvim = {
     ---@typeuser.plugin.FormattingArgs?
     format_on_save = {
         -- I recommend these options. See :help conform.format for details.
-        timeout_ms = 500,
+        timeout_ms = 5000,
         lsp_fallback = true,
     },
 
