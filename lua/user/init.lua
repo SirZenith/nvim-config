@@ -124,7 +124,7 @@ local function setup_init_autocmd()
 
     vim.api.nvim_create_autocmd("User", {
         group = finalize_augroup,
-        pattern = "VeryLazy",
+        pattern = "LazyDone",
         callback = on_plugins_loaded,
         once = true,
     })
