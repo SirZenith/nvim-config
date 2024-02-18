@@ -100,32 +100,7 @@ local M = {}
 
 M._is_bootstrap = is_bootstrap
 M._is_finalized = false
-M._pending_spec_map = {} ---@type table<string, user.plugin.PluginSpec>
-M._loaded_plugin_set = {} ---@type table<string, true>
-
----@param spec user.plugin.PluginSpec
----@return boolean
-function M._check_plugin_dependencies_finalized(spec)
-    local dependencies = spec.dependencies
-    if not dependencies then
-        return true
-    end
-
-    if type(dependencies) ~= "table" then
-        dependencies = { dependencies }
-    end
-
-    local dep_ok = true
-    for _, dep_spec in ipairs(dependencies) do
-        local dep = get_plugin_name_from_spec(dep_spec)
-        if not M._loaded_plugin_set[dep] then
-            dep_ok = false
-            break
-        end
-    end
-
-    return dep_ok
-end
+M._pending_spec_list = nil ---@type user.plugin.PluginSpec[] | nil
 
 ---@param plugin_name string
 ---@return any[] | nil
@@ -144,10 +119,14 @@ function M._load_config_modules(plugin_name)
     return modules
 end
 
----@param plugin_name string
 ---@param spec user.plugin.PluginSpec
-function M._raw_finalize_plugin_config(plugin_name, spec)
-    M._loaded_plugin_set[plugin_name] = true
+function M._finalize_plugin_config(spec)
+    local plugin_name = get_plugin_name_from_spec(spec)
+    if not plugin_name then
+        vim.notify("failed to load plugin config: spec has no name", vim.log.levels.WARN)
+        vim.print(spec)
+        return
+    end
 
     local old_config_func = spec.old_config_func
     if old_config_func then
@@ -168,42 +147,17 @@ function M._raw_finalize_plugin_config(plugin_name, spec)
 end
 
 ---@param spec user.plugin.PluginSpec
-function M._finalize_plugin_config(spec)
-    local plugin_name = get_plugin_name_from_spec(spec)
-    if not plugin_name then
-        vim.notify("failed to load plugin config: spec has no name", vim.log.levels.WARN)
-        vim.print(spec)
-        return
-    end
-
-    local dep_ok = M._check_plugin_dependencies_finalized(spec)
-    if dep_ok then
-        M._raw_finalize_plugin_config(plugin_name, spec)
-    end
-
-    local pending_map = M._pending_spec_map
-    for name, pending_spec in pairs(pending_map) do
-        if M._check_plugin_dependencies_finalized(pending_spec) then
-            pending_map[name] = nil
-            M._finalize_plugin_config(pending_spec)
-        end
-    end
-
-    if not dep_ok then
-        M._pending_spec_map[plugin_name] = spec
-    end
-end
-
----@param spec user.plugin.PluginSpec
 function M._run_plugin_config(spec)
     if M._is_finalized or spec.config_no_defer then
         M._finalize_plugin_config(spec)
     else
-        local pending_map = M._pending_spec_map
-        local plugin_name = get_plugin_name_from_spec(spec)
-        if plugin_name then
-            pending_map[plugin_name] = spec
+        local pending_list = M._pending_spec_list
+        if not pending_list then
+            pending_list = {}
+            M._pending_spec_list = pending_list
         end
+
+        pending_list[#pending_list + 1] = spec
     end
 end
 
@@ -249,11 +203,13 @@ end
 function M.finalize()
     M._is_finalized = true
 
-    local pending_map = M._pending_spec_map
-    for name, spec in pairs(pending_map) do
-        M._finalize_plugin_config(spec)
-        pending_map[name] = nil
+    local pending_list = M._pending_spec_list
+    if pending_list then
+        for _, spec in ipairs(pending_list) do
+            M._finalize_plugin_config(spec)
+        end
     end
+    M._pending_spec_list = nil
 end
 
 return M
