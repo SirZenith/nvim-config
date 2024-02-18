@@ -25,13 +25,9 @@ cmd("Reload", "source $MYVIMRC", {
 })
 
 cmd("DumpConfigMeta", function()
-    for k in pairs(package.loaded) do
-        if k:starts_with("user") or k:starts_with("plugins") then
-            package.loaded[k] = nil
-        end
-    end
-
-    user.finalize()
+    local plugin_specs = import "user.config.plugins"
+    local plugin_loader = import "user.utils.plugin_loaders.lazy"
+    plugin_loader.load_all_plugin_config(plugin_specs)
 
     local filepath = fs.path_join(user.env.USER_RUNTIME_PATH(), "user", "meta", "user_config.lua")
     config_entry.dump_signature(user --[[@as ConfigEntry]], filepath)

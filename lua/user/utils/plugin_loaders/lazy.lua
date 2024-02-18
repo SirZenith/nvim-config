@@ -116,10 +116,6 @@ function M._load_config_modules(plugin_name)
         modules[i] = load_config_module(path)
     end
 
-    for _, item in ipairs(modules) do
-        utils.finalize_module(item)
-    end
-
     return modules
 end
 
@@ -132,17 +128,24 @@ function M._finalize_plugin_config(spec)
         return
     end
 
-    local old_config_func = spec.old_config_func
-    if old_config_func then
-        old_config_func(spec)
-    end
+    utils.execution_timing(plugin_name, function()
+        local old_config_func = spec.old_config_func
+        if old_config_func then
+            old_config_func(spec)
+        end
 
-    M._load_config_modules(plugin_name)
+        local modules = M._load_config_modules(plugin_name)
+        if modules then
+            for _, item in ipairs(modules) do
+                utils.finalize_module(item)
+            end
+        end
 
-    local after_finalization = spec.after_finalization
-    if after_finalization then
-        after_finalization()
-    end
+        local after_finalization = spec.after_finalization
+        if after_finalization then
+            after_finalization()
+        end
+    end)
 end
 
 ---@param spec user.plugin.PluginSpec
@@ -161,24 +164,41 @@ function M._run_plugin_config(spec)
 end
 
 ---@param specs user.plugin.PluginSpec[]
+function M.load_all_plugin_config(specs)
+    if not M._is_finalized then
+        vim.notify("plugin loader is not finalized yet")
+        return
+    end
+
+    for _, spec in ipairs(specs) do
+        local plugin_name = get_plugin_name_from_spec(spec)
+        if plugin_name then
+            M._load_config_modules(plugin_name)
+        end
+    end
+end
+
+---@param specs user.plugin.PluginSpec[]
 function M.setup(specs)
     if M._is_bootstrap then return end
 
     local targets = {}
-    for _, spec in ipairs(specs) do
-        if type(spec) == "string" then
-            spec = { spec }
+    utils.execution_timing("spec preprocess", function()
+        for _, spec in ipairs(specs) do
+            if type(spec) == "string" then
+                spec = { spec }
+            end
+
+            handling_before_load_cmd(spec)
+
+            spec.old_config_func = spec.config
+            spec.config = M._run_plugin_config
+
+            table.insert(targets, spec)
         end
+    end)
 
-        handling_before_load_cmd(spec)
-
-        spec.old_config_func = spec.config
-        spec.config = M._run_plugin_config
-
-        table.insert(targets, spec)
-    end
-
-    manager.setup(targets, manager_config)
+    utils.execution_timing("setup call", manager.setup, targets, manager_config)
 
     return M
 end
