@@ -4,7 +4,6 @@ if err then
 end
 
 local utils = require "user.utils"
-local fs = require "user.utils.fs"
 local import = utils.import
 local config_entry = require "user.utils.config_entry"
 
@@ -102,6 +101,10 @@ end
 
 local function setup_environment()
     chdir()
+
+    vim.o.shortmess = "I" -- disable intro screen message
+    vim.o.laststatus = 0 -- disable staus line in intro screen
+    vim.o.fillchars = "eob: " -- remove `~` at eob lines
 
     -- disable Netrw
     vim.g.loaded_netrw = 1

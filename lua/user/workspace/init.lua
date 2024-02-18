@@ -65,14 +65,12 @@ M.finalize = function() end
 
 ---@param callback fun()
 function M.load(callback)
-    callback = vim.schedule_wrap(callback)
-
     utils.do_async_steps {
         function(next_step)
             local file_path = M.get_workspace_config_file_path()
             loop.fs_stat(file_path, next_step)
         end,
-        function(_, err, stat)
+        vim.schedule_wrap(function(_, err, stat)
             if err or not stat then
                 callback()
                 return
@@ -97,7 +95,7 @@ function M.load(callback)
             M.finalize = finalize
 
             callback()
-        end
+        end)
     }
 end
 
