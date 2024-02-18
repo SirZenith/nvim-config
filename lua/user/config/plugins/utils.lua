@@ -20,6 +20,7 @@ function M.user_config_spec(module_name)
         return nil
     end
 
+    ---@type user.plugin.PluginSpec
     local spec = {
         name = module_name,
         dir = base_config.env.USER_RUNTIME_PATH,
@@ -42,6 +43,20 @@ function M.turn_on_true_color()
     if vim.fn.has "termguicolors" then
         vim.o.termguicolors = true
     end
+end
+
+function M.after_color_scheme_loaded()
+    local user = require "user"
+    local colorscheme = user.theme.colorscheme()
+    if colorscheme and colorscheme ~= "" then
+        vim.cmd("colorscheme " .. colorscheme)
+    end
+end
+
+---@param spec user.plugin.PluginSpec
+function M.colorscheme_spec(spec)
+    spec.after_finalization = M.after_color_scheme_loaded
+    return spec
 end
 
 -- Looing for a directory recrusively in parent

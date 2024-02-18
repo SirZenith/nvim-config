@@ -1,6 +1,7 @@
 local putl = require "user.config.plugins.utils"
 
 local ucs = putl.user_config_spec
+-- local cs = putl.colorscheme_spec
 
 putl.turn_on_true_color()
 

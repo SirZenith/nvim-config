@@ -1,3 +1,5 @@
+local hrtime =  vim.loop.hrtime
+
 ---@param s string
 ---@param prefix string
 function string.starts_with(s, prefix)
@@ -180,6 +182,16 @@ function M.notify(msg, level, opt)
     else
         vim.notify(msg)
     end
+end
+
+---@param msg string
+---@param func function
+---@param ... any
+function M.execution_timing(msg, func, ...)
+    local start_time = hrtime()
+    func(...)
+    local duration = hrtime() - start_time
+    print(("%s: %dms"):format(msg, duration / 1e6))
 end
 
 return M

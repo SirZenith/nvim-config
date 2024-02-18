@@ -13,13 +13,11 @@ local user = config_entry.ConfigEntry:new(base_config) --[[@as UserConfig]]
 -- ----------------------------------------------------------------------------
 
 -- copying variables in user namespace into vim namespace.
----@param key string|string[] # if a list of string is passed, each element in the list is treated as a key.
-local function load_into_vim(key)
-    if type(key) == "string" then
-        key = { key }
-    end
+---@param ... string # if a list of string is passed, each element in the list is treated as a key.
+local function load_into_vim(...)
+    local keys = { ... }
 
-    for _, k in ipairs(key) do
+    for _, k in ipairs(keys) do
         local optioins = user.option[k]
         if not optioins then return end
 
@@ -54,15 +52,34 @@ local function dump_user_config_meta()
     config_entry.dump_signature(user --[[@as ConfigEntry]], filepath)
 end
 
--- ----------------------------------------------------------------------------
+-- Show editor starup state notification.
+local function show_editor_state()
+    local msg_buffer = {}
 
+    local time = require("lazy").stats().startuptime
+    table.insert(msg_buffer, "startup time: " .. tostring(time) .. "ms")
+
+    local workspace = import "user.workspace"
+    if workspace and workspace.is_workspace_confg_loaded() then
+        table.insert(msg_buffer, "workspace configuration loaded.")
+    end
+
+    local msg = table.concat(msg_buffer, "\n")
+    utils.notify(msg, vim.log.levels.INFO, {
+        title = "Editor State",
+        timeout = 800,
+        animated = false,
+    })
+end
+
+-- Finalize plugin configs.
 local function on_plugins_loaded()
     local workspace = import "user.workspace"
 
     workspace.load()
 
     -- settle vim variables.
-    load_into_vim { "o", "g", "go" }
+    load_into_vim("o", "g", "go")
 
     -- finalize all loaded configs
     utils.finalize {
@@ -83,55 +100,51 @@ local function on_plugins_loaded()
     dump_user_config_meta()
 end
 
-local function show_editor_state()
-    local msg_buffer = {}
-
-    local time = require("lazy").stats().startuptime
-    table.insert(msg_buffer, "startup time: " .. tostring(time) .. "ms")
-
-    local workspace = import "user.workspace"
-    if workspace and workspace.is_workspace_confg_loaded() then
-        table.insert(msg_buffer, "workspace configuration loaded.")
-    end
-
-    local msg = table.concat(msg_buffer, "\n")
-    utils.notify(msg, vim.log.levels.INFO, {
-        title = "Editor State",
-        timeout = 800,
-        animated = false,
-    })
-end
-
 -- ----------------------------------------------------------------------------
 
-rawset(user, "finalize", function()
+local function setup_environment()
     chdir()
 
-    vim.g.loaded_netrwPlugin = 1 -- disable Netrw
+    -- disable Netrw
+    vim.g.loaded_netrw = 1
+    vim.g.loaded_netrwPlugin = 1
 
     -- loading custom loader
     require "user.utils.module_loaders".setup {
         user_runtime_path = user.env.USER_RUNTIME_PATH(),
     }
+end
 
-    -- wait for plugins get loaded
+local function setup_init_autocmd()
     local finalize_augroup = vim.api.nvim_create_augroup("user.finalize", { clear = true })
+
     vim.api.nvim_create_autocmd("User", {
         group = finalize_augroup,
         pattern = "LazyDone",
         callback = on_plugins_loaded,
+        once = true,
     })
 
     vim.api.nvim_create_autocmd("User", {
         group = finalize_augroup,
-        pattern = "LazyVimStarted",
+        pattern = "VeryLazy",
         callback = show_editor_state,
+        once = true,
     })
+end
 
-    -- load plugins
+local function setup_plugin()
     local plugin_specs = require "user.config.plugins"
     local plugin_loader = require "user.utils.plugin_loaders.lazy"
     plugin_loader.setup(plugin_specs)
+end
+
+-- ----------------------------------------------------------------------------
+
+rawset(user, "finalize", function()
+    setup_environment()
+    setup_init_autocmd()
+    setup_plugin()
 end)
 
 return user

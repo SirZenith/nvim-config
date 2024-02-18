@@ -10,14 +10,6 @@ local user = require "user"
 -- Return a list of `{ content, hl_group }` tuple.
 ---@alias user.plugin.nvim_ufo.VirtTextHandler fun(virt_text: user.plugin.nvim_ufo.VirtTextContent[], line_num: integer, end_line_num: integer, width: integer, truncate: fun(s: string, len: integer): string): user.plugin.nvim_ufo.VirtTextContent[]
 
-user.option.o = {
-    foldcolumn = "0",
-    -- `manual` fold methd require a large fold level to keep fold folded as it
-    -- was after fold range gets updated.
-    foldlevel = 99,
-    foldlevelstart = 99,
-}
-
 user.plugin.nvim_ufo = {
     __new_entry = true,
     -- Highligh text after its folding state toggled for given time.
@@ -97,6 +89,13 @@ user.plugin.nvim_ufo = {
 
 return function()
     local ufo = require "ufo"
+
+    local target = vim.o
+    target.foldcolumn = "0"
+    -- `manual` fold methd require a large fold level to keep fold folded as it
+    -- was after fold range gets updated.
+    target.foldlevel = 99
+    target.foldlevelstart = 99
 
     user.lsp.capabilities_settings:append {
         textDocument = {
