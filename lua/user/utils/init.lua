@@ -191,7 +191,7 @@ function M.execution_timing(msg, func, ...)
     local start_time = hrtime()
     func(...)
     local duration = hrtime() - start_time
-    print(("%s: %dms"):format(msg, duration / 1e6))
+    print(("%s: %.2fms"):format(msg, duration / 1e6))
 end
 
 return M

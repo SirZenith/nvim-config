@@ -99,8 +99,8 @@ end
 local M = {}
 
 M._is_bootstrap = is_bootstrap
-M._is_finalized = true
-M._pending_spec_list = {} ---@type user.plugin.PluginSpec[] | nil
+M._is_finalized = false
+M._pending_spec_list = nil ---@type user.plugin.PluginSpec[] | nil
 
 ---@param plugin_name string
 ---@return any[] | nil
@@ -147,9 +147,8 @@ end
 
 ---@param spec user.plugin.PluginSpec
 function M._run_plugin_config(spec)
-    if M._is_finalized or spec.lazy == false then
-        local plugin_name = get_plugin_name_from_spec(spec) or "unknown-plugin"
-        utils.execution_timing(plugin_name, M._finalize_plugin_config, spec)
+    if M._is_finalized or spec.config_no_defer == false then
+        M._finalize_plugin_config(spec)
     else
         local pending_list = M._pending_spec_list
         if not pending_list then
@@ -189,6 +188,12 @@ function M.finalize()
 
     local pending_list = M._pending_spec_list
     if pending_list then
+        table.sort(pending_list, function(spec_1, spec_2)
+            local priority_1 = spec_1.priority or 50
+            local priority_2 = spec_2.priority or 50
+            return priority_1 > priority_2
+        end)
+
         for _, spec in ipairs(pending_list) do
             M._finalize_plugin_config(spec)
         end

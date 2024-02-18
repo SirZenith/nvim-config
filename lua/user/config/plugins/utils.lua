@@ -51,10 +51,15 @@ function M.after_color_scheme_loaded()
     if colorscheme and colorscheme ~= "" then
         vim.cmd("colorscheme " .. colorscheme)
     end
+
+    for group, config in user.theme.highlight:pairs() do
+        vim.api.nvim_set_hl(0, group, config)
+    end
 end
 
 ---@param spec user.plugin.PluginSpec
 function M.colorscheme_spec(spec)
+    spec.priority = 100
     spec.after_finalization = M.after_color_scheme_loaded
     return spec
 end

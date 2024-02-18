@@ -128,7 +128,9 @@ local function setup_init_autocmd()
     vim.api.nvim_create_autocmd("User", {
         group = finalize_augroup,
         pattern = "VeryLazy",
-        callback = show_editor_state,
+        callback = function()
+            vim.fn.timer_start(1000, show_editor_state)
+        end,
         once = true,
     })
 end

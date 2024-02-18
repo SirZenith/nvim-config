@@ -305,15 +305,6 @@ return function()
         vim.cmd("language " .. locale)
     end
 
-    local colorscheme = user.theme.colorscheme()
-    if colorscheme and colorscheme ~= "" then
-        vim.cmd("colorscheme " .. colorscheme)
-    end
-
-    for group, config in user.theme.highlight:pairs() do
-        vim.api.nvim_set_hl(0, group, config)
-    end
-
     for name, cfg in user.sign:pairs() do
         vim.fn.sign_define(name, cfg)
     end

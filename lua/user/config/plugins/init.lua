@@ -1,7 +1,7 @@
 local putl = require "user.config.plugins.utils"
 
 local ucs = putl.user_config_spec
--- local cs = putl.colorscheme_spec
+local cs = putl.colorscheme_spec
 
 putl.turn_on_true_color()
 
@@ -18,14 +18,14 @@ local specs = {
 
     -- ------------------------------------------------------------------------
     -- Themes
-    { "marko-cerovac/material.nvim",      enabled = false },
-    { "kaicataldo/material.vim",          enabled = false },
-    { "EdenEast/nightfox.nvim" },
-    { "shaunsingh/nord.nvim",             enabled = false },
-    { "mhartington/oceanic-next",         enabled = false },
-    { "JoosepAlviste/palenightfall.nvim", enabled = false },
-    { "wadackel/vim-dogrun",              enabled = false },
-    { "rakr/vim-two-firewatch",           enabled = false },
+    cs { "marko-cerovac/material.nvim",      enabled = false },
+    cs { "kaicataldo/material.vim",          enabled = false },
+    cs { "EdenEast/nightfox.nvim" },
+    cs { "shaunsingh/nord.nvim",             enabled = false },
+    cs { "mhartington/oceanic-next",         enabled = false },
+    cs { "JoosepAlviste/palenightfall.nvim", enabled = false },
+    cs { "wadackel/vim-dogrun",              enabled = false },
+    cs { "rakr/vim-two-firewatch",           enabled = false },
 
     -- ------------------------------------------------------------------------
     -- General
