@@ -147,7 +147,7 @@ end
 
 ---@param spec user.plugin.PluginSpec
 function M._run_plugin_config(spec)
-    if M._is_finalized or spec.config_no_defer == false then
+    if M._is_finalized or spec.config_no_defer then
         M._finalize_plugin_config(spec)
     else
         local pending_list = M._pending_spec_list

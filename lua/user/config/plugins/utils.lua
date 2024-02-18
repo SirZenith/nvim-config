@@ -25,6 +25,7 @@ function M.user_config_spec(module_name)
         name = module_name,
         dir = base_config.env.USER_RUNTIME_PATH,
         config = M.user_config_init,
+        config_no_defer = true,
     }
 
     local base_module = "user.config.general";
