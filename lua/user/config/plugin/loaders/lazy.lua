@@ -335,7 +335,6 @@ function M._on_autocmd_triggered(event, args)
 
     log_util.trace("+ plugin event:", event)
 
-    local is_empty = true
     for spec in pairs(set) do
         local ok = spec.autocmd_load_checker(spec, args)
         if ok then
@@ -348,12 +347,10 @@ function M._on_autocmd_triggered(event, args)
             end
 
             set[spec] = nil
-        else
-            is_empty = false
         end
     end
 
-    if is_empty then
+    if not next(set) then
         log_util.trace("-", event, "\n", set)
         M._custom_autocmd_listener[event] = nil
         return
