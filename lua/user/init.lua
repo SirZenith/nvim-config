@@ -46,17 +46,11 @@ local function chdir()
     end
 end
 
--- dump user config Lua meta file to config home.
-local function dump_user_config_meta()
-    local filepath = fs.path_join(user.env.USER_RUNTIME_PATH(), "user", "meta", "user_config.lua")
-    config_entry.dump_signature(user --[[@as ConfigEntry]], filepath)
-end
-
 -- Show editor starup state notification.
 local function show_editor_state()
     local msg_buffer = {}
 
-    local time = require("lazy").stats().startuptime
+    local time = require "lazy".stats().startuptime
     table.insert(msg_buffer, "startup time: " .. tostring(time) .. "ms")
 
     local workspace = import "user.workspace"
@@ -76,28 +70,32 @@ end
 local function on_plugins_loaded()
     local workspace = import "user.workspace"
 
-    workspace.load()
+    utils.do_async_steps {
+        function(next_step)
+            workspace.load(next_step)
+        end,
+        function(next_step)
+            load_into_vim("o", "g", "go")
 
-    -- settle vim variables.
-    load_into_vim("o", "g", "go")
+            utils.finalize_async({
+                "user.config.general",
+                "user.config.keybinding",
+                "user.config.command",
+                "user.config.lsp",
+                "user.config.platforms",
+            }, next_step)
+        end,
+        function()
+            -- workspace config
+            utils.finalize_module(workspace)
 
-    -- finalize all loaded configs
-    utils.finalize {
-        -- user config
-        import "user.config.general",
-        import "user.config.keybinding",
-        import "user.config.command",
-        import "user.config.lsp",
-        import "user.config.platforms",
+            -- plugins, get finalized after all user configurations are.
+            local plugin_loader = import "user.utils.plugin_loaders.lazy"
+            utils.finalize_module(plugin_loader)
 
-        -- workspace config
-        workspace,
-
-        -- plugins, get finalized after all user configurations are.
-        import "user.utils.plugin_loaders.lazy",
+            vim.fn.timer_start(1000, show_editor_state)
+        end
     }
-
-    dump_user_config_meta()
 end
 
 -- ----------------------------------------------------------------------------
@@ -110,9 +108,12 @@ local function setup_environment()
     vim.g.loaded_netrwPlugin = 1
 
     -- loading custom loader
-    require "user.utils.module_loaders".setup {
-        user_runtime_path = user.env.USER_RUNTIME_PATH(),
-    }
+    local module_loaders = import "user.utils.module_loaders"
+    if module_loaders then
+        module_loaders.setup {
+            user_runtime_path = user.env.USER_RUNTIME_PATH(),
+        }
+    end
 end
 
 local function setup_init_autocmd()
@@ -120,24 +121,15 @@ local function setup_init_autocmd()
 
     vim.api.nvim_create_autocmd("User", {
         group = finalize_augroup,
-        pattern = "LazyDone",
-        callback = on_plugins_loaded,
-        once = true,
-    })
-
-    vim.api.nvim_create_autocmd("User", {
-        group = finalize_augroup,
         pattern = "VeryLazy",
-        callback = function()
-            vim.fn.timer_start(1000, show_editor_state)
-        end,
+        callback = on_plugins_loaded,
         once = true,
     })
 end
 
 local function setup_plugin()
-    local plugin_specs = require "user.config.plugins"
-    local plugin_loader = require "user.utils.plugin_loaders.lazy"
+    local plugin_specs = import "user.config.plugins"
+    local plugin_loader = import "user.utils.plugin_loaders.lazy"
     plugin_loader.setup(plugin_specs)
 end
 

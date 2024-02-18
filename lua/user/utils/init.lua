@@ -1,4 +1,4 @@
-local hrtime =  vim.loop.hrtime
+local hrtime = vim.loop.hrtime
 
 ---@param s string
 ---@param prefix string
@@ -63,31 +63,31 @@ end
 
 -- ----------------------------------------------------------------------------
 
+---@param err? string
+local function on_import_error(err)
+    local thread = coroutine.running()
+    local traceback = debug.traceback(thread, err)
+    vim.notify(traceback or err, vim.log.levels.WARN)
+end
+
 -- wrap require in xpcall, print traceback then return nil when failed.
 ---@param modname string
 ---@param failed_msg? string
 ---@return any?
 function M.import(modname, failed_msg)
-    local ok, result = xpcall(function()
-        return require(modname)
-    end, function(err)
-        local thread = coroutine.running()
-        local traceback = debug.traceback(thread, err)
-        vim.notify(traceback or err, vim.log.levels.WARN)
-    end)
+    local ret = { xpcall(require, on_import_error, modname) }
+    local ok = ret[1]
 
-    local module
-    if ok then
-        module = result
-    else
+    if not ok then
         if not failed_msg then
-            vim.notify(tostring(result))
+            vim.notify(tostring(ret[2]))
         elseif failed_msg ~= "" then
             vim.notify(failed_msg)
         end
+        return nil
     end
 
-    return module
+    return unpack(ret, 2)
 end
 
 -- Wrap the task_func with a new func, which when called tries to import target module
@@ -122,53 +122,52 @@ function M.finalize_module(module)
     end
 
     if type(final) == "function" then
-        xpcall(final, function(err)
-            local thread = coroutine.running()
-            local traceback = debug.traceback(thread, err)
-            vim.notify(traceback or err, vim.log.levels.WARN)
-        end)
+        xpcall(final, on_import_error)
     end
 end
 
--- pass in loaded config modules, this function will finalize them in order.
----@param modules any[]
-function M.finalize(modules)
-    for i = 1, #modules do
-        local module = modules[i]
-        M.finalize_module(module)
-    end
-end
+-- Import a list of modules, import and finalize all of them. Each module can
+-- return one of following values:
+-- - nil
+-- - fun()
+-- - { finalize: fun() }
+-- - "async", fun(callback: fun(finalizable?: fun() | { finalize: fun() }))
+---@param module_paths string[]
+---@param callback fun()
+function M.finalize_async(module_paths, callback)
+    local i = 0
 
----@generic T
----@param a T
----@param b T
----@return T
-function M.min(a, b)
-    if not (a and b) then return nil end
-    return a <= b and a or b
-end
-
----@generic T
----@param a T
----@param b T
----@return T
-function M.max(a, b)
-    if not (a and b) then return nil end
-    return a >= b and a or b
-end
-
----@param args string[]
----@return string | nil err
----@return string? ...
-function M.arg_list_check(args, ...)
-    local targets = { ... }
-    for i, name in ipairs(targets) do
-        if not args[i] then
-            return ("expecting '%s' at #%d"):format(name, i)
+    local finalize_one_module
+    finalize_one_module = function()
+        i = i + 1
+        local path = module_paths[i]
+        if not path then
+            callback()
+            return
         end
+
+        local symbol, value = M.import(path)
+        if symbol ~= "async" or type(value) ~= "function" then
+            M.finalize_module(symbol)
+            finalize_one_module()
+            return
+        end
+
+        M.do_async_steps {
+            function(next_step)
+                local ok = xpcall(value, on_import_error, next_step)
+                if not ok then
+                    next_step()
+                end
+            end,
+            function(_, target)
+                M.finalize_module(target)
+                finalize_one_module()
+            end,
+        }
     end
 
-    return nil, unpack(args)
+    finalize_one_module()
 end
 
 -- notify shows notifycation.
@@ -192,6 +191,27 @@ function M.execution_timing(msg, func, ...)
     func(...)
     local duration = hrtime() - start_time
     print(("%s: %.2fms"):format(msg, duration / 1e6))
+end
+
+---@alias user.utils.AsyncStepFunc fun(next_step: fun(...), ...: any)
+
+---@param steps user.utils.AsyncStepFunc[]
+---@param ... any
+function M.do_async_steps(steps, ...)
+    local index = 0
+
+    local next_step
+    next_step = function(...)
+        index = index + 1
+        local step = steps[index]
+        if type(step) ~= "function" then
+            return
+        end
+
+        step(next_step, ...)
+    end
+
+    next_step(...)
 end
 
 return M

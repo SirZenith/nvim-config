@@ -1,5 +1,8 @@
 local fs = require "user.utils.fs"
-local import = require "user.utils".import
+local utils = require "user.utils"
+
+local loop = vim.loop
+local import = utils.import
 
 local M = {}
 
@@ -56,28 +59,46 @@ function M.get_workspace_config_require_path()
     )
 end
 
+-- After loading workspace config, this value will be replaced by finalize value
+-- of workspace config.
 M.finalize = function() end
 
-function M.load()
-    local file_path = M.get_workspace_config_file_path()
-    if vim.fn.filereadable(file_path) == 0 then return end
+---@param callback fun()
+function M.load(callback)
+    callback = vim.schedule_wrap(callback)
 
-    local result = import(M.get_workspace_config_require_path())
-    if not result then
-        return
-    end
+    utils.do_async_steps {
+        function(next_step)
+            local file_path = M.get_workspace_config_file_path()
+            loop.fs_stat(file_path, next_step)
+        end,
+        function(_, err, stat)
+            if err or not stat then
+                callback()
+                return
+            end
 
-    config_loaded = true
+            local result = import(M.get_workspace_config_require_path())
+            if not result then
+                callback()
+                return
+            end
 
-    local result_type = type(result)
-    local finalize
-    if result_type == "function" then
-        finalize = result
-    elseif result_type == "table" then
-        finalize = result.finalize
-    end
+            config_loaded = true
 
-    M.finalize = finalize
+            local result_type = type(result)
+            local finalize
+            if result_type == "function" then
+                finalize = result
+            elseif result_type == "table" then
+                finalize = result.finalize
+            end
+
+            M.finalize = finalize
+
+            callback()
+        end
+    }
 end
 
 return M
