@@ -50,7 +50,7 @@ user.plugin.conform_nvim = {
     formatters_by_ft = filetype_map,
 
     -- Argument used for `format()` call on save
-    ---@typeuser.plugin.FormattingArgs?
+    ---@type user.plugin.FormattingArgs?
     format_on_save = {
         -- I recommend these options. See :help conform.format for details.
         timeout_ms = 5000,
