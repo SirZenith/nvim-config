@@ -316,7 +316,7 @@ user.plugin.noice = {
                 col = "50%",
             },
             size = {
-                min_width = vim.o.columns > vim.o.lines
+                min_width = vim.o.columns > vim.o.lines * 2
                     and math.floor(vim.o.columns * 0.3)
                     or math.floor(vim.o.columns * 0.7),
                 width = "auto",
