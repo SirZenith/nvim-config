@@ -73,9 +73,9 @@ user.plugin.noice = {
     },
 
     messages = {
+        -- Enables the Noice messages UI
         -- NOTE: If you enable messages, then the cmdline is enabled automatically.
         -- This is a current Neovim limitation.
-        -- enables the Noice messages UI
         enabled = true,
 
         -- default view for messages
@@ -146,6 +146,14 @@ user.plugin.noice = {
             },
             filter_opts = { count = 1 },
         },
+        -- :Noice warn
+        warns = {
+            -- options for the message history that you get with `:Noice`
+            view = "popup",
+            opts = { enter = true, format = "details" },
+            filter = { warning = true },
+            filter_opts = { reverse = true },
+        },
         -- :Noice errors
         errors = {
             -- options for the message history that you get with `:Noice`
@@ -157,11 +165,8 @@ user.plugin.noice = {
     },
 
     notify = {
-        -- Noice can be used as `vim.notify` so you can route any notification like other messages
-        -- Notification messages have their level and other properties set.
-        -- event is always "notify" and kind can be any log level as a string
-        -- The default routes will forward notifications to nvim-notify
-        -- Benefit of using Noice for this is the routing and consistent history view
+        -- Noice can take over `vim.notify`. All message can will be record in
+        -- noice history with severe level attached.
         enabled = true,
         view = "cmdline",
     },
@@ -169,11 +174,11 @@ user.plugin.noice = {
     lsp = {
         override = {
             -- override the default lsp markdown formatter with Noice
-            ["vim.lsp.util.convert_input_to_markdown_lines"] = false,
+            ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
             -- override the lsp markdown formatter with Noice
-            ["vim.lsp.util.stylize_markdown"] = false,
+            ["vim.lsp.util.stylize_markdown"] = true,
             -- override cmp documentation with Noice (needs the other options to work)
-            ["cmp.entry.get_documentation"] = false,
+            ["cmp.entry.get_documentation"] = true,
         },
 
         -- defaults for hover and signature help
@@ -273,8 +278,8 @@ user.plugin.noice = {
 
     ---@type NoicePresets
     presets = {
-        -- you can enable a preset by setting it to true, or a table that will override the preset config
-        -- you can also add custom presets that you can enable/disable with enabled=true
+        -- Enable preset by setting it to true or a table. Table fields will
+        -- override values preset config
 
         -- use a classic bottom cmdline for search
         bottom_search = false,
@@ -288,7 +293,7 @@ user.plugin.noice = {
         lsp_doc_border = false,
     },
 
-    -- how frequently does Noice need to check for ui updates? This has no effect when in blocking mode.
+    -- Duration between each Noice UI update. Unit: second.
     throttle = 1000 / 30,
 
     ---@type NoiceConfigViews
@@ -300,6 +305,10 @@ user.plugin.noice = {
                 row = -1,
                 col = 0,
             },
+            size = {
+                height = "auto",
+                max_height = 5,
+            },
         },
         cmdline_popup = {
             position = {
@@ -307,7 +316,7 @@ user.plugin.noice = {
                 col = "50%",
             },
             size = {
-                min_width = 60,
+                min_width = math.floor(vim.o.columns * 0.3),
                 width = "auto",
                 height = "auto",
             },
@@ -316,7 +325,24 @@ user.plugin.noice = {
 
     ---@type NoiceRouteConfig[]
     --- @see section on routes
-    routes = {},
+    routes = {
+        {
+            view = "cmdline",
+            filter = {
+                any = {
+                    {
+                        event = "msg_show",
+                        kind = { "", "echo", "echomsg" },
+                    },
+                    { error = true },
+                    { warning = true },
+                    { event = "notify" },
+                },
+
+            },
+            opts = {},
+        },
+    },
 
     ---@type table<string, NoiceFilter>
     --- @see section on statusline components

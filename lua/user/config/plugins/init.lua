@@ -18,10 +18,7 @@ local specs = {
 
     -- ------------------------------------------------------------------------
     -- Themes
-    cs { "marko-cerovac/material.nvim", enabled = false },
-    cs { "kaicataldo/material.vim", enabled = false },
     cs { "EdenEast/nightfox.nvim" },
-    cs { "shaunsingh/nord.nvim", enabled = false },
     cs { "mhartington/oceanic-next", enabled = false },
     cs { "JoosepAlviste/palenightfall.nvim", enabled = false },
     cs { "wadackel/vim-dogrun", enabled = false },
@@ -31,12 +28,14 @@ local specs = {
     -- General
     {
         "numToStr/Comment.nvim",
+        -- enabled = false,
         event = "BufEnter",
         autocmd_load_checker = putl.buffer_enter_trigger_loading_predicate,
     },
     {
         -- Collaborative edit support
         "jbyuki/instant.nvim",
+        -- enabled = false,
         cmd = {
             "InstantStartServer",
 
@@ -57,12 +56,14 @@ local specs = {
     {
         -- Show bookmark symbols in gutter column.
         "chentoast/marks.nvim",
+        -- enabled = false,
         event = "BufEnter",
         autocmd_load_checker = putl.buffer_enter_trigger_loading_predicate,
     },
     {
         -- Clipboard history manager
         "AckslD/nvim-neoclip.lua",
+        -- enabled = false,
         requires = {
             -- you'll need at least one of these
             "nvim-telescope/telescope.nvim",
@@ -76,24 +77,34 @@ local specs = {
     },
     {
         "kylechui/nvim-surround",
-        dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },
+        -- enabled = false,
+        dependencies = {
+            "nvim-treesitter/nvim-treesitter-textobjects"
+        },
         event = "BufEnter",
         autocmd_load_checker = putl.buffer_enter_trigger_loading_predicate,
     },
     {
         "nvim-tree/nvim-tree.lua",
         enabled = false,
-        dependencies = { "nvim-tree/nvim-web-devicons" },
+        dependencies = {
+            "nvim-tree/nvim-web-devicons"
+        },
         event = "VeryLazy",
     },
     {
         -- A file explorer that allows you edit your file system as vim buffer.
         "stevearc/oil.nvim",
+        -- enabled = false,
+        dependencies = {
+            "nvim-tree/nvim-web-devicons"
+        },
         event = "VeryLazy",
     },
     {
         -- Display VCS status symbol in oil.nvim buffer's signcolumn
         "SirZenith/oil-vcs-status",
+        -- enabled = false,
         -- dev = true,
         dependencies = {
             "stevearc/oil.nvim",
@@ -103,12 +114,14 @@ local specs = {
     },
     {
         "SirZenith/panelpal.nvim",
+        -- enabled = false,
         -- dev = true,
         lazy = true,
     },
     {
         -- Global Search & Replace
         "nvim-pack/nvim-spectre",
+        -- enabled = false,
         dependencies = {
             "nvim-lua/plenary.nvim",
         },
@@ -119,28 +132,37 @@ local specs = {
     },
     {
         "nvim-telescope/telescope.nvim",
-        dependencies = { "nvim-lua/plenary.nvim" },
+        -- enabled = false,
+        dependencies = {
+            "nvim-lua/plenary.nvim"
+        },
         cmd = "Telescope",
         keys = "<leader>f",
     },
     {
         "akinsho/toggleterm.nvim",
-        dependencies = { "user.config.general" },
+        -- enabled = false,
+        dependencies = {
+            "user.config.general"
+        },
         keys = "<F12>"
     },
     {
         -- Undo tree visualizer.
         "mbbill/undotree",
+        -- enabled = false,
         event = "BufEnter",
         autocmd_load_checker = putl.buffer_enter_trigger_loading_predicate,
     },
     {
-        'ThePrimeagen/vim-be-good',
+        "ThePrimeagen/vim-be-good",
+        -- enabled = false,
         cmd = "VimBeGood",
     },
     {
         -- Markup language heading outline sidebar.
         "vim-voom/VOoM",
+        -- enabled = false,
         ft = { "markdown", "html" },
     },
 
@@ -149,6 +171,7 @@ local specs = {
     {
         -- vim.ui.input and vim.ui.select UI delegate.
         "stevearc/dressing.nvim",
+        -- enabled = false,
         dependencies = {
             "nvim-telescope/telescope.nvim",
         },
@@ -156,6 +179,7 @@ local specs = {
     },
     {
         "nvim-lualine/lualine.nvim",
+        -- enabled = false,
         dependencies = {
             "kyazdani42/nvim-web-devicons",
             "folke/noice.nvim", -- load after noice.nvim
@@ -177,19 +201,12 @@ local specs = {
         event = "VeryLazy",
     },
     {
-        "startup-nvim/startup.nvim",
-        enabled = false,
-        dependencies = {
-            "user.config.general",
-            "nvim-telescope/telescope.nvim",
-            "nvim-lua/plenary.nvim"
-        },
-        event = "VeryLazy",
-    },
-    {
         -- tab line styling
         "nanozuki/tabby.nvim",
-        dependencies = { "nvim-tree/nvim-web-devicons" },
+        -- enabled = false,
+        dependencies = {
+            "nvim-tree/nvim-web-devicons"
+        },
         event = "TabNew",
     },
 
@@ -198,6 +215,7 @@ local specs = {
     {
         -- Indent level visualization.
         "lukas-reineke/indent-blankline.nvim",
+        -- enabled = false,
         main = "ibl",
         dependencies = {
             "user.config.general",
@@ -208,6 +226,7 @@ local specs = {
     {
         -- Highlight line and word under cursor.
         "SirZenith/nvim-cursorline",
+        -- enabled = false,
         -- dev = true,
         event = "BufEnter",
         autocmd_load_checker = putl.buffer_enter_trigger_loading_predicate,
@@ -216,7 +235,9 @@ local specs = {
         -- Folding support
         "kevinhwang91/nvim-ufo",
         -- enabled = false,
-        dependencies = "kevinhwang91/promise-async",
+        dependencies = {
+            "kevinhwang91/promise-async"
+        },
         event = "BufEnter",
         autocmd_load_checker = putl.buffer_enter_trigger_loading_predicate,
     },
@@ -230,21 +251,18 @@ local specs = {
     {
         -- Highlight range argument in command line.
         "winston0410/range-highlight.nvim",
-        dependencies = { "winston0410/cmd-parser.nvim" },
+        -- enabled = false,
+        dependencies = {
+            "winston0410/cmd-parser.nvim"
+        },
         event = "CmdlineEnter",
     },
 
     -- ------------------------------------------------------------------------
     -- tree-sitter
     {
-        "code-biscuits/nvim-biscuits",
-        enabled = false,
-        dependencies = { "nvim-treesitter/nvim-treesitter" },
-        event = "BufEnter",
-        autocmd_load_checker = putl.buffer_enter_trigger_loading_predicate,
-    },
-    {
         "nvim-treesitter/nvim-treesitter",
+        -- enabled = false,
         build = ":TSUpdate",
         ft = "TelescopePrompt",
         event = "BufNew",
@@ -252,13 +270,19 @@ local specs = {
     },
     {
         "nvim-treesitter/nvim-treesitter-textobjects",
-        dependencies = { "nvim-treesitter/nvim-treesitter" },
+        -- enabled = false,
+        dependencies = {
+            "nvim-treesitter/nvim-treesitter"
+        },
         event = "BufEnter",
         autocmd_load_checker = putl.buffer_enter_trigger_loading_predicate,
     },
     {
         "windwp/nvim-ts-autotag",
-        dependencies = { "nvim-treesitter/nvim-treesitter" },
+        -- enabled = false,
+        dependencies = {
+            "nvim-treesitter/nvim-treesitter"
+        },
         ft = {
             "astro",
             "glimmer",
@@ -278,12 +302,16 @@ local specs = {
     },
     {
         "nvim-treesitter/playground",
-        dependencies = { "nvim-treesitter/nvim-treesitter" },
+        -- enabled = false,
+        dependencies = {
+            "nvim-treesitter/nvim-treesitter"
+        },
         event = "BufEnter",
         autocmd_load_checker = putl.buffer_enter_trigger_loading_predicate,
     },
     {
         "hiphish/rainbow-delimiters.nvim",
+        -- enabled = false,
         dependencies = {
             "nvim-treesitter/nvim-treesitter",
             "user.config.general",
@@ -296,6 +324,7 @@ local specs = {
     -- LSP
     {
         "SirZenith/lsp-config-loader",
+        -- enabled = false,
         -- dev = true,
         dependencies = {
             "SirZenith/panelpal.nvim",
@@ -308,27 +337,34 @@ local specs = {
     {
         -- LSP status component for Lualine
         "nvim-lua/lsp-status.nvim",
+        -- enabled = false,
         lazy = true,
     },
     {
         -- LSP completion item kind icon for completion menu
         "onsails/lspkind.nvim",
+        -- enabled = false,
         lazy = true,
     },
     {
         "neovim/nvim-lspconfig",
+        -- enabled = false,
         lazy = true,
     },
     {
         -- LSP injection
         "jose-elias-alvarez/null-ls.nvim",
-        dependencies = { "nvim-lua/plenary.nvim" },
+        -- enabled = false,
+        dependencies = {
+            "nvim-lua/plenary.nvim"
+        },
         event = "BufNew",
         autocmd_load_checker = putl.new_buffer_trigger_loading_predicate,
     },
     {
         -- tsserer adapter for NeoVim
         "pmizio/typescript-tools.nvim",
+        -- enabled = false,
         dependencies = {
             "nvim-lua/plenary.nvim",
             "neovim/nvim-lspconfig",
@@ -346,31 +382,47 @@ local specs = {
     -- Completion
     {
         "hrsh7th/cmp-buffer",
-        dependencies = { "hrsh7th/nvim-cmp" },
+        -- enabled = false,
+        dependencies = {
+            "hrsh7th/nvim-cmp"
+        },
         event = { "InsertEnter", "CmdlineEnter" },
     },
     {
         "hrsh7th/cmp-cmdline",
-        dependencies = { "hrsh7th/nvim-cmp" },
+        -- enabled = false,
+        dependencies = {
+            "hrsh7th/nvim-cmp"
+        },
         event = { "CmdlineEnter" },
     },
     {
         "saadparwaiz1/cmp_luasnip",
-        dependencies = { "hrsh7th/nvim-cmp" },
+        -- enabled = false,
+        dependencies = {
+            "hrsh7th/nvim-cmp"
+        },
         event = "InsertEnter",
     },
     {
         "hrsh7th/cmp-nvim-lsp",
-        dependencies = { "hrsh7th/nvim-cmp" },
+        -- enabled = false,
+        dependencies = {
+            "hrsh7th/nvim-cmp"
+        },
         event = "LspAttach",
     },
     {
         "hrsh7th/cmp-path",
-        dependencies = { "hrsh7th/nvim-cmp" },
+        -- enabled = false,
+        dependencies = {
+            "hrsh7th/nvim-cmp"
+        },
         event = { "InsertEnter", "CmdlineEnter" },
     },
     {
         "SirZenith/cmd-snippet",
+        -- enabled = false,
         -- dev = true,
         dependencies = {
             "L3MON4D3/LuaSnip",
@@ -380,18 +432,22 @@ local specs = {
     },
     {
         "L3MON4D3/LuaSnip",
+        -- enabled = false,
         lazy = true,
     },
     {
         "windwp/nvim-autopairs",
+        -- enabled = false,
         event = "InsertEnter",
     },
     {
         "hrsh7th/nvim-cmp",
+        -- enabled = false,
         lazy = true,
     },
     {
         "SirZenith/ts-grammar-navigator",
+        -- enabled = false,
         -- dev = true,
         dependencies = {
             "SirZenith/panelpal.nvim",
@@ -401,8 +457,11 @@ local specs = {
     },
     {
         "SirZenith/prefab-cmp",
+        -- enabled = false,
         -- dev = true,
-        dependencies = { "hrsh7th/nvim-cmp", },
+        dependencies = {
+            "hrsh7th/nvim-cmp",
+        },
         event = "InsertEnter",
         cond = putl.root_directory_cond {
             ".creator",
@@ -411,6 +470,7 @@ local specs = {
     },
     {
         "SirZenith/snippet-loader",
+        -- enabled = false,
         -- dev = true,
         dependencies = {
             "L3MON4D3/LuaSnip",
@@ -424,14 +484,17 @@ local specs = {
     -- Language Support
     {
         "lervag/vimtex",
+        -- enabled = false,
         ft = { "tex", "latex", "bibtex" },
     },
     {
         "stevearc/vim-arduino",
+        -- enabled = false,
         ft = "arduino",
     },
     {
         "sudar/vim-arduino-syntax",
+        -- enabled = false,
         ft = "arduino",
     },
 
@@ -439,6 +502,7 @@ local specs = {
     -- Debugger
     {
         "rcarriga/cmp-dap",
+        -- enabled = false,
         dependencies = {
             "mfussenegger/nvim-dap",
         },
@@ -446,10 +510,12 @@ local specs = {
     },
     {
         "mfussenegger/nvim-dap",
+        -- enabled = false,
         cmd = "Dap",
     },
     {
         "LiadOz/nvim-dap-repl-highlights",
+        -- enabled = false,
         dependencies = {
             "nvim-treesitter/nvim-treesitter",
             "mfussenegger/nvim-dap",
@@ -458,6 +524,7 @@ local specs = {
     },
     {
         "rcarriga/nvim-dap-ui",
+        -- enabled = false,
         dependencies = {
             "nvim-treesitter/nvim-treesitter",
             "mfussenegger/nvim-dap",
@@ -467,6 +534,7 @@ local specs = {
     {
         -- Display inline variable infomation with virtual text.
         "theHamsta/nvim-dap-virtual-text",
+        -- enabled = false,
         dependencies = {
             "nvim-treesitter/nvim-treesitter",
             "mfussenegger/nvim-dap",
@@ -478,14 +546,18 @@ local specs = {
     -- Version Control System
     {
         "lewis6991/gitsigns.nvim",
+        -- enabled = false,
         event = "BufEnter",
         autocmd_load_checker = putl.buffer_enter_trigger_loading_predicate,
         cond = putl.root_directory_cond { ".git" },
     },
     {
         "SirZenith/vcs-helper.nvim",
+        -- enabled = false,
         -- dev = true,
-        dependencies = { "SirZenith/panelpal.nvim" },
+        dependencies = {
+            "SirZenith/panelpal.nvim"
+        },
         cmd = {
             "VcsCommit",
             "VcsDiff",
@@ -499,6 +571,7 @@ local specs = {
     {
         -- Create Color Code, color picker in NeoVim
         "uga-rosa/ccc.nvim",
+        -- enabled = false,
         cmd = {
             "CccPick",
             "CccConvert",
@@ -510,6 +583,7 @@ local specs = {
     {
         -- Highlight color code with its color in vim
         "norcalli/nvim-colorizer.lua",
+        -- enabled = false,
         event = "BufEnter",
         autocmd_load_checker = putl.buffer_enter_trigger_loading_predicate,
     },
@@ -518,11 +592,13 @@ local specs = {
     -- External Tools
     {
         "iamcco/markdown-preview.nvim",
+        -- enabled = false,
         build = function() vim.fn["mkdp#util#install"]() end,
         ft = { "markdown" },
     },
     {
         "SirZenith/mongosh.nvim",
+        -- enabled = false,
         -- dev = true,
         dependencies = {
             "nvim-lualine/lualine.nvim",
@@ -531,6 +607,7 @@ local specs = {
     },
     {
         -- Preview PlantUML in browser
+        -- enabled = false,
         "weirongxu/plantuml-previewer.vim",
         dependencies = {
             "aklt/plantuml-syntax",
