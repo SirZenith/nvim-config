@@ -145,12 +145,10 @@ user.option = {
     },
     g = {
         python3_host_prog = user.env.PYTHON_PATH(),
-        loaded_netrwPlugin = 1, -- disable Netrw
-    }
+    },
 }
 
 user.general = {
-    -- locale = "zh_CN.UTF-8",
     filetype = {
         -- disable soft tab for listed file types
         no_soft_tab = { "go", "make", "plantuml", "vlang" },
@@ -299,11 +297,6 @@ return function()
     vim.cmd "filetype plugin indent on"
 
     im_auto_toggle_setup(user.general.im_select())
-
-    local locale = user.general.locale()
-    if locale then
-        vim.cmd("language " .. locale)
-    end
 
     for name, cfg in user.sign:pairs() do
         vim.fn.sign_define(name, cfg)

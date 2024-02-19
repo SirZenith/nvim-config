@@ -106,10 +106,6 @@ local function setup_environment()
     vim.o.laststatus = 0 -- disable staus line in intro screen
     vim.o.fillchars = "eob: " -- remove `~` at eob lines
 
-    -- disable Netrw
-    vim.g.loaded_netrw = 1
-    vim.g.loaded_netrwPlugin = 1
-
     -- loading custom loader
     local module_loaders = import "user.utils.module_loaders"
     if module_loaders then
