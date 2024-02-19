@@ -1,3 +1,5 @@
+local api = vim.api
+
 local M = {}
 
 ---@param spec user.plugin.PluginSpec
@@ -68,7 +70,7 @@ end
 -- Looing for a directory recrusively in parent
 ---@param target_names string[] # target directory name
 ---@return boolean is_found
-local function find_root_by_directory(target_names)
+function M.find_root_by_directory(target_names)
     local pwd = vim.fn.getcwd()
 
     local is_found = false
@@ -93,7 +95,7 @@ end
 ---@return fun(): boolean
 function M.root_directory_cond(target_names)
     return function()
-        return find_root_by_directory(target_names)
+        return M.find_root_by_directory(target_names)
     end
 end
 
@@ -127,6 +129,39 @@ function M.root_file_cond(target_names)
     return function()
         return find_root_by_file(target_names)
     end
+end
+
+local IGNORE_FILETYPE_TRIGGER = {
+    [""] = true,
+    oil = true,
+}
+
+-- Check if autocmd event of a buffer is valid for triggering a plugin to load.
+---@return boolean
+function M.buffer_enter_trigger_loading_predicate()
+    local filetype = vim.bo.filetype
+    if IGNORE_FILETYPE_TRIGGER[filetype] then
+        return false
+    end
+
+    return true
+end
+
+-- Check if BufNew event is valid for triggering a plugin to load.
+---@param args table
+---@return boolean
+function M.new_buffer_trigger_loading_predicate(spec, args)
+    local file = args.file
+    if not file or file == "" then
+        return false
+    end
+
+    local prefix = "oil://"
+    if file:sub(1, #prefix) == prefix then
+        return false
+    end
+
+    return true
 end
 
 return M

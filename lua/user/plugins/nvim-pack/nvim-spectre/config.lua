@@ -186,4 +186,11 @@ user.plugin.nvim_spectre = {
 
 return function()
     require "spectre".setup(user.plugin.nvim_spectre())
+
+    vim.api.nvim_create_user_command("SearchAndReplace", function()
+        vim.cmd "Spectre"
+    end, {
+        desc = "alias for Spectre",
+        bang = true,
+    })
 end

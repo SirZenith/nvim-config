@@ -4,3 +4,4 @@
 ---@field config_no_defer? boolean # finalize config module of plugin right after it's loaded
 ---@field config? fun(spec: user.plugin.PluginSpec) # cache value of `config` function before being overridden by plugin loader setup.
 ---@field old_config_func? fun(spec: user.plugin.PluginSpec) # cache value of `config` function before being overridden by plugin loader setup.
+---@field autocmd_load_checker? fun(spec: user.plugin.PluginSpec, args: table): boolean

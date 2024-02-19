@@ -6,8 +6,6 @@ user.plugin.nvim_cmp = {
 
 return function()
     local cmp = require "cmp"
-    local luasnip = require "luasnip"
-    local lspkind = require "lspkind"
     local mapping = require "user.plugins.hrsh7th.nvim-cmp.mapping"
 
     user.plugin.nvim_cmp = {
@@ -27,6 +25,7 @@ return function()
         },
         snippet = {
             expand = function(args)
+                local luasnip = require "luasnip"
                 luasnip.lsp_expand(args.body)
             end,
         },
@@ -51,14 +50,19 @@ return function()
         )
     }
 
-    local lspkind_cfg = user.plugin.lspkind()
-    lspkind_cfg.maxwidth = 50
-    lspkind_cfg.symbol_map = user.lsp.kind_label()
-
-    local fmt_func = lspkind.cmp_format(lspkind_cfg)
+    local fmt_func
 
     local cmp_cfg = user.plugin.nvim_cmp()
     cmp_cfg.formatting.format = function(entry, vim_item)
+        if not fmt_func then
+            local lspkind = require "lspkind"
+            local lspkind_cfg = user.plugin.lspkind()
+            lspkind_cfg.maxwidth = 50
+            lspkind_cfg.symbol_map = user.lsp.kind_label()
+
+            fmt_func = lspkind.cmp_format(lspkind_cfg)
+        end
+
         local kind = fmt_func(entry, vim_item)
         local strings = vim.split(kind.kind, "%s+", { trimempty = true })
 

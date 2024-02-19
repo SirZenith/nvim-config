@@ -18,20 +18,21 @@ local specs = {
 
     -- ------------------------------------------------------------------------
     -- Themes
-    cs { "marko-cerovac/material.nvim",      enabled = false },
-    cs { "kaicataldo/material.vim",          enabled = false },
+    cs { "marko-cerovac/material.nvim", enabled = false },
+    cs { "kaicataldo/material.vim", enabled = false },
     cs { "EdenEast/nightfox.nvim" },
-    cs { "shaunsingh/nord.nvim",             enabled = false },
-    cs { "mhartington/oceanic-next",         enabled = false },
+    cs { "shaunsingh/nord.nvim", enabled = false },
+    cs { "mhartington/oceanic-next", enabled = false },
     cs { "JoosepAlviste/palenightfall.nvim", enabled = false },
-    cs { "wadackel/vim-dogrun",              enabled = false },
-    cs { "rakr/vim-two-firewatch",           enabled = false },
+    cs { "wadackel/vim-dogrun", enabled = false },
+    cs { "rakr/vim-two-firewatch", enabled = false },
 
     -- ------------------------------------------------------------------------
     -- General
     {
         "numToStr/Comment.nvim",
-        event = "BufReadPost",
+        event = "BufEnter",
+        autocmd_load_checker = putl.buffer_enter_trigger_loading_predicate,
     },
     {
         -- Collaborative edit support
@@ -50,12 +51,14 @@ local specs = {
         -- Jump to anywhere with a few key strokes
         "ggandor/leap.nvim",
         -- enabled = false,
-        event = "BufReadPost",
+        event = "BufEnter",
+        autocmd_load_checker = putl.buffer_enter_trigger_loading_predicate,
     },
     {
         -- Show bookmark symbols in gutter column.
         "chentoast/marks.nvim",
-        event = "BufReadPost",
+        event = "BufEnter",
+        autocmd_load_checker = putl.buffer_enter_trigger_loading_predicate,
     },
     {
         -- Clipboard history manager
@@ -65,16 +68,17 @@ local specs = {
             "nvim-telescope/telescope.nvim",
             -- "ibhagwan/fzf-lua",
         },
-        event = "BufReadPost",
+        keys = "<leader>p"
     },
     {
         "rcarriga/nvim-notify",
-        event = "VeryLazy",
+        lazy = true,
     },
     {
         "kylechui/nvim-surround",
         dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },
-        event = "BufReadPost",
+        event = "BufEnter",
+        autocmd_load_checker = putl.buffer_enter_trigger_loading_predicate,
     },
     {
         "nvim-tree/nvim-tree.lua",
@@ -94,13 +98,13 @@ local specs = {
         dependencies = {
             "stevearc/oil.nvim",
         },
-        event = "VeryLazy",
+        ft = "oil",
         cond = putl.root_directory_cond { ".git", ".svn" },
     },
     {
         "SirZenith/panelpal.nvim",
         -- dev = true,
-        event = "VeryLazy",
+        lazy = true,
     },
     {
         -- Global Search & Replace
@@ -116,17 +120,19 @@ local specs = {
     {
         "nvim-telescope/telescope.nvim",
         dependencies = { "nvim-lua/plenary.nvim" },
-        event = "VeryLazy",
+        cmd = "Telescope",
+        keys = "<leader>f",
     },
     {
         "akinsho/toggleterm.nvim",
-        event = "VeryLazy",
         dependencies = { "user.config.general" },
+        keys = "<F12>"
     },
     {
         -- Undo tree visualizer.
         "mbbill/undotree",
-        event = "BufReadPre",
+        event = "BufEnter",
+        autocmd_load_checker = putl.buffer_enter_trigger_loading_predicate,
     },
     {
         'ThePrimeagen/vim-be-good',
@@ -146,11 +152,14 @@ local specs = {
         dependencies = {
             "nvim-telescope/telescope.nvim",
         },
-        event = "VeryLazy",
+        event = { "CmdlineEnter", "InsertEnter", "LspAttach" },
     },
     {
         "nvim-lualine/lualine.nvim",
-        dependencies = { "kyazdani42/nvim-web-devicons" },
+        dependencies = {
+            "kyazdani42/nvim-web-devicons",
+            "folke/noice.nvim", -- load after noice.nvim
+        },
         event = "VeryLazy",
     },
     {
@@ -181,7 +190,7 @@ local specs = {
         -- tab line styling
         "nanozuki/tabby.nvim",
         dependencies = { "nvim-tree/nvim-web-devicons" },
-        event = "VeryLazy",
+        event = "TabNew",
     },
 
     -- ------------------------------------------------------------------------
@@ -193,26 +202,30 @@ local specs = {
         dependencies = {
             "user.config.general",
         },
-        event = "BufReadPost",
+        event = "BufEnter",
+        autocmd_load_checker = putl.buffer_enter_trigger_loading_predicate,
     },
     {
         -- Highlight line and word under cursor.
         "SirZenith/nvim-cursorline",
         -- dev = true,
-        event = "BufReadPost",
+        event = "BufEnter",
+        autocmd_load_checker = putl.buffer_enter_trigger_loading_predicate,
     },
     {
         -- Folding support
         "kevinhwang91/nvim-ufo",
         -- enabled = false,
         dependencies = "kevinhwang91/promise-async",
-        event = "VeryLazy",
+        event = "BufEnter",
+        autocmd_load_checker = putl.buffer_enter_trigger_loading_predicate,
     },
     {
         -- Folding style customization
         "anuvyklack/pretty-fold.nvim",
         enabled = false,
-        event = "BufReadPost",
+        event = "BufEnter",
+        autocmd_load_checker = putl.buffer_enter_trigger_loading_predicate,
     },
     {
         -- Highlight range argument in command line.
@@ -227,17 +240,21 @@ local specs = {
         "code-biscuits/nvim-biscuits",
         enabled = false,
         dependencies = { "nvim-treesitter/nvim-treesitter" },
-        event = "VeryLazy",
+        event = "BufEnter",
+        autocmd_load_checker = putl.buffer_enter_trigger_loading_predicate,
     },
     {
         "nvim-treesitter/nvim-treesitter",
         build = ":TSUpdate",
-        event = "VeryLazy",
+        ft = "TelescopePrompt",
+        event = "BufNew",
+        autocmd_load_checker = putl.new_buffer_trigger_loading_predicate,
     },
     {
         "nvim-treesitter/nvim-treesitter-textobjects",
         dependencies = { "nvim-treesitter/nvim-treesitter" },
-        event = "BufReadPre",
+        event = "BufEnter",
+        autocmd_load_checker = putl.buffer_enter_trigger_loading_predicate,
     },
     {
         "windwp/nvim-ts-autotag",
@@ -262,7 +279,8 @@ local specs = {
     {
         "nvim-treesitter/playground",
         dependencies = { "nvim-treesitter/nvim-treesitter" },
-        event = "BufReadPre",
+        event = "BufEnter",
+        autocmd_load_checker = putl.buffer_enter_trigger_loading_predicate,
     },
     {
         "hiphish/rainbow-delimiters.nvim",
@@ -270,7 +288,8 @@ local specs = {
             "nvim-treesitter/nvim-treesitter",
             "user.config.general",
         },
-        event = "VeryLazy",
+        event = "BufEnter",
+        autocmd_load_checker = putl.buffer_enter_trigger_loading_predicate,
     },
 
     -- ------------------------------------------------------------------------
@@ -283,27 +302,29 @@ local specs = {
             "nvim-lua/lsp-status.nvim",
             "neovim/nvim-lspconfig",
         },
-        event = "VeryLazy",
+        event = "BufNew",
+        autocmd_load_checker = putl.new_buffer_trigger_loading_predicate,
     },
     {
         -- LSP status component for Lualine
         "nvim-lua/lsp-status.nvim",
-        event = "VeryLazy",
+        lazy = true,
     },
     {
         -- LSP completion item kind icon for completion menu
         "onsails/lspkind.nvim",
-        event = "VeryLazy",
+        lazy = true,
     },
     {
         "neovim/nvim-lspconfig",
-        event = "VeryLazy",
+        lazy = true,
     },
     {
         -- LSP injection
         "jose-elias-alvarez/null-ls.nvim",
         dependencies = { "nvim-lua/plenary.nvim" },
-        event = "VeryLazy",
+        event = "BufNew",
+        autocmd_load_checker = putl.new_buffer_trigger_loading_predicate,
     },
     {
         -- tsserer adapter for NeoVim
@@ -317,41 +338,16 @@ local specs = {
             "tsconfig.json",
             "client/tsconfig.json",
         },
-        event = "VeryLazy",
+        event = "BufNew",
+        autocmd_load_checker = putl.new_buffer_trigger_loading_predicate,
     },
 
     -- ------------------------------------------------------------------------
     -- Completion
     {
-        "SirZenith/cmd-snippet",
-        -- dev = true,
-        dependencies = {
-            "L3MON4D3/LuaSnip",
-            "hrsh7th/nvim-cmp",
-        },
-        event = "InsertEnter",
-    },
-    {
-        "L3MON4D3/LuaSnip",
-        event = "VeryLazy",
-    },
-    {
-        "windwp/nvim-autopairs",
-        event = "InsertEnter",
-    },
-    {
-        "hrsh7th/nvim-cmp",
-        dependencies = {
-            "L3MON4D3/LuaSnip",
-            "onsails/lspkind.nvim",
-            "SirZenith/lsp-config-loader",
-        },
-        lazy = true,
-    },
-    {
         "hrsh7th/cmp-buffer",
         dependencies = { "hrsh7th/nvim-cmp" },
-        event = "BufReadPost",
+        event = { "InsertEnter", "CmdlineEnter" },
     },
     {
         "hrsh7th/cmp-cmdline",
@@ -366,12 +362,33 @@ local specs = {
     {
         "hrsh7th/cmp-nvim-lsp",
         dependencies = { "hrsh7th/nvim-cmp" },
-        event = "BufReadPost",
+        event = "LspAttach",
     },
     {
         "hrsh7th/cmp-path",
         dependencies = { "hrsh7th/nvim-cmp" },
         event = { "InsertEnter", "CmdlineEnter" },
+    },
+    {
+        "SirZenith/cmd-snippet",
+        -- dev = true,
+        dependencies = {
+            "L3MON4D3/LuaSnip",
+            "hrsh7th/nvim-cmp",
+        },
+        event = "InsertEnter",
+    },
+    {
+        "L3MON4D3/LuaSnip",
+        lazy = true,
+    },
+    {
+        "windwp/nvim-autopairs",
+        event = "InsertEnter",
+    },
+    {
+        "hrsh7th/nvim-cmp",
+        lazy = true,
     },
     {
         "SirZenith/ts-grammar-navigator",
@@ -399,7 +416,8 @@ local specs = {
             "L3MON4D3/LuaSnip",
             "SirZenith/cmd-snippet",
         },
-        event = "VeryLazy",
+        event = "BufNew",
+        autocmd_load_checker = putl.new_buffer_trigger_loading_predicate,
     },
 
     -- ------------------------------------------------------------------------
@@ -460,14 +478,19 @@ local specs = {
     -- Version Control System
     {
         "lewis6991/gitsigns.nvim",
-        event = "BufReadPost",
+        event = "BufEnter",
+        autocmd_load_checker = putl.buffer_enter_trigger_loading_predicate,
         cond = putl.root_directory_cond { ".git" },
     },
     {
         "SirZenith/vcs-helper.nvim",
         -- dev = true,
         dependencies = { "SirZenith/panelpal.nvim" },
-        event = "CmdlineEnter",
+        cmd = {
+            "VcsCommit",
+            "VcsDiff",
+            "VcsStatus",
+        },
         cond = putl.root_directory_cond { ".git", ".svn" },
     },
 
@@ -476,12 +499,19 @@ local specs = {
     {
         -- Create Color Code, color picker in NeoVim
         "uga-rosa/ccc.nvim",
-        event = "CmdlineEnter",
+        cmd = {
+            "CccPick",
+            "CccConvert",
+            "CccHighlighterDisable",
+            "CccHighlighterEnable",
+            "CccHighlighterToggle",
+        },
     },
     {
         -- Highlight color code with its color in vim
         "norcalli/nvim-colorizer.lua",
-        event = "BufReadPost",
+        event = "BufEnter",
+        autocmd_load_checker = putl.buffer_enter_trigger_loading_predicate,
     },
 
     -- ------------------------------------------------------------------------

@@ -92,7 +92,7 @@ local function on_plugins_loaded()
             local plugin_loader = import "user.utils.plugin_loaders.lazy"
             utils.finalize_module(plugin_loader)
 
-            vim.fn.timer_start(1000, show_editor_state)
+            show_editor_state()
         end
     }
 end
@@ -131,6 +131,9 @@ local function setup_init_autocmd()
 end
 
 local function setup_plugin()
+    -- setup plugin loading keymap leader
+    vim.g.mapleader = " "
+
     local plugin_specs = import "user.config.plugins"
     local plugin_loader = import "user.utils.plugin_loaders.lazy"
     plugin_loader.setup(plugin_specs)

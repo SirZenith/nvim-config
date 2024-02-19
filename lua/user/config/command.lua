@@ -60,12 +60,6 @@ end, {
     desc = "save & delete all buffers",
 })
 
-cmd("SearchAndReplace", function()
-    vim.cmd "Spectre"
-end, {
-    desc = "alias for Spectre"
-})
-
 -- ----------------------------------------------------------------------------
 
 return function()

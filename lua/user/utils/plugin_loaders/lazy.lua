@@ -98,22 +98,108 @@ end
 
 local M = {}
 
+local augroup = vim.api.nvim_create_augroup("user.util.plugin_loader.lazy", { clear = true })
+
 M._is_bootstrap = is_bootstrap
 M._is_finalized = false
 M._pending_spec_list = nil ---@type user.plugin.PluginSpec[] | nil
+M._custom_autocmd_listener = {} ---@type table<string, table<user.plugin.PluginSpec, true>>
+
+---@param event string
+---@param args table
+function M._on_autocmd_triggered(event, args)
+    local set = M._custom_autocmd_listener[event]
+    if not set then return end
+
+    local is_empty = true
+    for spec in pairs(set) do
+        local ok = spec.autocmd_load_checker(spec, args)
+        if ok then
+            local full_name = get_plugin_name_from_spec(spec)
+            if full_name then
+                local segments = vim.split(full_name, "/")
+                local name = segments[#segments]
+                manager.load { plugins = { name } }
+            end
+
+            set[spec] = nil
+        else
+            is_empty = false
+        end
+    end
+
+    if is_empty then
+        M._custom_autocmd_listener[event] = nil
+        return
+    end
+end
+
+---@parevent string
+---@param spec user.plugin.PluginSpec
+function M._register_autocmd_listener(event, spec)
+    local set = M._custom_autocmd_listener[event]
+    if not set then
+        set = {}
+        M._custom_autocmd_listener[event] = set
+
+        vim.api.nvim_create_autocmd(event, {
+            group = augroup,
+            callback = function(args)
+                M._on_autocmd_triggered(event, args)
+            end
+        })
+    end
+
+    set[spec] = true
+end
+
+---@param spec user.plugin.PluginSpec
+---@return boolean is_custom_load
+function M._try_setup_spec_autocmd(spec)
+    if not spec.autocmd_load_checker then
+        return false
+    end
+
+    local event = spec.event
+    if not event then
+        vim.notify("plugin specified custom autocmd handler but doesn't provide autocmd name.", vim.log.WARN)
+        vim.print(spec)
+        return false
+    end
+
+    local is_custom = true
+
+    if type(event) == "string" then
+        M._register_autocmd_listener(event, spec)
+    elseif type(event) == "table" then
+        for _, value in ipairs(event) do
+            if type(value) == "string" then
+                M._register_autocmd_listener(value, spec)
+            else
+                vim.notify("autocmd name value for custom handler shoul be string", vim.log.levels.WARN)
+                vim.print(value)
+            end
+        end
+    else
+        is_custom = true
+    end
+
+    return is_custom
+end
 
 ---@param plugin_name string
 ---@return any[] | nil
 function M._load_config_modules(plugin_name)
     if M._is_bootstrap then return nil end
 
-    local modules = {
+    local paths = {
         get_config_path(plugin_name),
         get_keybinding_path(plugin_name),
     }
 
-    for i, path in ipairs(modules) do
-        modules[i] = load_config_module(path)
+    local modules = {}
+    for _, path in ipairs(paths) do
+        modules[#modules + 1] = load_config_module(path)
     end
 
     return modules
@@ -144,10 +230,14 @@ function M._finalize_plugin_config(spec)
     if after_finalization then
         after_finalization()
     end
+
+    for _, set in pairs(M._custom_autocmd_listener) do
+        set[spec] = nil
+    end
 end
 
 ---@param spec user.plugin.PluginSpec
-function M._run_plugin_config(spec)
+function M._on_plugin_loaded(spec)
     if M._is_finalized or spec.config_no_defer then
         M._finalize_plugin_config(spec)
     else
@@ -190,7 +280,13 @@ function M.setup(specs)
         handling_before_load_cmd(spec)
 
         spec.old_config_func = spec.config
-        spec.config = M._run_plugin_config
+        spec.config = M._on_plugin_loaded
+
+        local is_custom_load = M._try_setup_spec_autocmd(spec)
+        if is_custom_load then
+            spec.event = nil
+            spec.lazy = true
+        end
 
         table.insert(targets, spec)
     end
