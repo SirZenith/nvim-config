@@ -102,7 +102,7 @@ end
 local function setup_environment()
     chdir()
 
-    vim.o.shortmess = "I" -- disable intro screen message
+    vim.o.shortmess = vim.o.shortmess .. "I" -- disable intro screen message
     vim.o.laststatus = 0 -- disable staus line in intro screen
     vim.o.fillchars = "eob: " -- remove `~` at eob lines
 
