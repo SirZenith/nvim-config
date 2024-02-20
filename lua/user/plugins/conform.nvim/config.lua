@@ -36,7 +36,16 @@ user.plugin.conform_nvim = {
     __new_entry = true,
 
     ---@type table<string, user.plugin.FormatterInfo | fun(bufnr: integer): user.plugin.FormatterInfo>
-    formatters = {},
+    formatters = {
+        ["prettier-eslint"] = {
+            command = vim.fn.has("win32") == 1 and "prettier-eslint.cmd" or "prettier-eslint",
+            args = { "--stdin", "--stdin-filepath", "$FILENAME" },
+        },
+        prettier_d_slim = {
+            command = vim.fn.has("win32") == 1 and "prettier_d_slim.cmd" or "prettier_d_slim",
+            args = { "--stdin", "--stdin-filepath", "$FILENAME" },
+        },
+    },
 
     -- Multiple formatters will be called sequentially.
     -- For formatters in nested list, only first available one will be used.
@@ -46,7 +55,8 @@ user.plugin.conform_nvim = {
     ---@type user.plugin.FormatterFileTypeMap
     formatters_by_ft = {
         ["_"] = { "trim_whitespace" },
-        typescript = { "eslint_d" },
+        javascript = { "prettier_d_slim", "eslint_d" },
+        typescript = { "prettier_d_slim", "eslint_d" },
     },
 
     -- Argument used for `format()` call on save
