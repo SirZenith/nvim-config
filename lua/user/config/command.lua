@@ -26,7 +26,7 @@ cmd("Reload", "source $MYVIMRC", {
 
 cmd("DumpConfigMeta", function()
     local plugin_specs = import "user.config.plugins"
-    local plugin_loader = import "user.utils.plugin_loaders.lazy"
+    local plugin_loader = import "user.config.plugins.loaders.lazy"
     plugin_loader.load_all_plugin_config(plugin_specs)
 
     local filepath = fs.path_join(user.env.USER_RUNTIME_PATH(), "user", "meta", "user_config.lua")

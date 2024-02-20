@@ -89,7 +89,7 @@ local function on_plugins_loaded()
             utils.finalize_module(workspace)
 
             -- plugins, get finalized after all user configurations are.
-            local plugin_loader = import "user.utils.plugin_loaders.lazy"
+            local plugin_loader = import "user.config.plugins.loaders.lazy"
             utils.finalize_module(plugin_loader)
 
             show_editor_state()
@@ -103,8 +103,8 @@ local function setup_environment()
     chdir()
 
     vim.o.shortmess = vim.o.shortmess .. "I" -- disable intro screen message
-    vim.o.laststatus = 0 -- disable staus line in intro screen
-    vim.o.fillchars = "eob: " -- remove `~` at eob lines
+    vim.o.laststatus = 0                     -- disable staus line in intro screen
+    vim.o.fillchars = "eob: "                -- remove `~` at eob lines
 
     -- loading custom loader
     local module_loaders = import "user.utils.module_loaders"
@@ -131,7 +131,7 @@ local function setup_plugin()
     vim.g.mapleader = " "
 
     local plugin_specs = import "user.config.plugins"
-    local plugin_loader = import "user.utils.plugin_loaders.lazy"
+    local plugin_loader = import "user.config.plugins.loaders.lazy"
     plugin_loader.setup(plugin_specs)
 end
 
