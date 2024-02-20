@@ -3,7 +3,6 @@ return function()
 
     vim.keymap.set("n", "<A-F>", function()
         conform.format {
-            bufnr = 0,
             async = true,
             lsp_fallback = true,
         }
