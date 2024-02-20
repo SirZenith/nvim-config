@@ -331,6 +331,7 @@ local specs = {
             "nvim-lua/lsp-status.nvim",
             "neovim/nvim-lspconfig",
         },
+        ft = "TelescopePrompt",
         event = "BufNew",
         autocmd_load_checker = putl.new_buffer_trigger_loading_predicate,
     },
@@ -354,7 +355,7 @@ local specs = {
     {
         -- LSP injection
         "jose-elias-alvarez/null-ls.nvim",
-        -- enabled = false,
+        enabled = false,
         dependencies = {
             "nvim-lua/plenary.nvim"
         },
@@ -374,6 +375,7 @@ local specs = {
             "tsconfig.json",
             "client/tsconfig.json",
         },
+        ft = "TelescopePrompt",
         event = "BufNew",
         autocmd_load_checker = putl.new_buffer_trigger_loading_predicate,
     },
@@ -476,12 +478,21 @@ local specs = {
             "L3MON4D3/LuaSnip",
             "SirZenith/cmd-snippet",
         },
+        ft = "TelescopePrompt",
         event = "BufNew",
         autocmd_load_checker = putl.new_buffer_trigger_loading_predicate,
     },
 
     -- ------------------------------------------------------------------------
     -- Language Support
+    {
+        -- Formatter integration
+        "stevearc/conform.nvim",
+        -- enabled = false,
+        ft = "TelescopePrompt",
+        event = "BufNew",
+        autocmd_load_checker = putl.new_buffer_trigger_loading_predicate,
+    },
     {
         "lervag/vimtex",
         -- enabled = false,

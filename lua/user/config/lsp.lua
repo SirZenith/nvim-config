@@ -23,7 +23,6 @@ user.lsp = {
     },
     keymap = {
         -- utility
-        ["<A-F>"] = function() vim.lsp.buf.format(user.lsp.format_args()) end,
         ["<F2>"] = vim.lsp.buf.rename,
         ["<space>ca"] = vim.lsp.buf.code_action,
         -- goto
