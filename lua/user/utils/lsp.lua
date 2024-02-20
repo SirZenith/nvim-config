@@ -2,12 +2,12 @@ local import = require "user.utils".import
 
 local validate = vim.validate
 
-local  M = {}
+local M = {}
 
 -- Add server config to nvim-lspconfig
 ---@param ls_name string
----@param default_config table<string, any>
----@param extra_opts? table<string, any>
+---@param default_config table<string, any> # `default_config` field for config
+---@param extra_opts? table<string, any> # all other fields of config that are optional
 function M.add_lsp_config(ls_name, default_config, extra_opts)
     local lspconfigs_configs = import "lspconfig.configs"
     if not lspconfigs_configs then return end

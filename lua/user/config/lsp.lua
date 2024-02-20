@@ -1,7 +1,6 @@
 local user = require "user"
 local config_const = require "user.config.constant"
 local fs = require "user.utils.fs"
-local lsp_util = require "user.utils.lsp"
 
 user.lsp = {
     __new_entry = true,
@@ -108,6 +107,11 @@ user.lsp = {
             install = "npm i -g vscode-langservers-extracted",
         },
         {
+            "markdown",
+            enabled = false,
+            install = "yarn global add vscode-langservers-extracted",
+        },
+        {
             "nushell",
             desc = "make use of built in language server of nu",
         },
@@ -183,7 +187,7 @@ user.lsp = {
     },
     extra_server = {
         markdown = {
-            cmd = { 'vscode-markdown-language-server', '--stdio' },
+            cmd = { "vscode-markdown-language-server", "--stdio" },
             filetypes = { "markdown" },
             root_dir = function()
                 local lspconfig_util = require "lspconfig.util"
@@ -198,6 +202,3 @@ user.lsp = {
     },
     load_extra_plugins = {},
 }
-
-return function()
-end
