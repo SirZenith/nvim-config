@@ -107,6 +107,10 @@ user.lsp = {
             install = "npm i -g vscode-langservers-extracted",
         },
         {
+            "nushell",
+            desc = "make use of built in language server of nu",
+        },
+        {
             "pylsp",
             install = "pip install 'python-lsp-server[all]'",
         },
