@@ -5,7 +5,7 @@ end
 
 local utils = require "user.utils"
 local import = utils.import
-local config_entry = require "user.utils.config_entry"
+local config_entry = require "user.config.config_entry"
 
 local user = config_entry.ConfigEntry:new(base_config) --[[@as UserConfig]]
 
