@@ -1,6 +1,6 @@
 local user = require "user"
 
-local comp_maco = require "user/plugins/nvim-lualine/lualine.nvim/component_macro"
+local comp_maco = require "user/plugins/lualine.nvim/component_macro"
 
 user.plugin.lualine = {
     __new_entry = true,

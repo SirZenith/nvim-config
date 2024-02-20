@@ -257,8 +257,8 @@ local function get_plugin_name_from_spec(spec)
     local spec_type = type(spec)
 
     local name
-    if spec_type == "table" then
-        name = spec.enabled ~= false and spec[1] or spec.name
+    if spec_type == "table" and spec.enabled ~= false then
+        name = spec[1] or spec.name
     elseif spec_type == "string" then
         name = spec
     end
@@ -266,12 +266,12 @@ local function get_plugin_name_from_spec(spec)
     return name
 end
 
----@param name string # plugin spec name
+---@param name string # plugin base name
 local function get_config_path(name)
     return fs.path_join("user", "plugins", name, "config.lua")
 end
 
----@param name string # plugin spec name
+---@param name string # plugin base name
 local function get_keybinding_path(name)
     return fs.path_join("user", "plugins", name, "keybinding.lua")
 end
@@ -433,9 +433,10 @@ end
 function M._load_config_modules(plugin_name)
     if M._is_bootstrap then return nil end
 
+    local plugin_basename = vim.fs.basename(plugin_name)
     local paths = {
-        get_config_path(plugin_name),
-        get_keybinding_path(plugin_name),
+        get_config_path(plugin_basename),
+        get_keybinding_path(plugin_basename),
     }
 
     local modules = {}

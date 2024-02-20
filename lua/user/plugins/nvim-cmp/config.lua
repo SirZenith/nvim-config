@@ -6,7 +6,7 @@ user.plugin.nvim_cmp = {
 
 return function()
     local cmp = require "cmp"
-    local mapping = require "user.plugins.hrsh7th.nvim-cmp.mapping"
+    local mapping = require "user.plugins.nvim-cmp.mapping"
 
     user.plugin.nvim_cmp = {
         window = {

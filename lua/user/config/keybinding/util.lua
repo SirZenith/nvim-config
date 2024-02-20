@@ -71,8 +71,16 @@ function M.goto_cursor_file(is_open_in_new_tab)
     local search_targets = {}
     local path
     for _, pattern in user.keybinding.cursor_file.jump_pattern:ipairs() do
-        local p = pattern:gsub("%?", cfile)
-        if vim.fn.filereadable(p) == 1 then
+        local patt_type = type(pattern)
+
+        local p
+        if patt_type == "string" then
+            p = pattern:gsub("%?", cfile)
+        elseif patt_type == "function" then
+            p = pattern(cfile)
+        end
+
+        if p and vim.fn.filereadable(p) == 1 then
             path = p
             break
         end

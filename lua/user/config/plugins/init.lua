@@ -353,16 +353,6 @@ local specs = {
         lazy = true,
     },
     {
-        -- LSP injection
-        "jose-elias-alvarez/null-ls.nvim",
-        enabled = false,
-        dependencies = {
-            "nvim-lua/plenary.nvim"
-        },
-        event = "BufNew",
-        autocmd_load_checker = putl.new_buffer_trigger_loading_predicate,
-    },
-    {
         -- tsserer adapter for NeoVim
         "pmizio/typescript-tools.nvim",
         -- enabled = false,

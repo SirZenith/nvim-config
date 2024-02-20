@@ -40,7 +40,7 @@ user.plugin.nvim_neoclip = {
                 paste_behind = '<c-k>',
                 replay = '<c-q>', -- replay a macro
                 delete = '<c-d>', -- delete an entry
-                edit = '<c-e>', -- edit an entry
+                edit = '<c-e>',   -- edit an entry
                 custom = {},
             },
             n = {

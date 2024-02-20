@@ -29,7 +29,7 @@ local user = require "user"
 ---@alias user.plugin.DapVirtualTextOptions table<string, any>
 
 user.plugin.nvim_dap_virtual_text = {
-	__new_entry = true,
+    __new_entry = true,
     -- enable this plugin (the default)
     enabled = true,
     -- create commands DapVirtualTextEnable, DapVirtualTextDisable, DapVirtualTextToggle, (DapVirtualTextForceRefresh for refreshing when debug adapter did not notify its termination)
@@ -52,7 +52,7 @@ user.plugin.nvim_dap_virtual_text = {
     --- A callback that determines how a variable is displayed or whether it should be omitted
     --- @param variable user.plugin.DapVariable
     --- @param buf number
-    --- @param stackframe user.plugin.DapStackFrame 
+    --- @param stackframe user.plugin.DapStackFrame
     --- @param node TSNode
     --- @param options user.plugin.DapVirtualTextOptions # Current options for nvim-dap-virtual-text
     --- @return string? # A text how the virtual text should be displayed or nil, if this variable shouldn't be displayed

@@ -33,12 +33,16 @@ user.keybinding = {
         search_paths = { "." },
     },
     cursor_file = {
+        ---@type (string | fun(cfile: string): string?)[]
         jump_pattern = {
             "?",
             "?.lua",
             "?.h",
             "?.hpp",
-            "lua/user/plugins/?/config.lua",
+            function(cfile)
+                local name = vim.fs.basename(cfile)
+                return "lua/user/plugins/" .. name .. "/config.lua"
+            end,
         }
     },
     keymap = {
