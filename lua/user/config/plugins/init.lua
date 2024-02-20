@@ -14,7 +14,7 @@ local specs = {
     ucs "user.config.command",
     ucs "user.config.platforms",
     ucs "user.config.lsp",
-    ucs "user.workspace",
+    ucs "user.config.workspace",
 
     -- ------------------------------------------------------------------------
     -- Themes

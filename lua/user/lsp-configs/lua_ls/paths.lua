@@ -2,7 +2,7 @@ local user = require "user"
 local fs = require "user.utils.fs"
 local functional = require "user.utils.functional"
 local table_utils = require "user.utils.table"
-local workspace = require "user.workspace"
+local workspace = require "user.config.workspace"
 
 local M = {}
 

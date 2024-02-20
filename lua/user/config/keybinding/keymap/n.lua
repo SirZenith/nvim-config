@@ -112,8 +112,8 @@ return vim.tbl_extend("keep", {
     ["<C-h>"] = "<C-o>",
     ["<C-l>"] = "<C-i>",
     -- Quick Fix jumping
-    ["<A-j>"] = "<cmd>cnext<cr>",
-    ["<A-k>"] = "<cmd>cprevious<cr>",
+    ["<A-j>"] = "<cmd>cnext<cr>zz",
+    ["<A-k>"] = "<cmd>cprevious<cr>zz",
     -- jump to file
     ["gf"] = function() keybinding_util.goto_cursor_file(true) end,
     ["<leader>gf"] = function() keybinding_util.goto_cursor_file(false) end,

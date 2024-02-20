@@ -52,7 +52,7 @@ local function show_editor_state()
     local time = require "lazy".stats().startuptime
     table.insert(msg_buffer, "startup time: " .. tostring(time) .. "ms")
 
-    local workspace = import "user.workspace"
+    local workspace = import "user.config.workspace"
     if workspace and workspace.is_workspace_confg_loaded() then
         table.insert(msg_buffer, "workspace configuration loaded.")
     end
@@ -67,7 +67,7 @@ end
 
 -- Finalize plugin configs.
 local function on_plugins_loaded()
-    local workspace = import "user.workspace"
+    local workspace = import "user.config.workspace"
 
     utils.do_async_steps {
         function(next_step)

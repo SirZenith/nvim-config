@@ -1,5 +1,5 @@
 local fs = require "user.utils.fs"
-local workspace = require "user.workspace"
+local workspace = require "user.config.workspace"
 
 local M = {}
 M.user_runtime_path = nil
