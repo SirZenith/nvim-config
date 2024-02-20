@@ -1,6 +1,7 @@
 local user = require "user"
 local config_const = require "user.config.constant"
 local fs = require "user.utils.fs"
+local lsp_util = require "user.utils.lsp"
 
 user.lsp = {
     __new_entry = true,
@@ -11,6 +12,7 @@ user.lsp = {
     capabilities_settings = {
         {
             textDocument = {
+                -- required by nvim-ufo
                 foldingRange = {
                     dynamicRegistration = false,
                     lineFoldingOnly = true,
@@ -153,7 +155,6 @@ user.lsp = {
                 "recommended to build from source",
             },
         },
-        -- "vls",
         {
             "v_analyzer",
             desc = "V Language Server",
@@ -180,5 +181,23 @@ user.lsp = {
             },
         },
     },
+    extra_server = {
+        markdown = {
+            cmd = { 'vscode-markdown-language-server', '--stdio' },
+            filetypes = { "markdown" },
+            root_dir = function()
+                local lspconfig_util = require "lspconfig.util"
+                return lspconfig_util.root_pattern(".git")()
+            end,
+            single_file_support = true,
+            settings = {},
+            init_options = {
+                markdownFileExtensions = { "md" },
+            },
+        },
+    },
     load_extra_plugins = {},
 }
+
+return function()
+end
