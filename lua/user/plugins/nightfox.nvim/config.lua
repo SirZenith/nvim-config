@@ -1,4 +1,4 @@
 local user = require "user"
 
-user.theme.colorscheme = "nordfox"
-user.theme.lualine_theme = "nordfox"
+user.general.theme.colorscheme = "nordfox"
+user.general.theme.lualine_theme = "nordfox"

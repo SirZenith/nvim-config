@@ -1,3 +1,5 @@
+local log_util = require "user.utils.log"
+
 local api = vim.api
 
 local BUILD_SYSTEM_AUGROUP = api.nvim_create_augroup("user.keybinding.build_system", { clear = true })
@@ -20,29 +22,29 @@ register_build_mapping("lua", function()
         if not input then return end
 
         if vim.bo.buftype ~= "" then
-            vim.notify("Lau build only works on normal buffer")
+            log_util.info("Lau build only works on normal buffer")
             return
         end
 
         if input:lower() ~= "y" then
-            vim.notify("execution interrupted.")
+            log_util.info("execution interrupted.")
             return
         end
 
         local filename = vim.api.nvim_buf_get_name(0)
         if vim.fn.filereadable(filename) == 0 then
-            vim.notify("file of current buffer not found")
+            log_util.info("file of current buffer not found")
             return
         end
 
         local chunk = loadfile(filename)
         if not chunk then
-            vim.notify("failed to load file")
+            log_util.info("failed to load file")
             return
         end
 
         xpcall(chunk, function(err)
-            vim.notify(err, vim.log.levels.ERROR)
+            log_util.error(err)
         end)
     end)
 end)

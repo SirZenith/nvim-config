@@ -1,3 +1,5 @@
+local log_util = require "user.utils.log"
+
 local ts = vim.treesitter
 
 local M = {}
@@ -10,7 +12,7 @@ function M.visit_node(context, node)
 
     if context.visited_type_set then
         if context.visited_type_set[type] then
-            vim.notify("repeated visited type: " .. type, vim.log.levels.WARN)
+            log_util.warn("repeated visited type: " .. type)
             return
         end
         context.visited_type_set[type] = true
@@ -18,7 +20,7 @@ function M.visit_node(context, node)
 
     local handler = context.handler_map[type]
     if not handler then
-        vim.notify("can't find handler for type: " .. type, vim.log.levels.WARN)
+        log_util.warn("can't find handler for type: " .. type)
         return
     end
 

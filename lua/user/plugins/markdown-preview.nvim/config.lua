@@ -3,7 +3,7 @@ local fs = require "user.utils.fs"
 
 local css_root = fs.path_join(user.env.USER_RUNTIME_PATH(), "iamcco", "css")
 
-user.option.g = {
+user.general.option.g = {
     mkdp_open_to_the_world = true,
     -- mkdp_command_for_global = true,
     mkdp_filetypes = { "markdown", "markdown.pandoc" },

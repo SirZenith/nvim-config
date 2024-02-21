@@ -5,11 +5,12 @@ local keybinding_util = require "user.config.keybinding.util"
 
 local import = utils.import
 
-user.option.g = {
+user.general.option.g = {
     mapleader = " ",
 }
 
 user.keybinding = {
+    __new_entry = true,
     global_search = {
         ---@type table<string, string>
         cmd_template_map = {

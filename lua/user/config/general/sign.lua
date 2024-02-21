@@ -1,6 +1,4 @@
 local sign = vim.tbl_extend('force', {
-    __new_entry = true,
-}, {
     -- LSP diagnostics
     DiagnosticSignError = { text = "", texthl = "DiagnosticSignError" },
     DiagnosticSignWarn = { text = "", texthl = "DiagnosticSignWarn" },

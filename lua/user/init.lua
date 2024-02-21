@@ -1,4 +1,4 @@
-local base_config, err = require "user.config"
+local base_config, err = require "user.config.base"
 if err then
     return { finalize = function() end }
 end
@@ -16,12 +16,13 @@ local user = config_entry.ConfigEntry:new(base_config) --[[@as UserConfig]]
 local function load_into_vim(...)
     local keys = { ... }
 
+    local option_tbl = user.general.option()
     for _, k in ipairs(keys) do
-        local optioins = user.option[k]
-        if not optioins then return end
+        local options = option_tbl[k]
+        if not options then return end
 
         local target = vim[k]
-        for field, value in optioins:pairs() do
+        for field, value in pairs(options) do
             target[field] = value
         end
     end
@@ -78,20 +79,16 @@ local function on_plugins_loaded()
 
             utils.finalize_async({
                 import "user.config.general",
+                import "user.config.filetype",
                 import "user.config.keybinding",
                 import "user.config.command",
                 import "user.config.lsp",
                 import "user.config.platforms",
+                workspace,
+                import "user.config.plugin"
             }, next_step)
         end,
         function()
-            -- workspace config
-            utils.finalize_module(workspace)
-
-            -- plugins, get finalized after all user configurations are.
-            local plugin_loader = import "user.config.plugins.loaders.lazy"
-            utils.finalize_module(plugin_loader)
-
             show_editor_state()
         end
     }
@@ -127,12 +124,7 @@ local function setup_init_autocmd()
 end
 
 local function setup_plugin()
-    -- setup plugin loading keymap leader
-    vim.g.mapleader = " "
-
-    local plugin_specs = import "user.config.plugins"
-    local plugin_loader = import "user.config.plugins.loaders.lazy"
-    plugin_loader.setup(plugin_specs)
+    import "user.config.plugin".init()
 end
 
 -- ----------------------------------------------------------------------------

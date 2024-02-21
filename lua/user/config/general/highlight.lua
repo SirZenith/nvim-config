@@ -53,8 +53,6 @@ local color = {
 }
 
 local highlight = vim.tbl_extend("keep", {
-    __new_entry = true,
-}, {
     -- ------------------------------------------------------------------------
     -- General
     CursorLine = {

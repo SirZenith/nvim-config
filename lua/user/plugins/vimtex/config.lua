@@ -1,6 +1,6 @@
 local user = require "user"
 
-user.option.g = {
+user.general.option.g = {
     tex_flavor = "latex",
     vimtex_view_general_viewer = "SumatraPDF",
     -- vimtex_view_general_options = "--unique file:@pdf#src:@line@tex",

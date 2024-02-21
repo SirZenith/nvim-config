@@ -1,3 +1,4 @@
+local log_util = require "user.utils.log"
 local ts_util = require "user.utils.tree_sitter"
 
 local ts = vim.treesitter
@@ -89,7 +90,7 @@ local handler_map = {
         local type = target:type()
 
         if not param_extraction_start_set[type] then
-            vim.notify("unsupported starting type: " .. type, vim.log.levels.WARN)
+            log_util.warn("unsupported starting type: " .. type)
             return
         end
 

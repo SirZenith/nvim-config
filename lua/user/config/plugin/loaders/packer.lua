@@ -2,6 +2,7 @@ local user = require "user"
 local utils = require "user.utils"
 local import = utils.import
 local fs = require "user.utils.fs"
+local log_util = require "user.utils.log"
 
 local fn = vim.fn
 
@@ -63,7 +64,7 @@ local function do_load(load_func, spec)
         function(err)
             io.write("while loading: ")
             vim.print(spec)
-            vim.notify(debug.traceback() or err)
+            log_util.warn(debug.traceback() or err)
         end
     )
     return ok

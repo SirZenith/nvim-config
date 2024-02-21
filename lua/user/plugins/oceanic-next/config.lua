@@ -1,3 +1,3 @@
 local user = require "user"
 
-user.theme.colorscheme = "OceanicNext"
+user.general.theme.colorscheme = "OceanicNext"

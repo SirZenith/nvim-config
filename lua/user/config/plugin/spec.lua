@@ -1,4 +1,4 @@
-local putl = require "user.config.plugins.utils"
+local putl = require "user.config.plugin.utils"
 
 local ucs = putl.user_config_spec
 local cs = putl.colorscheme_spec
@@ -10,6 +10,7 @@ local specs = {
     -- ------------------------------------------------------------------------
     -- Local configs
     ucs "user.config.general",
+    ucs "user.config.filetype",
     ucs "user.config.keybinding",
     ucs "user.config.command",
     ucs "user.config.platforms",

@@ -1,9 +1,10 @@
-local base_config = require "user.config"
+local base_config = require "user.config.base"
 
 local user = require "user"
 local utils = require "user.utils"
 local import = utils.import
 local fs = require "user.utils.fs"
+local log_util = require "user.utils.log"
 
 local fn = vim.fn
 
@@ -399,8 +400,10 @@ function M._try_setup_spec_autocmd(spec)
 
     local event = spec.event
     if not event then
-        vim.notify("plugin specified custom autocmd handler but doesn't provide autocmd name.", vim.log.WARN)
-        vim.print(spec)
+        log_util.warn(
+            "plugin specified custom autocmd handler but doesn't provide autocmd name.",
+            spec
+        )
         return false
     end
 
@@ -413,8 +416,10 @@ function M._try_setup_spec_autocmd(spec)
             if type(value) == "string" then
                 M._register_autocmd_listener(value, spec)
             else
-                vim.notify("autocmd name value for custom handler shoul be string", vim.log.levels.WARN)
-                vim.print(value)
+                log_util.warn(
+                    "autocmd name value for custom handler shoul be string",
+                    value
+                )
             end
         end
     else
@@ -452,8 +457,7 @@ end
 function M._finalize_plugin_config(spec)
     local plugin_name = get_plugin_name_from_spec(spec)
     if not plugin_name then
-        vim.notify("failed to load plugin config: spec has no name", vim.log.levels.WARN)
-        vim.print(spec)
+        log_util.warn("failed to load plugin config: spec has no name", spec)
         return
     end
 
@@ -527,7 +531,7 @@ end
 ---@param specs user.plugin.PluginSpec[]
 function M.load_all_plugin_config(specs)
     if not M._is_finalized then
-        vim.notify("plugin loader is not finalized yet")
+        log_util.info("plugin loader is not finalized yet")
         return
     end
 

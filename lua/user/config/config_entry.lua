@@ -1,5 +1,6 @@
 local utils = require "user.utils"
 local fnil = require "user.utils.functional".fnil
+local log_util = require "user.utils.log"
 local table_utils = require "user.utils.table"
 
 local reserved_key = {
@@ -440,14 +441,14 @@ function M.dump_signature(config_entry, path)
     local permission = 480 -- 0o740
     loop.fs_open(path, "w+", permission, function(open_err, fd)
         if open_err or not fd then
-            vim.notify(open_err or "failed to open config meta file")
+            log_util.info(open_err or "failed to open config meta file")
             return
         end
 
         local metadata = dump_signature(config_entry)
         loop.fs_write(fd, metadata, function(write_err)
             if write_err then
-                vim.notify(write_err)
+                log_util.info(write_err)
                 return
             end
 

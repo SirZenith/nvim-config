@@ -1,4 +1,4 @@
-local api = vim.api
+local log_util = require "user.utils.log"
 
 local M = {}
 
@@ -6,7 +6,7 @@ local M = {}
 function M.user_config_init(spec)
     local module = spec.name
     if not module then
-        vim.notify("can't find `name` in spec for user config module", vim.log.levels.WARN)
+        log_util.warn("can't find `name` in spec for user config module")
         return
     end
 
@@ -16,9 +16,9 @@ end
 ---@param module_name string
 ---@return  user.plugin.PluginSpec?
 function M.user_config_spec(module_name)
-    local base_config, err = require "user.config"
+    local base_config, err = require "user.config.base"
     if err then
-        vim.notify(err, vim.log.levels.WARN)
+        log_util.warn(err)
         return nil
     end
 
@@ -50,12 +50,12 @@ end
 
 function M.after_color_scheme_loaded()
     local user = require "user"
-    local colorscheme = user.theme.colorscheme()
+    local colorscheme = user.general.theme.colorscheme()
     if colorscheme and colorscheme ~= "" then
         vim.cmd("colorscheme " .. colorscheme)
     end
 
-    for group, config in user.theme.highlight:pairs() do
+    for group, config in user.general.theme.highlight:pairs() do
         vim.api.nvim_set_hl(0, group, config)
     end
 end

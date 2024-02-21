@@ -8,12 +8,12 @@ local styles = {
     "deep ocean",
 }
 
-user.option.g = {
+user.general.option.g = {
     material_style = styles[3]
 }
 
-user.theme.colorscheme = "material"
-user.theme.lualine_theme = "material-nvim"
+user.general.theme.colorscheme = "material"
+user.general.theme.lualine_theme = "material-nvim"
 
 user.plugin.material_nvim = {
     __new_entry = true,

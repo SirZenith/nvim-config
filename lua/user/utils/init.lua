@@ -1,3 +1,5 @@
+local log_util = require "user.utils.log"
+
 local hrtime = vim.loop.hrtime
 
 ---@param s string
@@ -67,7 +69,7 @@ end
 local function on_import_error(err)
     local thread = coroutine.running()
     local traceback = debug.traceback(thread, err)
-    vim.notify(traceback or err, vim.log.levels.WARN)
+    log_util.warn(traceback or err)
 end
 
 -- wrap require in xpcall, print traceback then return nil when failed.
@@ -79,10 +81,11 @@ function M.import(modname, failed_msg)
     local ok = ret[1]
 
     if not ok then
+        log_util.warn("failed to load module:", modname)
         if not failed_msg then
-            vim.notify(tostring(ret[2]))
+            log_util.warn(tostring(ret[2]))
         elseif failed_msg ~= "" then
-            vim.notify(failed_msg)
+            log_util.warn(failed_msg)
         end
         return nil
     end

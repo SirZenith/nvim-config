@@ -13,10 +13,10 @@ local styles = {
     "lighter-community",
 }
 
-user.option.g = {
+user.general.option.g = {
     material_theme_style = styles[6],
     material_terminal_italics = 1,
     airline_theme = "material",
 }
 
-user.theme.colorscheme = "material"
+user.general.theme.colorscheme = "material"

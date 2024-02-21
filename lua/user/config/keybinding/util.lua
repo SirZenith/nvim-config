@@ -1,4 +1,5 @@
 local user = require "user"
+local log_util = require "user.utils.log"
 
 local api = vim.api
 
@@ -109,7 +110,7 @@ function M.goto_cursor_file(is_open_in_new_tab)
             or "e "
         vim.cmd(prefix .. path)
     else
-        vim.notify("No match found for: " .. cfile)
+        log_util.info("No match found for: " .. cfile)
     end
 end
 

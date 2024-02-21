@@ -1,5 +1,6 @@
 local user = require "user"
 local fs = require "user.utils.fs"
+local log_util = require "user.utils.log"
 
 local dap_root = fs.path_join(user.env.APP_PATH(), "DAP")
 local local_lua_root = fs.path_join(dap_root, "local-lua-debugger-vscode")
@@ -94,7 +95,7 @@ return function()
 
     local config = user.plugin.nvim_dap
     if not config then
-        vim.notify("no config entry found for nvim-dap", vim.log.levels.WARN)
+        log_util.warn("no config entry found for nvim-dap")
         return
     end
 

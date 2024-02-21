@@ -1,9 +1,10 @@
+local log_util = require "user.utils.log"
 local fs = require "user.utils.fs"
 
 local env_config_home = vim.env.CONFIG_HOME
 if not env_config_home then
     local err = "failed to initialize, Can't find environment variable 'CONFIG_HOME'"
-    vim.notify(err, vim.log.levels.ERROR)
+    log_util.error(err)
 
     return {}, err
 end
@@ -31,18 +32,5 @@ return {
         APPDATA = vim.env.APPDATA or "",
 
         LOAD_NVIM_RUNTIME = vim.env.LOAD_NVIM_RUNTIME or false,
-    },
-    general = {},
-    keybinding = {},
-    option = {
-        o = {},
-        go = {},
-        g = {},
-    },
-    platform = {},
-    plugin = {},
-    theme = {
-        colorscheme = "",
-        lualine_theme = "",
     },
 }

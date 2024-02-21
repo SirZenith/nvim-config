@@ -1,6 +1,7 @@
 local user = require "user"
 local config_const = require "user.config.constant"
 local fs = require "user.utils.fs"
+local log_util = require "user.utils.log"
 
 user.lsp = {
     __new_entry = true,
@@ -50,7 +51,7 @@ user.lsp = {
             end
 
             local msg = table.concat(paths, ",\n")
-            vim.notify(msg)
+            log_util.info(msg)
         end,
     },
     kind_label = config_const.KIND_LABEL,

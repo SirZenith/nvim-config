@@ -22,7 +22,7 @@ user.plugin.toggleterm = {
 
     -- Default shell of terminal.
     ---@type string | fun(): string
-    shell = user.option.go.shell(),
+    shell = user.general.option.go.shell(),
 
     ---@type string
     open_mapping = "<F12>",

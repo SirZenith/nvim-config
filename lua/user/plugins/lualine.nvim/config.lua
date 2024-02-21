@@ -65,7 +65,7 @@ user.plugin.lualine = {
 return function()
     local lualine = require "lualine"
 
-    local theme = user.theme.lualine_theme()
+    local theme = user.general.theme.lualine_theme()
     user.plugin.lualine.options.theme = theme
 
     lualine.setup(user.plugin.lualine())

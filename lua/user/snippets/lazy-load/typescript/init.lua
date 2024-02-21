@@ -1,5 +1,6 @@
 local cmd_snip = require "cmd-snippet"
 
+local log_util = require "user.utils.log"
 local snip_util = require "user.utils.snippet"
 
 local extract_param = require "user.snippets.lazy-load.typescript.param_extraction"
@@ -41,7 +42,7 @@ cmd_snip.register(snip_filetype, {
             if param_cnt_str then
                 param_cnt = tonumber(param_cnt_str)
                 if not param_cnt then
-                    vim.notify("invalid number: " .. param_cnt_str, vim.log.levels.WARN)
+                    log_util.warn("invalid number: " .. param_cnt_str)
                     return;
                 end
             end
