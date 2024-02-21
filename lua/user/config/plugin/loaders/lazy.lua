@@ -1,4 +1,4 @@
-local base_config = require "user.config.base"
+local env_config = require "user.config.env"
 
 local user = require "user"
 local util = require "user.util"
@@ -80,7 +80,7 @@ local manager_config = {
     dev = {
         -- directory where you store your local plugin projects
         ---@type string | fun(plugin: user.plugin.PluginSpec): string
-        path = base_config.env.PLUGIN_DEV_PATH,
+        path = env_config.PLUGIN_DEV_PATH,
         -- plugins that match these patterns will use your local versions instead
         -- of being fetched from GitHub
         -- For example {"folke"}

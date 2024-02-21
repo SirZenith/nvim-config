@@ -31,7 +31,7 @@ cmd("DumpConfigMeta", function()
     plugin_loader.load_all_plugin_config(plugin_specs)
 
     local filepath = fs_util.path_join(user.env.USER_RUNTIME_PATH(), "user", "meta", "user_config.lua")
-    config_entry.dump_signature(user --[[@as ConfigEntry]], filepath)
+    config_entry.dump_signature(user --[[@as user.config.ConfigEntry]], filepath)
 end, {
     desc = "dump user config metadata to file."
 })

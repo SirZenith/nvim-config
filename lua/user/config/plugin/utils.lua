@@ -16,16 +16,12 @@ end
 ---@param module_name string
 ---@return  user.plugin.PluginSpec?
 function M.user_config_spec(module_name)
-    local base_config, err = require "user.config.base"
-    if err then
-        log_util.warn(err)
-        return nil
-    end
+    local env_config = require "user.config.env"
 
     ---@type user.plugin.PluginSpec
     local spec = {
         name = module_name,
-        dir = base_config.env.USER_RUNTIME_PATH,
+        dir = env_config.USER_RUNTIME_PATH,
         config = M.user_config_init,
         config_no_defer = true,
     }

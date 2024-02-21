@@ -1,4 +1,4 @@
-local base_config = require "user.config.base"
+local env_config = require "user.config.env"
 
 local option = {
     o = {
@@ -76,7 +76,7 @@ local option = {
         shellredir = "| ansi strip | save --raw",
     },
     g = {
-        python3_host_prog = base_config.env.PYTHON_PATH,
+        python3_host_prog = env_config.PYTHON_PATH,
     },
 }
 

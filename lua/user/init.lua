@@ -1,5 +1,5 @@
-local base_config, err = require "user.config.base"
-if err then
+local env_config = require "user.config.env"
+if not env_config.ENV_CONFIG_INIT_OK then
     return { finalize = function() end }
 end
 
@@ -8,7 +8,9 @@ local config_entry = require "user.config.config_entry"
 
 local import = util.import
 
-local user = config_entry.ConfigEntry:new(base_config) --[[@as UserConfig]]
+local user = config_entry.ConfigEntry:new {
+    env = env_config,
+} --[[@as UserConfig]]
 
 -- ----------------------------------------------------------------------------
 

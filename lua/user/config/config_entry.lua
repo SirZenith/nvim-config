@@ -10,19 +10,23 @@ local reserved_key = {
     __reserved = true,
 }
 
----@class ConfigEntry
+---@class user.config.ConfigEntry
 --
 ---@field __key_sep string
 ---@field __config_base {[string]: any}
 ---@field __reserved_keys {[string]: boolean}
 --
 ---@field __key string
+---@field _parent? user.config.ConfigEntry
 local ConfigEntry = {
     __key_sep = ".",
     __config_base = {},
     __reserved_keys = reserved_key,
     __meta_keys = {
         __new_entry = true,
+        __copy = true,
+        __override = true,
+        __append = true,
     },
 }
 
@@ -98,17 +102,42 @@ end
 
 -- ----------------------------------------------------------------------------
 
+-- Remove reserved keys from input value, return modified value.
+---@param value any
+---@return any
+function ConfigEntry:_remove_reserved_keys(value)
+    if type(value) ~= "table" then
+        return
+    end
+
+    for k in pairs(self.__meta_keys) do
+        value[k] = nil
+    end
+
+    return value
+end
+
 -- Specialized version deep copy. Will remove all meta keys from result after
 -- copying.
 ---@param value any
 function ConfigEntry:_deep_copy(value)
     value = table_util.deep_copy(value)
-    if type(value) == "table" then
-        for k in pairs(self.__meta_keys) do
-            value[k] = nil
-        end
-    end
+    self:_remove_reserved_keys(value)
     return value
+end
+
+-- Process input value before updating config entry.
+---@param value any
+function ConfigEntry:_process_new_value(value)
+    if type(value) ~= "table" then
+        return value
+    end
+
+    if not value.__copy then
+        return self:_remove_reserved_keys(value)
+    end
+
+    return self:_deep_copy(value)
 end
 
 -- If `k` is nil, return config of current entry, else get child in current entry.
@@ -198,15 +227,15 @@ end
 
 -- ----------------------------------------------------------------------------
 
----@param key? string|table
+---@param key? string | table
 ---@param initial_value? any
----@return ConfigEntry
+---@return user.config.ConfigEntry
 function ConfigEntry:new(key, initial_value)
     if type(key) == "table" then
         initial_value = key
         key = nil
     elseif key ~= nil and type(key) ~= "string" then
-        error("key of ConfigEntry must be of string type.", 2)
+        error("key of ConfigEntry must be string.", 2)
     end
 
     if initial_value ~= nil then
@@ -235,9 +264,9 @@ end
 -- to ture in that table.
 function ConfigEntry:__newindex(key, value)
     if type(key) ~= "string" then
-        error("key of ConfigEntry must be of string type.", 2)
+        error("key of ConfigEntry must be string.", 2)
     elseif ConfigEntry.__reserved_keys[key] then
-        error("use for " .. key .. " is reserved in ConfigEntry", 2)
+        error("usage of " .. key .. " is reserved in ConfigEntry", 2)
     end
 
     local target = self:_join_key(self.__key, key)
@@ -255,15 +284,15 @@ function ConfigEntry:__newindex(key, value)
     if type(old_value) == "table" and value_t == "table" then
         table_util.update_table(old_value, value)
     elseif old_value ~= nil then
-        tbl[tail] = self:_deep_copy(value)
+        tbl[tail] = self:_process_new_value(value)
     elseif value_t == "table" then
         if value.__new_entry == nil then
             error("trying to insert table at: " .. target, 2)
         else
-            tbl[tail] = self:_deep_copy(value)
+            tbl[tail] = self:_process_new_value(value)
         end
     else
-        error("trying to insert new config at: " .. target, 2)
+        error("trying to insert new value at: " .. target, 2)
     end
 end
 
@@ -271,14 +300,14 @@ function ConfigEntry:__tostring()
     return vim.inspect(self:_get_value())
 end
 
----@generic T : ConfigEntry
+---@generic T : user.config.ConfigEntry
 ---@param self T
 ---@return T
 function ConfigEntry.__call(self)
     return self:value()
 end
 
----@generic T : ConfigEntry
+---@generic T : user.config.ConfigEntry
 ---@param self T
 ---@return T
 function ConfigEntry.value(self)
@@ -417,7 +446,7 @@ local function _dump_config_class(env, class_name, tbl, parent_class)
     table.insert(env.buffer, "")
 end
 
----@param config_entry ConfigEntry
+---@param config_entry user.config.ConfigEntry
 ---@return string
 local function dump_signature(config_entry)
     ---@class DumpEnv
@@ -435,7 +464,7 @@ local function dump_signature(config_entry)
     return table.concat(env.buffer, "\n")
 end
 
----@param config_entry ConfigEntry
+---@param config_entry user.config.ConfigEntry
 ---@param path string # path to output meta file
 function M.dump_signature(config_entry, path)
     local loop = vim.loop
