@@ -1,9 +1,9 @@
 local user = require "user"
-local utils = require "user.utils"
+local util = require "user.util"
 
 local keybinding_util = require "user.config.keybinding.util"
 
-local import = utils.import
+local import = util.import
 
 user.general.option.g = {
     mapleader = " ",

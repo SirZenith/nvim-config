@@ -1,4 +1,4 @@
-local log_util = require "user.utils.log"
+local log_util = require "user.util.log"
 
 local hrtime = vim.loop.hrtime
 
@@ -198,9 +198,9 @@ function M.execution_timing(msg, func, ...)
     print(("%s: %.2fms"):format(msg, duration / 1e6))
 end
 
----@alias user.utils.AsyncStepFunc fun(next_step: fun(...), ...: any)
+---@alias user.util.AsyncStepFunc fun(next_step: fun(...), ...: any)
 
----@param steps user.utils.AsyncStepFunc[]
+---@param steps user.util.AsyncStepFunc[]
 ---@param ... any
 function M.do_async_steps(steps, ...)
     local index = 0

@@ -1,10 +1,11 @@
 local user = require "user"
 local config_entry = require "user.config.config_entry"
-local import = require "user.utils".import
-local fs = require "user.utils.fs"
+local util = require "user.util"
+local fs_util = require "user.util.fs"
 
 local api = vim.api
 local cmd = api.nvim_create_user_command
+local import = util.import
 
 -- ----------------------------------------------------------------------------
 
@@ -29,7 +30,7 @@ cmd("DumpConfigMeta", function()
     local plugin_loader = import "user.config.plugin.loaders.lazy"
     plugin_loader.load_all_plugin_config(plugin_specs)
 
-    local filepath = fs.path_join(user.env.USER_RUNTIME_PATH(), "user", "meta", "user_config.lua")
+    local filepath = fs_util.path_join(user.env.USER_RUNTIME_PATH(), "user", "meta", "user_config.lua")
     config_entry.dump_signature(user --[[@as ConfigEntry]], filepath)
 end, {
     desc = "dump user config metadata to file."

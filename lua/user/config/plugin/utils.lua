@@ -1,4 +1,4 @@
-local log_util = require "user.utils.log"
+local log_util = require "user.util.log"
 
 local M = {}
 

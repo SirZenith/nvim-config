@@ -1,5 +1,5 @@
 local user = require "user"
-local fs = require "user.utils.fs"
+local fs_util = require "user.util.fs"
 
 local M = {}
 
@@ -19,8 +19,8 @@ user.env.FIREFOX_PATH = "C:/Program Files/Mozilla Firefox/firefox.exe"
 
 user.platform.windows = {
     __new_entry = true,
-    nu_config_path = fs.path_join(user.env.HOME(), [[AppData\Roaming\nushell\config.nu]]),
-    nu_env_path = fs.path_join(user.env.HOME(), [[AppData\Roaming\nushell\env.nu]]),
+    nu_config_path = fs_util.path_join(user.env.HOME(), [[AppData\Roaming\nushell\config.nu]]),
+    nu_env_path = fs_util.path_join(user.env.HOME(), [[AppData\Roaming\nushell\env.nu]]),
 }
 user.platform.im_select = M.im_select
 

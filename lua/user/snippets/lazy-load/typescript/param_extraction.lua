@@ -1,5 +1,5 @@
-local log_util = require "user.utils.log"
-local ts_util = require "user.utils.tree_sitter"
+local log_util = require "user.util.log"
+local ts_util = require "user.util.tree_sitter"
 
 local ts = vim.treesitter
 
@@ -15,7 +15,7 @@ local param_extraction_start_set = {
     property_identifier = true,
 }
 
----@type user.utils.TSNodeHandlerMap
+---@type user.util.TSNodeHandlerMap
 local handler_map = {
     accessibility_modifier = function(visit_func, context, node)
         local parent = node:parent()

@@ -1,12 +1,12 @@
 local base_config = require "user.config.base"
 
 local user = require "user"
-local utils = require "user.utils"
-local import = utils.import
-local fs = require "user.utils.fs"
-local log_util = require "user.utils.log"
+local util = require "user.util"
+local fs_util = require "user.util.fs"
+local log_util = require "user.util.log"
 
 local fn = vim.fn
+local import = util.import
 
 local function require_manager()
     if vim.fn.executable("git") == 0 then
@@ -269,12 +269,12 @@ end
 
 ---@param name string # plugin base name
 local function get_config_path(name)
-    return fs.path_join("user", "plugins", name, "config.lua")
+    return fs_util.path_join("user", "plugins", name, "config.lua")
 end
 
 ---@param name string # plugin base name
 local function get_keybinding_path(name)
-    return fs.path_join("user", "plugins", name, "keybinding.lua")
+    return fs_util.path_join("user", "plugins", name, "keybinding.lua")
 end
 
 -- Rune before command before adding plugin spec to load list
@@ -293,7 +293,7 @@ end
 ---@param module_path string # module path relative to user config home directory
 ---@return any?
 local function load_config_module(module_path)
-    local file = fs.path_join(user.env.USER_RUNTIME_PATH(), module_path)
+    local file = fs_util.path_join(user.env.USER_RUNTIME_PATH(), module_path)
     if fn.filereadable(file) == 0 then
         return nil
     end
@@ -469,7 +469,7 @@ function M._finalize_plugin_config(spec)
     local modules = M._load_config_modules(plugin_name)
     if modules then
         for _, item in ipairs(modules) do
-            utils.finalize_module(item)
+            util.finalize_module(item)
         end
     end
 

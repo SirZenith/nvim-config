@@ -1,5 +1,5 @@
 local user = require "user"
-local lsp_util = require "user.utils.lsp"
+local lsp_util = require "user.util.lsp"
 
 return function()
     for name, config in user.lsp.extra_server:pairs() do

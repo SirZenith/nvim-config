@@ -1,5 +1,5 @@
 local user = require "user"
-local table_utils = require "user.utils.table"
+local table_util = require "user.util.table"
 
 user.plugin.typescript_tools = {
     __new_entry = true,
@@ -108,7 +108,7 @@ return function()
     )
     tsserver_config.on_new_config = nil
 
-    table_utils.update_table(tsserver_config, user.plugin.typescript_tools())
+    table_util.update_table(tsserver_config, user.plugin.typescript_tools())
 
     typescript_tools.setup(tsserver_config)
 end

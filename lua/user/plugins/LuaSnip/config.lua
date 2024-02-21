@@ -1,5 +1,4 @@
 local user = require "user"
-local import = require "user.utils".import
 
 user.plugin.luasnip = {
     __new_entry = true,

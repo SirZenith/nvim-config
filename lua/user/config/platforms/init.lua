@@ -1,8 +1,8 @@
 local user = require "user"
-local utils = require "user.utils"
-local fs = require "user.utils.fs"
+local util = require "user.util"
+local fs_util = require "user.util.fs"
 
-local import = utils.import
+local import = util.import
 
 ---@class user.platform.ImSelectInfo
 ---@field check string
@@ -15,7 +15,7 @@ local import = utils.import
 
 local mark = user.env.PLATFORM_MARK()
 local platform_config = mark
-    and fs.path_join(
+    and fs_util.path_join(
         user.env.USER_RUNTIME_PATH(), "user", "config", "platforms", mark
     )
     or ""
@@ -156,5 +156,5 @@ end
 return function()
     local module = import(platform_config, "")
     base_finalize()
-    utils.finalize_module(module)
+    util.finalize_module(module)
 end

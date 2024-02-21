@@ -1,6 +1,6 @@
 local lspconfig_util = require "lspconfig.util"
 
-local lsp_util = require "user.utils.lsp"
+local lsp_util = require "user.util.lsp"
 local workspace = require "user.config.workspace"
 
 local paths = require "user.lsp-configs.lua_ls.paths"

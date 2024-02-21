@@ -1,4 +1,5 @@
-require "user.utils"
+-- TODO: remove dependency on string method injection
+require "user.util"
 
 local M = {}
 

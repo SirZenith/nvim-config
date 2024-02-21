@@ -1,4 +1,4 @@
-local fs = require "user.utils.fs"
+local fs_util = require "user.util.fs"
 local workspace = require "user.config.workspace"
 
 local M = {}
@@ -31,10 +31,10 @@ M.loaders = {
         local err_template = "no file '%s' (plugin config loader)"
 
         local paths = {
-            fs.path_join(modulename),
-            fs.path_join(user_runtime_path, modulename),
-            fs.path_join(user_runtime_path, modulename .. ".lua"),
-            fs.path_join(user_runtime_path, modulename, "init.lua"),
+            fs_util.path_join(modulename),
+            fs_util.path_join(user_runtime_path, modulename),
+            fs_util.path_join(user_runtime_path, modulename .. ".lua"),
+            fs_util.path_join(user_runtime_path, modulename, "init.lua"),
         }
 
         for i = 1, #paths do
@@ -60,17 +60,17 @@ M.loaders = {
         local errmsg = { "" }
         local err_template = "no file '%s' (workspace loader)"
 
-        local modulename = raw_modulename:gsub("%.", fs.PATH_SEP)
+        local modulename = raw_modulename:gsub("%.", fs_util.PATH_SEP)
         do
-            local temp = dirname:gsub("%.", fs.PATH_SEP)
+            local temp = dirname:gsub("%.", fs_util.PATH_SEP)
             modulename = dirname .. modulename:sub(#temp + 1)
         end
 
         local workspace_path = workspace.get_workspace_path()
         local paths = {
-            fs.path_join(workspace_path, modulename),
-            fs.path_join(workspace_path, modulename .. ".lua"),
-            fs.path_join(workspace_path, modulename, "init.lua"),
+            fs_util.path_join(workspace_path, modulename),
+            fs_util.path_join(workspace_path, modulename .. ".lua"),
+            fs_util.path_join(workspace_path, modulename, "init.lua"),
         }
 
         for i = 1, #paths do

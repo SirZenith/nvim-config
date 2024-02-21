@@ -1,4 +1,4 @@
-local str_util = require "user.utils.str"
+local str_util = require "user.util.str"
 
 local theme = require "user/plugins/tabby.nvim/theme"
 

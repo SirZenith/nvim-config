@@ -1,10 +1,10 @@
 local user = require "user"
-local utils = require "user.utils"
-local import = utils.import
-local fs = require "user.utils.fs"
-local log_util = require "user.utils.log"
+local util = require "user.util"
+local fs_util = require "user.util.fs"
+local log_util = require "user.util.log"
 
 local fn = vim.fn
+local import = util.import
 
 local function require_packer()
     if vim.fn.executable("git") == 0 then
@@ -39,12 +39,12 @@ local is_bootstrap, packer = require_packer()
 
 ---@param path string # plugin spec path
 local function get_config_name(path)
-    return fs.path_join("user", "plugins", path, "config.lua")
+    return fs_util.path_join("user", "plugins", path, "config.lua")
 end
 
 ---@param path string # plugin spec path
 local function get_keybinding_name(path)
-    return fs.path_join("user", "plugins", path, "keybinding.lua")
+    return fs_util.path_join("user", "plugins", path, "keybinding.lua")
 end
 
 local function do_load(load_func, spec)
@@ -87,7 +87,7 @@ M._loaded_config_module = {} ---@type table<string, any>
 
 ---@param name string # file path relative to user config home directory
 local function try_load_file(name)
-    local file = fs.path_join(user.env.USER_RUNTIME_PATH(), name)
+    local file = fs_util.path_join(user.env.USER_RUNTIME_PATH(), name)
     if fn.filereadable(file) ~= 0 then
         local module = import(name)
         M._loaded_config_module[name] = module

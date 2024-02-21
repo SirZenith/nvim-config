@@ -1,8 +1,9 @@
-local utils = require "user.utils"
-local fs = require "user.utils.fs"
-local snip_utils = require "user.utils.snippet"
-local table_utils = require "user.utils.table"
 local cmd_snip = require "cmd-snippet"
+
+local util = require "user.util"
+local fs_util = require "user.util.fs"
+local snip_util = require "user.util.snippet"
+local table_util = require "user.util.table"
 
 local snip_filetype = "typescript"
 local s = require("snippet-loader.utils")
@@ -30,7 +31,7 @@ local s = require("snippet-loader.utils")
 ---@return any
 local function to_camel(index)
     return s.f(function(args)
-        return utils.underscore_to_camel_case(args[1][1])
+        return util.underscore_to_camel_case(args[1][1])
     end, { index })
 end
 
@@ -46,13 +47,13 @@ end
 ---@return string | any class_name
 local function get_panel_name_from_file_name(index_gen)
     local file_name = vim.api.nvim_buf_get_name(0)
-    file_name = fs.remove_ext(file_name)
+    file_name = fs_util.remove_ext(file_name)
     file_name = vim.fs.basename(file_name) or ""
 
     local panel_name, class_name
     if file_name ~= "" then
         panel_name = file_name
-        class_name = utils.underscore_to_camel_case(panel_name)
+        class_name = util.underscore_to_camel_case(panel_name)
     else
         panel_name = index_gen()
         class_name = to_camel(panel_name)
@@ -399,7 +400,7 @@ cmd_snip.register(snip_filetype, {
     ["import ptl"] = {
         args = { "name" },
         content = function(name)
-            local module_name = utils.underscore_to_camel_case(name)
+            local module_name = util.underscore_to_camel_case(name)
             return {
                 { "import { } from 'script_logic/common/proto/define/c2s/", module_name, "';" }
             }
@@ -431,11 +432,11 @@ cmd_snip.register(snip_filetype, {
         content = function(name)
             if not name then
                 name = vim.api.nvim_buf_get_name(0)
-                name = fs.remove_ext(name)
+                name = fs_util.remove_ext(name)
                 name = vim.fs.basename(name) or ""
             end
 
-            local panel_name = utils.underscore_to_camel_case(name)
+            local panel_name = util.underscore_to_camel_case(name)
 
             return {
                 "import { UIText } from 'script_logic/base/ui_system/uiext/ui_text';",
@@ -443,7 +444,7 @@ cmd_snip.register(snip_filetype, {
                 "import { UIDialogBase } from 'script_logic/ui/ui_dialog/ui_dialog_base';",
                 "",
                 { "type ArgType = DialogTypeMap['", name,       "']['args'];" },
-                { "export class ",                 panel_name, " extends UIDialogBase<ArgType> {" },
+                { "export class ",                  panel_name, " extends UIDialogBase<ArgType> {" },
                 "    protected initDialog(): void {",
                 "        super.initDialog();",
                 "",
@@ -464,7 +465,7 @@ cmd_snip.register(snip_filetype, {
         content = function(name)
             if not name then
                 name = vim.api.nvim_buf_get_name(0)
-                name = fs.remove_ext(name)
+                name = fs_util.remove_ext(name)
                 name = vim.fs.basename(name) or ""
             end
 
@@ -492,7 +493,7 @@ cmd_snip.register(snip_filetype, {
     },
     ["init label-view"] = {
         content = function()
-            local index = snip_utils.new_jump_index()
+            local index = snip_util.new_jump_index()
             local panel_name, class_name = get_panel_name_from_file_name(index)
             local desc_index = index()
 
@@ -547,7 +548,7 @@ cmd_snip.register(snip_filetype, {
     },
     ["init panel"] = {
         content = function()
-            local index = snip_utils.new_jump_index()
+            local index = snip_util.new_jump_index()
             local panel_name, class_name = get_panel_name_from_file_name(index)
             local desc_index = index()
 
@@ -585,7 +586,7 @@ cmd_snip.register(snip_filetype, {
     },
     ["init popup"] = {
         content = function()
-            local index = snip_utils.new_jump_index()
+            local index = snip_util.new_jump_index()
             local panel_name, class_name = get_panel_name_from_file_name(index)
             local desc_index = index()
 
@@ -628,7 +629,7 @@ cmd_snip.register(snip_filetype, {
         content = function(name)
             if not name then
                 name = vim.api.nvim_buf_get_name(0)
-                name = fs.remove_ext(name)
+                name = fs_util.remove_ext(name)
                 name = vim.fs.basename(name) or ""
             end
 
@@ -651,7 +652,7 @@ cmd_snip.register(snip_filetype, {
     },
     ["init sub-view"] = {
         content = function()
-            local index = snip_utils.new_jump_index()
+            local index = snip_util.new_jump_index()
             local panel_name, class_name = get_panel_name_from_file_name(index)
             return {
                 "import { LOGGING } from 'script_logic/common/base/logging';",
@@ -673,7 +674,7 @@ cmd_snip.register(snip_filetype, {
     },
     ["init tips"] = {
         content = function()
-            local index = snip_utils.new_jump_index()
+            local index = snip_util.new_jump_index()
             local panel_name, class_name = get_panel_name_from_file_name(index)
             return {
                 "import { LOGGING } from 'script_logic/common/base/logging';",
@@ -710,7 +711,7 @@ cmd_snip.register(snip_filetype, {
             }
 
             if type == GmCmdType.Server then
-                table_utils.extend_list(buffer, {
+                table_util.extend_list(buffer, {
                     "    imports: { },",
                     "    server: (agent: IFakeAgent, cmdArgs: ICmdArgsMap, imports: importedMap): void => {",
                     "        // const { } = imports;",
@@ -719,7 +720,7 @@ cmd_snip.register(snip_filetype, {
                     "    },"
                 })
             elseif type == GmCmdType.Client then
-                table_utils.extend_list(buffer, {
+                table_util.extend_list(buffer, {
                     "    client: (cmdArgs: ICmdArgsMap, imports: importedMap): void => {",
                     "        // const { } = imports;",
                     "        // const { } = cmdArgs;",
@@ -771,7 +772,7 @@ cmd_snip.register(snip_filetype, {
             if not name then
                 local file_name = vim.api.nvim_buf_get_name(0)
                 file_name = vim.fs.basename(file_name) or ""
-                name = fs.remove_ext(file_name)
+                name = fs_util.remove_ext(file_name)
             end
 
             return "const Log = LOGGING.logger('" .. name .. "');"

@@ -1,8 +1,8 @@
-local fs = require "user.utils.fs"
-local utils = require "user.utils"
+local util = require "user.util"
+local fs_util = require "user.util.fs"
 
 local loop = vim.loop
-local import = utils.import
+local import = util.import
 
 local M = {}
 
@@ -36,7 +36,7 @@ end
 
 ---@return string path
 function M.get_workspace_config_dir_path()
-    return fs.path_join(
+    return fs_util.path_join(
         M.get_workspace_path(),
         M.WORKSPACE_CONFIG_DIR_NAME
     )
@@ -44,7 +44,7 @@ end
 
 ---@return string path
 function M.get_workspace_config_file_path()
-    return fs.path_join(
+    return fs_util.path_join(
         M.get_workspace_path(),
         M.WORKSPACE_CONFIG_DIR_NAME,
         M.WORKSPACE_CONFIG_INIT_FILE_NAME
@@ -53,7 +53,7 @@ end
 
 ---@return string path
 function M.get_workspace_config_require_path()
-    return fs.path_join(
+    return fs_util.path_join(
         M.WORKSPACE_CONFIG_DIR_NAME,
         M.WORKSPACE_CONFIG_INIT_FILE_BASENAME
     )
@@ -65,7 +65,7 @@ M.finalize = function() end
 
 ---@param callback fun()
 function M.load(callback)
-    utils.do_async_steps {
+    util.do_async_steps {
         function(next_step)
             local file_path = M.get_workspace_config_file_path()
             loop.fs_stat(file_path, next_step)

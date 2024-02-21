@@ -1,7 +1,7 @@
 local user = require "user"
-local fs = require "user.utils.fs"
-local functional = require "user.utils.functional"
-local table_utils = require "user.utils.table"
+local fs_util = require "user.util.fs"
+local functional_util = require "user.util.functional"
+local table_util = require "user.util.table"
 local workspace = require "user.config.workspace"
 
 local M = {}
@@ -44,7 +44,7 @@ local function get_import_paths(root_dir)
     end
 
     local workspace_path = workspace.get_workspace_path()
-    if fs.is_subdir_of(workspace_path, user.env.NVIM_HOME()) then
+    if fs_util.is_subdir_of(workspace_path, user.env.NVIM_HOME()) then
         -- Used when editing user config.
         vim.list_extend(plugin_names, {
             "cmd-snippet",
@@ -58,10 +58,10 @@ local function get_import_paths(root_dir)
         })
     end
 
-    local plugin_root = fs.path_join(vim.fn.stdpath("data"), "lazy")
+    local plugin_root = fs_util.path_join(vim.fn.stdpath("data"), "lazy")
     for i = 1, #plugin_names do
         local name = plugin_names[i]
-        paths[#paths + 1] = fs.path_join(plugin_root, name, "lua")
+        paths[#paths + 1] = fs_util.path_join(plugin_root, name, "lua")
     end
 
     -- Lua import Path
@@ -85,7 +85,7 @@ local function get_import_paths(root_dir)
         paths[i] = vim.fs.normalize(paths[i])
     end
 
-    paths = table_utils.remove_duplicates(paths)
+    paths = table_util.remove_duplicates(paths)
 
     return paths
 end
@@ -99,7 +99,7 @@ local function get_runtime_paths(root_dir)
     local import_paths = get_import_paths(root_dir)
 
     if is_in_nvim_runtime_path then
-        local local_lua_dir = fs.path_join(root_dir, "lua")
+        local local_lua_dir = fs_util.path_join(root_dir, "lua")
 
         if vim.fn.isdirectory(local_lua_dir) == 1 then
             import_paths[#import_paths + 1] = local_lua_dir
@@ -130,16 +130,16 @@ local function get_library_paths(root_dir)
     vim.list_extend(paths, import_paths)
 
     -- User defined EmmyLua
-    local emmylua_path = fs.path_join(user.env.APP_PATH(), "EmmyLua", "lua-lib-annotation")
+    local emmylua_path = fs_util.path_join(user.env.APP_PATH(), "EmmyLua", "lua-lib-annotation")
     paths[#paths + 1] = emmylua_path
 
     -- Remove paths under current workspace
     local workspace_path = workspace.get_workspace_path()
-    paths = functional.filter(paths, function(_, path)
-        return not fs.is_subdir_of(path, workspace_path)
+    paths = functional_util.filter(paths, function(_, path)
+        return not fs_util.is_subdir_of(path, workspace_path)
     end)
 
-    paths = fs.path_list_dedup(paths)
+    paths = fs_util.path_list_dedup(paths)
 
     return paths
 end
@@ -147,10 +147,10 @@ end
 ---@param root_dir string
 ---@return boolean
 function M.check_in_nvim_runtime_path(root_dir)
-    local is_nvim_runtime_path = fs.is_subdir_of(root_dir, user.env.NVIM_HOME())
+    local is_nvim_runtime_path = fs_util.is_subdir_of(root_dir, user.env.NVIM_HOME())
         or vim.fs.basename(root_dir) == workspace.WORKSPACE_CONFIG_DIR_NAME
-        or fs.is_subdir_of(root_dir, vim.fn.stdpath("data"))
-        or fs.is_subdir_of(root_dir, user.env.PLUGIN_DEV_PATH())
+        or fs_util.is_subdir_of(root_dir, vim.fn.stdpath("data"))
+        or fs_util.is_subdir_of(root_dir, user.env.PLUGIN_DEV_PATH())
         or user.env.LOAD_NVIM_RUNTIME()
 
     return is_nvim_runtime_path

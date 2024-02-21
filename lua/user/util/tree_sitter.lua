@@ -1,10 +1,10 @@
-local log_util = require "user.utils.log"
+local log_util = require "user.util.log"
 
 local ts = vim.treesitter
 
 local M = {}
 
----@param context user.utils.TSNodeHandlerContext
+---@param context user.util.TSNodeHandlerContext
 ---@param node TSNode
 ---@return any
 function M.visit_node(context, node)
@@ -29,14 +29,14 @@ end
 
 ---@param bufnr integer
 ---@param filetype string
----@param handler_map user.utils.TSNodeHandlerMap
+---@param handler_map user.util.TSNodeHandlerMap
 ---@return any
 function M.visit_node_in_buffer(bufnr, filetype, handler_map)
     local parser = ts.get_parser(bufnr, filetype)
     local tree = parser:parse()[1]
     local root = tree:root()
 
-    ---@type user.utils.TSNodeHandlerContext
+    ---@type user.util.TSNodeHandlerContext
     local context = {
         root = root,
         handler_map = handler_map,

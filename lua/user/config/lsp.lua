@@ -1,11 +1,11 @@
 local user = require "user"
 local config_const = require "user.config.constant"
-local fs = require "user.utils.fs"
-local log_util = require "user.utils.log"
+local fs_util = require "user.util.fs"
+local log_util = require "user.util.log"
 
 user.lsp = {
     __new_entry = true,
-    root_path = fs.path_join(user.env.USER_RUNTIME_PATH(), "user", "lsp-configs"),
+    root_path = fs_util.path_join(user.env.USER_RUNTIME_PATH(), "user", "lsp-configs"),
     log_update_method = "append",
     log_scroll_method = "bottom",
     on_attach_callbacks = {},

@@ -1,7 +1,7 @@
 local user = require "user"
 local spec = require "user.config.plugin.spec"
 local loader = require "user.config.plugin.loaders.lazy"
-local utils = require "user.utils"
+local util = require "user.util"
 
 local M = {}
 
@@ -16,7 +16,7 @@ function M.init()
 end
 
 function M.finalize()
-    utils.finalize_module(loader)
+    util.finalize_module(loader)
 end
 
 return M

@@ -1,5 +1,5 @@
 local user = require "user"
-local log_util = require "user.utils.log"
+local log_util = require "user.util.log"
 
 local api = vim.api
 

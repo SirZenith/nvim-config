@@ -1,12 +1,11 @@
 local cmd_snip = require "cmd-snippet"
 
-local utils = require "user.utils"
-local fs_utils = require "user.utils.fs"
--- local snip_utils = require "user.utils.snippet"
+local util = require "user.util"
+local fs_util = require "user.util.fs"
 
 local snip_filetype = "typescript"
-local s = require("snippet-loader.utils")
-local makers = s.snippet_makers(snip_filetype)
+-- local s = require("snippet-loader.utils")
+-- local makers = s.snippet_makers(snip_filetype)
 -- local sp = makers.sp
 -- local asp = makers.asp
 -- local psp = makers.psp
@@ -38,7 +37,7 @@ cmd_snip.register(snip_filetype, {
         content = function(name)
             if not name then
                 name = vim.api.nvim_buf_get_name(0)
-                name = fs_utils.remove_ext(name)
+                name = fs_util.remove_ext(name)
                 name = vim.fs.basename(name) or ""
             end
 
@@ -75,11 +74,11 @@ cmd_snip.register(snip_filetype, {
         content = function(name)
             if not name then
                 name = vim.api.nvim_buf_get_name(0)
-                name = fs_utils.remove_ext(name)
+                name = fs_util.remove_ext(name)
                 name = vim.fs.basename(name) or ""
             end
 
-            name = utils.underscore_to_camel_case(name)
+            name = util.underscore_to_camel_case(name)
 
             return {
                 "// 将定义里面的 IAgent 转成 Agent",

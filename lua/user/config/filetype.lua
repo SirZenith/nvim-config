@@ -1,7 +1,7 @@
 local user = require "user"
-local table_utils = require "user.utils.table"
-local functional_utils = require "user.utils.functional"
-local fs_utils = require "user.utils.fs"
+local fs_util = require "user.util.fs"
+local functional_util = require "user.util.functional"
+local table_util = require "user.util.table"
 
 local augroup_id = vim.api.nvim_create_augroup("user.filetype", { clear = true })
 
@@ -32,7 +32,7 @@ user.filetype = {
                 local ok = false
 
                 for path in vim.fs.parents(match) do
-                    local mod_file_path = fs_utils.path_join(path, "v.mod")
+                    local mod_file_path = fs_util.path_join(path, "v.mod")
                     ok = vim.fn.filereadable(mod_file_path) == 1
                     if ok then
                         break
@@ -92,7 +92,7 @@ local function setup_filetype(match)
         then
             is_match = true
         elseif type(map.pattern) == "table"
-            and functional_utils.any(map.pattern, cond)
+            and functional_util.any(map.pattern, cond)
         then
             is_match = true
         end
@@ -129,8 +129,8 @@ local function setup_filetype(match)
         end
 
         local buffer = {}
-        table_utils.extend_list(buffer, primary)
-        table_utils.extend_list(buffer, secondary)
+        table_util.extend_list(buffer, primary)
+        table_util.extend_list(buffer, secondary)
         typename = table.concat(buffer, ".")
     end
 

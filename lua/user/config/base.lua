@@ -1,5 +1,5 @@
-local log_util = require "user.utils.log"
-local fs = require "user.utils.fs"
+local fs_util = require "user.util.fs"
+local log_util = require "user.util.log"
 
 local env_config_home = vim.env.CONFIG_HOME
 if not env_config_home then
@@ -9,12 +9,12 @@ if not env_config_home then
     return {}, err
 end
 
-local DEV_PATH = vim.env.DEV_PATH or fs.path_join(vim.env.HOME, "Developer")
+local DEV_PATH = vim.env.DEV_PATH or fs_util.path_join(vim.env.HOME, "Developer")
 
 return {
     env = {
-        NVIM_HOME = fs.path_join(env_config_home, "nvim"),
-        USER_RUNTIME_PATH = fs.path_join(env_config_home, "nvim", "lua"),
+        NVIM_HOME = fs_util.path_join(env_config_home, "nvim"),
+        USER_RUNTIME_PATH = fs_util.path_join(env_config_home, "nvim", "lua"),
 
         PROXY_URL = vim.env.PROXY_URL or "",
         PLATFORM_MARK = vim.env.PLATFORM_MARK or "",
@@ -22,7 +22,7 @@ return {
         APP_PATH = vim.env.APP_PATH or "",
         DEV_PATH = DEV_PATH,
         LANG_PATH = vim.env.LANG_PATH or "",
-        PLUGIN_DEV_PATH = fs.path_join(DEV_PATH, "nvim-plugins"),
+        PLUGIN_DEV_PATH = fs_util.path_join(DEV_PATH, "nvim-plugins"),
 
         CC = vim.env.CC or "cc",
         FIREFOX_PATH = "",

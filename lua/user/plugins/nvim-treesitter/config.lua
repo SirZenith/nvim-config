@@ -1,5 +1,5 @@
 local user = require "user"
-local table_utils = require "user.utils.table"
+local table_util = require "user.util.table"
 
 user.plugin.nvim_treesitter = {
     __new_entry = true,
@@ -160,7 +160,7 @@ return function()
         nts_install.compilers = compilers
     end
 
-    table_utils.update_table(
+    table_util.update_table(
         nts_install.command_extra_args,
         user.plugin.nvim_treesitter.install.command_extra_args()
     )

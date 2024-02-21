@@ -1,7 +1,9 @@
-local utils = require "user.utils"
-local fnil = require "user.utils.functional".fnil
-local log_util = require "user.utils.log"
-local table_utils = require "user.utils.table"
+local util = require "user.util"
+local functional_util = require "user.util.functional"
+local log_util = require "user.util.log"
+local table_util = require "user.util.table"
+
+local fnil = functional_util.fnil
 
 local reserved_key = {
     __key = true,
@@ -100,7 +102,7 @@ end
 -- copying.
 ---@param value any
 function ConfigEntry:_deep_copy(value)
-    value = table_utils.deep_copy(value)
+    value = table_util.deep_copy(value)
     if type(value) == "table" then
         for k in pairs(self.__meta_keys) do
             value[k] = nil
@@ -163,11 +165,11 @@ function ConfigEntry:_set_value(k, v)
     local old_value = tail == nil and tbl or tbl[tail]
 
     if type(old_value) == "table" and type(v) == "table" then
-        table_utils.update_table(old_value, v)
+        table_util.update_table(old_value, v)
     elseif tail == nil then
         error("trying to update config with non-table value", 2)
     else
-        tbl[tail] = table_utils.deep_copy(v)
+        tbl[tail] = table_util.deep_copy(v)
     end
 end
 
@@ -251,7 +253,7 @@ function ConfigEntry:__newindex(key, value)
     local value_t = type(value)
 
     if type(old_value) == "table" and value_t == "table" then
-        table_utils.update_table(old_value, value)
+        table_util.update_table(old_value, value)
     elseif old_value ~= nil then
         tbl[tail] = self:_deep_copy(value)
     elseif value_t == "table" then
@@ -280,7 +282,7 @@ end
 ---@param self T
 ---@return T
 function ConfigEntry.value(self)
-    return table_utils.deep_copy(self:_get_value())
+    return table_util.deep_copy(self:_get_value())
 end
 
 -- Delete current config entry from config table.
@@ -388,7 +390,7 @@ local M = {
 ---@param parent_class? string
 local function _dump_config_class(env, class_name, tbl, parent_class)
     parent_class = parent_class or "ConfigEntry"
-    if table_utils.is_array(tbl) then
+    if table_util.is_array(tbl) then
         ---@type string
         local element_type = tbl[1] and type(tbl[1]) or "any"
         table.insert(env.buffer, "-- underlaying: " .. element_type .. "[]")
@@ -406,7 +408,7 @@ local function _dump_config_class(env, class_name, tbl, parent_class)
         elseif type(value) ~= "table" then
             table.insert(env.buffer, "---@field " .. key .. "? " .. type(value))
         else
-            local name = class_name .. utils.underscore_to_camel_case(key)
+            local name = class_name .. util.underscore_to_camel_case(key)
             table.insert(env.buffer, "---@field " .. key .. "? " .. name)
             table.insert(env.pending, { name = name, value = value })
         end

@@ -1,6 +1,7 @@
-local import = require "user.utils".import
+local util = require "user.util"
 
 local validate = vim.validate
+local import = util.import
 
 local M = {}
 

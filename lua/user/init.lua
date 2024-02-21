@@ -3,9 +3,10 @@ if err then
     return { finalize = function() end }
 end
 
-local utils = require "user.utils"
-local import = utils.import
+local util = require "user.util"
 local config_entry = require "user.config.config_entry"
+
+local import = util.import
 
 local user = config_entry.ConfigEntry:new(base_config) --[[@as UserConfig]]
 
@@ -59,7 +60,7 @@ local function show_editor_state()
     end
 
     local msg = table.concat(msg_buffer, "\n")
-    utils.notify(msg, vim.log.levels.INFO, {
+    util.notify(msg, vim.log.levels.INFO, {
         title = "Editor State",
         timeout = 800,
         animated = false,
@@ -70,14 +71,14 @@ end
 local function on_plugins_loaded()
     local workspace = import "user.config.workspace"
 
-    utils.do_async_steps {
+    util.do_async_steps {
         function(next_step)
             workspace.load(next_step)
         end,
         function(next_step)
             load_into_vim("o", "g", "go")
 
-            utils.finalize_async({
+            util.finalize_async({
                 import "user.config.general",
                 import "user.config.filetype",
                 import "user.config.keybinding",
@@ -104,7 +105,7 @@ local function setup_environment()
     vim.o.fillchars = "eob: "                -- remove `~` at eob lines
 
     -- loading custom loader
-    local module_loaders = import "user.utils.module_loaders"
+    local module_loaders = import "user.util.module_loaders"
     if module_loaders then
         module_loaders.setup {
             user_runtime_path = user.env.USER_RUNTIME_PATH(),
