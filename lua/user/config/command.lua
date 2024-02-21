@@ -25,6 +25,24 @@ cmd("Reload", "source $MYVIMRC", {
     desc = "reload user config",
 })
 
+cmd("ShowUserConfig", function()
+    local bufnr = api.nvim_create_buf(false, true)
+
+    vim.cmd.vsp()
+    local winnr = api.nvim_get_current_win()
+    api.nvim_win_set_buf(winnr, bufnr)
+
+    local content = tostring(user)
+    local lines = vim.split(content, "\n")
+    api.nvim_buf_set_lines(bufnr, 0, -1, true, lines)
+
+    local bo = vim.bo[bufnr]
+    bo.filetype = "lua"
+    bo.modifiable = false
+end, {
+    desc = "show current value of user config entry in buffer.",
+})
+
 cmd("DumpConfigMeta", function()
     local plugin_specs = import "user.config.plugin.spec"
     local plugin_loader = import "user.config.plugin.loaders.lazy"
