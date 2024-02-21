@@ -1,6 +1,7 @@
 local user = require "user"
 local fs_util = require "user.util.fs"
 local functional_util = require "user.util.functional"
+local str_util = require "user.util.str"
 local table_util = require "user.util.table"
 local workspace = require "user.config.workspace"
 
@@ -68,13 +69,13 @@ local function get_import_paths(root_dir)
     for _, path in ipairs(vim.split(package.path, ";")) do
         path = vim.fs.normalize(path)
 
-        if path:ends_with("?.lua") then
+        if str_util.ends_with(path, "?.lua") then
             path = path:sub(1, -6)
-        elseif path:ends_with("?/init.lua") then
+        elseif str_util.ends_with(path, "?/init.lua") then
             path = path:sub(1, -11)
         end
 
-        if path:ends_with("/") then
+        if str_util.ends_with(path, "/") then
             path = path:sub(1, -2)
         end
 

@@ -2,32 +2,6 @@ local log_util = require "user.util.log"
 
 local hrtime = vim.loop.hrtime
 
----@param s string
----@param prefix string
-function string.starts_with(s, prefix)
-    local l_suf = #prefix
-    local l_s = #s
-    if l_s < l_suf then
-        return false
-    end
-
-    return string.sub(s, 1, l_suf) == prefix
-end
-
----@param s string
----@param suffix string
-function string.ends_with(s, suffix)
-    local l_s = #s
-    local l_suf = #suffix
-    if l_s < l_suf then
-        return false
-    end
-
-    return string.sub(s, l_s - l_suf + 1) == suffix
-end
-
--- ----------------------------------------------------------------------------
-
 local M = {}
 
 -- ----------------------------------------------------------------------------
