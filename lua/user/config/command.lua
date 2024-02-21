@@ -26,7 +26,7 @@ cmd("Reload", "source $MYVIMRC", {
 })
 
 cmd("DumpConfigMeta", function()
-    local plugin_specs = import "user.config.plugin"
+    local plugin_specs = import "user.config.plugin.spec"
     local plugin_loader = import "user.config.plugin.loaders.lazy"
     plugin_loader.load_all_plugin_config(plugin_specs)
 

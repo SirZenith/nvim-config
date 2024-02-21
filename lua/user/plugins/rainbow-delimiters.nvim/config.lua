@@ -6,6 +6,6 @@ user.plugin.rainbow_delimiters_nvim = {
     highlight = highlight.rainbow_hl_groups,
 }
 
-return function()
-    require "rainbow-delimiters.setup".setup(user.plugin.rainbow_delimiters_nvim())
-end
+return user.plugin.rainbow_delimiters_nvim:with_wrap(function(value)
+    require "rainbow-delimiters.setup".setup(value)
+end)

@@ -39,6 +39,6 @@ user.plugin.marks_nvim = {
     mappings = {}
 }
 
-return function()
-    require "marks".setup(user.plugin.marks_nvim())
-end
+return user.plugin.marks_nvim:with_wrap(function(value)
+    require "marks".setup(value)
+end)

@@ -42,6 +42,6 @@ user.plugin.nvim_surround = {
     },
 }
 
-return function()
-    require "nvim-surround".setup(user.plugin.nvim_surround())
-end
+return user.plugin.nvim_surround:with_wrap(function(value)
+    require "nvim-surround".setup(value)
+end)

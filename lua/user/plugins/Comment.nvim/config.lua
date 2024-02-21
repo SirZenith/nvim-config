@@ -45,6 +45,6 @@ user.plugin.comment_nvim = {
     post_hook = nil,
 }
 
-return function()
-    require "Comment".setup(user.plugin.comment_nvim())
-end
+return user.plugin.comment_nvim:with_wrap(function(value)
+    require "Comment".setup(value)
+end)

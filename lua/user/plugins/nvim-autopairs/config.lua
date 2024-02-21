@@ -7,6 +7,6 @@ user.plugin.nvim_autopairs = {
     enable_check_bracket_line = false,
 }
 
-return function()
-    require "nvim-autopairs".setup(user.plugin.nvim_autopairs())
-end
+return user.plugin.nvim_autopairs:with_wrap(function(value)
+    require "nvim-autopairs".setup(value)
+end)

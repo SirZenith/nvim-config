@@ -60,6 +60,6 @@ user.plugin.oil_vcs_status_nvim = {
     }
 }
 
-return function()
-    require "oil-vcs-status".setup(user.plugin.oil_vcs_status_nvim())
-end
+return user.plugin.oil_vcs_status_nvim:with_wrap(function(value)
+    require "oil-vcs-status".setup(value)
+end)

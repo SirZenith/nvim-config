@@ -469,7 +469,10 @@ function M._finalize_plugin_config(spec)
     local modules = M._load_config_modules(plugin_name)
     if modules then
         for _, item in ipairs(modules) do
-            util.finalize_module(item)
+            local ok = util.finalize_module(item)
+            if not ok then
+                log_util.warn("failed to finalize plugin config:", plugin_name)
+            end
         end
     end
 

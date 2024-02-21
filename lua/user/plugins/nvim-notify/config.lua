@@ -27,6 +27,6 @@ user.plugin.nvim_notify = {
     },
 }
 
-return function()
-    require "notify".setup(user.plugin.nvim_notify())
-end
+return user.plugin.nvim_notify:with_wrap(function(value)
+    require "notify".setup(value)
+end)

@@ -9,6 +9,6 @@ user.plugin.prefab_cmp = {
     prefab_loader = {},
 }
 
-return function()
-    require "prefab-cmp".setup(user.plugin.prefab_cmp())
-end
+return user.plugin.prefab_cmp:with_wrap(function(value)
+    require "prefab-cmp".setup(value)
+end)

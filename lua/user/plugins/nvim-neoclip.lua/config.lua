@@ -64,6 +64,6 @@ user.plugin.nvim_neoclip = {
     },
 }
 
-return function()
-    require "neoclip".setup(user.plugin.nvim_neoclip())
-end
+return user.plugin.nvim_neoclip:with_wrap(function(value)
+    require "neoclip".setup(value)
+end)

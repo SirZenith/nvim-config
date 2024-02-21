@@ -43,6 +43,6 @@ user.plugin.pretty_fold = {
     ft_ignore = { "neorg" },
 }
 
-return function()
-    require "pretty-fold".setup(user.plugin.pretty_fold())
-end
+return user.plugin.pretty_fold:with_wrap(function(value)
+    require "pretty-fold".setup(value)
+end)

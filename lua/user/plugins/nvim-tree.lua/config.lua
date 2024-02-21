@@ -140,10 +140,8 @@ user.plugin.nvim_tree = {
     },
 }
 
-return function()
-    local nvim_tree = require "nvim-tree"
-
-    nvim_tree.setup(user.plugin.nvim_tree())
+return user.plugin.nvim_tree:with_wrap(function(value)
+    require "nvim-tree".setup(value)
 
     -- try_open_tree()
-end
+end)

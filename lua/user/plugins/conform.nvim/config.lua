@@ -79,6 +79,6 @@ user.plugin.conform_nvim = {
     notify_on_error = true,
 }
 
-return function()
-    require "conform".setup(user.plugin.conform_nvim())
-end
+return user.plugin.conform_nvim:with_wrap(function(value)
+    require "conform".setup(value)
+end)

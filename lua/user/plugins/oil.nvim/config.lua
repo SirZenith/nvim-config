@@ -189,6 +189,6 @@ user.plugin.oil_nvim = {
     },
 }
 
-return function()
-    require "oil".setup(user.plugin.oil_nvim())
-end
+return user.plugin.oil_nvim:with_wrap(function(value)
+    require "oil".setup(value)
+end)

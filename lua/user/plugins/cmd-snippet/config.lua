@@ -10,6 +10,6 @@ user.plugin.cmd_snippet = {
     cmd_tail_char = ";",
 }
 
-return function()
-    require "cmd-snippet".setup(user.plugin.cmd_snippet())
-end
+return user.plugin.cmd_snippet:with_wrap(function(value)
+    require "cmd-snippet".setup(value)
+end)

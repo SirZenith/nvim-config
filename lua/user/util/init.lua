@@ -88,6 +88,7 @@ end
 
 -- Try to finalize a single module
 ---@param module any
+---@return boolean
 function M.finalize_module(module)
     local module_type = type(module)
 
@@ -98,9 +99,12 @@ function M.finalize_module(module)
         final = module.finalize
     end
 
+    local ok = true
     if type(final) == "function" then
-        xpcall(final, on_import_error)
+        ok = xpcall(final, on_import_error)
     end
+
+    return ok
 end
 
 -- Import a list of modules, import and finalize all of them. Each module can

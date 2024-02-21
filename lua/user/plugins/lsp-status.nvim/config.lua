@@ -61,7 +61,7 @@ user.plugin.lsp_status = {
     update_interval = 100
 }
 
-return function()
+return user.plugin.lsp_status:with_wrap(function(value)
     local lsp_status = require "lsp-status"
 
     user.lsp.on_attach_callbacks:append(lsp_status.on_attach)
@@ -69,8 +69,7 @@ return function()
 
     lsp_status.register_progress()
 
-    local cfg = user.plugin.lsp_status()
-    cfg.kind_labels = user.lsp.kind_label()
+    value.kind_labels = user.lsp.kind_label()
 
-    lsp_status.config(cfg)
-end
+    lsp_status.config(value)
+end)

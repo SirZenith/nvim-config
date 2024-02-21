@@ -7,6 +7,6 @@ user.plugin.colorizer = {
     "!noice",
 }
 
-return function()
-    require "colorizer".setup(user.plugin.colorizer())
-end
+return user.plugin.colorizer:with_wrap(function(value)
+    require "colorizer".setup(value)
+end)

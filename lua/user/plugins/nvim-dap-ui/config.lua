@@ -71,7 +71,7 @@ user.plugin.nvim_dap_ui = {
     },
 }
 
-return function()
+return user.plugin.nvim_dap_ui:with_wrap(function(value)
     local dap = require "dap"
     local dapui = require "dapui"
 
@@ -80,5 +80,5 @@ return function()
     dap.listeners.before.event_terminated.dapui_config = dapui.close
     dap.listeners.before.event_exited.dapui_config = dapui.close
 
-    dapui.setup(user.plugin.nvim_dap_ui())
-end
+    dapui.setup(value)
+end)

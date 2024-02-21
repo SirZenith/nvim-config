@@ -44,6 +44,6 @@ user.plugin.gitsigns = {
     },
 }
 
-return function()
-    require "gitsigns".setup(user.plugin.gitsigns())
-end
+return user.plugin.gitsigns:with_wrap(function(value)
+    require "gitsigns".setup(value)
+end)

@@ -6,6 +6,6 @@ user.plugin.snippet_loader = {
     root_path = fs_util.path_join(user.env.USER_RUNTIME_PATH(), "user", "snippets"),
 }
 
-return function()
-    require "snippet-loader".setup(user.plugin.snippet_loader())
-end
+return user.plugin.snippet_loader:with_wrap(function(value)
+    require "snippet-loader".setup(value)
+end)

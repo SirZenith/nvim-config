@@ -78,6 +78,6 @@ user.plugin.nvim_dap_virtual_text = {
     virt_text_win_col = nil
 }
 
-return function()
-    require "nvim-dap-virtual-text".setup(user.plugin.nvim_dap_virtual_text())
-end
+return user.plugin.nvim_dap_virtual_text:with_wrap(function(value)
+    require "nvim-dap-virtual-text".setup(value)
+end)

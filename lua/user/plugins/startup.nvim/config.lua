@@ -166,9 +166,9 @@ user.plugin.startup_nvim = {
     },
 }
 
-return function()
+return user.plugin.startup_nvim:with_wrap(function(value)
     local startup = require "startup"
 
-    startup.setup(user.plugin.startup_nvim())
+    startup.setup(value)
     startup.display()
-end
+end)

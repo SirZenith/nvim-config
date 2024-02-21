@@ -13,11 +13,11 @@ user.plugin.indent_blankline_nvim = {
     },
 }
 
-return function()
+return user.plugin.indent_blankline_nvim:with_wrap(function(value)
     local ibl = require "ibl"
     local hooks = require "ibl.hooks"
 
-    ibl.setup(user.plugin.indent_blankline_nvim())
+    ibl.setup(value)
 
     hooks.register(hooks.type.SCOPE_HIGHLIGHT, hooks.builtin.scope_highlight_from_extmark)
-end
+end)

@@ -21,6 +21,6 @@ user.plugin.nvim_cursorline = {
     }
 }
 
-return function()
-    require "nvim-cursorline".setup(user.plugin.nvim_cursorline())
-end
+return user.plugin.nvim_cursorline:with_wrap(function(value)
+    require "nvim-cursorline".setup(value)
+end)

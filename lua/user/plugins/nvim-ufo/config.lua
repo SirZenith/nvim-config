@@ -87,7 +87,7 @@ user.plugin.nvim_ufo = {
     }
 }
 
-return function()
+return user.plugin.nvim_ufo:with_wrap(function(value)
     local ufo = require "ufo"
 
     local target = vim.o
@@ -106,5 +106,5 @@ return function()
         }
     }
 
-    ufo.setup(user.plugin.nvim_ufo())
-end
+    ufo.setup(value)
+end)

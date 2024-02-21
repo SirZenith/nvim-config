@@ -39,6 +39,6 @@ user.plugin.nvim_biscuits = {
     },
 }
 
-return function()
-    require "nvim-biscuits".setup(user.plugin.nvim_biscuits())
-end
+return user.plugin.nvim_biscuits:with_wrap(function(value)
+    require "nvim-biscuits".setup(value)
+end)

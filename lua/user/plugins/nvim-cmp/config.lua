@@ -1,14 +1,10 @@
 local user = require "user"
 
-user.plugin.nvim_cmp = {
-    __new_entry = true,
-}
-
 return function()
     local cmp = require "cmp"
     local mapping = require "user.plugins.nvim-cmp.mapping"
 
-    user.plugin.nvim_cmp = {
+    local cmp_cfg = {
         window = {
             completion = {
                 border = "shadow",
@@ -52,7 +48,6 @@ return function()
 
     local fmt_func
 
-    local cmp_cfg = user.plugin.nvim_cmp()
     cmp_cfg.formatting.format = function(entry, vim_item)
         if not fmt_func then
             local lspkind = require "lspkind"

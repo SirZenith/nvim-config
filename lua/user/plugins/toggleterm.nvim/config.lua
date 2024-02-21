@@ -154,6 +154,6 @@ user.plugin.toggleterm = {
     on_exit = nil,
 }
 
-return function()
-    require "toggleterm".setup(user.plugin.toggleterm())
-end
+return user.plugin.toggleterm:with_wrap(function(value)
+    require "toggleterm".setup(value)
+end)

@@ -169,6 +169,6 @@ user.plugin.dressing_nvim = {
     },
 }
 
-return function()
-    require "dressing".setup(user.plugin.dressing_nvim())
-end
+return user.plugin.dressing_nvim:with_wrap(function(value)
+    require "dressing".setup(value)
+end)

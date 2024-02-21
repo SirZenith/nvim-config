@@ -90,29 +90,22 @@ user.plugin.nvim_dap = {
     },
 }
 
-return function()
+return user.plugin.nvim_dap:with_wrap(function(value)
     local dap = require "dap"
 
-    local config = user.plugin.nvim_dap
-    if not config then
-        log_util.warn("no config entry found for nvim-dap")
-        return
-    end
-
     -- update firefox config
-    local ts_configs = config.configurations.typescript()
+    local ts_configs = value.configurations.typescript
     for _, cfg in ipairs(ts_configs) do
         if cfg.firefoxExecutable == "" then
             cfg.firefoxExecutable = user.env.FIREFOX_PATH()
         end
     end
-    config.configurations.typescript = ts_configs
 
-    for key, value in config.adapters:pairs() do
-        dap.adapters[key] = value
+    for key, adp in pairs(value.adapters) do
+        dap.adapters[key] = adp
     end
 
-    for key, value in config.configurations:pairs() do
-        dap.configurations[key] = value
+    for key, cfg in pairs(value.configurations) do
+        dap.configurations[key] = cfg
     end
-end
+end)

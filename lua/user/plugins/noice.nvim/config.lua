@@ -355,6 +355,6 @@ user.plugin.noice = {
     format = {},
 }
 
-return function()
-    require "noice".setup(user.plugin.noice())
-end
+return user.plugin.noice:with_wrap(function(value)
+    require "noice".setup(value)
+end)

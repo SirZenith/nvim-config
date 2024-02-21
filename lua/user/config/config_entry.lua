@@ -17,7 +17,6 @@ local reserved_key = {
 ---@field __reserved_keys {[string]: boolean}
 --
 ---@field __key string
----@field _parent? user.config.ConfigEntry
 local ConfigEntry = {
     __key_sep = ".",
     __config_base = {},
@@ -340,6 +339,29 @@ function ConfigEntry:delete()
     tbl[tail] = nil
 end
 
+-- Call consumer function with value of current entry. Entry will be deleted
+-- after invokation.
+---@param consume fun(value: any): ...
+---@return any ...
+function ConfigEntry:with(consume)
+    local value = self:value()
+    self:delete()
+
+    if value == nil then
+        log_util.warn("no value found in context invokation:", self.__key)
+        return
+    end
+    return consume(value)
+end
+
+-- Return a function. When called, `with` method of current entry is invoked
+-- with given consumer function.
+---@param consume fun(value: any)
+---@return fun(): ...
+function ConfigEntry:with_wrap(consume)
+    return function() return self:with(consume) end
+end
+
 -- Assuming current config entry is a list, append a new element to its end.
 function ConfigEntry:append(value)
     local segments = self:_get_key_segments()
@@ -418,7 +440,7 @@ local M = {
 ---@param tbl any
 ---@param parent_class? string
 local function _dump_config_class(env, class_name, tbl, parent_class)
-    parent_class = parent_class or "ConfigEntry"
+    parent_class = parent_class or "user.config.ConfigEntry"
     if table_util.is_array(tbl) then
         ---@type string
         local element_type = tbl[1] and type(tbl[1]) or "any"

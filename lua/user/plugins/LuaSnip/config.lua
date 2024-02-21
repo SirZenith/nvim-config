@@ -14,11 +14,11 @@ user.plugin.luasnip = {
     store_selection_keys = "<Tab>",
 }
 
-return function()
+return user.plugin.luasnip:with_wrap(function(value)
     local luasnip = require "luasnip"
     local types = require "luasnip.util.types"
 
-    user.plugin.luasnip.ext_opts = {
+    value.ext_opts = {
         [types.choiceNode] = {
             active = {
                 virt_text = { { "●", "LuaSnipChoiceHint" } },
@@ -31,6 +31,5 @@ return function()
         }
     }
 
-    -- Every unspecified option will be set to the default.
-    luasnip.config.set_config(user.plugin.luasnip())
-end
+    luasnip.config.set_config(value)
+end)

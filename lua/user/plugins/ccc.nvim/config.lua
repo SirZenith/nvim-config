@@ -57,8 +57,6 @@ user.plugin.ccc_nvim = {
     },
 }
 
-return function()
-    local ccc = require "ccc"
-
-    ccc.setup(user.plugin.ccc_nvim())
-end
+return user.plugin.ccc_nvim:with_wrap(function(value)
+    require "ccc".setup(value)
+end)

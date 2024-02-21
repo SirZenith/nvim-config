@@ -28,7 +28,7 @@ user.plugin.mongosh_nvim = {
     },
 }
 
-return function()
+return user.plugin.mongosh_nvim:with_wrap(function(value)
     local lualine = require "lualine"
     local mongosh = require "mongosh-nvim"
     local mongosh_status = require "mongosh-nvim.ui.status"
@@ -36,6 +36,6 @@ return function()
     user.plugin.lualine.sections.lualine_x:prepend(mongosh_status.status)
     user.plugin.lualine.inactive_sections.lualine_x:prepend(mongosh_status.status)
 
-    mongosh.setup(user.plugin.mongosh_nvim())
+    mongosh.setup(value)
     lualine.setup(user.plugin.lualine())
-end
+end)

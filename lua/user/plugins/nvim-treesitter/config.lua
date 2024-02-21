@@ -130,7 +130,7 @@ user.plugin.nvim_treesitter = {
     },
 }
 
-return function()
+return user.plugin.nvim_treesitter:with_wrap(function(value)
     local nts_configs = require "nvim-treesitter.configs"
     local nts_parsers = require "nvim-treesitter.parsers"
     local nts_install = require "nvim-treesitter.install"
@@ -149,28 +149,26 @@ return function()
 
     -- ------------------------------------------------------------------------
 
-    nts_configs.setup(user.plugin.nvim_treesitter.configs())
+    nts_configs.setup(value.configs)
 
     -- ------------------------------------------------------------------------
 
-    nts_install.prefer_git = user.plugin.nvim_treesitter.install.prefer_git()
+    nts_install.prefer_git = value.install.prefer_git
 
-    local compilers = user.plugin.nvim_treesitter.install.compilers()
+    local compilers = value.install.compilers
     if compilers then
         nts_install.compilers = compilers
     end
 
     table_util.update_table(
         nts_install.command_extra_args,
-        user.plugin.nvim_treesitter.install.command_extra_args()
+        value.install.command_extra_args
     )
 
     -- ------------------------------------------------------------------------
 
     local parser_config = nts_parsers.get_parser_configs()
-    for name, info in user.plugin.nvim_treesitter.parsers:pairs() do
+    for name, info in pairs(value.parsers) do
         parser_config[name] = info
     end
-
-    return true
-end
+end)

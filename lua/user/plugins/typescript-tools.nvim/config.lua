@@ -97,7 +97,7 @@ user.plugin.typescript_tools = {
     },
 }
 
-return function()
+return user.plugin.typescript_tools:with_wrap(function(value)
     local loader = require "lsp-config-loader.loader"
     local typescript_tools = require "typescript-tools"
 
@@ -108,7 +108,7 @@ return function()
     )
     tsserver_config.on_new_config = nil
 
-    table_util.update_table(tsserver_config, user.plugin.typescript_tools())
+    table_util.update_table(tsserver_config, value)
 
     typescript_tools.setup(tsserver_config)
-end
+end)
