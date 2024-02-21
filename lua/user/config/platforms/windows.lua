@@ -22,7 +22,7 @@ user.platform.windows = {
     nu_config_path = fs.path_join(user.env.HOME(), [[AppData\Roaming\nushell\config.nu]]),
     nu_env_path = fs.path_join(user.env.HOME(), [[AppData\Roaming\nushell\env.nu]]),
 }
-user.general.im_select = M.im_select
+user.platform.im_select = M.im_select
 
 -- ----------------------------------------------------------------------------
 

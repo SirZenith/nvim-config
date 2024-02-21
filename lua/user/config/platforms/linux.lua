@@ -1,6 +1,6 @@
 local user = require "user"
 
-user.general.im_select = {
+user.platform.im_select = {
     check = "fcitx5-remote",
     on = "fcitx5-remote -o",
     off = "fcitx5-remote -c",

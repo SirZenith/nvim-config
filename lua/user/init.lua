@@ -77,11 +77,11 @@ local function on_plugins_loaded()
             load_into_vim("o", "g", "go")
 
             utils.finalize_async({
-                "user.config.general",
-                "user.config.keybinding",
-                "user.config.command",
-                "user.config.lsp",
-                "user.config.platforms",
+                import "user.config.general",
+                import "user.config.keybinding",
+                import "user.config.command",
+                import "user.config.lsp",
+                import "user.config.platforms",
             }, next_step)
         end,
         function()

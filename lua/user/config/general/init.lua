@@ -8,66 +8,6 @@ local sign = require "user.config.general.sign"
 
 local augroup_id = vim.api.nvim_create_augroup("user.general", { clear = true })
 
-local function im_auto_toggle_setup(cmd)
-    if not cmd then
-        return
-    end
-
-    local im_check_cmd = cmd.check
-
-    local im_on_cmd = cmd.on
-    local im_off_cmd = cmd.off
-    local im_isoff = cmd.isoff
-
-    local method_toggled = false
-    local auto_toggle_on = true
-
-    -- IM off
-    vim.api.nvim_create_autocmd("InsertLeave", {
-        group = augroup_id,
-        pattern = "*",
-        callback = function()
-            if not auto_toggle_on then return end
-
-            local im = vim.fn.system(im_check_cmd)
-            if not im_isoff(im) then
-                method_toggled = true
-                vim.fn.system(im_off_cmd)
-            else
-                method_toggled = false
-            end
-        end,
-    })
-
-    -- IM on
-    vim.api.nvim_create_autocmd("InsertEnter", {
-        group = augroup_id,
-        pattern = "*",
-        callback = function()
-            if not auto_toggle_on then return end
-
-            if method_toggled then
-                vim.fn.system(im_on_cmd)
-                method_toggled = false
-            end
-        end,
-    })
-
-    vim.api.nvim_create_user_command(
-        "IMToggleOn",
-        function() auto_toggle_on = true end,
-        { desc = "turn on input method auto toggle" }
-    )
-
-    vim.api.nvim_create_user_command(
-        "IMToggleOff",
-        function() auto_toggle_on = false end,
-        { desc = "turn off input method auto toggle" }
-    )
-end
-
--- ----------------------------------------------------------------------------
-
 user.option = {
     o = {
         autochdir = false,              -- auto chdir into directory of current buffer
@@ -206,12 +146,6 @@ user.general = {
             },
         },
     },
-    im_select = {
-        check = "",
-        on = "",
-        off = "",
-        isoff = function() return true end
-    },
 }
 
 user.sign = sign
@@ -295,8 +229,6 @@ return function()
     vim.env.NVIM_TUI_ENABLE_TRUE_COLOR = 1
 
     vim.cmd "filetype plugin indent on"
-
-    im_auto_toggle_setup(user.general.im_select())
 
     for name, cfg in user.sign:pairs() do
         vim.fn.sign_define(name, cfg)

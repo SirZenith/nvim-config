@@ -131,31 +131,33 @@ end
 -- - nil
 -- - fun()
 -- - { finalize: fun() }
--- - "async", fun(callback: fun(finalizable?: fun() | { finalize: fun() }))
----@param module_paths string[]
+-- - { async: true, finalize: fun(callback: fun(finalizable?: fun() | { finalize: fun() }) }
+---@param modules any[]
 ---@param callback fun()
-function M.finalize_async(module_paths, callback)
+function M.finalize_async(modules, callback)
     local i = 0
 
     local finalize_one_module
     finalize_one_module = function()
         i = i + 1
-        local path = module_paths[i]
-        if not path then
+        local module = modules[i]
+        if not module then
             callback()
             return
         end
 
-        local symbol, value = M.import(path)
-        if symbol ~= "async" or type(value) ~= "function" then
-            M.finalize_module(symbol)
+        if type(module) ~= "table"
+            or not module.async
+            or type(module.finalize) ~= "function"
+        then
+            M.finalize_module(module)
             finalize_one_module()
             return
         end
 
         M.do_async_steps {
             function(next_step)
-                local ok = xpcall(value, on_import_error, next_step)
+                local ok = xpcall(module.finalize, on_import_error, next_step)
                 if not ok then
                     next_step()
                 end
