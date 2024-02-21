@@ -27,8 +27,6 @@ user.platform = {
 local function im_auto_toggle_setup(augroup, cmd)
     if not cmd then return end
 
-    vim.print(cmd)
-
     local im_check_cmd = cmd.check or ""
     local im_on_cmd = cmd.on or ""
     local im_off_cmd = cmd.off or ""

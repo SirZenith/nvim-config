@@ -87,6 +87,9 @@ M.loaders = {
 }
 
 function M.setup(options)
+    -- allow loading modules via absolute path
+    package.path = package.path .. ";?.lua;?/init.lua"
+
     M.user_runtime_path = options.user_runtime_path
 
     for _, loader in pairs(M.loaders) do
