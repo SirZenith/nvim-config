@@ -291,11 +291,16 @@ local function handling_before_load_cmd(spec)
 end
 
 ---@param module_path string # module path relative to user config home directory
+---@param reload boolean
 ---@return any?
-local function load_config_module(module_path)
+local function load_config_module(module_path, reload)
     local file = fs_util.path_join(user.env.USER_RUNTIME_PATH(), module_path)
     if fn.filereadable(file) == 0 then
         return nil
+    end
+
+    if reload then
+        package.loaded[file] = nil
     end
 
     return import(file)
@@ -434,9 +439,12 @@ end
 
 -- Import config modules of a plugin.
 ---@param plugin_name string
+---@param reload? boolean
 ---@return any[] | nil
-function M._load_config_modules(plugin_name)
+function M._load_config_modules(plugin_name, reload)
     if M._is_bootstrap then return nil end
+
+    reload = reload or false
 
     local plugin_basename = vim.fs.basename(plugin_name)
     local paths = {
@@ -446,7 +454,7 @@ function M._load_config_modules(plugin_name)
 
     local modules = {}
     for _, path in ipairs(paths) do
-        modules[#modules + 1] = load_config_module(path)
+        modules[#modules + 1] = load_config_module(path, reload)
     end
 
     return modules
@@ -541,7 +549,7 @@ function M.load_all_plugin_config(specs)
     for _, spec in ipairs(specs) do
         local plugin_name = get_plugin_name_from_spec(spec)
         if plugin_name then
-            M._load_config_modules(plugin_name)
+            M._load_config_modules(plugin_name, true)
         end
     end
 end
