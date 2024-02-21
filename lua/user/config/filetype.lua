@@ -22,6 +22,7 @@ user.filetype = {
         },
         {
             name = "nu",
+            override = true,
             pattern = "%.nu$",
         },
         {
