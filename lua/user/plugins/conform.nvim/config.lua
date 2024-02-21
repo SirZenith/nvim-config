@@ -1,5 +1,8 @@
 local user = require "user"
 
+local formatter = require "user/plugins/conform.nvim/formatter"
+local filetype_map = require "user/plugins/conform.nvim/filetype_map"
+
 ---@alias user.plugin.FormatterList (string | string[])[]
 ---@alias user.plugin.FormatterGetter fun(bufnr: integer): user.plugin.FormatterList
 ---@alias user.plugin.FormatterFileTypeMap table<string, user.plugin.FormatterList | user.plugin.FormatterGetter>
@@ -22,7 +25,7 @@ local user = require "user"
 
 ---@class user.plugin.FormatterInfo
 ---@field command string
----@field args? string[] | fun(): string | string[]
+---@field args? string[] | fun(self: user.plugin.FormatterInfo, ctx: table): string | string[]
 ---@field range_args? fun(ctx: table): string[]
 ---@field stdin? boolean # send file content to stdin, read output from stdout, default true
 ---@field cwd? string
@@ -36,16 +39,7 @@ user.plugin.conform_nvim = {
     __new_entry = true,
 
     ---@type table<string, user.plugin.FormatterInfo | fun(bufnr: integer): user.plugin.FormatterInfo>
-    formatters = {
-        ["prettier-eslint"] = {
-            command = vim.fn.has("win32") == 1 and "prettier-eslint.cmd" or "prettier-eslint",
-            args = { "--stdin", "--stdin-filepath", "$FILENAME" },
-        },
-        prettier_d_slim = {
-            command = vim.fn.has("win32") == 1 and "prettier_d_slim.cmd" or "prettier_d_slim",
-            args = { "--stdin", "--stdin-filepath", "$FILENAME" },
-        },
-    },
+    formatters = formatter,
 
     -- Multiple formatters will be called sequentially.
     -- For formatters in nested list, only first available one will be used.
@@ -53,11 +47,7 @@ user.plugin.conform_nvim = {
     -- - `*`: all file type.
     -- - `_`: default formatter for files with no available formatter.
     ---@type user.plugin.FormatterFileTypeMap
-    formatters_by_ft = {
-        ["_"] = { "trim_whitespace" },
-        javascript = { "prettier_d_slim", "eslint_d" },
-        typescript = { "prettier_d_slim", "eslint_d" },
-    },
+    formatters_by_ft = filetype_map,
 
     -- Argument used for `format()` call on save
     ---@typeuser.plugin.FormattingArgs?
