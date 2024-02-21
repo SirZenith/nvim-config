@@ -2,6 +2,30 @@ local workspace = require "user.config.workspace"
 
 local M = {}
 
+local function check_eslint_activated()
+    local pwd = workspace.get_workspace_path()
+    local target = pwd .. "/.eslintrc.*"
+    local matsh_str = vim.fn.glob(target)
+    if matsh_str ~= "" then
+        return true
+    end
+
+    local file = io.open(pwd .. "/package.json", "r")
+    if file then
+        local content = file:read("*a")
+        local parse_ok, value = pcall(vim.json.decode, content)
+
+        if parse_ok
+            and type(value) == "table"
+            and value.eslintConfig ~= nil
+        then
+            return true
+        end
+    end
+
+    return false
+end
+
 local formatters = {
     {
         name = "prettier_d_slim",
@@ -12,7 +36,7 @@ local formatters = {
                 return cached
             end
 
-            local ok = true
+            local ok = check_eslint_activated()
             info.check_cache = ok
             return ok
         end,
@@ -26,29 +50,7 @@ local formatters = {
                 return cached
             end
 
-            local ok = false
-
-            local pwd = workspace.get_workspace_path()
-            local target = pwd .. "/.eslintrc.*"
-            local matsh_str = vim.fn.glob(target)
-            if matsh_str ~= "" then
-                ok = true
-            end
-
-            if not ok then
-                local file = io.open(pwd .. "/package.json", "r")
-                if file then
-                    local content = file:read("*a")
-                    local parse_ok, value = pcall(vim.json.decode, content)
-                    if parse_ok
-                        and type(value) == "table"
-                        and value.eslintConfig ~= nil
-                    then
-                        ok = true
-                    end
-                end
-            end
-
+            local ok = check_eslint_activated()
             info.check_cache = ok
             return ok
         end,
