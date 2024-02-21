@@ -4,6 +4,15 @@ local fs = require "user.utils.fs"
 
 local import = utils.import
 
+---@class user.platform.ImSelectInfo
+---@field check string
+---@field on string
+---@field off string
+---@field isoff fun(im: string): boolean
+--
+---@field ignore_comment_filetype string[]
+---@field should_reactivate fun(): boolean
+
 local mark = user.env.PLATFORM_MARK()
 local platform_config = mark
     and fs.path_join(
@@ -14,16 +23,67 @@ local augroup_id = vim.api.nvim_create_augroup("user.platform", { clear = true }
 
 user.platform = {
     __new_entry = true,
+
+    ---@type user.platform.ImSelectInfo
     im_select = {
         check = "",
         on = "",
         off = "",
-        isoff = function() return true end
+        isoff = function() return true end,
+
+        ignore_comment_filetype = {
+            "",
+            "html",
+            "markdown",
+            "help",
+            "text",
+        },
+        should_reactivate = function()
+            -- reactivate IM only in comment node.
+
+            local cur_ft = vim.bo.filetype
+            for _, ft in user.platform.im_select.ignore_comment_filetype:ipairs() do
+                if ft == cur_ft then
+                    return true
+                end
+            end
+
+            local parser = vim.treesitter.get_parser()
+            if not parser then
+                return true
+            end
+
+            local tree = parser:parse()[1]
+            if not tree then
+                return true
+            end
+
+            local root = tree:root()
+
+            local pos = vim.api.nvim_win_get_cursor(0)
+            local row, col = pos[1] - 1, pos[2] - 1
+            local node = root:named_descendant_for_range(row, col, row, col + 1)
+            if not node then
+                return true
+            end
+
+            local comment_found = false
+            local walker = node
+            while walker do
+                if walker:type() == "comment" then
+                    comment_found = true
+                    break
+                end
+                walker = walker:parent()
+            end
+
+            return comment_found
+        end,
     },
 }
 
 ---@param augroup any
----@param cmd { check: string, on: string, off: string, isoff: fun(im: string): boolean }
+---@param cmd user.platform.ImSelectInfo
 local function im_auto_toggle_setup(augroup, cmd)
     if not cmd then return end
 
@@ -40,6 +100,8 @@ local function im_auto_toggle_setup(augroup, cmd)
         return
     end
 
+    local should_reactivate = cmd.should_reactivate
+
     local method_toggled = false
     local auto_toggle_on = true
 
@@ -54,8 +116,6 @@ local function im_auto_toggle_setup(augroup, cmd)
             if not im_isoff(im) then
                 method_toggled = true
                 vim.fn.system(im_off_cmd)
-            else
-                method_toggled = false
             end
         end,
     })
@@ -67,7 +127,7 @@ local function im_auto_toggle_setup(augroup, cmd)
         callback = function()
             if not auto_toggle_on then return end
 
-            if method_toggled then
+            if method_toggled and should_reactivate() then
                 vim.fn.system(im_on_cmd)
                 method_toggled = false
             end
