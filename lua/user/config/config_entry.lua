@@ -193,11 +193,38 @@ function ConfigEntry:_set_value(k, v)
     local old_value = tail == nil and tbl or tbl[tail]
 
     if type(old_value) == "table" and type(v) == "table" then
-        table_util.update_table(old_value, v)
+        self:_update_table_value(old_value, v)
     elseif tail == nil then
         error("trying to update config with non-table value", 2)
     else
         tbl[tail] = table_util.deep_copy(v)
+    end
+end
+
+---@param dst table
+---@param src table
+---@param is_override? boolean
+function ConfigEntry:_update_table_value(dst, src, is_override)
+    is_override = src.__override or is_override or false
+
+    for k, v in pairs(src) do
+        local old_value = dst[k]
+
+        if old_value == nil then
+            dst[k] = v
+            goto continue
+        end
+
+        if type(old_value) == "table" then
+            self:_update_table_value(old_value, v, is_override)
+            goto continue
+        end
+
+        if is_override then
+            dst[k] = v
+        end
+
+        ::continue::
     end
 end
 
@@ -281,11 +308,14 @@ function ConfigEntry:__newindex(key, value)
     local value_t = type(value)
 
     if type(old_value) == "table" and value_t == "table" then
-        table_util.update_table(old_value, value)
+        -- Both are table
+        self:_update_table_value(old_value, value)
     elseif old_value ~= nil then
+        -- Old value exists, but not a table
         tbl[tail] = self:_process_new_value(value)
     elseif value_t == "table" then
-        if value.__new_entry == nil then
+        -- Old value does not exist, trying to insert a new table
+        if not (value.__new_entry or value.__override) then
             error("trying to insert table at: " .. target, 2)
         else
             tbl[tail] = self:_process_new_value(value)
