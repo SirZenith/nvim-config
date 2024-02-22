@@ -2,6 +2,21 @@ local log_util = require "user.util.log"
 
 local M = {}
 
+---@param spec string | user.plugin.PluginSpec
+---@return string?
+function M.get_plugin_name_from_spec(spec)
+    local spec_type = type(spec)
+
+    local name
+    if spec_type == "table" and spec.enabled ~= false then
+        name = spec[1] or spec.name
+    elseif spec_type == "string" then
+        name = spec
+    end
+
+    return name
+end
+
 ---@param spec user.plugin.PluginSpec
 function M.user_config_init(spec)
     local module = spec.name

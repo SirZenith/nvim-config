@@ -1,4 +1,4 @@
-local putl = require "user.config.plugin.utils"
+local putl = require "user.config.plugin.util"
 
 local ucs = putl.user_config_spec
 local cs = putl.colorscheme_spec
@@ -129,6 +129,15 @@ local specs = {
         cmd = {
             "SearchAndReplace",
             "Spectre",
+        },
+    },
+    {
+        -- Editing remote files with rsync.
+        "OscarCreator/rsync.nvim",
+        enabled = vim.fn.has("win32") ~= 1,
+        build = "make",
+        dependencies = {
+            "nvim-lua/plenary.nvim",
         },
     },
     {

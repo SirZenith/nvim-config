@@ -1,11 +1,13 @@
 local env_config = require "user.config.env"
 
 local user = require "user"
+local plugin_util = require "user.config.plugin.util"
 local util = require "user.util"
 local fs_util = require "user.util.fs"
 local log_util = require "user.util.log"
 
 local fn = vim.fn
+local get_plugin_name_from_spec = plugin_util.get_plugin_name_from_spec
 local import = util.import
 
 local function require_manager()
@@ -251,21 +253,6 @@ local manager_config = {
 
 -- ----------------------------------------------------------------------------
 -- loading helpers
-
----@param spec lazy.PluginSpec | string
----@return string? name
-local function get_plugin_name_from_spec(spec)
-    local spec_type = type(spec)
-
-    local name
-    if spec_type == "table" and spec.enabled ~= false then
-        name = spec[1] or spec.name
-    elseif spec_type == "string" then
-        name = spec
-    end
-
-    return name
-end
 
 ---@param name string # plugin base name
 local function get_config_path(name)
