@@ -62,7 +62,6 @@ function M.get_formatters()
     local result = {}
     for _, info in ipairs(formatters) do
         if info.check_available(info) then
-            vim.print(info.name, "is available")
             result[#result + 1] = info.name
         end
     end
