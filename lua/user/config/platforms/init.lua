@@ -48,8 +48,8 @@ user.platform = {
                 end
             end
 
-            local parser = vim.treesitter.get_parser()
-            if not parser then
+            local ok, parser = pcall(vim.treesitter.get_parser)
+            if not ok or not parser then
                 return true
             end
 
