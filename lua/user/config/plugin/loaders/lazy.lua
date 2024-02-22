@@ -333,11 +333,14 @@ function M._on_autocmd_triggered(event, args)
     local set = M._custom_autocmd_listener[event]
     if not set then return end
 
+    log_util.trace("plugin event:", event)
+
     local is_empty = true
     for spec in pairs(set) do
         local ok = spec.autocmd_load_checker(spec, args)
         if ok then
             local full_name = get_plugin_name_from_spec(spec)
+            log_util.trace("  +", full_name or "<unknown>")
             if full_name then
                 local segments = vim.split(full_name, "/")
                 local name = segments[#segments]
@@ -477,6 +480,8 @@ function M._finalize_plugin_config(spec)
     end
 
     M._remove_all_listeners_for_spec(spec)
+
+    log_util.trace("    *", plugin_name)
 end
 
 ---@param spec user.plugin.PluginSpec

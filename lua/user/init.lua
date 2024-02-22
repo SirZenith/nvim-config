@@ -4,9 +4,12 @@ if not env_config.ENV_CONFIG_INIT_OK then
 end
 
 local util = require "user.util"
+local log_uitl = require "user.util.log"
 local config_entry = require "user.config.config_entry"
 
 local import = util.import
+
+log_uitl.log_level = vim.log.levels.WARN
 
 local user = config_entry.ConfigEntry:new {
     env = env_config,
