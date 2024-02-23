@@ -276,7 +276,7 @@ condasp(
     { trig = "(.*%))/", regTrig = true },
     {
         s.f(
-            function (_, snip)
+            function(_, snip)
                 local target = snip.captures[1]
                 local st = #target
                 local depth = 0
@@ -304,7 +304,7 @@ condasp(
 -- Sub- and Supscript
 condapsp(math, { trig = "__", wordTrig = false }, "_{$1} $0")
 condsp(math, { trig = "(%a)(%d+)", regTrig = true }, s.f(
-    function (_, snip)
+    function(_, snip)
         return string.format("%s_{%s}", snip.captures[1], snip.captures[2])
     end, {}
 ))
@@ -346,17 +346,21 @@ condapsp(math, "SI", "\\SI{$1}{$2} $0")
 apsp("cvec", [[\begin{pmatrix} ${1:x}_${2:1}\\ \vdots\\ ${1}_${3:n} \end{pmatrix}]])
 condapsp(math, "bar", "\\overline{$1} $0")
 condasp(math, { trig = "(%a)bar", regTrig = true }, s.f(
-        function(_, snip) return string.format(
+    function(_, snip)
+        return string.format(
             "\\overline{%s}", snip.captures[1]
-        ) end, {}
-    )
+        )
+    end, {}
+)
 )
 condapsp(math, "hat", "\\hat{$1} $0")
 condasp(math, { trig = "(%a)hat", regTrig = true }, s.f(
-        function(_, snip) return string.format(
+    function(_, snip)
+        return string.format(
             "\\hat{%s}", snip.captures[1]
-        ) end, {}
-    )
+        )
+    end, {}
+)
 )
 
 -- ----------------------------------------------------------------------------
