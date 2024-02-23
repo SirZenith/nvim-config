@@ -28,7 +28,7 @@ end
 
 local formatters = {
     {
-        name = "prettier_d_slim",
+        name = "prettierd",
         check_cache = nil,
         check_available = function(info)
             local cached = info.check_cache
