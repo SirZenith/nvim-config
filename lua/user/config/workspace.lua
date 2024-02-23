@@ -1,3 +1,4 @@
+local user = require "user"
 local util = require "user.util"
 local fs_util = require "user.util.fs"
 
@@ -76,7 +77,11 @@ function M.load(callback)
                 return
             end
 
-            local result = import(M.get_workspace_config_require_path())
+            local result
+            user:with_source(user.__source_type.Workspace, function()
+                result = import(M.get_workspace_config_require_path())
+            end)
+
             if not result then
                 callback()
                 return

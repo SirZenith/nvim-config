@@ -2,7 +2,7 @@ local user = require "user"
 local highlight = require "user.config.general.highlight"
 
 user.plugin.rainbow_delimiters_nvim = {
-    __default = true,
+    __newentry = true,
     highlight = highlight.rainbow_hl_groups,
 }
 

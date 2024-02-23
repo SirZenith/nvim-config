@@ -4,7 +4,7 @@ local fs_util = require "user.util.fs"
 local M = {}
 
 M.im_select = {
-    __default = true,
+    __newentry = true,
     check = "im-select.exe",
     on = "im-select.exe 2052",
     off = "im-select.exe 1033",
@@ -16,12 +16,12 @@ M.im_select = {
 -- ----------------------------------------------------------------------------
 
 user.env = {
-    __override = true,
+    __newentry = true,
     FIREFOX_PATH = "C:/Program Files/Mozilla Firefox/firefox.exe"
 }
 
 user.platform.windows = {
-    __default = true,
+    __newentry = true,
     nu_config_path = fs_util.path_join(user.env.APPDATA(), "nushell/config.nu"),
     nu_env_path = fs_util.path_join(user.env.APPDATA(), "nushell/env.nu"),
 }

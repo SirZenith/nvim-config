@@ -1,7 +1,7 @@
 local user = require "user"
 
 user.plugin.comment_nvim = {
-    __default = true,
+    __newentry = true,
     ---Add a space b/w comment and the line
     padding = true,
     ---Whether the cursor should stay at its position

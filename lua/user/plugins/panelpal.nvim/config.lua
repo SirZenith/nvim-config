@@ -1,7 +1,7 @@
 local user = require "user"
 
 user.plugin.panelpal_nvim = {
-    __default = true,
+    __newentry = true,
     default_position_for_new_window = "right",
 }
 

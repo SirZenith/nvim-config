@@ -1,7 +1,7 @@
 local user = require "user"
 
 user.plugin.nvim_treesitter = {
-    __default = true,
+    __newentry = true,
     configs = {
         ---@type "all" | "maintained" | string[]
         ensure_installed = {

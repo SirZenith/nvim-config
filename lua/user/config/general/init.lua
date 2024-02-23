@@ -5,7 +5,7 @@ local option = require "user.config.general.option"
 local sign = require "user.config.general.sign"
 
 user.general = {
-    __default = true,
+    __newentry = true,
     option = option,
     sign = sign,
     theme = {

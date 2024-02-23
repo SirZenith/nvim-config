@@ -1,7 +1,7 @@
 local user = require "user"
 
 user.plugin.nvim_autopairs = {
-    __default = true,
+    __newentry = true,
     -- set to false means even always do pairing
     -- even there is unclosed pair following cursor position.
     enable_check_bracket_line = false,

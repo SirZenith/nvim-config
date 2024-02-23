@@ -5,7 +5,7 @@ local functional_util = require "user.util.functional"
 local augroup_id = vim.api.nvim_create_augroup("user.filetype", { clear = true })
 
 user.filetype = {
-    __default = true,
+    __newentry = true,
 
     -- disable soft tab for listed file types
     no_soft_tab = { "go", "make", "plantuml", "vlang" },

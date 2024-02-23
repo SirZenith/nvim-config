@@ -6,7 +6,7 @@ local util = require "user.util"
 local M = {}
 
 user.plugin = {
-    __default = true,
+    __newentry = true,
 }
 
 function M.init()

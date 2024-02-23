@@ -6,7 +6,7 @@ local dap_root = fs_util.path_join(user.env.APP_PATH(), "DAP")
 local local_lua_root = fs_util.path_join(dap_root, "local-lua-debugger-vscode")
 
 user.plugin.nvim_dap = {
-    __default = true,
+    __newentry = true,
     adapters = {
         firefox = {
             -- git clone https://github.com/firefox-devtools/vscode-firefox-debug.git

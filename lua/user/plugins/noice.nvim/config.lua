@@ -2,7 +2,7 @@ local user = require "user"
 local config_const = require "user.config.constant"
 
 user.plugin.noice = {
-    __default = true,
+    __newentry = true,
 
     cmdline = {
         -- enables the Noice cmdline UI

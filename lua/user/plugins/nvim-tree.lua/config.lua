@@ -18,7 +18,7 @@ local function try_open_tree()
 end
 
 user.plugin.nvim_tree = {
-    __default = true,
+    __newentry = true,
     respect_buf_cwd = false,
     create_in_closed_folder = false,
     disable_netrw = false,

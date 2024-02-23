@@ -1,7 +1,7 @@
 local user = require "user"
 
 user.plugin.oil_nvim = {
-    __default = true,
+    __newentry = true,
 
     -- Oil will take over directory buffers (e.g. `vim .` or `:e src/`)
     -- Set to false if you still want to use netrw.

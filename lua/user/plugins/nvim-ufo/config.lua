@@ -11,7 +11,7 @@ local user = require "user"
 ---@alias user.plugin.nvim_ufo.VirtTextHandler fun(virt_text: user.plugin.nvim_ufo.VirtTextContent[], line_num: integer, end_line_num: integer, width: integer, truncate: fun(s: string, len: integer): string): user.plugin.nvim_ufo.VirtTextContent[]
 
 user.plugin.nvim_ufo = {
-    __default = true,
+    __newentry = true,
     -- Highligh text after its folding state toggled for given time.
     open_fold_hl_timeout = 0,
     -- Function which returns a list of folding provider names, plugin will try

@@ -1,7 +1,7 @@
 local user = require "user"
 
 user.plugin.dressing_nvim = {
-    __default = true,
+    __newentry = true,
 
     input = {
         -- Set to false to disable the vim.ui.input implementation

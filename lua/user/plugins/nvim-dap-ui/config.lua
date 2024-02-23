@@ -1,7 +1,7 @@
 local user = require "user"
 
 user.plugin.nvim_dap_ui = {
-    __default = true,
+    __newentry = true,
     controls = {
         element = "breakpoints",
         enabled = true,

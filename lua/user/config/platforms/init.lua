@@ -23,7 +23,7 @@ local platform_config = mark
 local augroup_id = vim.api.nvim_create_augroup("user.platform", { clear = true })
 
 user.platform = {
-    __default = true,
+    __newentry = true,
 
     ---@type user.platform.ImSelectInfo
     im_select = {

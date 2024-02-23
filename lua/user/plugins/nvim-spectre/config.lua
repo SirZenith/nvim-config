@@ -1,7 +1,7 @@
 local user = require "user"
 
 user.plugin.nvim_spectre = {
-    __default        = true,
+    __newentry        = true,
     color_devicons     = true,
     open_cmd           = 'vnew',
     -- auto execute search again when you write to any file in vim

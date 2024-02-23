@@ -1,7 +1,7 @@
 local user = require "user"
 
 user.plugin.prefab_cmp = {
-    __default = true,
+    __newentry = true,
     flavor = "cocos",
     path_map_func = function(path)
         return path

@@ -1,7 +1,7 @@
 local user = require "user"
 
 user.plugin.marks_nvim = {
-    __default = true,
+    __newentry = true,
     -- whether to map keybinds or not. default true
     default_mappings = true,
     -- which builtin marks to show. default {}

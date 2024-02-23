@@ -2,7 +2,7 @@ local user = require "user"
 local fs_util = require "user.util.fs"
 
 user.plugin.typescript_tools = {
-    __default = true,
+    __newentry = true,
     settings = {
         -- spawn additional tsserver instance to calculate diagnostics on it
         ---@type boolean

@@ -36,7 +36,7 @@ local filetype_map = require "user/plugins/conform.nvim/filetype_map"
 ---@field prepend_args? string[] # arguments to be prepend to argument list.
 
 user.plugin.conform_nvim = {
-    __default = true,
+    __newentry = true,
 
     ---@type table<string, user.plugin.FormatterInfo | fun(bufnr: integer): user.plugin.FormatterInfo>
     formatters = formatter,

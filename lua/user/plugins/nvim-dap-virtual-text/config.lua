@@ -29,7 +29,7 @@ local user = require "user"
 ---@alias user.plugin.DapVirtualTextOptions table<string, any>
 
 user.plugin.nvim_dap_virtual_text = {
-    __default = true,
+    __newentry = true,
     -- enable this plugin (the default)
     enabled = true,
     -- create commands DapVirtualTextEnable, DapVirtualTextDisable, DapVirtualTextToggle, (DapVirtualTextForceRefresh for refreshing when debug adapter did not notify its termination)

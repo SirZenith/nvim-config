@@ -2,7 +2,7 @@ local user = require "user"
 local config_const = require "user.config.constant"
 
 user.plugin.lspkind = {
-    __default = true,
+    __newentry = true,
     -- defines how annotations are shown
     -- default: symbol
     -- options: 'text', 'text_symbol', 'symbol_text', 'symbol'

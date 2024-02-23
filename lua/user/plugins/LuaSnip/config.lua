@@ -1,7 +1,7 @@
 local user = require "user"
 
 user.plugin.luasnip = {
-    __default = true,
+    __newentry = true,
     history = true,
     -- Update more often, :h events for more info.
     updateevents = "TextChanged,TextChangedI",

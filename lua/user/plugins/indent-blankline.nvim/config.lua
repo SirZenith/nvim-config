@@ -2,7 +2,7 @@ local user = require "user"
 local highlight = require "user.config.general.highlight"
 
 user.plugin.indent_blankline_nvim = {
-    __default = true,
+    __newentry = true,
     indent = {
         char = "|",
     },

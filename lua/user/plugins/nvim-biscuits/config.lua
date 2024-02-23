@@ -1,7 +1,7 @@
 local user = require "user"
 
 user.plugin.nvim_biscuits = {
-    __default = true,
+    __newentry = true,
     -- Minimum row distance between beginning and ending of scope required to
     -- show virtual text.
     ---@type number

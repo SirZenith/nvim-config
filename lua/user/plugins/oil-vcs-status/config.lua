@@ -1,7 +1,7 @@
 local user = require "user"
 
 user.plugin.oil_vcs_status_nvim = {
-    __default = true,
+    __newentry = true,
     status_symbol = {
         added                = "",
         copied               = "󰆏",

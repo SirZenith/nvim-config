@@ -10,7 +10,7 @@ local import = util.import
 -- ----------------------------------------------------------------------------
 
 user.command = {
-    __default = true,
+    __newentry = true,
 
     ---@type table<string, string>
     alias_map = {

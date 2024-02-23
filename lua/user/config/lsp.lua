@@ -4,7 +4,7 @@ local fs_util = require "user.util.fs"
 local log_util = require "user.util.log"
 
 user.lsp = {
-    __default = true,
+    __newentry = true,
     root_path = fs_util.path_join(user.env.USER_RUNTIME_PATH(), "user", "lsp-configs"),
     log_update_method = "append",
     log_scroll_method = "bottom",

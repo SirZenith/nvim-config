@@ -5,29 +5,40 @@ local table_util = require "user.util.table"
 
 local fnil = functional_util.fnil
 
+---@enum user.config.SourceType
+local SourceType = {
+    User = "user",
+    Platform = "platform",
+    Workspace = "workspace",
+}
+
 local reserved_key = {
     __key = true,
     __reserved = true,
 }
 
 ---@class user.config.ConfigEntry
---
----@field __key_sep string
----@field __config_base {[string]: any}
----@field __reserved_keys {[string]: boolean}
---
 ---@field __key string
-local ConfigEntry = {
-    __key_sep = ".",
-    __config_base = {},
-    __reserved_keys = reserved_key,
-    __meta_keys = {
-        __copy = true,     -- add value to ConfigEntry by deep copy.
-        __default = true,  -- if old field exists, don't update its value
-        __override = true, -- update field value even if it alreay exists.
-        __append = true,   -- append list content into config entry
-        __replace = true,  -- replace old field by new vlaue directly instead of updating it.
-    },
+local ConfigEntry = {}
+ConfigEntry.__key_sep = "."
+ConfigEntry.__reserved_keys = reserved_key
+ConfigEntry.__meta_keys = {
+    __newentry = true, -- allow adding new entry
+    __copy = true,     -- add value to ConfigEntry by deep copy.
+    __override = true, -- update field value even if it alreay exists.
+    __append = true,   -- append list content into config entry
+    __replace = true,  -- replace old field by new vlaue directly instead of updating it.
+}
+
+ConfigEntry.__source_type = SourceType
+-- Source appears latter in the list takes higher priority.
+ConfigEntry.__source_read_order = {
+    SourceType.User,
+    SourceType.Workspace,
+}
+ConfigEntry.__cur_source_type = SourceType.User
+ConfigEntry.__source_map = {
+    [SourceType.User] = {},
 }
 
 -- ----------------------------------------------------------------------------
@@ -110,11 +121,25 @@ function ConfigEntry:_remove_reserved_keys(value)
         return
     end
 
-    for k in pairs(self.__meta_keys) do
+    for k in pairs(self.__reserved_keys) do
         value[k] = nil
     end
 
     return value
+end
+
+---@param tbl table
+function ConfigEntry:_remove_meta_keys(tbl)
+    local meta_set = self.__meta_keys
+    for k, v in pairs(tbl) do
+        if meta_set[k] then
+            tbl[k] = nil
+        end
+
+        if type(v) == "table" then
+            self:_remove_meta_keys(v)
+        end
+    end
 end
 
 -- Specialized version deep copy. Will remove all meta keys from result after
@@ -148,16 +173,22 @@ function ConfigEntry:_get_value(k)
         error("expected key of string type.", 2)
     end
 
+    local source_type = self.__cur_source_type
+    local cur_source = self.__source_map[source_type]
+    if not cur_source then
+        return nil
+    end
+
     local segments = self:_get_key_segments(k)
     local tail = table.remove(segments)
 
-    local tbl = self.__config_base
+    local tbl = cur_source
     for i = 1, #segments do
-        tbl = tbl[segments[i]]
+        local seg = segments[i]
+        tbl = tbl[seg]
 
         if type(tbl) ~= "table" then
-            error("indexing a non-table config: " .. tostring(self.__key), 2)
-        elseif tbl == nil then
+            -- log_util.error("indexing a non-table config:", self.__key)
             break
         end
     end
@@ -206,6 +237,7 @@ end
 ---@param src table
 ---@param is_override? boolean
 ---@return boolean ok
+---@return table dst
 function ConfigEntry:_update_table_value(dst, src, is_override)
     is_override = src.__override or is_override or false
 
@@ -247,7 +279,7 @@ function ConfigEntry:_update_table_value(dst, src, is_override)
         end
     end
 
-    return ok
+    return ok, dst
 end
 
 -- Query config node specified by key segments.
@@ -255,7 +287,8 @@ end
 ---@param segments string[]
 ---@return {[string]: any}? tbl
 function ConfigEntry:_get_tbl_by_segments(segments)
-    local tbl = self.__config_base
+    local source_type = self.__cur_source_type
+    local tbl = self.__source_map[source_type]
 
     local ok = true
     for i = 1, #segments do
@@ -293,6 +326,8 @@ function ConfigEntry:new(key, initial_value)
     return setmetatable({ __key = key }, self)
 end
 
+---@param key string
+---@return any
 function ConfigEntry:__index(key)
     if key == nil then
         error("trying to index config with nil key", 2)
@@ -308,8 +343,10 @@ function ConfigEntry:__index(key)
 end
 
 -- Update or insert config value.
--- New key is only allowed when its value is table, and __default is set
+-- New key is only allowed when its value is table, and __newentry is set
 -- to ture in that table.
+---@param key string
+---@param value any
 function ConfigEntry:__newindex(key, value)
     if type(key) ~= "string" then
         log_util.error("ConfigEntry key must be string:", key)
@@ -331,29 +368,23 @@ function ConfigEntry:__newindex(key, value)
         return
     end
 
-    local value_t = type(value)
-    if value_t ~= "table" then
-        log_util.error(
-            "while updating:", target,
-            "\n    updating config entry with plain value is not allowed"
-        )
-        return
-    end
-
-    -- Updating field with table value
     local old_value = tbl[tail]
+    local value_t = type(value)
 
     if old_value == nil then
         -- Inserting new field
-        local allow_new_value = value.__default or value.__override or false
+        local allow_new_value = value_t == "table" and (value.__newentry or value.__override or false)
 
         if allow_new_value then
             tbl[tail] = self:_process_new_value(value)
         else
             log_util.error("config entry insertion blocked:", target)
         end
+    elseif value_t ~= "table" then
+        -- Update existing field with non-table value
+        tbl[tail] = value
     elseif type(old_value) == "table" then
-        -- Updating table field
+        -- Updating table field with table value
         local is_replace = value.__replace
 
         if is_replace then
@@ -365,7 +396,7 @@ function ConfigEntry:__newindex(key, value)
             end
         end
     else
-        -- Field exists, but its value is not a table
+        -- Update non-table field with table value
         local is_override = value.__override or false
 
         if is_override then
@@ -374,22 +405,64 @@ function ConfigEntry:__newindex(key, value)
     end
 end
 
+---@return string
 function ConfigEntry:__tostring()
-    return vim.inspect(self:_get_value())
+    return vim.inspect(self:value())
 end
 
----@generic T : user.config.ConfigEntry
----@param self T
----@return T
-function ConfigEntry.__call(self)
+---@return any
+function ConfigEntry:__call()
     return self:value()
 end
 
----@generic T : user.config.ConfigEntry
----@param self T
----@return T
-function ConfigEntry.value(self)
-    return vim.deepcopy(self:_get_value())
+---@param type user.config.SourceType
+function ConfigEntry:switch_source(type)
+    local cls = getmetatable(self)
+    local source_map = rawget(cls, "__source_map")
+    if not source_map[type] then
+        source_map[type] = {}
+    end
+    rawset(cls, "__cur_source_type", type)
+end
+
+-- Switch given source type and call `action`, reverto old source type after
+-- invokation.
+---@param type user.config.SourceType
+---@param action fun()
+function ConfigEntry:with_source(type, action)
+    local source_type = self.__cur_source_type
+    self:switch_source(type)
+    action()
+    self:switch_source(source_type)
+end
+
+---@return any
+function ConfigEntry:value()
+    local result = nil
+
+    local source_type = self.__cur_source_type
+
+    local type_list = self.__source_read_order
+    for i = 1, #type_list do
+        local target_type = type_list[i]
+        self:switch_source(target_type)
+
+        local value = self:_get_value()
+        if value == nil then
+        elseif type(value) ~= "table" then
+            result = value
+        else
+            _, result = self:_update_table_value(result or {}, value)
+        end
+    end
+
+    if type(result) == "table" then
+        self:_remove_meta_keys(result)
+    end
+
+    self:switch_source(source_type)
+
+    return result
 end
 
 -- Delete current config entry from config table.
@@ -400,7 +473,8 @@ function ConfigEntry:delete()
         return
     end
 
-    local tbl = self.__config_base
+    local source_type = self.__cur_source_type
+    local tbl = self.__source_map[source_type]
     for i = 1, #segments do
         tbl = tbl[segments[i]]
 
@@ -556,7 +630,12 @@ local function dump_signature(config_entry)
         pending = {},
     }
 
-    local target = { name = "UserConfig", value = config_entry(), parent_class = "" }
+    local target = {
+        name = "UserConfig",
+        value = config_entry(),
+        parent_class = "user.config.ConfigEntry"
+    }
+
     while target do
         _dump_config_class(env, target.name, target.value, target.parent_class)
         target = table.remove(env.pending, 1)

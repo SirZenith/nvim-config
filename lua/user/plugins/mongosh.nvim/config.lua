@@ -4,7 +4,7 @@ local hilight = require "user.config.general.highlight"
 local color = hilight.color
 
 user.plugin.mongosh_nvim = {
-    __default = true,
+    __newentry = true,
 
     query = {
         use_typed_query = false,

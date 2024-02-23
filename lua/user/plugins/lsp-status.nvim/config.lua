@@ -1,7 +1,7 @@
 local user = require "user"
 
 user.plugin.lsp_status = {
-    __default = true,
+    __newentry = true,
     kind_labels = {},
     current_function = true,
     show_filename = false,

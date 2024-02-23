@@ -1,7 +1,7 @@
 local user = require "user"
 
 user.plugin.rsync_nvim = {
-    __default = true,
+    __newentry = true,
 
     -- triggers `RsyncUp` when fugitive thinks something might have changed in the repo.
     fugitive_sync = false,
