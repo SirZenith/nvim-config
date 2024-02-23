@@ -96,7 +96,7 @@ local function on_plugins_loaded()
             }, next_step)
         end,
         function()
-            show_editor_state()
+            vim.fn.timer_start(200, show_editor_state)
         end
     }
 end
