@@ -217,6 +217,10 @@ function ConfigEntry:_update_table_value(dst, src, is_override)
         end
     else
         for k, v in pairs(src) do
+            if ConfigEntry.__meta_keys[k] then
+                goto continue
+            end
+
             if ConfigEntry.__reserved_keys[k] then
                 log_util.warn("'", k, "' is reserved in ConfigEntry")
                 ok = false
