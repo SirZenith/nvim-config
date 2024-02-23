@@ -1,8 +1,7 @@
 local user = require "user"
-local table_util = require "user.util.table"
 
 user.plugin.nvim_treesitter = {
-    __new_entry = true,
+    __default = true,
     configs = {
         ---@type "all" | "maintained" | string[]
         ensure_installed = {
@@ -160,7 +159,8 @@ return user.plugin.nvim_treesitter:with_wrap(function(value)
         nts_install.compilers = compilers
     end
 
-    table_util.update_table(
+    nts_install.command_extra_args = vim.table_extend(
+        "force",
         nts_install.command_extra_args,
         value.install.command_extra_args
     )

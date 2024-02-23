@@ -1,7 +1,7 @@
 local user = require "user"
 
 user.plugin.nvim_neoclip = {
-    __new_entry = true,
+    __default = true,
     history = 1000,
     enable_persistent_history = false,
     length_limit = 1048576,

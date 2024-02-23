@@ -4,7 +4,7 @@ local fs_util = require "user.util.fs"
 local M = {}
 
 M.im_select = {
-    __new_entry = true,
+    __default = true,
     check = "im-select.exe",
     on = "im-select.exe 2052",
     off = "im-select.exe 1033",
@@ -15,10 +15,12 @@ M.im_select = {
 
 -- ----------------------------------------------------------------------------
 
-user.env.FIREFOX_PATH = "C:/Program Files/Mozilla Firefox/firefox.exe"
+user.env = {
+    FIREFOX_PATH = "C:/Program Files/Mozilla Firefox/firefox.exe"
+}
 
 user.platform.windows = {
-    __new_entry = true,
+    __default = true,
     nu_config_path = fs_util.path_join(user.env.HOME(), [[AppData\Roaming\nushell\config.nu]]),
     nu_env_path = fs_util.path_join(user.env.HOME(), [[AppData\Roaming\nushell\env.nu]]),
 }

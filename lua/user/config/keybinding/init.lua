@@ -10,7 +10,7 @@ user.general.option.g = {
 }
 
 user.keybinding = {
-    __new_entry = true,
+    __default = true,
     global_search = {
         ---@type table<string, string>
         cmd_template_map = {

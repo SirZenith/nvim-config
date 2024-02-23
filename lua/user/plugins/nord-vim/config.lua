@@ -1,3 +1,5 @@
 local user = require "user"
 
-user.general.theme.colorscheme = "nord"
+user.general.theme = {
+    colorscheme = "nord",
+}

@@ -18,7 +18,7 @@ local user = require "user"
 ---@alias user.plugin.TerminalSizeFunc fun(term: user.plugin.Terminal): number
 
 user.plugin.toggleterm = {
-    __new_entry = true,
+    __default = true,
 
     -- Default shell of terminal.
     ---@type string | fun(): string

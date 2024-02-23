@@ -1,7 +1,7 @@
 local user = require "user"
 
 user.plugin.nvim_cursorline = {
-    __new_entry = true,
+    __default = true,
     disable_in_filetype = { "floaterm" },
     disable_in_buftype = { "terminal" },
     cursorline = {

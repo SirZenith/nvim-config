@@ -22,10 +22,11 @@ local ConfigEntry = {
     __config_base = {},
     __reserved_keys = reserved_key,
     __meta_keys = {
-        __new_entry = true,
-        __copy = true,
-        __override = true,
-        __append = true,
+        __copy = true,     -- add value to ConfigEntry by deep copy.
+        __default = true,  -- if old field exists, don't update its value
+        __override = true, -- update field value even if it alreay exists.
+        __append = true,   -- append list content into config entry
+        __replace = true,  -- replace old field by new vlaue directly instead of updating it.
     },
 }
 
@@ -120,7 +121,7 @@ end
 -- copying.
 ---@param value any
 function ConfigEntry:_deep_copy(value)
-    value = table_util.deep_copy(value)
+    value = vim.deepcopy(value)
     self:_remove_reserved_keys(value)
     return value
 end
@@ -197,35 +198,52 @@ function ConfigEntry:_set_value(k, v)
     elseif tail == nil then
         error("trying to update config with non-table value", 2)
     else
-        tbl[tail] = table_util.deep_copy(v)
+        tbl[tail] = vim.deepcopy(v)
     end
 end
 
 ---@param dst table
 ---@param src table
 ---@param is_override? boolean
+---@return boolean ok
 function ConfigEntry:_update_table_value(dst, src, is_override)
     is_override = src.__override or is_override or false
 
-    for k, v in pairs(src) do
-        local old_value = dst[k]
+    local ok = true
 
-        if old_value == nil then
-            dst[k] = v
-            goto continue
+    if src.__append then
+        for i = 1, #src do
+            dst[#dst + 1] = src[i]
         end
+    else
+        for k, v in pairs(src) do
+            if ConfigEntry.__reserved_keys[k] then
+                log_util.warn("'", k, "' is reserved in ConfigEntry")
+                ok = false
+                goto continue
+            end
 
-        if type(old_value) == "table" then
-            self:_update_table_value(old_value, v, is_override)
-            goto continue
+            local old_value = dst[k]
+
+            if old_value == nil then
+                dst[k] = v
+                goto continue
+            end
+
+            if type(old_value) == "table" then
+                self:_update_table_value(old_value, v, is_override)
+                goto continue
+            end
+
+            if is_override then
+                dst[k] = v
+            end
+
+            ::continue::
         end
-
-        if is_override then
-            dst[k] = v
-        end
-
-        ::continue::
     end
+
+    return ok
 end
 
 -- Query config node specified by key segments.
@@ -286,42 +304,69 @@ function ConfigEntry:__index(key)
 end
 
 -- Update or insert config value.
--- New key is only allowed when its value is table, and __new_entry is set
+-- New key is only allowed when its value is table, and __default is set
 -- to ture in that table.
 function ConfigEntry:__newindex(key, value)
     if type(key) ~= "string" then
-        error("key of ConfigEntry must be string.", 2)
-    elseif ConfigEntry.__reserved_keys[key] then
-        error("usage of " .. key .. " is reserved in ConfigEntry", 2)
+        log_util.error("ConfigEntry key must be string:", key)
+        return
     end
 
     local target = self:_join_key(self.__key, key)
+
+    if ConfigEntry.__reserved_keys[key] then
+        log_util.error("'", key, "' is reserved in ConfigEntry:", target)
+        return
+    end
 
     local segments = self:_get_key_segments(key)
     local tail = table.remove(segments)
     local tbl = self:_get_tbl_by_segments(segments)
     if not tbl then
-        error("trying to write into an invalid path: " .. target, 2)
+        log_util.error("writing to an invalid ConfigEntry:", target)
+        return
     end
 
-    local old_value = tbl[tail]
     local value_t = type(value)
+    if value_t ~= "table" then
+        log_util.error(
+            "while updating:", target,
+            "\n    updating config entry with plain value is not allowed"
+        )
+        return
+    end
 
-    if type(old_value) == "table" and value_t == "table" then
-        -- Both are table
-        self:_update_table_value(old_value, value)
-    elseif old_value ~= nil then
-        -- Old value exists, but not a table
-        tbl[tail] = self:_process_new_value(value)
-    elseif value_t == "table" then
-        -- Old value does not exist, trying to insert a new table
-        if not (value.__new_entry or value.__override) then
-            error("trying to insert table at: " .. target, 2)
-        else
+    -- Updating field with table value
+    local old_value = tbl[tail]
+
+    if old_value == nil then
+        -- Inserting new field
+        local allow_new_value = value.__default or value.__override or false
+
+        if allow_new_value then
             tbl[tail] = self:_process_new_value(value)
+        else
+            log_util.error("config entry insertion blocked:", target)
+        end
+    elseif type(old_value) == "table" then
+        -- Updating table field
+        local is_replace = value.__replace
+
+        if is_replace then
+            tbl[tail] = self:_process_new_value(value)
+        else
+            local ok = self:_update_table_value(old_value, value)
+            if not ok then
+                log_util.error("error occured while updating:", target)
+            end
         end
     else
-        error("trying to insert new value at: " .. target, 2)
+        -- Field exists, but its value is not a table
+        local is_override = value.__override or false
+
+        if is_override then
+            tbl[tail] = self:_process_new_value(value)
+        end
     end
 end
 
@@ -340,7 +385,7 @@ end
 ---@param self T
 ---@return T
 function ConfigEntry.value(self)
-    return table_util.deep_copy(self:_get_value())
+    return vim.deepcopy(self:_get_value())
 end
 
 -- Delete current config entry from config table.
@@ -374,7 +419,7 @@ end
 ---@param consume fun(value: any): ...
 ---@return any ...
 function ConfigEntry:with(consume)
-    local value = self:value()
+    local value = self:_get_value()
     self:delete()
 
     if value == nil then

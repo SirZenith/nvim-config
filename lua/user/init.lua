@@ -9,7 +9,7 @@ local config_entry = require "user.config.config_entry"
 
 local import = util.import
 
-log_uitl.log_level = vim.log.levels.WARN
+log_uitl.log_level = vim.log.levels.TRACE
 
 local user = config_entry.ConfigEntry:new {
     env = env_config,

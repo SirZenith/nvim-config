@@ -4,7 +4,7 @@ local user = require "user"
 ---@alias user.plugin.ccc_nvim.ShowMode "auto" | "show" | "hide"
 
 user.plugin.ccc_nvim = {
-    __new_entry = true,
+    __default = true,
     ---@type string # hex
     default_color = "#000000",
     ---@type string

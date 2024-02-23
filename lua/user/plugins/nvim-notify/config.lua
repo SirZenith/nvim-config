@@ -1,7 +1,7 @@
 local user = require "user"
 
 user.plugin.nvim_notify = {
-    __new_entry = true,
+    __default = true,
     level = vim.log.levels.INFO,
     timeout = 2000,
     max_width = nil,

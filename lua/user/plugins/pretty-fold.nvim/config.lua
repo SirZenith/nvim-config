@@ -1,7 +1,7 @@
 local user = require "user"
 
 user.plugin.pretty_fold = {
-    __new_entry = true,
+    __default = true,
     sections = {
         left = {
             "content",

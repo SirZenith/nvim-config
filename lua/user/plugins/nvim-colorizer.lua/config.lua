@@ -1,7 +1,7 @@
 local user = require "user"
 
 user.plugin.colorizer = {
-    __new_entry = true,
+    __default = true,
     "*",
     -- Hilight all filetype except:
     "!noice",

@@ -1,7 +1,7 @@
 local user = require "user"
 
 user.plugin.gitsigns = {
-    __new_entry                  = true,
+    __default                  = true,
     signs                        = {
         add          = { hl = 'GitSignsAdd', text = '⁆', numhl = 'GitSignsAddNr', linehl = 'GitSignsAddLn' },
         change       = { hl = 'GitSignsChange', text = '▌', numhl = 'GitSignsChangeNr', linehl = 'GitSignsChangeLn' },

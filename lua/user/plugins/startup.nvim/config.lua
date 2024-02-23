@@ -94,7 +94,7 @@ local ASCII_DRAWING = {
 }
 
 user.plugin.startup_nvim = {
-    __new_entry = true,
+    __default = true,
     colors = {
         background = highlight.color.bg.normal,
         folded_section = highlight.color.fg.darker,

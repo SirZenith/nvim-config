@@ -5,12 +5,10 @@ local option = require "user.config.general.option"
 local sign = require "user.config.general.sign"
 
 user.general = {
-    __new_entry = true,
+    __default = true,
     option = option,
     sign = sign,
     theme = {
-        colorscheme = "",
-        lualine_theme = "",
         highlight = highlight.highlight,
     },
 }

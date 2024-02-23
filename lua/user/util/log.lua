@@ -14,6 +14,10 @@ function M.log(level, ...)
         msg[i] = type(value) == "string" and value or vim.inspect(value)
     end
     vim.notify(table.concat(msg, " "), level)
+
+    if (level == vim.log.levels.ERROR) then
+        vim.notify(debug.traceback(), vim.log.ERROR)
+    end
 end
 
 ---@param ... any

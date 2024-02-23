@@ -1,7 +1,7 @@
 local user = require "user"
 
 user.plugin.nvim_surround = {
-    __new_entry = true,
+    __default = true,
     -- Built-in delimiters include:
     -- - (), [], {}, <>, '', "", triggered by either side of delimiter.
     -- - HTML tags, triggered by `t` or `T`, e.g. `ysiwt`, tag name is given by

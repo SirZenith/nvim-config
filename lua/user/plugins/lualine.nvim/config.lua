@@ -3,7 +3,7 @@ local user = require "user"
 local comp_maco = require "user/plugins/lualine.nvim/component_macro"
 
 user.plugin.lualine = {
-    __new_entry = true,
+    __default = true,
     options = {
         icons_enabled = true,
         theme = "auto",

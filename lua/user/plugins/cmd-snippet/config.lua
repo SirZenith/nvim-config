@@ -1,7 +1,7 @@
 local user = require "user"
 
 user.plugin.cmd_snippet = {
-    __new_entry = true,
+    __default = true,
     -- Command snippet triggering prefix
     ---@type string
     cmd_head_char = "::",

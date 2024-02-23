@@ -1,9 +1,8 @@
 local user = require "user"
 local fs_util = require "user.util.fs"
-local table_util = require "user.util.table"
 
 user.plugin.typescript_tools = {
-    __new_entry = true,
+    __default = true,
     settings = {
         -- spawn additional tsserver instance to calculate diagnostics on it
         ---@type boolean
@@ -120,7 +119,7 @@ return user.plugin.typescript_tools:with_wrap(function(value)
     )
     tsserver_config.on_new_config = nil
 
-    table_util.update_table(tsserver_config, value)
+    vim.tbl_deep_extend("force", tsserver_config, value)
 
     typescript_tools.setup(tsserver_config)
 end)

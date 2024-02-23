@@ -30,7 +30,7 @@ local previewer_maker = function(filepath, bufnr, opts)
 end
 
 user.plugin.telescope_nvim = {
-    __new_entry = true,
+    __default = true,
     -- turn off syntax highlighting for certain file name pattern.
     preview_exclude = { ".*%.meta", ".*%.prefab" },
     config = {

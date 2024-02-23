@@ -1,4 +1,6 @@
 local user = require "user"
 
-user.general.theme.lualine_theme = "nord"
-user.general.theme.colorscheme = "nord"
+user.general.theme = {
+    colorscheme = "nord",
+    lualine_theme = "nord",
+}

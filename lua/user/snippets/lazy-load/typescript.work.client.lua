@@ -3,7 +3,6 @@ local cmd_snip = require "cmd-snippet"
 local util = require "user.util"
 local fs_util = require "user.util.fs"
 local snip_util = require "user.util.snippet"
-local table_util = require "user.util.table"
 
 local snip_filetype = "typescript"
 local s = require("snippet-loader.utils")
@@ -711,7 +710,7 @@ cmd_snip.register(snip_filetype, {
             }
 
             if type == GmCmdType.Server then
-                table_util.extend_list(buffer, {
+                vim.list_extend(buffer, {
                     "    imports: { },",
                     "    server: (agent: IFakeAgent, cmdArgs: ICmdArgsMap, imports: importedMap): void => {",
                     "        // const { } = imports;",
@@ -720,7 +719,7 @@ cmd_snip.register(snip_filetype, {
                     "    },"
                 })
             elseif type == GmCmdType.Client then
-                table_util.extend_list(buffer, {
+                vim.list_extend(buffer, {
                     "    client: (cmdArgs: ICmdArgsMap, imports: importedMap): void => {",
                     "        // const { } = imports;",
                     "        // const { } = cmdArgs;",

@@ -1,12 +1,11 @@
 local user = require "user"
 local fs_util = require "user.util.fs"
 local functional_util = require "user.util.functional"
-local table_util = require "user.util.table"
 
 local augroup_id = vim.api.nvim_create_augroup("user.filetype", { clear = true })
 
 user.filetype = {
-    __new_entry = true,
+    __default = true,
 
     -- disable soft tab for listed file types
     no_soft_tab = { "go", "make", "plantuml", "vlang" },
@@ -130,8 +129,8 @@ local function setup_filetype(match)
         end
 
         local buffer = {}
-        table_util.extend_list(buffer, primary)
-        table_util.extend_list(buffer, secondary)
+        vim.list_extend(buffer, primary)
+        vim.list_extend(buffer, secondary)
         typename = table.concat(buffer, ".")
     end
 
