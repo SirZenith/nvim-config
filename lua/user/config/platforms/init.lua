@@ -1,14 +1,15 @@
 local user = require "user"
 local util = require "user.util"
 local fs_util = require "user.util.fs"
+local log_util = require "user.util.log"
 
 local import = util.import
 
 ---@class user.platform.ImSelectInfo
----@field check string
----@field on string
----@field off string
----@field isoff fun(im: string): boolean
+---@field check? string
+---@field on? string
+---@field off? string
+---@field isoff? fun(im: string): boolean
 --
 ---@field ignore_comment_filetype string[]
 ---@field should_reactivate fun(): boolean
@@ -26,11 +27,6 @@ user.platform = {
 
     ---@type user.platform.ImSelectInfo
     im_select = {
-        check = "",
-        on = "",
-        off = "",
-        isoff = function() return true end,
-
         ignore_comment_filetype = {
             "",
             "html",
@@ -41,14 +37,14 @@ user.platform = {
         should_reactivate = function()
             -- reactivate IM only in comment node.
 
-            local cur_ft = vim.bo.filetype
+            local cur_ft = vim.split(vim.bo.filetype, ".", { plain = true })[1] or ""
             for _, ft in user.platform.im_select.ignore_comment_filetype:ipairs() do
                 if ft == cur_ft then
                     return true
                 end
             end
 
-            local ok, parser = pcall(vim.treesitter.get_parser)
+            local ok, parser = pcall(vim.treesitter.get_parser, 0, cur_ft)
             if not ok or not parser then
                 return true
             end
@@ -95,7 +91,7 @@ local function im_auto_toggle_setup(augroup, cmd)
     if im_check_cmd == ""
         or im_on_cmd == ""
         or im_off_cmd == ""
-        or not im_isoff
+        or type(im_isoff) ~= "function"
     then
         return
     end
@@ -155,6 +151,9 @@ end
 
 return function()
     local module = import(platform_config, "")
+    if module then
+        log_util.trace("platform config:", platform_config)
+    end
     base_finalize()
     util.finalize_module(module)
 end
