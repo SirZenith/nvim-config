@@ -192,7 +192,7 @@ local specs = {
         "nvim-lualine/lualine.nvim",
         -- enabled = false,
         dependencies = {
-            "kyazdani42/nvim-web-devicons",
+            "nvim-tree/nvim-web-devicons",
             "folke/noice.nvim", -- load after noice.nvim
         },
         event = "VeryLazy",
