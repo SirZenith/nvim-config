@@ -16,13 +16,14 @@ M.im_select = {
 -- ----------------------------------------------------------------------------
 
 user.env = {
+    __override = true,
     FIREFOX_PATH = "C:/Program Files/Mozilla Firefox/firefox.exe"
 }
 
 user.platform.windows = {
     __default = true,
-    nu_config_path = fs_util.path_join(user.env.HOME(), [[AppData\Roaming\nushell\config.nu]]),
-    nu_env_path = fs_util.path_join(user.env.HOME(), [[AppData\Roaming\nushell\env.nu]]),
+    nu_config_path = fs_util.path_join(user.env.APPDATA(), "nushell/config.nu"),
+    nu_env_path = fs_util.path_join(user.env.APPDATA(), "nushell/env.nu"),
 }
 user.platform.im_select = M.im_select
 
