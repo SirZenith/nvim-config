@@ -109,6 +109,7 @@ local function setup_environment()
     vim.o.shortmess = vim.o.shortmess .. "I" -- disable intro screen message
     vim.o.laststatus = 0                     -- disable staus line in intro screen
     vim.o.fillchars = "eob: "                -- remove `~` at eob lines
+    vim.o.cmdheight = 0                      -- hide cmdline
 
     -- loading custom loader
     local module_loaders = import "user.util.module_loaders"
