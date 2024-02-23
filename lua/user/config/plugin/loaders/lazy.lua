@@ -523,6 +523,14 @@ function M.setup(specs)
         table.insert(targets, spec)
     end
 
+    M._try_setup_spec_autocmd {
+        name = "observer",
+        event = "FileType",
+        autocmd_load_checker = function()
+            return false
+        end,
+    }
+
     manager.setup(targets, manager_config)
 
     return M

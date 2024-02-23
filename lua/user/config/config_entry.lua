@@ -437,12 +437,16 @@ end
 -- Switch given source type and call `action`, reverto old source type after
 -- invokation.
 ---@param type user.config.SourceType
----@param action fun()
-function ConfigEntry:with_source(type, action)
+---@param action fun(...)
+---@param ... any
+---@return ...
+function ConfigEntry:with_source(type, action, ...)
     local source_type = self.__cur_source_type
     self:switch_source(type)
-    action()
+    local result = { action(...) }
     self:switch_source(source_type)
+
+    return unpack(result)
 end
 
 ---@return any

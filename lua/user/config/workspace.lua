@@ -66,42 +66,37 @@ M.finalize = function() end
 
 ---@param callback fun()
 function M.load(callback)
-    util.do_async_steps {
-        function(next_step)
-            local file_path = M.get_workspace_config_file_path()
-            loop.fs_stat(file_path, next_step)
-        end,
-        vim.schedule_wrap(function(_, err, stat)
-            if err or not stat then
-                callback()
-                return
-            end
+    local file_path = M.get_workspace_config_file_path()
 
-            local result
-            user:with_source(user.__source_type.Workspace, function()
-                result = import(M.get_workspace_config_require_path())
-            end)
+    if not vim.secure.read(file_path) then
+        callback()
+        return
+    end
 
-            if not result then
-                callback()
-                return
-            end
+    local result = user:with_source(
+        user.__source_type.Workspace,
+        import,
+        M.get_workspace_config_require_path()
+    )
 
-            config_loaded = true
+    if not result then
+        callback()
+        return
+    end
 
-            local result_type = type(result)
-            local finalize
-            if result_type == "function" then
-                finalize = result
-            elseif result_type == "table" then
-                finalize = result.finalize
-            end
+    config_loaded = true
 
-            M.finalize = finalize
+    local result_type = type(result)
+    local finalize
+    if result_type == "function" then
+        finalize = result
+    elseif result_type == "table" then
+        finalize = result.finalize
+    end
 
-            callback()
-        end)
-    }
+    M.finalize = finalize
+
+    callback()
 end
 
 return M

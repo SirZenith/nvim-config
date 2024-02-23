@@ -27,10 +27,12 @@ user.platform = {
 
 -- ----------------------------------------------------------------------------
 
-local module
-user:with_source(user.__source_type.Platform, function()
-    module = import(platform_config, "")
-end)
+local module = user:with_source(
+    user.__source_type.Platform,
+    import,
+    platform_config,
+    ""
+)
 
 if module then
     log_util.trace("platform config:", platform_config)
