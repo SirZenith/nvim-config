@@ -286,8 +286,11 @@ end
 -- Query config node specified by key segments.
 -- Returns nil if segmented path points to nothing or non-table value.
 ---@param segments string[]
----@return {[string]: any}? tbl
-function ConfigEntry:_get_tbl_by_segments(segments)
+---@param allow_creation? boolean
+---@return table?
+function ConfigEntry:_get_tbl_by_segments(segments, allow_creation)
+    allow_creation = allow_creation or false
+
     local source_type = self.__cur_source_type
     local tbl = self.__source_map[source_type]
 
@@ -296,12 +299,16 @@ function ConfigEntry:_get_tbl_by_segments(segments)
         local seg = segments[i]
         local next_tbl = tbl[seg]
 
-        if type(next_tbl) ~= "table" then
+        if type(next_tbl) == "table" then
+            tbl = next_tbl
+        elseif next_tbl == nil and allow_creation then
+            next_tbl = {}
+            tbl[seg] = next_tbl
+            tbl = next_tbl
+        else
             ok = false
             break
         end
-
-        tbl = next_tbl
     end
 
     return ok and tbl or nil
@@ -361,20 +368,21 @@ function ConfigEntry:__newindex(key, value)
         return
     end
 
+    local value_t = type(value)
+    local allow_new_value = value_t == "table" and (value.__newentry or value.__override or false)
+
     local segments = self:_get_key_segments(key)
     local tail = table.remove(segments)
-    local tbl = self:_get_tbl_by_segments(segments)
+    local tbl = self:_get_tbl_by_segments(segments, allow_new_value)
     if not tbl then
         log_util.error("writing to an invalid ConfigEntry:", target)
         return
     end
 
     local old_value = tbl[tail]
-    local value_t = type(value)
 
     if old_value == nil then
         -- Inserting new field
-        local allow_new_value = value_t == "table" and (value.__newentry or value.__override or false)
 
         if allow_new_value then
             tbl[tail] = self:_process_new_value(value)
