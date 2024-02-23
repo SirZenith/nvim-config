@@ -34,6 +34,7 @@ ConfigEntry.__source_type = SourceType
 -- Source appears latter in the list takes higher priority.
 ConfigEntry.__source_read_order = {
     SourceType.User,
+    SourceType.Platform,
     SourceType.Workspace,
 }
 ConfigEntry.__cur_source_type = SourceType.User
@@ -452,7 +453,7 @@ function ConfigEntry:value()
         elseif type(value) ~= "table" then
             result = value
         else
-            _, result = self:_update_table_value(result or {}, value)
+            _, result = self:_update_table_value(result or {}, value, true)
         end
     end
 
@@ -497,7 +498,7 @@ end
 ---@param consume fun(value: any): ...
 ---@return any ...
 function ConfigEntry:with(consume)
-    local value = self:_get_value()
+    local value = self:value()
     self:delete()
 
     if value == nil then

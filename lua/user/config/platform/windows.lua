@@ -3,16 +3,6 @@ local fs_util = require "user.util.fs"
 
 local M = {}
 
-M.im_select = {
-    __newentry = true,
-    check = "im-select.exe",
-    on = "im-select.exe 2052",
-    off = "im-select.exe 1033",
-    isoff = function(im)
-        return tonumber(im) == 1033
-    end
-}
-
 -- ----------------------------------------------------------------------------
 
 user.env = {
@@ -20,14 +10,29 @@ user.env = {
     FIREFOX_PATH = "C:/Program Files/Mozilla Firefox/firefox.exe"
 }
 
-user.platform.windows = {
+user.platform = {
     __newentry = true,
-    nu_config_path = fs_util.path_join(user.env.APPDATA(), "nushell/config.nu"),
-    nu_env_path = fs_util.path_join(user.env.APPDATA(), "nushell/env.nu"),
+    windows = {
+        nu_config_path = fs_util.path_join(user.env.APPDATA(), "nushell/config.nu"),
+        nu_env_path = fs_util.path_join(user.env.APPDATA(), "nushell/env.nu"),
+    },
 }
-user.platform.im_select = M.im_select
+
+user.autocmd = {
+    __newentry = true,
+    im_select = {
+        check = "im-select.exe",
+        on = "im-select.exe 2052",
+        off = "im-select.exe 1033",
+        isoff = function(im)
+            return tonumber(im) == 1033
+        end
+    }
+}
 
 -- ----------------------------------------------------------------------------
+
+M.windows = true
 
 function M.finalize()
     --[[

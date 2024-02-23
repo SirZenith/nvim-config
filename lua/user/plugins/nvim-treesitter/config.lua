@@ -159,7 +159,7 @@ return user.plugin.nvim_treesitter:with_wrap(function(value)
         nts_install.compilers = compilers
     end
 
-    nts_install.command_extra_args = vim.table_extend(
+    nts_install.command_extra_args = vim.tbl_extend(
         "force",
         nts_install.command_extra_args,
         value.install.command_extra_args

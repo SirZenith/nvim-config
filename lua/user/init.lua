@@ -9,7 +9,7 @@ local config_entry = require "user.config.config_entry"
 
 local import = util.import
 
-log_uitl.log_level = vim.log.levels.TRACE
+log_uitl.log_level = vim.log.levels.WARN
 
 local user = config_entry.ConfigEntry:new {
     env = env_config,
@@ -89,8 +89,9 @@ local function on_plugins_loaded()
                 import "user.config.keybinding",
                 import "user.config.command",
                 import "user.config.lsp",
-                import "user.config.platforms",
+                import "user.config.platform",
                 workspace,
+                import "user.config.autocmd",
                 import "user.config.plugin"
             }, next_step)
         end,

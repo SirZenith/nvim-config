@@ -13,9 +13,10 @@ local specs = {
     ucs "user.config.filetype",
     ucs "user.config.keybinding",
     ucs "user.config.command",
-    ucs "user.config.platforms",
+    ucs "user.config.platform",
     ucs "user.config.lsp",
     ucs "user.config.workspace",
+    ucs "user.config.autocmd",
 
     -- ------------------------------------------------------------------------
     -- Themes

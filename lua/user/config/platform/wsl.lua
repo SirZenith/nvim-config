@@ -1,7 +1,7 @@
 local user = require "user"
 local import = require "user.util".import
 
-local wsl = import "user.config.platforms.wsl"
-if not wsl then
+local windows = import "user.config.platform.windows"
+if not windows then
     return
 end

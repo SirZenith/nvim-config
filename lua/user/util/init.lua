@@ -51,20 +51,19 @@ end
 ---@param failed_msg? string
 ---@return any?
 function M.import(modname, failed_msg)
-    local ret = { xpcall(require, on_import_error, modname) }
-    local ok = ret[1]
+    local ok, result = xpcall(require, on_import_error, modname)
 
     if not ok then
         log_util.warn("failed to load module:", modname)
         if not failed_msg then
-            log_util.warn(tostring(ret[2]))
+            log_util.warn(result)
         elseif failed_msg ~= "" then
             log_util.warn(failed_msg)
         end
         return nil
     end
 
-    return unpack(ret, 2)
+    return result
 end
 
 -- Wrap the task_func with a new func, which when called tries to import target module
