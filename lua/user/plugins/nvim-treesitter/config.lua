@@ -111,7 +111,7 @@ user.plugin.nvim_treesitter = {
     },
     install = {
         prefer_git = false,
-        compilers = { user.env.CC(), "cl", "clang", "gcc", "cc", "zig" },
+        compilers = { "clang", "cl", "gcc", "cc", "zig" },
         command_extra_args = {
             cl = { "/nologo" },
             curl = { "-x", user.env.PROXY_URL() },
@@ -128,6 +128,11 @@ user.plugin.nvim_treesitter = {
         },
     },
 }
+
+local env_cc = user.env.CC()
+if env_cc ~= "cc" then
+    user.plugin.nvim_treesitter.install.compilers:prepend(env_cc)
+end
 
 return user.plugin.nvim_treesitter:with_wrap(function(value)
     local nts_configs = require "nvim-treesitter.configs"
