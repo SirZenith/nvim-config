@@ -67,7 +67,12 @@ M.finalize = function() end
 ---@param callback fun()
 function M.load(callback)
     local file_path = M.get_workspace_config_file_path()
+    if vim.fn.filereadable(file_path) == 0 then
+        callback()
+        return
+    end
 
+    vim.notify("Workspace script found")
     if not vim.secure.read(file_path) then
         callback()
         return

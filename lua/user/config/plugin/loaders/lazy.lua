@@ -21,6 +21,7 @@ local function require_manager()
     if not vim.loop.fs_stat(install_path) then
         is_bootstrap = true
 
+        vim.notify("Plugin manger bootstrap...")
         vim.fn.system({
             "git",
             "clone",
@@ -29,6 +30,7 @@ local function require_manager()
             "--branch=stable", -- latest stable release
             install_path,
         })
+        vim.notify("Complete.")
     end
 
     vim.opt.rtp:prepend(install_path)
