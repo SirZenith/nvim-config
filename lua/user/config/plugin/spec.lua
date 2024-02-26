@@ -133,15 +133,6 @@ local specs = {
         },
     },
     {
-        -- Editing remote files with rsync.
-        "OscarCreator/rsync.nvim",
-        enabled = vim.fn.has("win32") ~= 1,
-        build = "make",
-        dependencies = {
-            "nvim-lua/plenary.nvim",
-        },
-    },
-    {
         "nvim-telescope/telescope.nvim",
         -- enabled = false,
         dependencies = {
