@@ -14,18 +14,20 @@ local import = util.import
 ---@field ignore_comment_filetype string[]
 ---@field should_reactivate fun(): boolean
 
+user.platform = {
+    __newentry = true,
+}
+
 local mark = user.env.PLATFORM_MARK()
+if not mark or mark == "" then
+    return
+end
+
 local platform_config = mark
     and fs_util.path_join(
         user.env.USER_RUNTIME_PATH(), "user", "config", "platform", mark
     )
     or ""
-
-user.platform = {
-    __newentry = true,
-}
-
--- ----------------------------------------------------------------------------
 
 local module = user:with_source(
     user.__source_type.Platform,
