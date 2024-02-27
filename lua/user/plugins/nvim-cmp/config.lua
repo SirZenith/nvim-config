@@ -1,7 +1,37 @@
 local user = require "user"
 
+---@param e1 cmp.Entry
+---@param e2 cmp.Entry
+---@return boolean?
+local function sort_indexed_args(e1, e2)
+    local label1 = e1:get_completion_item().label
+    local label2 = e2:get_completion_item().label
+    if not (label1 and label2) then
+        return
+    end
+
+    if label1:sub(1, 1) ~= "#" or label2:sub(1, 1) ~= "#" then
+        return
+    end
+
+    local index1 = label1:match("^#(%d+):")
+    local index2 = label1:match("^#(%d+):")
+    if not (index1 and index2) then
+        return
+    end
+
+    local num1 = tonumber(index1)
+    local num2 = tonumber(index2)
+    if not (num1 and num2) then
+        return
+    end
+
+    return num1 < num2
+end
+
 return function()
     local cmp = require "cmp"
+    local compare = require "cmp.config.compare"
     local mapping = require "user.plugins.nvim-cmp.mapping"
 
     local cmp_cfg = {
@@ -43,7 +73,21 @@ return function()
             {
                 { name = "buffer" },
             }
-        )
+        ),
+        sorting = {
+            comparators = {
+                sort_indexed_args,
+                compare.offset,
+                compare.exact,
+                compare.score,
+                compare.recently_used,
+                compare.locality,
+                compare.kind,
+                compare.sort_text,
+                compare.length,
+                compare.order,
+            },
+        },
     }
 
     local fmt_func
