@@ -1,4 +1,5 @@
 local putl = require "user.config.plugin.util"
+local workspace = require "user.config.workspace"
 
 local ucs = putl.user_config_spec
 local cs = putl.colorscheme_spec
@@ -457,10 +458,17 @@ local specs = {
             "hrsh7th/nvim-cmp",
         },
         event = "InsertEnter",
-        cond = putl.root_directory_cond {
-            ".creator",
-            "client/.creator",
-        },
+        cond = function()
+            local path = workspace.get_workspace_path()
+            if vim.fs.basename(path) ~= "client" then
+                return false
+            end
+
+            return putl.root_directory_cond {
+                ".creator",
+                "client/.creator",
+            }
+        end,
     },
     {
         "SirZenith/snippet-loader",
