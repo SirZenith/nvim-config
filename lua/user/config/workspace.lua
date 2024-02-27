@@ -72,7 +72,6 @@ function M.load(callback)
         return
     end
 
-    vim.notify("Workspace script found")
     if not vim.secure.read(file_path) then
         callback()
         return
