@@ -64,6 +64,20 @@ function M.to_abs(path)
     return table.concat(parts, "/")
 end
 
+-- Convert input path into relative path if its child path of CWD.
+function M.to_relative(path)
+    path = M.to_abs(path)
+    local cwd = M.to_abs(vim.fn.getcwd())
+
+    if not vim.startswith(path, cwd) then
+        return path
+    end
+
+    local len = #cwd
+
+    return path:sub(len + 1)
+end
+
 -- check if `path` is a sub directory of `other`.
 ---@param path string
 ---@param other string

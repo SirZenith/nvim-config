@@ -4,6 +4,20 @@ local workspace = require "user.config.workspace"
 local M = {}
 M.user_runtime_path = nil
 
+---@param path string
+---@return string
+local function path_name_digest(path)
+    local name = fs_util.to_relative(path)
+
+    local len = #name
+    local max_len = 45
+    if len > max_len then
+        name = "..." .. name:sub(len - max_len + 1, max_len)
+    end
+
+    return name
+end
+
 M.loaders = {
     ---@param modulename string
     no_dot_substiting_loader = function(modulename)
@@ -15,7 +29,8 @@ M.loaders = {
             local file = io.open(filename, "rb")
             if file then
                 local content = assert(file:read("*a"))
-                return assert(loadstring(content, filename))
+                local chunkname = path_name_digest(filename)
+                return assert(loadstring(content, chunkname))
             end
             table.insert(errmsg, err_template:format(filename))
         end
@@ -42,7 +57,8 @@ M.loaders = {
             local file = io.open(path, "rb")
             if file then
                 local content = assert(file:read("*a"))
-                return assert(loadstring(content, path))
+                local chunkname = path_name_digest(path)
+                return assert(loadstring(content, chunkname))
             end
             table.insert(errmsg, err_template:format(path))
         end
@@ -77,7 +93,8 @@ M.loaders = {
             local path = paths[i]
             local file = io.open(path, "rb")
             if file then
-                return assert(loadstring(assert(file:read("*a")), path))
+                local chunkname = path_name_digest(path)
+                return assert(loadstring(assert(file:read("*a")), chunkname))
             end
             table.insert(errmsg, err_template:format(path))
         end
