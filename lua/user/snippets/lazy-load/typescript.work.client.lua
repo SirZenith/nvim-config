@@ -148,12 +148,6 @@ local DMFieldTypeInfo = {
     specDict = { "idkey", "valueType", "category" },
 }
 
-local ACCESS_MODIFIER_SET = {
-    private = true,
-    protected = true,
-    public = true,
-}
-
 -- ----------------------------------------------------------------------------
 
 local HANDLER_ROLE_INFOCACHE_UPATE = {
@@ -312,32 +306,6 @@ cmd_snip.register(snip_filetype, {
         content = function(name, desc)
             return ("setDataModel('%s', '%s', {});"):format(name, desc)
         end,
-    },
-
-    fn = {
-        args = { "modifier-or-name", { "name", is_optional = true } },
-        content = function(modifier_or_name, name)
-            local modifier = name and modifier_or_name or ""
-            name = name or modifier_or_name
-
-            local result = "const " .. name .. " = (${2}): ${1:void} => {};"
-            if modifier then
-                result = modifier .. " " .. result
-            end
-
-            return result
-        end,
-    },
-
-    ["get keys"] = {
-        content = {
-            { "const keys = Object.keys(", 1, ");" },
-        }
-    },
-    ["get values"] = {
-        content = {
-            { "const values = Object.values(", 1, ");" },
-        }
     },
 
     gg = {
@@ -732,21 +700,6 @@ cmd_snip.register(snip_filetype, {
             table.insert(buffer, "},")
 
             return buffer
-        end,
-    },
-
-    method = {
-        args = { "modifier-or-name", { "name", is_optional = true } },
-        content = function(modifier_or_name, name)
-            if name then
-                return modifier_or_name .. " " .. name .. "(${2}): ${1:void} {}"
-            end
-
-            if ACCESS_MODIFIER_SET[modifier_or_name] then
-                return modifier_or_name .. " ${1}(): void {}"
-            end
-
-            return "private " .. modifier_or_name .. "(${2}): ${1:void} {}"
         end,
     },
 

@@ -9,4 +9,15 @@ function M.new_jump_index()
     end
 end
 
+---@param index integer
+---@param convertor fun(input: string): string
+function M.dynamic_conversion(index, convertor)
+    local s = require "snippet-loader.utils"
+
+    return s.f(function(args)
+        local input = args[1][1]
+        return convertor(input)
+    end, { index })
+end
+
 return M

@@ -2,9 +2,11 @@ local cmd_snip = require "cmd-snippet"
 
 local util = require "user.util"
 local fs_util = require "user.util.fs"
+local str_util = require "user.util.str"
+local snippet_util = require "user.util.snippet"
 
 local snip_filetype = "typescript"
--- local s = require("snippet-loader.utils")
+local s = require("snippet-loader.utils")
 -- local makers = s.snippet_makers(snip_filetype)
 -- local sp = makers.sp
 -- local asp = makers.asp
@@ -21,18 +23,47 @@ local snip_filetype = "typescript"
 -- local regpsp = makers.regpsp
 -- local regapsp = makers.regapsp
 
+---@param index number
+---@return any
+local function event_callback_name(index)
+    snippet_util.dynamic_conversion(index, function(str)
+        return "on" .. str_util.first_char_upper(str)
+    end)
+end
+
+---@param index number
+---@return any
+local function rpc_callback_name(index)
+    snippet_util.dynamic_conversion(index, function(str)
+        local segments = vim.split(str, "/")
+        local name = segments[#segments]
+        return "on" .. str_util.first_char_upper(name)
+    end)
+end
+
+---@param index number
+---@return any
+local function res_type_name(index)
+    snippet_util.dynamic_conversion(index, function(req_type_name)
+        if req_type_name:sub(1, 3):lower() ~= "req" then
+            return req_type_name
+        end
+        return req_type_name:sub(4)
+    end)
+end
+
 cmd_snip.register(snip_filetype, {
     ["agent event"] = {
         content = {
-            { "AGENT.roleEvent.on('", 1, "', ", 2, ");" },
+            { "AGENT.roleEvent.on('", 1, "', ", event_callback_name(1), ");" },
         },
     },
     ["agent rpc"] = {
         content = {
-            { "AGENT.registerRpcAsync('", 1, "', ", 2, ");" },
+            { "AGENT.registerRpcAsync('", 1, "', ", rpc_callback_name(1), ");" },
         },
     },
-    ["init sys"] = {
+    ["init mgr"] = {
         args = { { "name", is_optional = true }, },
         content = function(name)
             if not name then
@@ -57,6 +88,22 @@ cmd_snip.register(snip_filetype, {
             }
         end,
     },
+    ["new event-forward"] = {
+        args = { "name" },
+        content = function(name)
+            name = str_util.first_char_upper(name)
+            return {
+                "forward", name, "Event: (agent: Agent, ...args: [any]): void => {",
+                "    ", name:upper(), "_MGR.onEvent(agent, ...args);",
+                "},",
+            }
+        end,
+    },
+    ["new event-item"] = {
+        content = {
+            { 1, ": ", event_callback_name(1) },
+        },
+    },
     ["new event-tbl"] = {
         content = {
             "    // 事件注册",
@@ -69,7 +116,7 @@ cmd_snip.register(snip_filetype, {
             "    };",
         },
     },
-    ["new forward-type"] = {
+    ["new event-tbl-type"] = {
         args = { { "name", is_optional = true } },
         content = function(name)
             if not name then
@@ -88,5 +135,13 @@ cmd_snip.register(snip_filetype, {
                 "};",
             }
         end,
-    }
+    },
+    ["new req-handler"] = {
+        args = { "name" },
+        content = function(name)
+            return {
+                { "const ", name, " = (agent: Agent, req: ", 1, "): Promise<", res_type_name(1), "> => {};" }
+            }
+        end,
+    },
 })

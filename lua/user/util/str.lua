@@ -36,4 +36,11 @@ function M.digest(text, max_len)
     return text:sub(1, max_len - 3) .. "..."
 end
 
+-- Change fist character of string to upper case
+---@param str string
+---@return string
+function M.first_char_upper(str)
+    return str:sub(1, 1):upper() .. str:sub(2)
+end
+
 return M

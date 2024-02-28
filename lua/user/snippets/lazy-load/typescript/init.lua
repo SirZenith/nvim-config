@@ -23,6 +23,12 @@ local snip_filetype = "typescript"
 -- local regpsp = makers.regpsp
 -- local regapsp = makers.regapsp
 
+local ACCESS_MODIFIER_SET = {
+    private = true,
+    protected = true,
+    public = true,
+}
+
 -- ----------------------------------------------------------------------------
 
 cmd_snip.register(snip_filetype, {
@@ -30,6 +36,62 @@ cmd_snip.register(snip_filetype, {
         args = { "rule-name" },
         content = function(rule_name)
             return "// eslint-disable-next-line " .. rule_name
+        end,
+    },
+
+    fn = {
+        args = { "modifier-or-name", { "name", is_optional = true } },
+        content = function(modifier_or_name, name)
+            local modifier = name and modifier_or_name or ""
+            name = name or modifier_or_name
+
+            local result = "const " .. name .. " = (${2}): ${1:void} => {};"
+            if modifier then
+                result = modifier .. " " .. result
+            end
+
+            return result
+        end,
+    },
+
+    afn = {
+        args = { "modifier-or-name", { "name", is_optional = true } },
+        content = function(modifier_or_name, name)
+            local modifier = name and modifier_or_name or ""
+            name = name or modifier_or_name
+
+            local result = "const " .. name .. " = async (${2}): ${1:void} => {};"
+            if modifier then
+                result = modifier .. " " .. result
+            end
+
+            return result
+        end,
+    },
+
+    ["get keys"] = {
+        content = {
+            { "const keys = Object.keys(", 1, ");" },
+        }
+    },
+    ["get values"] = {
+        content = {
+            { "const values = Object.values(", 1, ");" },
+        }
+    },
+
+    method = {
+        args = { "modifier-or-name", { "name", is_optional = true } },
+        content = function(modifier_or_name, name)
+            if name then
+                return modifier_or_name .. " " .. name .. "(${2}): ${1:void} {}"
+            end
+
+            if ACCESS_MODIFIER_SET[modifier_or_name] then
+                return modifier_or_name .. " ${1}(): void {}"
+            end
+
+            return "private " .. modifier_or_name .. "(${2}): ${1:void} {}"
         end,
     },
 
