@@ -1,4 +1,5 @@
 local user = require "user"
+local fs_util = require "user.util.fs"
 local log_util = require "user.util.log"
 
 local api = vim.api
@@ -69,6 +70,12 @@ end
 function M.goto_cursor_file(is_open_in_new_tab)
     local cfile = vim.fn.expand "<cfile>"
 
+    local cur_path = vim.api.nvim_buf_get_name(0)
+    local cur_buffer_dir = ""
+    if vim.fn.filereadable(cur_path) == 1 then
+        cur_buffer_dir = vim.fs.dirname(cur_path)
+    end
+
     local search_targets = {}
     local path
     for _, pattern in user.keybinding.cursor_file.jump_pattern:ipairs() do
@@ -76,9 +83,14 @@ function M.goto_cursor_file(is_open_in_new_tab)
 
         local p
         if patt_type == "string" then
-            p = pattern:gsub("%?", cfile)
+            p = pattern
+                :gsub("%?", cfile)
+                :gsub("${buffer_dir}", cur_buffer_dir)
         elseif patt_type == "function" then
-            p = pattern(cfile)
+            p = pattern {
+                cfile = cfile,
+                buffer_dir = cur_buffer_dir
+            }
         end
 
         if p and vim.fn.filereadable(p) == 1 then

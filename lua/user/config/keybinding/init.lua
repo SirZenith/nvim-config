@@ -34,14 +34,15 @@ user.keybinding = {
         search_paths = { "." },
     },
     cursor_file = {
-        ---@type (string | fun(cfile: string): string?)[]
+        ---@type (string | fun(context): string?)[]
         jump_pattern = {
             "?",
             "?.lua",
             "?.h",
             "?.hpp",
-            function(cfile)
-                local name = vim.fs.basename(cfile)
+            "${buffer_dir}/?",
+            function(context)
+                local name = vim.fs.basename(context.cfile)
                 return "lua/user/plugins/" .. name .. "/config.lua"
             end,
         }
