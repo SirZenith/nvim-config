@@ -131,11 +131,13 @@ cmd_snip.register(snip_filetype, {
         end,
     },
     ["new loop"] = {
-        args = { "iter-name", "bound-name" },
-        content = function(iter_name, bound_name)
+        args = { "iter-name", "init-name", "bound-name" },
+        content = function(iter_name, init_name, bound_name)
             return {
-                ("for (let %s = 0; %s < %s; %s++) {"):format(
-                    iter_name, iter_name, bound_name, iter_name
+                ("for (let %s = %s; %s < %s; %s++) {"):format(
+                    iter_name, init_name,
+                    iter_name, bound_name,
+                    iter_name
                 ),
                 "",
                 "}"
