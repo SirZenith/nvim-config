@@ -46,6 +46,9 @@ return function()
                 border = "rounded",
             }
         },
+        experimental = {
+            ghost_text = true,
+        },
         formatting = {
             fields = { "kind", "abbr", "menu" },
         },
