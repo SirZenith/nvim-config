@@ -80,6 +80,10 @@ user.lsp = {
             install = "npm i -g vscode-langservers-extracted",
         },
         {
+            "gleam",
+            desc = "`gleam lsp` subcommand of Gleam compiler provides LSP support",
+        },
+        {
             "glsl_analyzer",
             desc = {
                 "Language Server for OpenGL Shading Language",

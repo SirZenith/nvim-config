@@ -17,6 +17,7 @@ user.plugin.nvim_treesitter = {
             -- "dap_repl",
             "dot",
             "gitignore",
+            "gleam",
             "glsl",
             "go",
             "gomod",
