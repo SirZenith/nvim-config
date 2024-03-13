@@ -10,6 +10,10 @@ user.filetype = {
     -- disable soft tab for listed file types
     no_soft_tab = { "go", "make", "plantuml", "vlang" },
 
+    filetype_indent = {
+        gleam = 2,
+    },
+
     -- file type mapping pattern. file types appear earlier in the list take
     -- high priority.
     -- `secondary = true` means that file type will be appended to original
@@ -141,8 +145,22 @@ return function()
     -- disable all auto commenting.
     vim.api.nvim_create_autocmd("FileType", {
         group = augroup_id,
-        callback = function()
+        pattern = "*",
+        callback = function(args)
             vim.opt_local.formatoptions:remove { "c", "r", "o" }
+
+            local indent_map = user.filetype.filetype_indent()
+            local filetype = args.match
+
+            local size = indent_map[filetype]
+            if size then
+                local bufnr = args.buf
+                local bo = vim.bo[bufnr]
+
+                bo.tabstop = size
+                bo.softtabstop = size
+                bo.shiftwidth = size
+            end
         end,
     })
 
