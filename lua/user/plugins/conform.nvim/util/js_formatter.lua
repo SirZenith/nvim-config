@@ -1,9 +1,11 @@
+local user = require "user"
 local workspace = require "user.config.workspace"
+local fs_util = require "user.util.fs"
 
 local M = {}
 
-local function check_eslint_activated()
-    local pwd = workspace.get_workspace_path()
+---@param pwd string
+local function check_eslint_activated_under_path(pwd)
     local target = pwd .. "/.eslintrc.*"
     local matsh_str = vim.fn.glob(target)
     if matsh_str ~= "" then
@@ -24,6 +26,25 @@ local function check_eslint_activated()
     end
 
     return false
+end
+
+---@return boolean
+local function check_eslint_activated()
+    local pwd = workspace.get_workspace_path()
+    local paths = { pwd }
+    for _, path in user.workspace.sub_directories:ipairs() do
+        paths[#paths + 1] = fs_util.path_join(pwd, path)
+    end
+
+    local ok = true
+    for _, path in ipairs(paths) do
+        ok = check_eslint_activated_under_path(path)
+        if ok then
+            break
+        end
+    end
+
+    return ok
 end
 
 local formatters = {
