@@ -26,7 +26,7 @@ local s = require("snippet-loader.utils")
 ---@param index number
 ---@return any
 local function event_callback_name(index)
-    snippet_util.dynamic_conversion(index, function(str)
+    return snippet_util.dynamic_conversion(index, function(str)
         return "on" .. str_util.first_char_upper(str)
     end)
 end
@@ -34,7 +34,7 @@ end
 ---@param index number
 ---@return any
 local function rpc_callback_name(index)
-    snippet_util.dynamic_conversion(index, function(str)
+    return snippet_util.dynamic_conversion(index, function(str)
         local segments = vim.split(str, "/")
         local name = segments[#segments]
         return "on" .. str_util.first_char_upper(name)
@@ -44,7 +44,7 @@ end
 ---@param index number
 ---@return any
 local function res_type_name(index)
-    snippet_util.dynamic_conversion(index, function(req_type_name)
+    return snippet_util.dynamic_conversion(index, function(req_type_name)
         if req_type_name:sub(1, 3):lower() ~= "req" then
             return req_type_name
         end
@@ -140,7 +140,7 @@ cmd_snip.register(snip_filetype, {
         args = { "name" },
         content = function(name)
             return {
-                { "const ", name, " = (agent: Agent, req: ", 1, "): Promise<", res_type_name(1), "> => {};" }
+                { "export const ", name, " = (agent: Agent, req: ", 1, "): Promise<Res", res_type_name(1), "> => {};" }
             }
         end,
     },
