@@ -57,11 +57,15 @@ user.plugin.oil_nvim = {
     ---@type integer
     cleanup_delay_ms = 2000,
 
-    -- Set to true to autosave buffers that are updated with LSP willRenameFiles
-    -- Set to "unmodified" to only save unmodified buffers
-    ---@type boolean
-    lsp_rename_autosave = false,
-
+    lsp_file_methods = {
+        -- Time to wait for LSP file operations to complete before skipping
+        ---@type integer
+        timeout_ms = 1000,
+        -- Set to true to autosave buffers that are updated with LSP willRenameFiles
+        -- Set to "unmodified" to only save unmodified buffers
+        ---@type false | "unmodified"
+        autosave_changes = false,
+    },
     -- Constrain the cursor to the editable parts of the oil buffer
     -- Set to `false` to disable, or "name" to keep it on the file names
     ---@type false | "editable" | "name"
