@@ -2,10 +2,14 @@ local user = require "user"
 local util = require "user.util"
 local fs_util = require "user.util.fs"
 
-local loop = vim.loop
 local import = util.import
 
 local M = {}
+
+user.workspace = {
+    __newentry = true,
+    sub_directories = {},
+}
 
 M.WORKSPACE_CONFIG_DIR_NAME = ".nvim"
 M.WORKSPACE_CONFIG_INIT_FILE_BASENAME = "init"
