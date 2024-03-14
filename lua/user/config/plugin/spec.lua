@@ -266,7 +266,7 @@ local specs = {
     {
         "nvim-treesitter/nvim-treesitter",
         -- enabled = false,
-        build = ":TSUpdate",
+        -- build = ":TSUpdate",
         ft = "TelescopePrompt",
         event = "BufNew",
         autocmd_load_checker = putl.new_buffer_trigger_loading_predicate,
