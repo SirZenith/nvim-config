@@ -367,6 +367,7 @@ local specs = {
         cond = putl.root_file_cond {
             "tsconfig.json",
             "client/tsconfig.json",
+            "project.code-workspace",
         },
         ft = "TelescopePrompt",
         event = "BufNew",
