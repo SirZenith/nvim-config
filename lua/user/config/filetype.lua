@@ -67,6 +67,10 @@ user.filetype = {
             name = "plantuml",
             pattern = "%.puml$",
         },
+        {
+            name = "qmljs",
+            pattern = "%.qml$",
+        },
     },
 }
 

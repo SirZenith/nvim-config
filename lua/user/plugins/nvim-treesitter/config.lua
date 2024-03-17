@@ -33,6 +33,7 @@ user.plugin.nvim_treesitter = {
             "markdown",
             "markdown_inline",
             "python",
+            "qmljs",
             "query",
             "regex",
             "rust",
