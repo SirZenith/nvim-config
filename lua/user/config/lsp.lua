@@ -145,6 +145,14 @@ user.lsp = {
             }
         },
         {
+            "qmlls",
+            desc = "QML Language server shipping with QT",
+            install = {
+                "One can find package name something like `qt6-langaugeserver`",
+                "install that package with package manager",
+            },
+        },
+        {
             "taplo",
             desc = {
                 "Language server for Taplo, a TOML toolkit",
