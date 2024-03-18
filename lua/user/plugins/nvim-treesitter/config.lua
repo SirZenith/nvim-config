@@ -23,6 +23,7 @@ user.plugin.nvim_treesitter = {
             "gomod",
             "haskell",
             "html",
+            "hyprlang",
             "ini",
             "javascript",
             "json",

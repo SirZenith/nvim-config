@@ -71,6 +71,10 @@ user.filetype = {
             name = "qmljs",
             pattern = "%.qml$",
         },
+        {
+            name = "hyprlang",
+            pattern = "hypr/.+%.conf$"
+        }
     },
 }
 
