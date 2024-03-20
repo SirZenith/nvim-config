@@ -80,6 +80,68 @@ cmd_snip.register(snip_filetype, {
         }
     },
 
+    ["iter for-num"] = {
+        args = { "iter-name", "init-name", "bound-name" },
+        content = function(iter_name, init_name, bound_name)
+            return {
+                ("for (let %s = %s; %s < %s; %s++) {"):format(
+                    iter_name, init_name,
+                    iter_name, bound_name,
+                    iter_name
+                ),
+                "",
+                "}"
+            }
+        end,
+    },
+    ["iter list"] = {
+        args = { "name" },
+        content = function(name)
+            return {
+                { "for (const element of ", name, ") {" },
+                "}",
+            }
+        end,
+    },
+    ["iter map-entries"] = {
+        args = { "name" },
+        content = function(name)
+            return {
+                { "for (const [key, value] of ", name, ".entries()) {" },
+                "}",
+            }
+        end,
+    },
+    ["iter map-keys"] = {
+        args = { "name" },
+        content = function(name)
+            return {
+                { "for (const key of ", name, ".keys()) {" },
+                "}",
+            }
+        end,
+    },
+    ["iter map-values"] = {
+        args = { "name" },
+        content = function(name)
+            return {
+                { "for (const value of ", name, ".values()) {" },
+                "}",
+            }
+        end,
+    },
+    ["iter object"] = {
+        args = { "name" },
+        content = function(name)
+            return {
+                { "for (const key in ",                  name, ") {" },
+                { "    if (Object.hasOwnProperty.call(", name, ", key)) {" },
+                "    }",
+                "}",
+            }
+        end,
+    },
+
     method = {
         args = { "modifier-or-name", { "name", is_optional = true } },
         content = function(modifier_or_name, name)
@@ -128,20 +190,6 @@ cmd_snip.register(snip_filetype, {
             table.insert(result, " */")
 
             return result
-        end,
-    },
-    ["new loop"] = {
-        args = { "iter-name", "init-name", "bound-name" },
-        content = function(iter_name, init_name, bound_name)
-            return {
-                ("for (let %s = %s; %s < %s; %s++) {"):format(
-                    iter_name, init_name,
-                    iter_name, bound_name,
-                    iter_name
-                ),
-                "",
-                "}"
-            }
         end,
     },
 })

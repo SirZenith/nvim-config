@@ -79,6 +79,7 @@ cmd_snip.register(snip_filetype, {
                 "import { COMMON_CONST } from 'script_logic/common/common_const';",
                 "",
                 { "export namespace ", name:upper(), "{}" },
+                "",
                 "const __init__ = (): void => {};",
                 "",
                 { "// ",               1 },
@@ -136,7 +137,81 @@ cmd_snip.register(snip_filetype, {
             }
         end,
     },
-    ["new req-handler"] = {
+    ["proto fd"] = {
+        args = {
+            { "id",  type = "number" },
+            { "name" },
+            { "desc" },
+        },
+        content = function(id, name, desc)
+            return {
+                "/**",
+                { " * ",            desc },
+                { " * PropertyId:", id },
+                " */",
+                { name, ": ", 1, ";" },
+            }
+        end,
+    },
+    ["proto init"] = {
+        args = {
+            { "range-start", type = "number" },
+            { "range-end",   type = "number" },
+        },
+        content = function(st, ed)
+            return {
+                "import {} from 'tsrpc-proto';",
+                "",
+                { "// ProtocolRange:", st, "-", ed },
+                "",
+            }
+        end,
+    },
+    ["proto new"] = {
+        args = {
+            { "id",  type = "number" },
+            { "name" },
+            { "desc" },
+        },
+        content = function(id, name, desc)
+            name = str_util.first_char_upper(name)
+            return {
+                "/**",
+                { " * ", desc, "请求" },
+                { " * ProtocolId:", id },
+                " */",
+                { "export interface Req", name, " {" },
+                "}",
+                "",
+                "/**",
+                { " * ", desc, "响应" },
+                { " * ProtocolId:", id },
+                " */",
+                { "export interface Res", name, " {" },
+                "    /**",
+                "     * 是否成功",
+                "     * PropertyId:0",
+                "     */",
+                "    ok: boolean;",
+                "    /**",
+                "     * 返回信息",
+                "     * PropertyId:1",
+                "     */",
+                "    msg?: string;",
+                "}",
+            }
+        end,
+    },
+
+    ["rpc plain"] = {
+        args = { "name" },
+        content = function(name)
+            return {
+                { "export const ", name, " = (agent: Agent, req: ", 1, "): Res", res_type_name(1), " => {};" }
+            }
+        end,
+    },
+    ["rpc async"] = {
         args = { "name" },
         content = function(name)
             return {
