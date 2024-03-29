@@ -36,6 +36,7 @@ user.plugin.nvim_treesitter = {
             "python",
             "qmljs",
             "query",
+            "rasi",
             "regex",
             "rust",
             "sql",
