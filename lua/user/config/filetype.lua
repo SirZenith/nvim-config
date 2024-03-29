@@ -73,8 +73,12 @@ user.filetype = {
         },
         {
             name = "hyprlang",
-            pattern = "hypr/.+%.conf$"
-        }
+            pattern = "hypr/.+%.conf$",
+        },
+        {
+            name = "rasi",
+            pattern = "%.rasi$",
+        },
     },
 }
 
