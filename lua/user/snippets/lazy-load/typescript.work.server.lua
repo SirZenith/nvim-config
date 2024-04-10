@@ -78,7 +78,7 @@ cmd_snip.register(snip_filetype, {
                 "import { serviceCall, serviceSend } from '@share/network/service_network';",
                 "import { COMMON_CONST } from 'script_logic/common/common_const';",
                 "",
-                { "export namespace ", name:upper(), "{}" },
+                { "export namespace ", name:upper(), " {}" },
                 "",
                 "const __init__ = (): void => {};",
                 "",
