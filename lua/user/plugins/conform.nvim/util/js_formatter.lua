@@ -48,7 +48,7 @@ local function check_eslint_activated()
 end
 
 local formatters = {
-    {
+    --[[ {
         name = "prettierd",
         check_cache = nil,
         check_available = function(info)
@@ -61,7 +61,7 @@ local formatters = {
             info.check_cache = ok
             return ok
         end,
-    },
+    }, ]]
     {
         name = "eslint_d",
         check_cache = nil,
