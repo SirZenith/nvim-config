@@ -139,11 +139,12 @@ cmd_snip.register(snip_filetype, {
     },
     ["proto fd"] = {
         args = {
-            { "id",  type = "number" },
+            { "id",   type = "number" },
             { "name" },
-            { "desc" },
+            { "desc", is_varg = true },
         },
-        content = function(id, name, desc)
+        content = function(id, name, ...)
+            local desc = table.concat({ ... }, " ")
             return {
                 "/**",
                 { " * ",            desc },
@@ -169,12 +170,13 @@ cmd_snip.register(snip_filetype, {
     },
     ["proto new"] = {
         args = {
-            { "id",  type = "number" },
+            { "id",   type = "number" },
             { "name" },
-            { "desc" },
+            { "desc", is_varg = true },
         },
-        content = function(id, name, desc)
+        content = function(id, name, ...)
             name = str_util.first_char_upper(name)
+            local desc = table.concat({ ... }, " ")
             return {
                 "/**",
                 { " * ", desc, "请求" },
@@ -198,6 +200,37 @@ cmd_snip.register(snip_filetype, {
                 "     * PropertyId:1",
                 "     */",
                 "    msg?: string;",
+                "}",
+            }
+        end,
+    },
+    ["proto new-srv"] = {
+        args = {
+            { "id",   type = "number" },
+            { "name" },
+            { "desc", is_varg = true },
+        },
+        content = function(id, name, ...)
+            name = str_util.first_char_upper(name)
+            local desc = table.concat({ ... }, " ")
+            return {
+                "/**",
+                { " * ", desc, "请求" },
+                { " * ProtocolId:", id },
+                " */",
+                { "export interface NodeReq", name, " {" },
+                "}",
+                "",
+                "/**",
+                { " * ", desc, "响应" },
+                { " * ProtocolId:", id },
+                " */",
+                { "export interface NodeRes", name, " {" },
+                "    /**",
+                "     * 是否成功",
+                "     * PropertyId:0",
+                "     */",
+                "    ok: boolean;",
                 "}",
             }
         end,
