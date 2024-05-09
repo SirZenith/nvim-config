@@ -128,6 +128,10 @@ local game_object_name_map = {
         name = "UILayer",
         prefix = "layer",
     },
+    spine = {
+        name = "UISpine",
+        prefix = "spine",
+    },
 }
 
 local GmCmdType = {
