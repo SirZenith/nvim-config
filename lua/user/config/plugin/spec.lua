@@ -358,7 +358,7 @@ local specs = {
     {
         -- tsserer adapter for NeoVim
         "pmizio/typescript-tools.nvim",
-        -- enabled = false,
+        enabled = false,
         dependencies = {
             "nvim-lua/plenary.nvim",
             "neovim/nvim-lspconfig",

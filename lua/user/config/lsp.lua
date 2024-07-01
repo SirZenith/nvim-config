@@ -190,6 +190,13 @@ user.lsp = {
             }
         },
         {
+            "vtsls",
+            desc = "VSCode tsserver wrapper",
+            install = {
+                "npm install -g @vtsls/language-server",
+            },
+        },
+        {
             "zls",
             desc = {
                 "Zig Language Server",
