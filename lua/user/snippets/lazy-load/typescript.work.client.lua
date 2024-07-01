@@ -771,12 +771,16 @@ cmd_snip.register(snip_filetype, {
         args = { "name", { "flag_name", is_optional = true } },
         content = function(name, flag_name)
             flag_name = flag_name or name
+            local flag_property = "this.requested" .. first_char_upper(flag_name)
             return {
-                { "private do",             first_char_upper(name),      "(",  1, "): void {" },
-                { "    if (this.requested", first_char_upper(flag_name), ") {" },
+                { "private do", first_char_upper(name), "(",  1, "): void {" },
+                { "    if (",   flag_property,          ") {" },
                 "        return;",
                 "    }",
                 "",
+                { "    ",              flag_property, " = true;" },
+                { "    Log.d('todo: ", name,          "');" },
+                { "    ",              flag_property, " = false;" },
                 "}",
             }
         end,
