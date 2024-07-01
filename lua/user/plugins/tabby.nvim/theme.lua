@@ -4,6 +4,7 @@ local color = highlight.color
 
 return {
     line_bg = color.bg.darker,
+    fill = "",
 
     header = {
         fg = color.white.normal,

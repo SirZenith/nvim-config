@@ -224,7 +224,7 @@ end
 local function format_line(line)
     local context = make_context(line)
     if not context then
-        return {}
+        return { hl = "" }
     end
 
     return {

@@ -85,6 +85,65 @@ local highlight = vim.tbl_extend("keep", {
     },
 }, {
     -- ------------------------------------------------------------------------
+    -- GitSign
+    --[[ GitSignsAdd = {
+        link = 'GitSignsAdd',
+    },
+    GitSignsAddLn = {
+        link = "GitSignsAddLn",
+    },
+    GitSignsAddNr = {
+        link = "GitSignsAddNr",
+    },
+    GitSignsChange = {
+        link = "GitSignsChange",
+    },
+    GitSignsChangeLn = {
+        link = "GitSignsChangeLn",
+    },
+    GitSignsChangeNr = {
+        link = "GitSignsChangeNr",
+    },
+    GitSignsDelete = {
+        link = "GitSignsDelete",
+    },
+    GitSignsDeleteLn = {
+        link = "GitSignsDeleteLn",
+    },
+    GitSignsDeleteNr = {
+        link = "GitSignsDeleteNr",
+    },
+    ]]
+    GitSignsChangedelete = {
+        link = "GitSignsChange",
+    },
+    GitSignsChangedeleteLn = {
+        link = "GitSignsChangeLn",
+    },
+    GitSignsChangedeleteNr = {
+        link = "GitSignsChangeNr",
+    },
+
+    GitSignsTopdelete = {
+        link = "GitSignsDelete",
+    },
+    GitSignsTopdeleteLn = {
+        link = "GitSignsDeleteLn",
+    },
+    GitSignsTopdeleteNr = {
+        link = "GitSignsDeleteNr",
+    },
+    GitSignsUntracked = {
+        link = "GitSignsAdd",
+    },
+    GitSignsUntrackedLn = {
+        link = "GitSignsAddLn",
+    },
+    GitSignsUntrackedNr = {
+        link = "GitSignsAddNr",
+    },
+}, {
+    -- ------------------------------------------------------------------------
     -- LSP log
     LspLogTrace = {
         bg = color.sel.dark,
