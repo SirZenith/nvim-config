@@ -9,7 +9,7 @@
 ---@field dev? boolean # If true, a local directory will be used instead
 ---@field enabled? boolean # Is the plugins activated
 --
----@field dependencies? string | (string | lazy.PluginSpec)[] # Specifies plugin dependencies
+---@field dependencies? string | (string | lazy.PluginSpec)[] # Specifies plugin dependencies. When local plugins is specified as dependency, plugin spec value with `dir` field should be used.
 ---@field priority? number # useful for non-lazy plugins, higher number means higher priority, default is 50
 --
 ---@field init? fun() # This function gets called on plugin startup

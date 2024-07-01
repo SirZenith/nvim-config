@@ -10,7 +10,10 @@ putl.turn_on_true_color()
 local specs = {
     -- ------------------------------------------------------------------------
     -- Local configs
-    ucs "user.config.general",
+    ucs {
+        name = "user.config.general",
+        no_auto_dependencies = true,
+    },
     ucs "user.config.filetype",
     ucs "user.config.keybinding",
     ucs "user.config.command",
@@ -146,7 +149,7 @@ local specs = {
         "akinsho/toggleterm.nvim",
         -- enabled = false,
         dependencies = {
-            "user.config.general"
+            ucs "user.config.general",
         },
         keys = "<F12>"
     },
@@ -199,7 +202,7 @@ local specs = {
             --   `nvim-notify` is only needed, if you want to use the notification view.
             --   If not available, we use `mini` as the fallback
             "rcarriga/nvim-notify",
-            "user.config.lsp",
+            ucs "user.config.lsp",
         },
         event = "VeryLazy",
     },
@@ -221,7 +224,7 @@ local specs = {
         -- enabled = false,
         main = "ibl",
         dependencies = {
-            "user.config.general",
+            ucs "user.config.general",
         },
         event = "BufEnter",
         autocmd_load_checker = putl.buffer_enter_trigger_loading_predicate,
@@ -317,7 +320,7 @@ local specs = {
         -- enabled = false,
         dependencies = {
             "nvim-treesitter/nvim-treesitter",
-            "user.config.general",
+            ucs "user.config.general",
         },
         event = "BufEnter",
         autocmd_load_checker = putl.buffer_enter_trigger_loading_predicate,

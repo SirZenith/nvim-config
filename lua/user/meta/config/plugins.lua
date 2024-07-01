@@ -5,3 +5,6 @@
 ---@field config? fun(spec: user.plugin.PluginSpec) # cache value of `config` function before being overridden by plugin loader setup.
 ---@field old_config_func? fun(spec: user.plugin.PluginSpec) # cache value of `config` function before being overridden by plugin loader setup.
 ---@field autocmd_load_checker? fun(spec: user.plugin.PluginSpec, args: table): boolean
+
+---@class user.plugin.UserConfigSpec : user.plugin.PluginSpec
+---@field no_auto_dependencies? boolean

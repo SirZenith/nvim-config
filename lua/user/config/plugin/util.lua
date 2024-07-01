@@ -20,6 +20,7 @@ end
 ---@param spec user.plugin.PluginSpec
 function M.user_config_init(spec)
     local module = spec.name
+
     if not module then
         log_util.warn("can't find `name` in spec for user config module")
         return
@@ -28,23 +29,47 @@ function M.user_config_init(spec)
     require(spec.name)
 end
 
----@param module_name string
----@return  user.plugin.PluginSpec?
-function M.user_config_spec(module_name)
+-- Cache table for generated user config spec.
+---@type table<string | user.plugin.UserConfigSpec, user.plugin.PluginSpec>
+local UCS_CACHE = {};
+
+---@param module_info string | user.plugin.UserConfigSpec
+---@return user.plugin.PluginSpec
+function M.user_config_spec(module_info)
+    local cached_spec = UCS_CACHE[module_info]
+    if type(cached_spec) == "table" then
+        return cached_spec
+    end
+
     local env_config = require "user.config.env"
 
-    ---@type user.plugin.PluginSpec
+    ---@type user.plugin.UserConfigSpec
     local spec = {
-        name = module_name,
         dir = env_config.USER_RUNTIME_PATH,
         config = M.user_config_init,
         config_no_defer = true,
+        priority = 1000,
     }
 
-    local base_module = "user.config.general";
-    if module_name ~= base_module then
-        spec.dependencies = { base_module }
+    local info_type = type(module_info)
+    if info_type == "string" then
+        spec.name = module_info
+    elseif info_type == "table" then
+        for key, value in pairs(module_info) do
+            spec[key] = value;
+        end
     end
+
+    if not spec.no_auto_dependencies then
+        spec.dependencies = {
+            {
+                name = "user.config.general",
+                dir = env_config.USER_RUNTIME_PATH
+            },
+        }
+    end
+
+    UCS_CACHE[module_info] = spec
 
     return spec
 end
