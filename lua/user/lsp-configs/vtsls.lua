@@ -57,10 +57,10 @@ local preference = {
 
 M.settings = {
     javascript = {
-        preference = preference,
+        preferences = preference,
     },
     typescript = {
-        preference = preference,
+        preferences = preference,
         tsserver = {
             pluginPaths = {
                 user.env.YARN_GLOBAL_DIR(),
