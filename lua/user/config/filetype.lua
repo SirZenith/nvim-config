@@ -79,6 +79,10 @@ user.filetype = {
             name = "rasi",
             pattern = "%.rasi$",
         },
+        {
+            name = "dts",
+            pattern = "%.overlay$"
+        }
     },
 }
 
