@@ -418,7 +418,7 @@ function M._try_setup_spec_autocmd(spec)
                 M._register_autocmd_listener(value, spec)
             else
                 log_util.warn(
-                    "autocmd name value for custom handler shoul be string",
+                    "autocmd name value for custom handler should be string",
                     value
                 )
             end
