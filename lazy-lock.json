@@ -59,6 +59,7 @@
   "rainbow-delimiters.nvim": { "branch": "master", "commit": "a727bd368e70808125b7cf589328cc595faf3d5a" },
   "range-highlight.nvim": { "branch": "master", "commit": "8b5e8ccb3460b2c3675f4639b9f54e64eaab36d9" },
   "snippet-loader": { "branch": "main", "commit": "012dffb4299a788eed651a6ff77d0b04a778e6a6" },
+  "symbols-outline.nvim": { "branch": "master", "commit": "564ee65dfc9024bdde73a6621820866987cbb256" },
   "tabby.nvim": { "branch": "main", "commit": "43d61e7418c062c18b67b2136fcc564426f08db2" },
   "telescope.nvim": { "branch": "master", "commit": "10b8a82b042caf50b78e619d92caf0910211973d" },
   "toggleterm.nvim": { "branch": "main", "commit": "8ed0f52006d3207ec6c94de7db62da840937ef2a" },

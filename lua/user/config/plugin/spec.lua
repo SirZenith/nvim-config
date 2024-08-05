@@ -166,10 +166,14 @@ local specs = {
         cmd = "VimBeGood",
     },
     {
-        -- Markup language heading outline sidebar.
-        "vim-voom/VOoM",
+        -- Symbol tree view for code and markup
+        "simrat39/symbols-outline.nvim",
         -- enabled = false,
-        ft = { "markdown", "html" },
+        cmd = {
+            "SymbolsOutline",
+            "SymbolsOutlineOpen",
+            "SymbolsOutlineClose",
+        },
     },
 
     -- ------------------------------------------------------------------------
