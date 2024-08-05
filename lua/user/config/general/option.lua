@@ -72,8 +72,8 @@ local option = {
         shellcmdflag = "-c",
         shellquote = "",
         shellxquote = "",
-        shellpipe = "| ansi strip | save --raw",
-        shellredir = "| ansi strip | save --raw",
+        shellpipe = "out>",
+        shellredir = "out>",
     },
     g = {
         python3_host_prog = env_config.PYTHON_PATH,
