@@ -52,7 +52,6 @@ end)
 -- vimtex
 register_build_mapping("tex", "<cmd>w<cr><cmd>VimtexCompile<cr>")
 
--- VOom
-register_build_mapping({ "markdown", "markdown.*" }, "<cmd>Voom markdown<cr>")
-register_build_mapping("html", "<cmd>Voom html<cr>")
-register_build_mapping("voomtree", "<cmd>VoomToggle<cr>")
+-- SymbolsOutline
+register_build_mapping({ "html", "markdown", "markdown.*" }, "<cmd>SymbolsOutlineOpen<cr>")
+register_build_mapping("Outline", "<cmd>SymbolsOutlineClose<cr>")
