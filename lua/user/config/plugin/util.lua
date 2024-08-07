@@ -123,6 +123,10 @@ function M.find_root_by_directory(target_names)
                 break
             end
         end
+
+        if is_found then
+            break
+        end
     end
 
     return is_found

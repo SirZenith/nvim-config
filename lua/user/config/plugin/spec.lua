@@ -467,11 +467,6 @@ local specs = {
         },
         event = "InsertEnter",
         cond = function()
-            local path = workspace.get_workspace_path()
-            if vim.fs.basename(path) ~= "client" then
-                return false
-            end
-
             return putl.root_directory_cond {
                 ".creator",
                 "client/.creator",
