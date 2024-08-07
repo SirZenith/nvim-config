@@ -63,6 +63,7 @@ function M.user_config_spec(module_info)
     if not spec.no_auto_dependencies then
         spec.dependencies = {
             {
+                "user.config.general",
                 name = "user.config.general",
                 dir = env_config.USER_RUNTIME_PATH
             },

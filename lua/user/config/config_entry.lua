@@ -660,7 +660,7 @@ end
 ---@param config_entry user.config.ConfigEntry
 ---@param path string # path to output meta file
 function M.dump_signature(config_entry, path)
-    local loop = vim.loop
+    local loop = vim.uv
 
     local permission = 480 -- 0o740
     loop.fs_open(path, "w+", permission, function(open_err, fd)

@@ -97,7 +97,7 @@ function M.listdir(path)
     path = vim.fn.fnameescape(path)
     local patt = path .. (path:sub(#path) ~= "/" and "/*" or "*")
 
-    local items = vim.fn.glob(patt, 1, 1)
+    local items = vim.fn.glob(patt, true, 1)
     for _, item in ipairs(items) do
         table.insert(t, item)
     end

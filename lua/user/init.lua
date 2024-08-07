@@ -37,7 +37,8 @@ end
 -- chdir to directory of first file in command line arguments.
 -- This directory will be workspace directory of this run.
 local function chdir()
-    local output = vim.api.nvim_command_output "args"
+    local result = vim.api.nvim_exec2("args", { output = true })
+    local output = result.output or ""
     local cur_file = output:match("%[(.+)%]")
 
     local dir_path
