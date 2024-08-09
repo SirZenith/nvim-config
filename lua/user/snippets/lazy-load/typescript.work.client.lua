@@ -61,6 +61,15 @@ local function get_panel_name_from_file_name(index_gen)
     return panel_name, class_name
 end
 
+-- Generate namespace module name by file name.
+---@return string
+local function get_namespace_name_from_file_name()
+    local file_name = vim.api.nvim_buf_get_name(0)
+    file_name = fs_util.remove_ext(file_name)
+    file_name = vim.fs.basename(file_name) or ""
+    return file_name:upper()
+end
+
 -- ----------------------------------------------------------------------------
 
 ---@class ImportInfo
@@ -514,6 +523,15 @@ cmd_snip.register(snip_filetype, {
                 "",
                 "    protected onClose(): void {}",
                 "}",
+            }
+        end,
+    },
+    ["init namespace"] = {
+        content = function()
+            local name = get_namespace_name_from_file_name()
+
+            return {
+                { "export namespace ", name, " {}" },
             }
         end,
     },
