@@ -293,9 +293,13 @@ layer.setTouchEvent(this.close.bind(this));
 
 cmd_snip.register(snip_filetype, {
     ["dm fd"] = {
-        args = { "name", "index", "type" },
-        content = function(name, index, type)
-            index = tonumber(index) or 0
+        args = {
+            { "index", type = "number" },
+            { "name" },
+            { "type" },
+        },
+        content = function(index, name, type)
+            index = index and tonumber(index) or 0
             local buffer = {
                 name, ": { index: ", tostring(index), ", typ: '", type, "'",
             }
@@ -317,6 +321,7 @@ cmd_snip.register(snip_filetype, {
     ["dm new"] = {
         args = { "name", "desc" },
         content = function(name, desc)
+            desc = desc or ""
             return ("setDataModel('%s', '%s', {});"):format(name, desc)
         end,
     },
@@ -325,6 +330,8 @@ cmd_snip.register(snip_filetype, {
         -- get game object of type
         args = { "class-alias", "variable", "object" },
         content = function(class_alias, variable, object)
+            object = object or "this"
+
             local info = game_object_name_map[class_alias]
             if not info then return nil end
 
