@@ -248,7 +248,7 @@ cmd_snip.register(snip_filetype, {
         args = { "name" },
         content = function(name)
             return {
-                { "export const ", name, " = (agent: Agent, req: ", 1, "): Promise<Res", res_type_name(1), "> => {};" }
+                { "const ", name, " = (agent: Agent, req: ", 1, "): Promise<Res", res_type_name(1), "> => {};" }
             }
         end,
     },
