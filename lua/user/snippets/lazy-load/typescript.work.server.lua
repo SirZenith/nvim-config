@@ -196,7 +196,7 @@ cmd_snip.register(snip_filetype, {
                 "     */",
                 "    ok: boolean;",
                 "    /**",
-                "     * 返回信息",
+                "     * 操作失败时的提示信息",
                 "     * PropertyId:1",
                 "     */",
                 "    msg?: string;",
