@@ -2,7 +2,7 @@ local cmd_snip = require "cmd-snippet"
 
 local util = require "user.util"
 local fs_util = require "user.util.fs"
-local snip_util = require "user.util.snippet"
+local snippet_util = require "user.util.snippet"
 
 local snip_filetype = "typescript"
 local s = require("snippet-loader.utils")
@@ -69,6 +69,25 @@ local function get_namespace_name_from_file_name()
     file_name = vim.fs.basename(file_name) or ""
     return file_name:upper()
 end
+
+---@param index number
+---@return any
+local function get_rpc_name(index)
+    return snippet_util.dynamic_conversion(index, function(rpc_name)
+        local prefix = rpc_name:sub(1, 3):lower()
+        if prefix == "req" or prefix == "res" then
+            return rpc_name:sub(4)
+        end
+
+        if rpc_name:sub(1, 4):lower() == "c2s/" then
+            return rpc_name:sub(5)
+        end
+
+        return rpc_name
+    end)
+end
+
+
 
 -- ----------------------------------------------------------------------------
 
@@ -480,7 +499,7 @@ cmd_snip.register(snip_filetype, {
     },
     ["init label-view"] = {
         content = function()
-            local index = snip_util.new_jump_index()
+            local index = snippet_util.new_jump_index()
             local panel_name, class_name = get_panel_name_from_file_name(index)
             local desc_index = index()
 
@@ -544,7 +563,7 @@ cmd_snip.register(snip_filetype, {
     },
     ["init panel"] = {
         content = function()
-            local index = snip_util.new_jump_index()
+            local index = snippet_util.new_jump_index()
             local panel_name, class_name = get_panel_name_from_file_name(index)
             local desc_index = index()
 
@@ -582,7 +601,7 @@ cmd_snip.register(snip_filetype, {
     },
     ["init popup"] = {
         content = function()
-            local index = snip_util.new_jump_index()
+            local index = snippet_util.new_jump_index()
             local panel_name, class_name = get_panel_name_from_file_name(index)
             local desc_index = index()
 
@@ -648,7 +667,7 @@ cmd_snip.register(snip_filetype, {
     },
     ["init sub-view"] = {
         content = function()
-            local index = snip_util.new_jump_index()
+            local index = snippet_util.new_jump_index()
             local panel_name, class_name = get_panel_name_from_file_name(index)
             return {
                 "import { LOGGING } from 'script_logic/common/base/logging';",
@@ -670,7 +689,7 @@ cmd_snip.register(snip_filetype, {
     },
     ["init tips"] = {
         content = function()
-            local index = snip_util.new_jump_index()
+            local index = snippet_util.new_jump_index()
             local panel_name, class_name = get_panel_name_from_file_name(index)
             return {
                 "import { LOGGING } from 'script_logic/common/base/logging';",
@@ -807,6 +826,20 @@ cmd_snip.register(snip_filetype, {
                 { "    Log.d('todo: ", name,          "');" },
                 { "    ",              flag_property, " = false;" },
                 "}",
+            }
+        end,
+    },
+    ["new rpc-send"] = {
+        args = { "name" },
+        content = function(name)
+            local index = 1
+
+            return {
+                { "export const send",      first_char_upper(name), " = (args: Req",      get_rpc_name(index), ", backfunc?: (ret: Res", get_rpc_name(index), ") => void): void => {" },
+                { "    NETWORK.send('c2s/", index,                  "', args, (ret) => {" },
+                "        backfunc?.(ret);",
+                "    });",
+                "};",
             }
         end,
     },
