@@ -100,15 +100,15 @@ end
 local function make_timer_snippet(name, add_func, clear_func)
     name = first_char_upper(name)
     return {
-        "private init" .. name .. "Timer(): void {",
-        "    this.cancel" .. name .. "Timer();",
-        { "    this.timer" .. name .. " = TIMER.", add_func, "();" },
+        { "private init",    name, "Timer(): void {" },
+        { "    this.cancel", name, "Timer();" },
+        { "    this.timer",  name, " = TIMER.",      add_func, "();" },
         "}",
         "",
-        "private cancel" .. name .. "Timer(): void {",
-        "    if (this.timer" .. name .. ") {",
-        "        TIMER.", clear_func, "(this.timer" .. name .. ");",
-        "        this.timer" .. name .. " = null;",
+        { "private cancel",     name,       "Timer(): void {" },
+        { "    if (this.timer", name,       ") {" },
+        { "        TIMER.",     clear_func, "(this.timer",    name, ");" },
+        { "        this.timer", name,       " = null;" },
         "    }",
         "}",
     }
