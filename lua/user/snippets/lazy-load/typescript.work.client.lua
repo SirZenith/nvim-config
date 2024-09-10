@@ -40,6 +40,12 @@ local function first_char_upper(str)
     return str:sub(1, 1):upper() .. str:sub(2)
 end
 
+---@param str string
+---@return string
+local function first_char_lower(str)
+    return str:sub(1, 1):lower() .. str:sub(2)
+end
+
 -- Generate panel name and class name by file name.
 ---@param index_gen fun(): integer # index generator
 ---@return  string | integer panel_name
@@ -87,7 +93,26 @@ local function get_rpc_name(index)
     end)
 end
 
-
+---@param name string
+---@param add_func string
+---@param clear_func string
+---@return (string|string[])[]
+local function make_timer_snippet(name, add_func, clear_func)
+    name = first_char_upper(name)
+    return {
+        "private init" .. name .. "Timer(): void {",
+        "    this.cancel" .. name .. "Timer();",
+        { "    this.timer" .. name .. " = TIMER.", add_func, "();" },
+        "}",
+        "",
+        "private cancel" .. name .. "Timer(): void {",
+        "    if (this.timer" .. name .. ") {",
+        "        TIMER.", clear_func, "(this.timer" .. name .. ");",
+        "        this.timer" .. name .. " = null;",
+        "    }",
+        "}",
+    }
+end
 
 -- ----------------------------------------------------------------------------
 
@@ -125,28 +150,16 @@ local import_map = {
 
 ---@type table<string, { name: string, prefix?: string }>
 local game_object_name_map = {
-    go = {
-        name = "", -- GameObject
-    },
     btn = {
         name = "UIButton",
         prefix = "btn",
     },
-    text = {
-        name = "UIText",
-        prefix = "text",
+    go = {
+        name = "", -- GameObject
     },
     img = {
         name = "UIImage",
         prefix = "img",
-    },
-    scroll = {
-        name = "UIScrollView",
-        prefix = "scroll",
-    },
-    prog = {
-        name = "UIProgressBar",
-        prefix = "bar",
     },
     input = {
         name = "UIInputField",
@@ -156,9 +169,25 @@ local game_object_name_map = {
         name = "UILayer",
         prefix = "layer",
     },
+    list = {
+        name = "UIItemLayout",
+        prefix = "list",
+    },
+    prog = {
+        name = "UIProgressBar",
+        prefix = "bar",
+    },
+    scroll = {
+        name = "UIScrollView",
+        prefix = "scroll",
+    },
     spine = {
         name = "UISpine",
         prefix = "spine",
+    },
+    text = {
+        name = "UIText",
+        prefix = "text",
     },
 }
 
@@ -343,6 +372,17 @@ cmd_snip.register(snip_filetype, {
             desc = desc or ""
             return ("setDataModel('%s', '%s', {});"):format(name, desc)
         end,
+    },
+
+    ["event module"] = {
+        content = {
+            { "this.registerModuleListener('", 1, "', '", 2, "', this.on", 2, ".bind(this));" },
+        },
+    },
+    ["event ui"] = {
+        content = {
+            { "this.registerUIListener('", 1, "', this.on", 1, ".bind(this));" },
+        },
     },
 
     gg = {
@@ -751,6 +791,21 @@ cmd_snip.register(snip_filetype, {
         end,
     },
 
+    ["network send"] = {
+        args = { "name" },
+        content = function(name)
+            local index = 1
+
+            return {
+                { "export const send",      first_char_upper(name), " = (args: Req",      get_rpc_name(index), ", backfunc?: (ret: Res", get_rpc_name(index), ") => void): void => {" },
+                { "    NETWORK.send('c2s/", index,                  "', args, (ret) => {" },
+                "        backfunc?.(ret);",
+                "    });",
+                "};",
+            }
+        end,
+    },
+
     ["new ads"] = {
         args = { "ads_name", "ads_desc_name" },
         content = function(ads_name, ads_desc_name)
@@ -778,39 +833,6 @@ cmd_snip.register(snip_filetype, {
             return "const Log = LOGGING.logger('" .. name .. "');"
         end,
     },
-    ["new module-event"] = {
-        content = {
-            { "this.registerModuleListener('", 1, "', '", 2, "', this.on", 2, ".bind(this));" },
-        }
-    },
-    ["new reddot"] = {
-        args = { "name" },
-        content = function(name)
-            local key_name = name .. "Key"
-            local node_name = name .. "Node"
-            return {
-                { "const ",  key_name,               " = ",                         1,        " + '", name, "';" },
-                { "const ",  node_name,              " = reddotMgr.addNodeByPath(", key_name, ", '",  2,    "');" },
-                { node_name, ".setCheckFunc(() => {" },
-                "    return false;",
-                "});",
-            }
-        end,
-    },
-    ["new reddot-root"] = {
-        content = function()
-            local name = "root"
-            local key_name = name .. "Key"
-            local node_name = name .. "Node"
-            return {
-                { "const ",  key_name,                   " = localPrefix;" },
-                { "const ",  node_name,                  " = reddotMgr.addNodeByPath(", key_name, ", '", 1, "');" },
-                { node_name, ".setCheckOpenFunc(() => {" },
-                "    return false;",
-                "});",
-            }
-        end,
-    },
     ["new request"] = {
         args = { "name", { "flag_name", is_optional = true } },
         content = function(name, flag_name)
@@ -826,20 +848,6 @@ cmd_snip.register(snip_filetype, {
                 { "    Log.d('todo: ", name,          "');" },
                 { "    ",              flag_property, " = false;" },
                 "}",
-            }
-        end,
-    },
-    ["new rpc-send"] = {
-        args = { "name" },
-        content = function(name)
-            local index = 1
-
-            return {
-                { "export const send",      first_char_upper(name), " = (args: Req",      get_rpc_name(index), ", backfunc?: (ret: Res", get_rpc_name(index), ") => void): void => {" },
-                { "    NETWORK.send('c2s/", index,                  "', args, (ret) => {" },
-                "        backfunc?.(ret);",
-                "    });",
-                "};",
             }
         end,
     },
@@ -871,46 +879,51 @@ cmd_snip.register(snip_filetype, {
             return "const " .. varName .. ": LOCALE.textIdType = '';"
         end,
     },
-    ["new timer"] = {
-        args = { "name" },
-        content = function(name)
-            name = first_char_upper(name)
-            return {
-                "private init" .. name .. "Timer(): void {",
-                "    this.cancel" .. name .. "Timer();",
-                { "    this.timer" .. name .. " = TIMER.addTimer();" },
-                "}",
-                "",
-                "private cancel" .. name .. "Timer(): void {",
-                "    if (this.timer" .. name .. ") {",
-                "        TIMER.clearTimer(this.timer" .. name .. ");",
-                "        this.timer" .. name .. " = null;",
-                "    }",
-                "}",
-            }
-        end,
-    },
-    ["new repeat-timer"] = {
-        args = { "name" },
-        content = function(name)
-            name = first_char_upper(name)
-            return {
-                "private init" .. name .. "Timer(): void {",
-                "    this.cancel" .. name .. "Timer();",
-                { "    this.timer" .. name .. " = TIMER.addRepeatTimer();" },
-                "}",
-                "",
-                "private cancel" .. name .. "Timer(): void {",
-                "    if (this.timer" .. name .. ") {",
-                "        TIMER.clearRepteatTimer(this.timer" .. name .. ");",
-                "        this.timer" .. name .. " = null;",
-                "    }",
-                "}",
-            }
-        end,
-    },
     ["new touch-close"] = {
         content = NEW_TOUCH_CLOSE_LAYER,
+    },
+
+    ["reddot new"] = {
+        args = { "name" },
+        content = function(name)
+            local key_name = name .. "Key"
+            local node_name = name .. "Node"
+            return {
+                { "const ",  key_name,               " = ",                         1,        " + '", name, "';" },
+                { "const ",  node_name,              " = reddotMgr.addNodeByPath(", key_name, ", '",  2,    "');" },
+                { node_name, ".setCheckFunc(() => {" },
+                "    return false;",
+                "});",
+            }
+        end,
+    },
+    ["reddot root"] = {
+        content = function()
+            local name = "root"
+            local key_name = name .. "Key"
+            local node_name = name .. "Node"
+            return {
+                { "const ",  key_name,                   " = localPrefix;" },
+                { "const ",  node_name,                  " = reddotMgr.addNodeByPath(", key_name, ", '", 1, "');" },
+                { node_name, ".setCheckOpenFunc(() => {" },
+                "    return false;",
+                "});",
+            }
+        end,
+    },
+    ["reddot setup-func"] = {
+        args = { "name" },
+        content = function(name)
+            local node_name = first_char_lower(name)
+            local func_name = first_char_upper(name)
+
+            return {
+                { "const init",                               func_name, "Reddot = (): void => {" },
+                { "    const localPrefix = reddotPrefix + '", node_name, "/';" },
+                { "    const reddotMgr = S.reddotMgr;" },
+                "}",
+            }
+        end,
     },
 
     ["spine new"] = {
@@ -939,5 +952,18 @@ cmd_snip.register(snip_filetype, {
             "    modelId,",
             "});",
         },
+    },
+
+    ["timer normal"] = {
+        args = { "name" },
+        content = function(name)
+            return make_timer_snippet(name, "addTimer", "clearTimer");
+        end,
+    },
+    ["timer repeat"] = {
+        args = { "name" },
+        content = function(name)
+            return make_timer_snippet(name, "addRepeatTimer", "clearRepteatTimer");
+        end,
     },
 })
