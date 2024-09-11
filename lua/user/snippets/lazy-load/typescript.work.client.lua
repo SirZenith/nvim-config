@@ -165,6 +165,10 @@ local game_object_name_map = {
         name = "UIInputField",
         prefix = "input",
     },
+    item = {
+        name = "",
+        prefix = "item",
+    },
     layer = {
         name = "UILayer",
         prefix = "layer",
@@ -172,6 +176,10 @@ local game_object_name_map = {
     list = {
         name = "UIItemLayout",
         prefix = "list",
+    },
+    panel = {
+        name = "",
+        prefix = "panel",
     },
     prog = {
         name = "UIProgressBar",
@@ -387,8 +395,8 @@ cmd_snip.register(snip_filetype, {
 
     gg = {
         -- get game object of type
-        args = { "class-alias", "variable", "object" },
-        content = function(class_alias, variable, object)
+        args = { "class-alias", "name", "object" },
+        content = function(class_alias, name, object)
             object = object or "this"
 
             local info = game_object_name_map[class_alias]
@@ -399,14 +407,16 @@ cmd_snip.register(snip_filetype, {
 
             local prefix = info.prefix
             if prefix then
-                variable = prefix .. first_char_upper(variable)
+                name = name == "_"
+                    and prefix
+                    or prefix .. first_char_upper(name)
             end
 
             if class_name == "" then
-                return ("const %s = %s.getGameObject('${1}');"):format(variable, object)
+                return ("const %s = %s.getGameObject('${1}');"):format(name, object)
             end
 
-            return ("const %s = %s.getGameObject('${1}', %s);"):format(variable, object, class_name)
+            return ("const %s = %s.getGameObject('${1}', %s);"):format(name, object, class_name)
         end,
     },
 
