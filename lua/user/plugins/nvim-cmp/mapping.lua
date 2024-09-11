@@ -33,7 +33,7 @@ return {
         end
     end, { "c", "i", "s" }),
     -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-    ["<cr>"] = cmp.mapping.confirm { select = true },
+    ["<cr>"] = cmp.mapping.confirm { select = false },
     ["<C-b>"] = cmp.mapping(cmp.mapping.scroll_docs(-4), { "i", "c" }),
     ["<C-f>"] = cmp.mapping(cmp.mapping.scroll_docs(4), { "i", "c" }),
     -- Specify `cmp.config.disable` if you want to remove the default `<C-y>` mapping.
