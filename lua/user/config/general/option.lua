@@ -18,8 +18,8 @@ local option = {
         softtabstop = 4,
         shiftwidth = 4,
         expandtab = true,
-        autoindent = true,
-        cindent = true,
+        autoindent = false,
+        cindent = false,
         -- Folding
         foldmethod = "manual",
         -- foldexpr = "nvim_treesitter#foldexpr()",
