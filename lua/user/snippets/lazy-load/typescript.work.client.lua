@@ -393,6 +393,49 @@ cmd_snip.register(snip_filetype, {
         },
     },
 
+    ["field panel-fx-map"] = {
+        content = "private panelFxMap: UI_UTILITY.FxMap = new Map();",
+    },
+    ["field timer-map"] = {
+        content = "private timerMap: UI_UTILITY.TimerMap = new Map();",
+    },
+
+    ["fx add"] = {
+        args = { "path" },
+        content = function(path)
+            return {
+                { "const fxPath = '",                     path, "';" },
+                { "const panelFx = this.getGameObject('", 1,    "');" },
+                "UI_UTILITY.addFx(this.panelFxMap, panelFx, fxPath, {",
+                { "    extraTag: '", 2, "'," },
+                "});",
+            }
+        end,
+    },
+    ["fx toggle"] = {
+        args = { "path" },
+        content = function(path)
+            return {
+                { "const fxPath = '",                     path, "';" },
+                { "const showFx =",                       1 },
+                { "const panelFx = this.getGameObject('", 2,    "');" },
+                "UI_UTILITY.toggleFx(this.panelFxMap, panelFx, fxPath, showFx, {",
+                { "    extraTag: '", 3, "'," },
+                "});",
+            }
+        end,
+    },
+    ["fx hide"] = {
+        content = {
+            { "UI_UTILITY.hideFx(this.panelFxMap, panelFx, '", 1, "');" }
+        },
+    },
+    ["fx hide-all"] = {
+        content = {
+            { "UI_UTILITY.hideAllFx(this.panelFxMap, panelFx);" }
+        },
+    },
+
     gg = {
         -- get game object of type
         args = { "class-alias", "name", "object" },
