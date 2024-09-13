@@ -974,7 +974,7 @@ cmd_snip.register(snip_filetype, {
                 { "const init",                               func_name, "Reddot = (): void => {" },
                 { "    const localPrefix = reddotPrefix + '", node_name, "/';" },
                 { "    const reddotMgr = S.reddotMgr;" },
-                "}",
+                "};",
             }
         end,
     },
