@@ -63,7 +63,7 @@ M.settings = {
         preferences = preference,
         tsserver = {
             pluginPaths = {
-                user.env.YARN_GLOBAL_DIR(),
+                user.env.BUN_GLOBAL_DIR(),
             },
             useSeparateSyntaxServer = true,
             useSyntaxServer = true,
