@@ -979,6 +979,39 @@ cmd_snip.register(snip_filetype, {
         end,
     },
 
+    ["sheet cfg"] = {
+        args = { "name" },
+        content = function(name)
+            name = first_char_upper(name)
+
+            return {
+                { "export const get",           name, "Cfg = (id: ", 2, "): I", 1, name, " | null => {" },
+                { "    const tbl = get",        name, "Tbl();" },
+                { "    return tbl[id] || null;" },
+                { "};" },
+            }
+        end,
+    },
+    ["sheet tbl"] = {
+        args = { "name" },
+        content = function(name)
+            name = first_char_upper(name)
+
+            local file_index = 1
+            local file_node = snippet_util.dynamic_conversion(file_index, util.underscore_to_camel_case)
+
+            local sheet_index = 2
+            local sheet_node = snippet_util.dynamic_conversion(sheet_index, util.underscore_to_camel_case)
+
+
+            return {
+                { "export const get",                    name,       "Tbl = (): I", file_node,   sheet_node, "Dictionary => {" },
+                { "    return ConfigUtil.getSheetTbl('", file_index, "', '",        sheet_index, "');" },
+                "};",
+            }
+        end
+    },
+
     ["spine new"] = {
         content = {
             { "const panelModel = this.getGameObject('", 1, "');" },
