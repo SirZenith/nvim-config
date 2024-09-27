@@ -6,6 +6,8 @@ local util = require "user.util"
 local fs_util = require "user.util.fs"
 local log_util = require "user.util.log"
 
+local loop = vim.uv or vim.loop
+local fs_stat = loop.fs_stat
 local fn = vim.fn
 local get_plugin_name_from_spec = plugin_util.get_plugin_name_from_spec
 local import = util.import
@@ -18,7 +20,7 @@ local function require_manager()
     local is_bootstrap = false
     local install_path = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 
-    if not vim.uv.fs_stat(install_path) then
+    if not fs_stat(install_path) then
         is_bootstrap = true
 
         vim.notify("Plugin manger bootstrap...")
@@ -64,7 +66,7 @@ local manager_config = {
 
     -- limit the maximum amount of concurrent tasks
     ---@type number?
-    concurrency = jit.os:find("Windows") and (vim.uv.available_parallelism() * 2) or nil,
+    concurrency = jit.os:find("Windows") and (loop.available_parallelism() * 2) or nil,
 
     git = {
         -- defaults for the `Lazy log` command

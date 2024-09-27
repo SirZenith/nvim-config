@@ -1,6 +1,7 @@
 local log_util = require "user.util.log"
 
-local hrtime = vim.uv.hrtime
+local loop = vim.uv or vim.loop
+local hrtime = loop.hrtime
 
 local M = {}
 
