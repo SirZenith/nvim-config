@@ -62,6 +62,8 @@ M.settings = {
     typescript = {
         preferences = preference,
         tsserver = {
+            -- path to package installation directory, e.g. `./node_modules` or
+            -- directory printed by `yarn global dir`.
             pluginPaths = {
                 user.env.BUN_GLOBAL_DIR(),
             },
@@ -76,7 +78,15 @@ M.settings = {
         },
         tsserver = {
             globalPlugins = {
-                { name = "typescript-eslint-language-service" },
+                {
+                    -- Requires
+                    -- typescript
+                    -- @typescript-eslint/parser >= 5.0.0
+                    -- eslint >= 8.0.0,
+                    --    but < 9.0.0, starting from 9.0.0, eslint no longer
+                    --    supports .eslintrc file
+                    name = "typescript-eslint-language-service"
+                },
             }
         },
         typescript = {
