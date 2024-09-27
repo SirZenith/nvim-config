@@ -5,7 +5,7 @@ local env_home = vim.env.HOME or vim.env.USERPROFILE
 local env_config_home = vim.env.CONFIG_HOME
 
 if not env_config_home and env_home then
-    env_config_home = fs_util.path_join(env_home, ".config", "shell-environment", "nvim")
+    env_config_home = fs_util.path_join(env_home, ".config", "shell-environment")
     log_util.warn("no CONFIG_HOME variable found, use default value", env_config_home)
 end
 
