@@ -2,16 +2,16 @@ local M = {}
 
 M.settings = {
     ["rust-analyzer"] = {
+        cargo = {
+            buildScripts = {
+                enable = true,
+            },
+        },
         imports = {
             granularity = {
                 group = "module",
             },
             prefix = "self",
-        },
-        cargo = {
-            buildScripts = {
-                enable = true,
-            },
         },
         procMacro = {
             enable = true
