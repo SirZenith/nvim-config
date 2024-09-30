@@ -9,6 +9,7 @@ user.lsp = {
     log_update_method = "append",
     log_scroll_method = "bottom",
     on_attach_callbacks = {},
+    use_inlay_hint = false,
     capabilities_settings = {
         {
             textDocument = {

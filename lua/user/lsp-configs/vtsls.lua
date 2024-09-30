@@ -45,21 +45,38 @@ local preference = {
     quotePreference = "single",
 
     importModuleSpecifier = "non-relative",
+}
 
-    includeInlayParameterNameHints = "none",
-    includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-    includeInlayFunctionParameterTypeHints = false,
-    includeInlayVariableTypeHints = true,
-    includeInlayPropertyDeclarationTypeHints = false,
-    includeInlayFunctionLikeReturnTypeHints = false,
-    includeInlayEnumMemberValueHints = true,
+local inlay_hints = {
+    parameterNames = {
+        enabled = "literals",
+        suppressWhenArgumentMatchesName = true,
+    },
+    parameterTypes = {
+        enabled = true,
+    },
+    variableTypes = {
+        enabled = true,
+        suppressWhenTypeMatchesName = true,
+    },
+    propertyDeclarationTypes = {
+        enabled = true,
+    },
+    functionLikeReturnTypes = {
+        enabled = true,
+    },
+    enumMemberValues = {
+        enabled = true,
+    }
 }
 
 M.settings = {
     javascript = {
+        inlayHints = inlay_hints,
         preferences = preference,
     },
     typescript = {
+        inlayHints = inlay_hints,
         preferences = preference,
         tsserver = {
             -- path to package installation directory, e.g. `./node_modules` or
