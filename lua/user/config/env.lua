@@ -2,25 +2,14 @@ local fs_util = require "user.util.fs"
 local log_util = require "user.util.log"
 
 local env_home = vim.env.HOME or vim.env.USERPROFILE
-local env_config_home = vim.env.CONFIG_HOME
-
-if not env_config_home and env_home then
-    env_config_home = fs_util.path_join(env_home, ".config", "shell-environment")
-    log_util.warn("no CONFIG_HOME variable found, use default value", env_config_home)
-end
-
-if not env_config_home then
-    log_util.error "initialize failed, can't find environment variable 'CONFIG_HOME'"
-    return {}
-end
-
+local nvim_home = fs_util.path_join(env_home, ".dotfiles", "Configs", "nvim", ".config", "nvim")
 local dev_path = vim.env.DEV_PATH or fs_util.path_join(env_home, "Developer")
 
 return {
     ENV_CONFIG_INIT_OK = true,
 
-    NVIM_HOME = fs_util.path_join(env_config_home, "nvim"),
-    USER_RUNTIME_PATH = fs_util.path_join(env_config_home, "nvim", "lua"),
+    NVIM_HOME = nvim_home,
+    USER_RUNTIME_PATH = fs_util.path_join(nvim_home, "lua"),
 
     PROXY_URL = vim.env.PROXY_URL or "",
     PLATFORM_MARK = vim.env.PLATFORM_MARK or "",
