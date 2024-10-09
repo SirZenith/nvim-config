@@ -116,7 +116,7 @@ local specs = {
             "stevearc/oil.nvim",
         },
         ft = "oil",
-        cond = putl.root_directory_cond { ".git", ".svn" },
+        cond = putl.fs_entry_cond { ".git", ".svn" },
     },
     {
         "SirZenith/panelpal.nvim",
@@ -577,7 +577,7 @@ local specs = {
             "VcsDiff",
             "VcsStatus",
         },
-        cond = putl.root_directory_cond { ".git", ".svn" },
+        cond = putl.fs_entry_cond { ".git", ".svn" },
     },
 
     -- ------------------------------------------------------------------------

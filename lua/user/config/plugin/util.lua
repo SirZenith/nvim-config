@@ -143,7 +143,7 @@ end
 -- Looing for a file recrusively in parent
 ---@param target_names string[] # target file name
 ---@return boolean is_found
-local function find_root_by_file(target_names)
+function M.find_root_by_file(target_names)
     local pwd = vim.fn.getcwd()
 
     local is_found = false
@@ -168,7 +168,15 @@ end
 ---@return fun(): boolean
 function M.root_file_cond(target_names)
     return function()
-        return find_root_by_file(target_names)
+        return M.find_root_by_file(target_names)
+    end
+end
+
+---@param target_names string[] # target entry names
+---@return fun(): boolean
+function M.fs_entry_cond(target_names)
+    return function()
+        return M.find_root_by_directory(target_names) or M.find_root_by_file(target_names)
     end
 end
 
