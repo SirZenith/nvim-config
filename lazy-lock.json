@@ -45,7 +45,7 @@
   "nvim-ts-autotag": { "branch": "main", "commit": "e239a560f338be31337e7abc3ee42515daf23f5e" },
   "nvim-ufo": { "branch": "main", "commit": "203c9f434feec57909ab4b1e028abeb3349b7847" },
   "nvim-web-devicons": { "branch": "master", "commit": "56f17def81478e406e3a8ec4aa727558e79786f3" },
-  "oil-vcs-status": { "branch": "main", "commit": "ef3a96a889a47a27cc45e432701c05cb432800b2" },
+  "oil-vcs-status": { "branch": "main", "commit": "729f65d5ac6f115df0b54ffd24a4f3f0e8834a47" },
   "oil.nvim": { "branch": "master", "commit": "ccab9d5e09e2d0042fbbe5b6bd05e82426247067" },
   "open-browser.vim": { "branch": "master", "commit": "7d4c1d8198e889d513a030b5a83faa07606bac27" },
   "panelpal.nvim": { "branch": "main", "commit": "06747af24793abdb5dd1b963b6929ba112ef58d2" },
