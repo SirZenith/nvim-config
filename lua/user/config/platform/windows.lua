@@ -1,9 +1,14 @@
 local user = require "user"
 local fs_util = require "user.util.fs"
+local log = require "user.util.log"
 
 local M = {}
 
 -- ----------------------------------------------------------------------------
+
+local im_select_path = vim.env.IM_SELECT_PATH
+-- local weasel_server_path = vim.env.WEASEL_SERVER_PATH
+local weasel_server_path = nil
 
 user.env = {
     __newentry = true,
@@ -18,17 +23,29 @@ user.platform = {
     },
 }
 
-user.autocmd = {
-    __newentry = true,
-    im_select = {
-        check = "im-select.exe",
-        on = "im-select.exe 2052",
-        off = "im-select.exe 1033",
+if weasel_server_path then
+    user.autocmd.im_select = {
+        __newentry = true,
+        check = "echo place_holder",
+        on = weasel_server_path .. " /nascii",
+        off = weasel_server_path .. " /ascii",
+        isoff = function(_)
+            return false
+        end
+    }
+elseif im_select_path then
+    user.autocmd.im_select = {
+        __newentry = true,
+        check = im_select_path,
+        on = im_select_path .. " 2052",
+        off = im_select_path .. " 1033",
         isoff = function(im)
             return tonumber(im) == 1033
         end
     }
-}
+else
+    log.warn("neither WeaselServer.exe nor im-select.exe is found in environment")
+end
 
 -- ----------------------------------------------------------------------------
 
