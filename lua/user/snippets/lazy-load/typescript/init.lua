@@ -80,20 +80,6 @@ cmd_snip.register(snip_filetype, {
         }
     },
 
-    ["iter for-num"] = {
-        args = { "iter-name", "init-name", "bound-name" },
-        content = function(iter_name, init_name, bound_name)
-            return {
-                ("for (let %s = %s; %s < %s; %s++) {"):format(
-                    iter_name, init_name,
-                    iter_name, bound_name,
-                    iter_name
-                ),
-                "",
-                "}"
-            }
-        end,
-    },
     ["iter list"] = {
         args = { "name" },
         content = function(name)
@@ -138,6 +124,20 @@ cmd_snip.register(snip_filetype, {
                 { "    if (Object.hasOwnProperty.call(", name, ", key)) {" },
                 "    }",
                 "}",
+            }
+        end,
+    },
+    ["iter range"] = {
+        args = { "iter-name", "init-name", "bound-name" },
+        content = function(iter_name, init_name, bound_name)
+            return {
+                ("for (let %s = %s; %s < %s; %s++) {"):format(
+                    iter_name, init_name,
+                    iter_name, bound_name,
+                    iter_name
+                ),
+                "",
+                "}"
             }
         end,
     },
