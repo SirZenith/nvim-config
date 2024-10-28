@@ -49,6 +49,12 @@ apsp("dmt", [[
 -- ----------------------------------------------------------------------------
 
 cmd_snip.register(snip_filetype, {
+    b = {
+        arg = { "text" },
+        content = function(text)
+            return "<b>" .. text .. "</b>"
+        end
+    },
     img = {
         args = { "title", "url" },
         content = function(title, url)

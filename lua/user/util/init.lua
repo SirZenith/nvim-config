@@ -1,5 +1,6 @@
 local log_util = require "user.util.log"
 
+local api = vim.api
 local loop = vim.uv or vim.loop
 local hrtime = loop.hrtime
 
@@ -7,35 +8,33 @@ local M = {}
 
 -- ----------------------------------------------------------------------------
 
-local special_camel_word = {
-    ui = "UI",
-    id = "ID",
-}
+-- wrap_selected_text_with adds given content to the left and right side of selected
+-- part of buffer text.
+---@param left string
+---@param right string
+function M.wrap_selected_text_with(left, right)
+    local panelpal = require "panelpal"
 
----@param text string
----@return string
-local function capital_fist_letter(text)
-    if text == "" then return "" end
-    return text:sub(1, 1):upper() .. text:sub(2)
-end
+    local st_r, st_c, ed_r, ed_c = panelpal.visual_selection_range()
+    if not (st_r and st_c and ed_r and ed_c) then return end
 
----@param text string
----@return string
-function M.underscore_to_camel_case(text)
-    local st, buffer = 1, {}
+    local bufnr = 0
 
-    for i = 1, #text do
-        if text:sub(i, i) == "_" then
-            local part = text:sub(st, i - 1)
-            local special = special_camel_word[part:lower()]
-            buffer[#buffer + 1] = special or capital_fist_letter(part)
-            st = i + 1
-        end
+    local ed_line = api.nvim_buf_get_lines(bufnr, ed_r, ed_c, true)[1]
+    local ed_offset = ed_c + vim.str_utf_end(ed_line, ed_c)
+
+    local list = api.nvim_buf_get_text(bufnr, st_r, st_c, ed_r, ed_offset, {})
+    local len = #list
+    if len == 0 then return end
+
+    list[1] = left .. list[1]
+    list[len] = list[len] .. right
+
+    for _, line in ipairs(list) do
+        print(line)
     end
 
-    buffer[#buffer + 1] = capital_fist_letter(text:sub(st, #text))
-
-    return table.concat(buffer)
+    api.nvim_buf_set_text(0, st_r, st_c, ed_r, ed_offset, list)
 end
 
 -- ----------------------------------------------------------------------------

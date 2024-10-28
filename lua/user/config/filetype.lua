@@ -1,4 +1,6 @@
 local user = require "user"
+local util = require "user.util"
+local log_util = require "user.util.log"
 local fs_util = require "user.util.fs"
 local functional_util = require "user.util.functional"
 
@@ -86,6 +88,52 @@ user.filetype = {
     },
 }
 
+---@param bufnr integer
+---@param filetype string
+local function load_filetype_keybinding(bufnr, filetype)
+    local module_name = fs_util.path_join(
+        user.env.USER_RUNTIME_PATH(),
+        "user",
+        "config",
+        "keybinding",
+        "keymap",
+        "filetype",
+        filetype
+    )
+
+    local targets = {
+        module_name .. ".lua",
+        fs_util.path_join(module_name, "init.lua")
+    }
+
+    local module = nil
+    for _, file in ipairs(targets) do
+        if vim.fn.filereadable(file) == 1 then
+            module = util.import(file)
+            break
+        end
+    end
+
+    if not module then
+        return
+    end
+
+    local setup = nil
+    local module_type = type(module)
+    if module_type == "table" then
+        setup = module.setup
+    elseif module_type == "function" then
+        setup = module
+    end
+
+    if type(setup) == "function" then
+        setup(bufnr)
+    else
+        local msg = ("filetype specific keybinding for %s lacks setup function"):format(filetype)
+        log_util.warn(msg)
+    end
+end
+
 ---@param match string
 local function setup_filetype(match)
     local known_type = {}
@@ -167,16 +215,18 @@ return function()
 
             local indent_map = user.filetype.filetype_indent()
             local filetype = args.match
+            local bufnr = args.buf
 
             local size = indent_map[filetype]
             if size then
-                local bufnr = args.buf
                 local bo = vim.bo[bufnr]
 
                 bo.tabstop = size
                 bo.softtabstop = size
                 bo.shiftwidth = size
             end
+
+            load_filetype_keybinding(bufnr, filetype)
         end,
     })
 

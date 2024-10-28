@@ -126,7 +126,7 @@ cmd_snip.register(snip_filetype, {
                 name = vim.fs.basename(name) or ""
             end
 
-            name = util.underscore_to_camel_case(name)
+            name = str_util.underscore_to_camel_case(name)
 
             return {
                 "// 将定义里面的 IAgent 转成 Agent",

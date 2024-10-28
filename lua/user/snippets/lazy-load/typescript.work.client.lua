@@ -3,6 +3,7 @@ local cmd_snip = require "cmd-snippet"
 local util = require "user.util"
 local fs_util = require "user.util.fs"
 local snippet_util = require "user.util.snippet"
+local str_util = require "user.util.str"
 
 local snip_filetype = "typescript"
 local s = require("snippet-loader.utils")
@@ -30,7 +31,7 @@ local s = require("snippet-loader.utils")
 ---@return any
 local function to_camel(index)
     return s.f(function(args)
-        return util.underscore_to_camel_case(args[1][1])
+        return str_util.underscore_to_camel_case(args[1][1])
     end, { index })
 end
 
@@ -58,7 +59,7 @@ local function get_panel_name_from_file_name(index_gen)
     local panel_name, class_name
     if file_name ~= "" then
         panel_name = file_name
-        class_name = util.underscore_to_camel_case(panel_name)
+        class_name = str_util.underscore_to_camel_case(panel_name)
     else
         panel_name = index_gen()
         class_name = to_camel(panel_name)
@@ -499,7 +500,7 @@ cmd_snip.register(snip_filetype, {
     ["import ptl"] = {
         args = { "name" },
         content = function(name)
-            local module_name = util.underscore_to_camel_case(name)
+            local module_name = str_util.underscore_to_camel_case(name)
             return {
                 { "import { } from 'script_logic/common/proto/define/c2s/", module_name, "';" }
             }
@@ -535,7 +536,7 @@ cmd_snip.register(snip_filetype, {
                 name = vim.fs.basename(name) or ""
             end
 
-            local panel_name = util.underscore_to_camel_case(name)
+            local panel_name = str_util.underscore_to_camel_case(name)
 
             return {
                 "import { UIText } from 'script_logic/base/ui_system/uiext/ui_text';",
@@ -998,10 +999,10 @@ cmd_snip.register(snip_filetype, {
             name = first_char_upper(name)
 
             local file_index = 1
-            local file_node = snippet_util.dynamic_conversion(file_index, util.underscore_to_camel_case)
+            local file_node = snippet_util.dynamic_conversion(file_index, str_util.underscore_to_camel_case)
 
             local sheet_index = 2
-            local sheet_node = snippet_util.dynamic_conversion(sheet_index, util.underscore_to_camel_case)
+            local sheet_node = snippet_util.dynamic_conversion(sheet_index, str_util.underscore_to_camel_case)
 
 
             return {

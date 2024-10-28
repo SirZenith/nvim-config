@@ -1,6 +1,7 @@
 local util = require "user.util"
 local functional_util = require "user.util.functional"
 local log_util = require "user.util.log"
+local str_util = require "user.util.str"
 local table_util = require "user.util.table"
 
 local fnil = functional_util.fnil
@@ -625,7 +626,7 @@ local function _dump_config_class(env, class_name, tbl, parent_class)
         elseif type(value) ~= "table" then
             table.insert(env.buffer, "---@field " .. key .. "? " .. type(value))
         else
-            local name = class_name .. util.underscore_to_camel_case(key)
+            local name = class_name .. str_util.underscore_to_camel_case(key)
             table.insert(env.buffer, "---@field " .. key .. "? " .. name)
             table.insert(env.pending, { name = name, value = value })
         end
