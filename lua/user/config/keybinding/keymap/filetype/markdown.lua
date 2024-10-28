@@ -17,6 +17,9 @@ return function(bufnr)
             ["<A-s>"] = function()
                 util.wrap_selected_text_with("**", "**")
             end,
+            ["<A-t><A-s>"] = function()
+                util.wrap_selected_text_with("<span class=\"translate\">", "</span>")
+            end,
             ["<A-u>"] = function()
                 util.wrap_selected_text_with("<u>", "</u>")
             end,
