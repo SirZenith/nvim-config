@@ -48,7 +48,7 @@
   "oil-vcs-status": { "branch": "main", "commit": "729f65d5ac6f115df0b54ffd24a4f3f0e8834a47" },
   "oil.nvim": { "branch": "master", "commit": "cca1631d5ea450c09ba72f3951a9e28105a3632c" },
   "open-browser.vim": { "branch": "master", "commit": "7d4c1d8198e889d513a030b5a83faa07606bac27" },
-  "panelpal.nvim": { "branch": "main", "commit": "eaee0891c33a40d164d72ba702a3227332498aaa" },
+  "panelpal.nvim": { "branch": "main", "commit": "3548f2e790831ca9f93a633e4f4339aa4d8239a4" },
   "plantuml-previewer.vim": { "branch": "master", "commit": "368a1f331c1ff29f6a3ee76facfca39a7f374b13" },
   "plantuml-syntax": { "branch": "master", "commit": "9d4900aa16674bf5bb8296a72b975317d573b547" },
   "playground": { "branch": "master", "commit": "ba48c6a62a280eefb7c85725b0915e021a1a0749" },
