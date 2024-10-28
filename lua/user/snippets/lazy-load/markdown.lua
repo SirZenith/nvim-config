@@ -1,9 +1,11 @@
+local cmd_snip = require "cmd-snippet"
+
 local snip_filetype = "markdown"
 local s = require("snippet-loader.utils")
 local makers = s.snippet_makers(snip_filetype)
 -- local sp = makers.sp
 -- local asp = makers.asp
-local psp = makers.psp
+-- local psp = makers.psp
 local apsp = makers.apsp
 
 -- local condsp = makers.condsp
@@ -37,12 +39,32 @@ condasp(
     end)
 )
 
-psp("link", "[$1](${2:$TM_SELECTED_TEXT}) $0")
-psp("img", "![$1](${2:$TM_SELECTED_TEXT}) $0")
-
 apsp("imt", "\\$$1\\$ $0")
 apsp("dmt", [[
 \$\$
     $1
 .\$\$ $0
 ]])
+
+-- ----------------------------------------------------------------------------
+
+cmd_snip.register(snip_filetype, {
+    img = {
+        args = { "title", "url" },
+        content = function(title, url)
+            return ("![%s](%s)"):format(title, url)
+        end
+    },
+    link = {
+        args = { "title", "url" },
+        content = function(title, url)
+            return ("[%s](%s)"):format(title, url)
+        end
+    },
+    ruby = {
+        args    = { "text", "annotation" },
+        content = function(text, annotation)
+            return ("<ruby>%s<rp>(</rp><rt>%s</rt><rp>)</rp></ruby>"):format(text, annotation)
+        end,
+    },
+})
