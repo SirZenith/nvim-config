@@ -20,7 +20,9 @@ function M.wrap_selected_text_with(left, right)
 
     local bufnr = 0
 
-    local ed_line = api.nvim_buf_get_lines(bufnr, ed_r, ed_c, true)[1]
+    local ed_line = api.nvim_buf_get_lines(bufnr, ed_r, ed_r + 1, true)[1]
+    if not ed_line then return end
+
     local ed_offset = ed_c + vim.str_utf_end(ed_line, ed_c)
 
     local list = api.nvim_buf_get_text(bufnr, st_r, st_c, ed_r, ed_offset, {})

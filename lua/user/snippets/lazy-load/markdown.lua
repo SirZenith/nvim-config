@@ -68,9 +68,27 @@ cmd_snip.register(snip_filetype, {
         end
     },
     ruby = {
-        args    = { "text", "annotation" },
-        content = function(text, annotation)
-            return ("<ruby>%s<rp>(</rp><rt>%s</rt><rp>)</rp></ruby>"):format(text, annotation)
+        args    = { "text_list", "annotation_list" },
+        content = function(text_list, annotation_list)
+            local text_parts = vim.split(text_list, "|", { plain = true })
+            local anno_parts = vim.split(annotation_list, "|", { plain = true })
+            local buffer = { "<ruby>" }
+
+            for i = 0, #text_parts do
+                local text = text_parts[i]
+                local annotation = anno_parts[i]
+
+                local result = text
+                if annotation and annotation ~= "" then
+                    result = ("%s<rp>(</rp><rt>%s</rt><rp>)</rp>"):format(text, annotation)
+                end
+
+                table.insert(buffer, result)
+            end
+
+            table.insert(buffer, "</ruby>")
+
+            return table.concat(buffer, "")
         end,
     },
 })

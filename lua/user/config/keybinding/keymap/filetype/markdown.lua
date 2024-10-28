@@ -8,6 +8,15 @@ return function(bufnr)
             ["<A-b>"] = function()
                 util.wrap_selected_text_with("<b>", "</b>")
             end,
+            ["<A-h><A-l>"] = function()
+                util.wrap_selected_text_with("<mark>", "</mark>")
+            end,
+            ["<A-i>"] = function()
+                util.wrap_selected_text_with("*", "*")
+            end,
+            ["<A-s>"] = function()
+                util.wrap_selected_text_with("**", "**")
+            end,
             ["<A-u>"] = function()
                 util.wrap_selected_text_with("<u>", "</u>")
             end,
