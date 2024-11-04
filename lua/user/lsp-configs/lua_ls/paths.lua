@@ -131,8 +131,11 @@ local function get_library_paths(root_dir)
     vim.list_extend(paths, import_paths)
 
     -- User defined EmmyLua
-    local emmylua_path = fs_util.path_join(user.env.APP_PATH(), "EmmyLua", "lua-lib-annotation")
-    paths[#paths + 1] = emmylua_path
+    local user_meta_dir = fs_util.path_join(user.env.LANG_PATH(), "Lua", "meta")
+    local meta_names = { "delite" }
+    for _, name in ipairs(meta_names) do
+        paths[#paths + 1] = fs_util.path_join(user_meta_dir, name)
+    end
 
     -- Remove paths under current workspace
     local workspace_path = workspace.get_workspace_path()
