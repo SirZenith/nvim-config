@@ -66,8 +66,15 @@ function M.on_new_config(config, root_dir)
 
     local is_in_runtime_path = paths.check_in_nvim_runtime_path(root_dir)
 
+    local runtime_version = "Lua 5.4"
+    if is_in_runtime_path then
+        runtime_version = "LuaJIT"
+    elseif paths.check_in_library_directory(root_dir) then
+        runtime_version = "Lua 5.1"
+    end
+
     lsp_util.append_config_entry(settings, "Lua.diagnostics.globals", is_in_runtime_path and "vim" or nil)
-    lsp_util.upsert_config_entry(settings, "Lua.runtime.version", is_in_runtime_path and "LuaJIT" or "Lua 5.4")
+    lsp_util.upsert_config_entry(settings, "Lua.runtime.version", runtime_version)
     lsp_util.upsert_config_entry(settings, "Lua.runtime.special.import", is_in_runtime_path and "require" or nil)
 
     local runtime_paths, library_paths = paths.get_path_setting(root_dir)
@@ -85,10 +92,14 @@ function M.root_dir(fname)
         ".luarc.json",
         ".luarc.jsonc",
         ".luacheckrc",
+
         ".stylua.toml",
         "stylua.toml",
+
         "selene.toml",
         "selene.yml",
+
+        "library.json",
     }
 
     local root = lspconfig_util.root_pattern(unpack(root_files))(fname)

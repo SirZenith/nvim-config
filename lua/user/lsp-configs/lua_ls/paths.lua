@@ -160,6 +160,20 @@ function M.check_in_nvim_runtime_path(root_dir)
     return is_nvim_runtime_path
 end
 
+-- check_in_library_directory checks if root directory is a child of delite library
+---@param root_dir string
+---@return boolean
+function M.check_in_library_directory(root_dir)
+    local list = vim.fs.find({
+        "library.json"
+    }, {
+        upward = true,
+        path = root_dir,
+    })
+
+    return #list > 0
+end
+
 ---@param root_dir string
 ---@return string[] runtime_paths
 ---@return string[] library_paths
