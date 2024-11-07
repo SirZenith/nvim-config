@@ -389,9 +389,12 @@ cmd_snip.register(snip_filetype, {
         },
     },
     ["event ui"] = {
-        content = {
-            { "this.registerUIListener('", 1, "', this.on", 1, ".bind(this));" },
-        },
+        args = { "name" },
+        content = function(name)
+            return {
+                { "this.registerUIListener('", name, "', this.on", name, ".bind(this));" },
+            }
+        end,
     },
 
     ["field panel-fx-map"] = {
