@@ -217,6 +217,7 @@ local specs = {
         dependencies = {
             "nvim-tree/nvim-web-devicons"
         },
+        tag = "v2.6.0",
         event = "TabNew",
     },
 
