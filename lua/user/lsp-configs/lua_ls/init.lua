@@ -99,7 +99,7 @@ function M.root_dir(fname)
         "selene.toml",
         "selene.yml",
 
-        "library.json",
+        "preprocess.lua", -- delite library support
     }
 
     local root = lspconfig_util.root_pattern(unpack(root_files))(fname)
