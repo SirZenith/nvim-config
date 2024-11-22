@@ -85,7 +85,7 @@ M.settings = {
             -- 3. bun global directory, typically `~/.bun/install/global`
             -- 4. node global directory, `npm list -g --depth 0`
             pluginPaths = {
-                user.env.NPM_GLOBAL_DIR(),
+                user.env.BUN_GLOBAL_DIR(),
             },
             useSeparateSyntaxServer = true,
             useSyntaxServer = true,
@@ -105,7 +105,7 @@ M.settings = {
                     -- eslint >= 8.0.0,
                     --    but < 9.0.0, starting from 9.0.0, eslint no longer
                     --    supports .eslintrc file
-                    name = "typescript-eslint-language-service"
+                    name = "typescript-eslint-language-service",
                 },
             }
         },
