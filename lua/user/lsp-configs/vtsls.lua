@@ -79,10 +79,13 @@ M.settings = {
         inlayHints = inlay_hints,
         preferences = preference,
         tsserver = {
-            -- path to package installation directory, e.g. `./node_modules` or
-            -- directory printed by `yarn global dir`.
+            -- Can be one of following:
+            -- 1. local package installation path, e.g. `./node_modules` or
+            -- 2. yarn global directory, `yarn global dir`.
+            -- 3. bun global directory, typically `~/.bun/install/global`
+            -- 4. node global directory, `npm list -g --depth 0`
             pluginPaths = {
-                user.env.BUN_GLOBAL_DIR(),
+                user.env.NPM_GLOBAL_DIR(),
             },
             useSeparateSyntaxServer = true,
             useSyntaxServer = true,

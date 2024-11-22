@@ -24,6 +24,7 @@ return {
     PYTHON_PATH = vim.env.PYTHON_PATH or "python",
     TS_LIB_PATH = vim.env.TS_LIB_PATH or "",
     BUN_GLOBAL_DIR = vim.env.BUN_GLOBAL_DIR or fs_util.path_join(env_home or "~", ".bun", "install", "global"),
+    NPM_GLOBAL_DIR = vim.env.NPM_GLOBAL_DIR or "",
     YARN_GLOBAL_DIR = vim.env.YARN_GLOBAL_DIR or fs_util.path_join(env_home or "~", ".config", "yarn", "global"),
 
     APPDATA = vim.env.APPDATA or "",
