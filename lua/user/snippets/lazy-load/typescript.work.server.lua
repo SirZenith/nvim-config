@@ -83,7 +83,7 @@ cmd_snip.register(snip_filetype, {
                 "const __init__ = (): void => {};",
                 "",
                 { "// ",               1 },
-                "export const registersysmodule = (): void => {",
+                "export const registerSysModule = (): void => {",
                 "    __init__();",
                 "};",
             }
