@@ -63,6 +63,64 @@ cmd_snip.register(snip_filetype, {
             { "AGENT.registerRpcAsync('", 1, "', ", rpc_callback_name(1), ");" },
         },
     },
+
+    ["forward event-interface"] = {
+        args = { { "name", is_optional = true } },
+        content = function(name)
+            if not name then
+                name = vim.api.nvim_buf_get_name(0)
+                name = fs_util.remove_ext(name)
+                name = vim.fs.basename(name) or ""
+            end
+
+            name = str_util.underscore_to_camel_case(name)
+            name = "I" .. name .. "Forward"
+
+            return {
+                "// 将定义里面的 IAgent 转成 Agent",
+                "type ReplaceAgent<T> = T extends (agent: any, ...args: infer P) => infer R ? (agent: Agent, ...args: P) => R : T;",
+                "type ReplacedMgrForward = {",
+                { "    [K in keyof ", name, "]: ReplaceAgent<I", name, "Forward[K]>;" },
+                "};",
+            }
+        end,
+    },
+    ["forward register"] = {
+        args = { "name" },
+        content = function(name)
+            name = str_util.first_char_upper(name)
+            return {
+                { "forward", name,         "Event: (agent: Agent, ...args: [any]): void => {" },
+                { "    ",    name:upper(), "_MGR.onEvent(agent, ...args);" },
+                "},",
+            }
+        end,
+    },
+    ["forward tbl"] = {
+        content = function()
+            local name = vim.api.nvim_buf_get_name(0)
+            name = fs_util.remove_ext(name)
+            name = vim.fs.basename(name) or ""
+            name = str_util.underscore_to_camel_case(name)
+            name = "I" .. name .. "Forward"
+
+            return {
+                "// 事件注册",
+                "const eventTbl: ReplacedMgrForward = {};",
+                "",
+                { "export const onEvent = (agent: Agent, ev: keyof ", name, ", ...args: unknown[]): void => {" },
+                "    const func = eventTbl[ev] as (agent: Agent, ...args: unknown[]) => void;",
+                "    func(agent, ...args);",
+                "};",
+            }
+        end,
+    },
+    ["forward tbl-entry"] = {
+        content = {
+            { 1, ": ", event_callback_name(1) },
+        },
+    },
+
     ["init mgr"] = {
         args = { { "name", is_optional = true }, },
         content = function(name)
@@ -169,54 +227,7 @@ cmd_snip.register(snip_filetype, {
             }
         end,
     },
-    ["new event-forward"] = {
-        args = { "name" },
-        content = function(name)
-            name = str_util.first_char_upper(name)
-            return {
-                "forward", name, "Event: (agent: Agent, ...args: [any]): void => {",
-                "    ", name:upper(), "_MGR.onEvent(agent, ...args);",
-                "},",
-            }
-        end,
-    },
-    ["new event-item"] = {
-        content = {
-            { 1, ": ", event_callback_name(1) },
-        },
-    },
-    ["new event-tbl"] = {
-        content = {
-            "    // 事件注册",
-            "    const eventTbl: ReplacedMgrForward = {};",
-            "",
-            { "    export const onEvent = (agent: Agent, ev: keyof ", 1, ", ...args: any[]): void => {" },
-            "        const func = eventTbl[ev];",
-            "        const fixArgs = args as any;",
-            "        func(agent, ...fixArgs);",
-            "    };",
-        },
-    },
-    ["new event-tbl-type"] = {
-        args = { { "name", is_optional = true } },
-        content = function(name)
-            if not name then
-                name = vim.api.nvim_buf_get_name(0)
-                name = fs_util.remove_ext(name)
-                name = vim.fs.basename(name) or ""
-            end
 
-            name = str_util.underscore_to_camel_case(name)
-
-            return {
-                "// 将定义里面的 IAgent 转成 Agent",
-                "type ReplaceAgent<T> = T extends (agent: any, ...args: infer P) => infer R ? (agent: Agent, ...args: P) => R : T;",
-                "type ReplacedMgrForward = {",
-                { "    [K in keyof I", name, "Forward]: ReplaceAgent<I", name, "Forward[K]>;" },
-                "};",
-            }
-        end,
-    },
     ["proto fd"] = {
         args = {
             { "id",   type = "number" },
@@ -280,6 +291,25 @@ cmd_snip.register(snip_filetype, {
                 "     * PropertyId:1",
                 "     */",
                 "    msg?: string;",
+                "}",
+            }
+        end,
+    },
+    ["proto new-msg"] = {
+        args = {
+            { "id",   type = "number" },
+            "name",
+            { "desc", is_varg = true },
+        },
+        content = function(id, name, ...)
+            name = str_util.first_char_upper(name)
+            local desc = table.concat({ ... }, " ")
+            return {
+                "/**",
+                { " * ",            desc },
+                { " * ProtocolId:", id },
+                " */",
+                { "export interface Msg", name, " {" },
                 "}",
             }
         end,
