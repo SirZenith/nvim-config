@@ -60,7 +60,7 @@ cmd_snip.register(snip_filetype, {
             local modifier = name and modifier_or_name or ""
             name = name or modifier_or_name
 
-            local result = "const " .. name .. " = async (${2}): ${1:void} => {};"
+            local result = "const " .. name .. " = async (${2}): Promise<${1:void}> => {};"
             if modifier then
                 result = modifier .. " " .. result
             end
