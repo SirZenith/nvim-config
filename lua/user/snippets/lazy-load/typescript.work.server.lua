@@ -131,10 +131,10 @@ cmd_snip.register(snip_filetype, {
             end
 
             return {
-                "import { agent, agent } from '@agent/src/agent/agent';",
-                "import { iserverrole } from '@agent/src/agent/agent_interface';",
-                "import { servicecall, servicesend } from '@share/network/service_network';",
-                "import { common_const } from 'script_logic/common/common_const';",
+                "import { Agent, AGENT } from '@agent/src/agent/agent';",
+                "import { IServerRole } from '@agent/src/agent/agent_interface';",
+                "import { serviceCall, serviceSend } from '@share/network/service_network';",
+                "import { COMMON_CONST } from 'script_logic/common/common_const';",
                 "",
                 { "export namespace ", name:upper(), " {}" },
                 "",
