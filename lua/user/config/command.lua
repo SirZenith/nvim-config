@@ -79,6 +79,22 @@ end, {
     desc = "save & delete all buffers",
 })
 
+cmd("AutoFormatOff", function()
+    require "conform".setup {
+        format_after_save = false,
+    }
+end, {
+    desc = "turn off auto formatting after save",
+})
+
+cmd("AutoFormatOn", function()
+    require "conform".setup {
+        format_after_save = true,
+    }
+end, {
+    desc = "turn on auto formatting after save",
+})
+
 -- ----------------------------------------------------------------------------
 
 return function()
