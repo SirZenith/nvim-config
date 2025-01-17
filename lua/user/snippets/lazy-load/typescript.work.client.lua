@@ -561,6 +561,33 @@ cmd_snip.register(snip_filetype, {
             }
         end,
     },
+    ["init display-component"] = {
+        content = function()
+            local index = snippet_util.new_jump_index()
+            local panel_name, class_name = get_panel_name_from_file_name(index)
+
+            return {
+                "import { UIDisplayComponentBase } from 'script_logic/ui/ui_common/ui_display_component_base';",
+                "import { LOGGING } from 'script_logic/common/base/logging';",
+                "",
+                { "const Log = LOGGING.logger('", panel_name, "');" },
+                "",
+                { "export class ",                class_name, " extends UIDisplayComponentBase {" },
+                "    protected initData(): void {}",
+                "",
+                "    protected initUI(): void {}",
+                "",
+                "    protected initEvents(): void {}",
+                "",
+                "    protected postInit(): void {}",
+                "",
+                "    public onShow(): void {}",
+                "",
+                "    protected onDestroy(): void {}",
+                "}",
+            }
+        end,
+    },
     ["init event"] = {
         args = {
             { "name", is_optional = true },
