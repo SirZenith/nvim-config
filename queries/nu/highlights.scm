@@ -90,6 +90,10 @@ file_path: (val_string) @variable.parameter
 (escaped_interpolated_content) @string
 (expr_interpolated ["(" ")"] @variable.parameter)
 
+(raw_string_begin) @punctuation.special
+(raw_string_content) @string
+(raw_string_end) @punctuation.special
+
 ;;; ---
 ;;; operators
 (expr_binary [
@@ -178,6 +182,13 @@ file_path: (val_string) @variable.parameter
     "e>"   "err>"
     "e+o>" "err+out>"
     "o+e>" "out+err>"
+    "o>>"   "out>>"
+    "e>>"   "err>>"
+    "e+o>>" "err+out>>"
+    "o+e>>" "out+err>>"
+    "e>|"   "err>|"
+    "e+o>|" "err+out>|"
+    "o+e>|" "out+err>|"
 ] @operator
 
 ;;; ---
@@ -187,9 +198,12 @@ file_path: (val_string) @variable.parameter
     ";"
 ] @punctuation.special
 
-(param_short_flag "-" @punctuation.delimiter)
 (param_long_flag ["--"] @punctuation.delimiter)
 (long_flag ["--"] @punctuation.delimiter)
+(short_flag ["-"] @punctuation.delimiter)
+(long_flag ["="] @punctuation.special)
+(short_flag ["="] @punctuation.special)
+(param_short_flag ["-"] @punctuation.delimiter)
 (param_rest "..." @punctuation.delimiter)
 (param_type [":"] @punctuation.special)
 (param_value ["="] @punctuation.special)
@@ -201,6 +215,9 @@ file_path: (val_string) @variable.parameter
     "(" ")"
     "{" "}"
     "[" "]"
+    "...["
+    "...("
+    "...{"
 ] @punctuation.bracket
 
 (val_record
@@ -217,11 +234,12 @@ key: (identifier) @property
     param_name: (_) @variable.parameter)
 (param_cmd
     (cmd_identifier) @string)
-(param_long_flag) @variable.parameter
-(param_short_flag) @variable.parameter
 
-(short_flag) @variable.parameter
-(long_flag) @variable.parameter
+(param_long_flag (long_flag_identifier) @attribute)
+(param_short_flag (param_short_flag_identifier) @attribute)
+
+(short_flag (short_flag_identifier) @attribute)
+(long_flag_identifier) @attribute
 
 (scope_pattern [(wild_card) @function])
 
@@ -267,8 +285,11 @@ key: (identifier) @property
   ["." "?"] @punctuation.delimiter
 ) @variable.parameter
 
+(stmt_let (identifier) @variable)
+
 (val_variable
-  "$" @punctuation.special
+  "$"? @punctuation.special
+  "...$"? @punctuation.special
   [
    (identifier) @variable
    "in" @special
@@ -297,11 +318,9 @@ key: (identifier) @property
 
 (shebang) @keyword.directive
 (comment) @comment
-(
- (comment) @comment.documentation
- (decl_def)
-)
-(
- (parameter)
- (comment) @comment.documentation
-)
+((comment)+ @comment.documentation @spell
+  .
+  (decl_def))
+
+(parameter
+  (comment) @comment.documentation @spell)
