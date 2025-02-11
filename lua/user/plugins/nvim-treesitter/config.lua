@@ -122,16 +122,7 @@ user.plugin.nvim_treesitter = {
             curl = { "-x", user.env.PROXY_URL() },
         },
     },
-    parsers = {
-        nu = {
-            install_info = {
-                url = "https://github.com/nushell/tree-sitter-nu",
-                files = { "src/parser.c" },
-                branch = "main",
-            },
-            filetype = "nu",
-        },
-    },
+    parsers = {},
 }
 
 local env_cc = user.env.CC()
