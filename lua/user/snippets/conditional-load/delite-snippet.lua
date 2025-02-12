@@ -54,9 +54,9 @@ function M.setup()
                 local files = fs_util.listdir(source_dir)
 
                 local head = {
-                    "local delite = require \"delite \"",
+                    "local delite = require \"delite\"",
                     "-- local html = require \"html\"",
-                    "-- local atom = require \"html-atom \"",
+                    "-- local atom = require \"html-atom\"",
                     "",
                     "delite.switch_handler(meta.source_filename, {",
                 }
