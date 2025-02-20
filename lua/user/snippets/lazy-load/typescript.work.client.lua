@@ -525,6 +525,34 @@ cmd_snip.register(snip_filetype, {
         end,
     },
 
+    ["init battle-result-component"] = {
+        args = { { "prefab-path", is_optional = true } },
+        content = function(prefab_path)
+            local index = snippet_util.new_jump_index()
+            local panel_name, class_name = get_panel_name_from_file_name(index)
+
+            prefab_path = prefab_path or ""
+
+            return {
+                "import { UIBattleFinishComponentBase } from 'script_logic/ui/ui_battle_finish/ui_battle_finish_comp_base';",
+                "import { LOGGING } from 'script_logic/common/base/logging';",
+                "",
+                { "const Log = LOGGING.logger('",         panel_name,  "');" },
+                "",
+                { "export class ",                        class_name,  " extends UIBattleFinishComponentBase {" },
+                { "    protected prefabPath: string = '", prefab_path, "';" },
+                "",
+                { "    // prefab: panelMainContent - ", prefab_path },
+                "    protected updateMainContent(): void {",
+                "        const panelMainContent = this.panelMainContent;",
+                "        if (!panelMainContent) {",
+                "            return;",
+                "        }",
+                "    }",
+                "}",
+            }
+        end,
+    },
     ["init data-model"] = {
         content = INIT_DATA_MODEL,
     },
