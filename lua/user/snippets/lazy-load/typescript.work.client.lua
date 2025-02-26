@@ -802,7 +802,9 @@ cmd_snip.register(snip_filetype, {
 
             return {
                 { "export namespace ", name:upper(), " {" },
-                "    // --------- 通用玩家单例方法 begin-------",
+                "    // ------------------------------------------------------------------------",
+                "    // #region 通用玩家单例方法",
+                "",
                 "    export const onRoleDataReady = (): void => {};",
                 "",
                 "    export const onRoleEnterWorld = (): void => {};",
@@ -812,7 +814,8 @@ cmd_snip.register(snip_filetype, {
                 "    export const onLoginStartReconnect = (): void => {};",
                 "",
                 "    export const onLoginStartConnect = (): void => {};",
-                "    // --------- 通用玩家单例方法 end-------",
+                "",
+                "    // #endregion 通用玩家单例方法",
                 "}",
             }
         end,
