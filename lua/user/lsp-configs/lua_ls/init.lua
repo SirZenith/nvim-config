@@ -1,5 +1,7 @@
+local user = require "user"
 local lspconfig_util = require "lspconfig.util"
 
+local fs_util = require "user.util.fs"
 local lsp_util = require "user.util.lsp"
 local workspace = require "user.config.workspace"
 
@@ -53,6 +55,9 @@ M.settings = {
             },
             -- Annotation files path
             library = {},
+            userThirdParty = {
+                fs_util.path_join(user.env.LANG_PATH(), "Lua", "luals-addons"),
+            },
         }
     }
 }
