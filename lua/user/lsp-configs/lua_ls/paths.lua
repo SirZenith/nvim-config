@@ -7,6 +7,27 @@ local workspace = require "user.config.workspace"
 
 local M = {}
 
+local NVIM_RUNTIME_PATH_PATTERN = {
+    "nvim/runtime",
+}
+
+local PLUGIN_TARGETS = {
+    "cmd-snippet",
+    "LuaSnip",
+    "noice.nvim",
+    "nvim-cmp",
+    "nvim-lspconfig",
+    "mongosh.nvim",
+    "panelpal.nvim",
+    "snippet-loader",
+}
+
+local ADDON_LIBRARIES = {
+    "delite",
+    "luasocket",
+    "luasocket-luli",
+}
+
 ---@param root_dir string
 local function get_import_paths(root_dir)
     local is_in_nvim_runtime_path = M.check_in_nvim_runtime_path(root_dir)
@@ -20,17 +41,13 @@ local function get_import_paths(root_dir)
 
     -- NeoVim Runtime Path
     if is_in_nvim_runtime_path then
-        local patterns = {
-            "nvim/runtime",
-        }
-
         local list = vim.api.nvim_list_runtime_paths()
 
         for i = 1, #list do
             local path = vim.fs.normalize(list[i])
 
-            for j = 1, #patterns do
-                local patt = patterns[j]
+            for j = 1, #NVIM_RUNTIME_PATH_PATTERN do
+                local patt = NVIM_RUNTIME_PATH_PATTERN[j]
                 if path:match(patt) then
                     paths[#paths + 1] = path
                 end
@@ -47,16 +64,7 @@ local function get_import_paths(root_dir)
     local workspace_path = workspace.get_workspace_path()
     if fs_util.is_subdir_of(workspace_path, user.env.NVIM_HOME()) then
         -- Used when editing user config.
-        vim.list_extend(plugin_names, {
-            "cmd-snippet",
-            "LuaSnip",
-            "noice.nvim",
-            "nvim-cmp",
-            "nvim-lspconfig",
-            "mongosh.nvim",
-            "panelpal.nvim",
-            "snippet-loader",
-        })
+        vim.list_extend(plugin_names, PLUGIN_TARGETS)
     end
 
     local plugin_root = fs_util.path_join(vim.fn.stdpath("data"), "lazy")
@@ -130,11 +138,10 @@ local function get_library_paths(root_dir)
     local import_paths = get_import_paths(root_dir)
     vim.list_extend(paths, import_paths)
 
-    -- User defined EmmyLua
-    local user_meta_dir = fs_util.path_join(user.env.LANG_PATH(), "Lua", "meta")
-    local meta_names = { "delite" }
-    for _, name in ipairs(meta_names) do
-        paths[#paths + 1] = fs_util.path_join(user_meta_dir, name)
+    -- Addon library definition
+    local addon_dir = fs_util.path_join(user.env.LANG_PATH(), "Lua", "luals-addons")
+    for _, name in ipairs(ADDON_LIBRARIES) do
+        paths[#paths + 1] = fs_util.path_join(addon_dir, name, "library")
     end
 
     -- Remove paths under current workspace
