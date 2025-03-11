@@ -127,8 +127,8 @@ end
 
 -- path list for loading definition files.
 -- Note:
--- - All runtime paths rather than pwd, should be in this list.
--- - workspace path shouldn't be in lib path, some LSP features such as renaming
+--   All runtime paths rather than pwd, should be in this list.
+--   workspace path shouldn't be in lib path, some LSP features such as renaming
 --   are turned of on file under lib path.
 ---@param root_dir string
 local function get_library_paths(root_dir)
