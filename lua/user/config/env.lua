@@ -8,6 +8,7 @@ local dev_path = vim.env.DEV_PATH or fs_util.path_join(env_home, "Developer")
 return {
     ENV_CONFIG_INIT_OK = true,
 
+    DOTFILES_HOME = fs_util.path_join(env_home, ".config", "dotfiles"),
     NVIM_HOME = nvim_home,
     USER_RUNTIME_PATH = fs_util.path_join(nvim_home, "lua"),
 

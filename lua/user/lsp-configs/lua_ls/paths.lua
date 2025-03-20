@@ -24,6 +24,7 @@ local PLUGIN_TARGETS = {
 
 local ADDON_LIBRARIES = {
     "delite",
+    "luafilesystem",
     "luasocket",
     "luasocket-luli",
 }
@@ -159,6 +160,7 @@ end
 ---@return boolean
 function M.check_in_nvim_runtime_path(root_dir)
     local is_nvim_runtime_path = fs_util.is_subdir_of(root_dir, user.env.NVIM_HOME())
+        or fs_util.is_subdir_of(root_dir, user.env.DOTFILES_HOME())
         or vim.fs.basename(root_dir) == workspace.WORKSPACE_CONFIG_DIR_NAME
         or fs_util.is_subdir_of(root_dir, vim.fn.stdpath("data"))
         or fs_util.is_subdir_of(root_dir, user.env.PLUGIN_DEV_PATH())
