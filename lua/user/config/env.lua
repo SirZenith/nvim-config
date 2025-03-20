@@ -2,7 +2,7 @@ local fs_util = require "user.util.fs"
 local log_util = require "user.util.log"
 
 local env_home = vim.env.HOME or vim.env.USERPROFILE
-local nvim_home = fs_util.path_join(env_home, ".dotfiles", "Configs", "nvim", ".config", "nvim")
+local nvim_home = fs_util.path_join(env_home, ".config", "nvim")
 local dev_path = vim.env.DEV_PATH or fs_util.path_join(env_home, "Developer")
 
 return {
