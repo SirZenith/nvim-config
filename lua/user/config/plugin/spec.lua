@@ -258,15 +258,6 @@ local specs = {
         event = "BufEnter",
         autocmd_load_checker = putl.buffer_enter_trigger_loading_predicate,
     },
-    {
-        -- Highlight range argument in command line.
-        "winston0410/range-highlight.nvim",
-        -- enabled = false,
-        dependencies = {
-            "winston0410/cmd-parser.nvim"
-        },
-        event = "CmdlineEnter",
-    },
 
     -- ------------------------------------------------------------------------
     -- tree-sitter
