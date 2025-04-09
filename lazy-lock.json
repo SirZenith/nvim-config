@@ -54,7 +54,7 @@
   "plenary.nvim": { "branch": "master", "commit": "857c5ac632080dba10aae49dba902ce3abf91b35" },
   "prefab-cmp": { "branch": "main", "commit": "d5dbde94f588d05d5def5fb17142a2004d1cd7cc" },
   "promise-async": { "branch": "main", "commit": "119e8961014c9bfaf1487bf3c2a393d254f337e2" },
-  "rainbow-delimiters.nvim": { "branch": "master", "commit": "77e5bad54227dcfe3878ffbda88ab1efdaacb475" },
+  "rainbow-delimiters.nvim": { "branch": "master", "commit": "de39919a57e1a40a4c7dc5bae0de276f9c616ef3" },
   "snippet-loader": { "branch": "main", "commit": "3c6e71ac3daf11e432845335a7ba7ce1a3c884c7" },
   "symbols-outline.nvim": { "branch": "master", "commit": "564ee65dfc9024bdde73a6621820866987cbb256" },
   "tabby.nvim": { "branch": "main", "commit": "21b01d26627ee5fe94c8ae560bd1b0797dff3c40" },
