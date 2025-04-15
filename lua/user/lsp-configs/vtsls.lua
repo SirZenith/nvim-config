@@ -79,6 +79,10 @@ M.settings = {
         inlayHints = inlay_hints,
         preferences = preference,
         tsserver = {
+            -- Uncomment this line when log info is needed. Log file should be
+            -- found in `tsserver-log-*` directory under temp directory.
+            -- log = "verbose",
+
             -- Can be one of following:
             -- 1. local package installation path, e.g. `./node_modules` or
             -- 2. yarn global directory, `yarn global dir`.
