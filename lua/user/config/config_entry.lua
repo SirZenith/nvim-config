@@ -607,7 +607,7 @@ local M = {
 ---@param tbl any
 ---@param parent_class? string
 local function _dump_config_class(env, class_name, tbl, parent_class)
-    parent_class = parent_class or "user.config.ConfigEntry"
+    parent_class = parent_class or ""
     if table_util.is_array(tbl) then
         ---@type string
         local element_type = tbl[1] and type(tbl[1]) or "any"
@@ -647,7 +647,7 @@ local function dump_signature(config_entry)
     local target = {
         name = "UserConfig",
         value = config_entry(),
-        parent_class = "user.config.ConfigEntry"
+        parent_class = ""
     }
 
     while target do
