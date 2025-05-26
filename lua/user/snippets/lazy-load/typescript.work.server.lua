@@ -60,7 +60,7 @@ cmd_snip.register(snip_filetype, {
     },
     ["agent rpc"] = {
         content = {
-            { "AGENT.registerRpcAsync('", 1, "', ", rpc_callback_name(1), ");" },
+            { "AGENT.registerRpcAsync('", 1, "', ", rpc_callback_name(1), "Async);" },
         },
     },
 
@@ -358,7 +358,7 @@ cmd_snip.register(snip_filetype, {
         args = { "name" },
         content = function(name)
             return {
-                { "const ", name, " = (agent: Agent, req: ", 1, "): Promise<Res", res_type_name(1), "> => {};" }
+                { "const ", name, "Async = (agent: Agent, req: ", 1, "): Promise<Res", res_type_name(1), "> => {};" }
             }
         end,
     },
