@@ -80,7 +80,7 @@ cmd_snip.register(snip_filetype, {
                 "// 将定义里面的 IAgent 转成 Agent",
                 "type ReplaceAgent<T> = T extends (agent: any, ...args: infer P) => infer R ? (agent: Agent, ...args: P) => R : T;",
                 "type ReplacedMgrForward = {",
-                { "    [K in keyof ", name, "]: ReplaceAgent<I", name, "Forward[K]>;" },
+                { "    [K in keyof ", name, "]: ReplaceAgent<", name, "[K]>;" },
                 "};",
             }
         end,
