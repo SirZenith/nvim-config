@@ -1047,13 +1047,24 @@ cmd_snip.register(snip_filetype, {
         end,
     },
 
+    ["sheet base-cfg"] = {
+        args = { "key" },
+        content = function(key)
+            return {
+                { "export const ",                       1,   " = (): ",  2, " => {" },
+                { "    const value = getBaseConfig()['", key, "'].value;" },
+                { "    return value as ",                2,   ";" },
+                "}",
+            }
+        end,
+    },
     ["sheet cfg"] = {
         args = { "name" },
         content = function(name)
             name = first_char_upper(name)
 
             return {
-                { "export const get",           name, "Cfg = (id: ", 2, "): I", 1, name, " | null => {" },
+                { "export const get",           name, "Cfg = (id: ", 2, "): I", 1, " | null => {" },
                 { "    const tbl = get",        name, "Tbl();" },
                 { "    return tbl[id] || null;" },
                 { "};" },
