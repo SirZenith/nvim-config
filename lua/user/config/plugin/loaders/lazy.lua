@@ -213,14 +213,14 @@ local manager_config = {
             -- list any plugins you want to disable here
             ---@type string[]
             disabled_plugins = {
-                -- "gzip",
+                "gzip",
                 -- "matchit",
                 -- "matchparen",
                 "netrwPlugin",
-                -- "tarPlugin",
+                "tarPlugin",
                 -- "tohtml",
                 "tutor",
-                -- "zipPlugin",
+                "zipPlugin",
             },
         },
     },
