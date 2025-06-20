@@ -218,6 +218,12 @@ local DMFieldTypeInfo = {
     specDict = { "idkey", "valueType", "category" },
 }
 
+local SpanCounterType = {
+    week = "Week",
+    day = "Day",
+    hour = "Hour",
+}
+
 -- ----------------------------------------------------------------------------
 
 local HANDLER_ROLE_INFOCACHE_UPATE = {
@@ -349,11 +355,36 @@ layer.setTouchEvent(this.close.bind(this));
 -- ----------------------------------------------------------------------------
 
 cmd_snip.register(snip_filetype, {
+    ["dm counter"] = {
+        args = {
+            { "index", type = "number" },
+            "name",
+            "counter-type",
+        },
+        content = function(index, name, counter_type)
+            counter_type = first_char_upper(counter_type)
+
+            local type_ok = false
+            for _, known_type in pairs(SpanCounterType) do
+                if known_type == counter_type then
+                    type_ok = true
+                end
+            end
+
+            if not type_ok then
+                return nil, "unknown counter type " .. counter_type
+            end
+
+            return {
+                { name, "Counter: { index: ", tostring(index), ", typ: 'class', valueType: '", counter_type, "SpanCounter', customClass: '", counter_type, "SpanCounter', desc: '", 1, "' }," }
+            }
+        end,
+    },
     ["dm fd"] = {
         args = {
             { "index", type = "number" },
-            { "name" },
-            { "type" },
+            "name",
+            "type",
         },
         content = function(index, name, type)
             index = index and tonumber(index) or 0
