@@ -259,6 +259,18 @@ cmd_snip.register(snip_filetype, {
             }
         end,
     },
+    ["proto items"] = {
+        args = { { "id", type = "number" } },
+        content = function(id)
+            return {
+                { "/**" },
+                { " * 奖励物品字典" },
+                { " * PropertyId:", id },
+                { " */" },
+                { "items?: { [itemId: number]: number };" },
+            }
+        end,
+    },
     ["proto new"] = {
         args = {
             { "id",   type = "number" },
