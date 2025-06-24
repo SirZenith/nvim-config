@@ -681,7 +681,8 @@ cmd_snip.register(snip_filetype, {
         content = INIT_GM,
     },
     ["init label-view"] = {
-        content = function()
+        args = { { "prefab-path", is_optional = true } },
+        content = function(prefab_path)
             local index = snippet_util.new_jump_index()
             local panel_name, class_name = get_panel_name_from_file_name(index)
             local desc_index = index()
@@ -702,10 +703,10 @@ cmd_snip.register(snip_filetype, {
                 { " * ",                          desc_index },
                 " */",
                 "@uiRegister({",
-                { "    panelName: '",                                    panel_name, "'," },
-                { "    panelDesc: '",                                    desc_index, "'," },
-                { "    prefabPath: '",                                   index(),    "'," },
-                { "    fullScreen: ",                                    index(),    "," },
+                { "    panelName: '",                                    panel_name,             "'," },
+                { "    panelDesc: '",                                    desc_index,             "'," },
+                { "    prefabPath: '",                                   prefab_path or index(), "'," },
+                { "    fullScreen: ",                                    index(),                "," },
                 { "    sortOrderType: UI_COMMON.CANVAS_SORT_ORDER.MENU," },
                 "})",
                 "// eslint-disable-next-line @typescript-eslint/no-unused-vars",
@@ -747,7 +748,8 @@ cmd_snip.register(snip_filetype, {
         end,
     },
     ["init panel"] = {
-        content = function()
+        args = { { "prefab-path", is_optional = true } },
+        content = function(prefab_path)
             local index = snippet_util.new_jump_index()
             local panel_name, class_name = get_panel_name_from_file_name(index)
             local desc_index = index()
@@ -765,10 +767,10 @@ cmd_snip.register(snip_filetype, {
                 { " * ",                          desc_index },
                 " */",
                 "@uiRegister({",
-                { "    panelName: '",                                    panel_name, "'," },
-                { "    panelDesc: '",                                    desc_index, "'," },
-                { "    prefabPath: '",                                   index(),    "'," },
-                { "    fullScreen: ",                                    index(),    "," },
+                { "    panelName: '",                                    panel_name,             "'," },
+                { "    panelDesc: '",                                    desc_index,             "'," },
+                { "    prefabPath: '",                                   prefab_path or index(), "'," },
+                { "    fullScreen: ",                                    index(),                "," },
                 { "    sortOrderType: UI_COMMON.CANVAS_SORT_ORDER.MENU," },
                 "})",
                 "// eslint-disable-next-line @typescript-eslint/no-unused-vars",
@@ -787,7 +789,8 @@ cmd_snip.register(snip_filetype, {
         end,
     },
     ["init popup"] = {
-        content = function()
+        args = { { "prefab-path", is_optional = true } },
+        content = function(prefab_path)
             local index = snippet_util.new_jump_index()
             local panel_name, class_name = get_panel_name_from_file_name(index)
             local desc_index = index()
@@ -805,9 +808,9 @@ cmd_snip.register(snip_filetype, {
                 { " * ",                          desc_index },
                 " */",
                 "@uiRegister({",
-                { "    panelName: '",                                    panel_name, "'," },
-                { "    panelDesc: '",                                    desc_index, "'," },
-                { "    prefabPath: '",                                   index(),    "'," },
+                { "    panelName: '",                                    panel_name,             "'," },
+                { "    panelDesc: '",                                    desc_index,             "'," },
+                { "    prefabPath: '",                                   prefab_path or index(), "'," },
                 { "    fullScreen: false," },
                 { "    sortOrderType: UI_COMMON.CANVAS_SORT_ORDER.MENU," },
                 "})",
@@ -858,16 +861,18 @@ cmd_snip.register(snip_filetype, {
         end,
     },
     ["init sub-view"] = {
-        content = function()
+        args = { { "prefab-path", is_optional = true } },
+        content = function(prefab_path)
             local index = snippet_util.new_jump_index()
             local panel_name, class_name = get_panel_name_from_file_name(index)
             return {
                 "import { LOGGING } from 'script_logic/common/base/logging';",
                 "import { UISubView } from 'script_logic/base/ui_system/label_view/ui_sub_view';",
                 "",
-                { "const Log = LOGGING.logger('", panel_name, "');" },
+                { "const Log = LOGGING.logger('", panel_name,      "');" },
                 "",
-                { "export class ",                class_name, " extends UISubView {" },
+                { "// prefab: this - ",           prefab_path or 1 },
+                { "export class ",                class_name,      " extends UISubView {" },
                 "    protected onInit(): void {}",
                 "",
                 "    protected initEvents(): void {}",
