@@ -948,6 +948,23 @@ cmd_snip.register(snip_filetype, {
         end,
     },
 
+    ["misc show-reward"] = {
+        content = function()
+            return {
+                "if (!ret.ok) {",
+                "    return;",
+                "}",
+                "",
+                "const items = ret.items;",
+                "if (!items) {",
+                "    return;",
+                "}",
+                "",
+                "REWARD_MGR.showPlainReward('reward_dict', items);"
+            }
+        end
+    },
+
     ["network send"] = {
         args = { "name" },
         content = function(name)
