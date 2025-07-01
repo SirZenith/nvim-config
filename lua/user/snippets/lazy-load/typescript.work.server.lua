@@ -221,7 +221,7 @@ cmd_snip.register(snip_filetype, {
                 "};",
                 "",
                 "// 循环节日活动服务",
-                "export const registersysmodule = (): void => {",
+                "export const registerSysModule = (): void => {",
                 "    __init__();",
                 "};",
             }
