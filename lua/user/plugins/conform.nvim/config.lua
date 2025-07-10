@@ -60,7 +60,6 @@ user.plugin.conform_nvim = {
 
     -- default argument used when call `format()`
     default_format_opts = {
-        timeout_ms = 500,
         lsp_format = "first",
     },
 
