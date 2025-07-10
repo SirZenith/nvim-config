@@ -7,14 +7,24 @@ local filetype_map = require "user/plugins/conform.nvim/filetype_map"
 ---@alias user.plugin.FormatterGetter fun(bufnr: integer): user.plugin.FormatterList
 ---@alias user.plugin.FormatterFileTypeMap table<string, user.plugin.FormatterList | user.plugin.FormatterGetter>
 
----@class user.plugin.FormattingArgs
+---@alias user.plugin.conform.lspFormatOpts
+---| "never"
+---| "fallback"
+---| "prefer"
+---| "first"
+---| "last"
+
+---@class user.plugin.DefaultFormattingArgs
 ---@field timeout_ms? integer
+---@field lsp_format? user.plugin.conform.lspFormatOpts
+---@field quiet? boolean
+---@field stop_after_first? boolean
+
+---@class user.plugin.FormattingArgs : user.plugin.DefaultFormattingArgs
 ---@field bufnr? integer
 ---@field async? boolean
 ---@field dry_run? boolean
 ---@field formatters? string[]
----@field lsp_fallback? boolean | "always"
----@field quiet? boolean
 ---@field range? table
 --
 ---@field id? integer # get passed to vim.lsp.buf.format when needed
@@ -46,20 +56,26 @@ user.plugin.conform_nvim = {
     -- Special filetypes:
     -- - `*`: all file type.
     -- - `_`: default formatter for files with no available formatter.
-    ---@type user.plugin.FormatterFileTypeMap
     formatters_by_ft = filetype_map,
+
+    -- default argument used when call `format()`
+    default_format_opts = {
+        timeout_ms = 500,
+        lsp_format = "first",
+    },
 
     -- Argument used for `format()` call on save
     ---@type user.plugin.FormattingArgs?
     format_on_save = {
-        -- I recommend these options. See :help conform.format for details.
         timeout_ms = 500,
-        lsp_fallback = true,
+        lsp_format = "first",
     },
 
     -- Argument used for `format()` call after save
     ---@type user.plugin.FormattingArgs?
-    format_after_save = nil,
+    format_after_save = {
+        lsp_format = "first",
+    },
 
     -- Log level form `:ConformInfo`
     ---@type integer
@@ -67,6 +83,8 @@ user.plugin.conform_nvim = {
 
     ---@type boolean
     notify_on_error = true,
+    ---@type boolean
+    notify_no_formatters = true,
 }
 
 return user.plugin.conform_nvim:with_wrap(function(value)

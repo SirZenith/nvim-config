@@ -20,6 +20,7 @@ local PLUGIN_TARGETS = {
     "mongosh.nvim",
     "panelpal.nvim",
     "snippet-loader",
+    "conform.nvim",
 }
 
 local ADDON_LIBRARIES = {
