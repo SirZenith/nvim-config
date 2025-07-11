@@ -60,9 +60,6 @@ user.plugin.nvim_treesitter = {
 
         -- --------------------------------------------------------------------
         -- Extensions
-        autotag = {
-            enable = true,
-        },
         highlight = {
             enable = true,
 
