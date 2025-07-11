@@ -161,11 +161,6 @@ local specs = {
         autocmd_load_checker = putl.buffer_enter_trigger_loading_predicate,
     },
     {
-        "ThePrimeagen/vim-be-good",
-        -- enabled = false,
-        cmd = "VimBeGood",
-    },
-    {
         -- Symbol tree view for code and markup
         "simrat39/symbols-outline.nvim",
         -- enabled = false,
