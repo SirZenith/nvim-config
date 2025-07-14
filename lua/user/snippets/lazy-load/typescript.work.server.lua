@@ -64,6 +64,35 @@ cmd_snip.register(snip_filetype, {
         },
     },
 
+    ["charge precheck"] = {
+        content = {
+            "export const onGamePlayPayPreCheck = (",
+            "    agent: Agent,",
+            "    req: ReqPayPreCheck",
+            "): IOkLocaleErrRet & { isHandle: boolean } => {",
+            "    // TODO 添加检查内容",
+            "    return { ok: false, isHandle: false };",
+            "};",
+        },
+    },
+    ["charge callback"] = {
+        content = {
+            "/**",
+            " * @param role - 玩家数据",
+            " * @param chargeUid - 充值 ID",
+            " * @param extraData",
+            " * @param rewardItems - 奖励物品字典",
+            " */",
+            "const onChargeOrderDeliver = (",
+            "    role: IServerRole,",
+            "    chargeUid: number,",
+            "    extraData: IDeliverRoleExtraData,",
+            "    rewardItems: { [itemId: number]: number }",
+            "): void => {",
+            "};",
+        },
+    },
+
     ["forward event-interface"] = {
         args = { { "name", is_optional = true } },
         content = function(name)
