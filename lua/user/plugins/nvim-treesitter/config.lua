@@ -39,6 +39,7 @@ user.plugin.nvim_treesitter = {
             "query",
             "rasi",
             "regex",
+            "ron",
             "rust",
             "sql",
             "toml",
