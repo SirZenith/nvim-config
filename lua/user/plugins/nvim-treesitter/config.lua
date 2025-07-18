@@ -41,6 +41,7 @@ user.plugin.nvim_treesitter = {
             "regex",
             "ron",
             "rust",
+            "scss",
             "sql",
             "toml",
             "typescript",
@@ -48,6 +49,7 @@ user.plugin.nvim_treesitter = {
             "vim",
             "vimdoc",
             "yaml",
+            "yuck", -- configuration language for eww
             "zig",
         },
 
