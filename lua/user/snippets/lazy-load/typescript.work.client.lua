@@ -1184,4 +1184,25 @@ cmd_snip.register(snip_filetype, {
             return make_timer_snippet(name, "addRepeatTimer", "clearRepteatTimer");
         end,
     },
+
+    ["uimap fx"] = {
+        content = {
+            { "private panelFxMap: UI_UTILITY.FxMap = new Map();" },
+        },
+    },
+    ["uimap model"] = {
+        content = {
+            { "private modelInfoMap: UI_UTILITY.ModelInfoMap = new Map();" },
+        },
+    },
+    ["uimap steps"] = {
+        content = {
+            { "private stepHandleMap: CLIENT_UTILITY.AsyncStepsHandleMap = new Map();" },
+        },
+    },
+    ["uimap timer"] = {
+        content = {
+            { "private timerMap: UI_UTILITY.TimerMap = new Map();" },
+        },
+    },
 })
