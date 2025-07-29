@@ -109,10 +109,10 @@ user.plugin.lualine = {
 
                 diagnostics_color = {
                     -- Same values as the general color option can be used here.
-                    error = "DiagnosticError", -- Changes diagnostics' error color.
-                    warn  = "DiagnosticWarn",  -- Changes diagnostics' warn color.
-                    info  = "DiagnosticInfo",  -- Changes diagnostics' info color.
-                    hint  = "DiagnosticHint",  -- Changes diagnostics' hint color.
+                    error = "LspStatusIndicatorErrors",
+                    warn  = "LspStatusIndicatorWarnings",
+                    info  = "LspStatusIndicatorInfo",
+                    hint  = "LspStatusIndicatorHint",
                 },
                 symbols = { error = " ", warn = " ", info = " ", hint = "󰌵 " },
                 colored = true,           -- Displays diagnostics status in color if set to true.
