@@ -1,5 +1,4 @@
 local putl = require "user.config.plugin.util"
-local workspace = require "user.config.workspace"
 
 local ucs = putl.user_config_spec
 local cs = putl.colorscheme_spec
@@ -316,18 +315,11 @@ local specs = {
         -- dev = true,
         dependencies = {
             "SirZenith/panelpal.nvim",
-            -- "nvim-lua/lsp-status.nvim",
             "neovim/nvim-lspconfig",
         },
         ft = "TelescopePrompt",
         event = "BufNew",
         autocmd_load_checker = putl.new_buffer_trigger_loading_predicate,
-    },
-    {
-        -- LSP status component for Lualine
-        "nvim-lua/lsp-status.nvim",
-        enabled = false,
-        lazy = true,
     },
     {
         -- LSP completion item kind icon for completion menu

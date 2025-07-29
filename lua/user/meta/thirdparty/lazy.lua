@@ -1,7 +1,7 @@
 ---@meta
 
 ---@class lazy.PluginSpec
----@field [1] string # URL to plugin
+---@field [1] string? # URL to plugin
 ---@field dir string? # path to local plugin
 ---@field url string? # custom git URL to plugin host
 ---@field name? string # Specifies an alias under which to install the plugin
