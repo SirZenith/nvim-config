@@ -262,7 +262,7 @@ local specs = {
         -- build = ":TSUpdate",
         -- branch = "main",
         ft = "TelescopePrompt",
-        event = "BufNew",
+        event = { "BufNew", "CmdlineEnter" },
         autocmd_load_checker = putl.new_buffer_trigger_loading_predicate,
     },
     {
