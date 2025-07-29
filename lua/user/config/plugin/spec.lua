@@ -298,15 +298,6 @@ local specs = {
         },
     },
     {
-        "nvim-treesitter/playground",
-        -- enabled = false,
-        dependencies = {
-            "nvim-treesitter/nvim-treesitter"
-        },
-        event = "BufEnter",
-        autocmd_load_checker = putl.buffer_enter_trigger_loading_predicate,
-    },
-    {
         "hiphish/rainbow-delimiters.nvim",
         -- enabled = false,
         dependencies = {
