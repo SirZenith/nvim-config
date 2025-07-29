@@ -325,7 +325,7 @@ local specs = {
         -- dev = true,
         dependencies = {
             "SirZenith/panelpal.nvim",
-            "nvim-lua/lsp-status.nvim",
+            -- "nvim-lua/lsp-status.nvim",
             "neovim/nvim-lspconfig",
         },
         ft = "TelescopePrompt",
@@ -335,7 +335,7 @@ local specs = {
     {
         -- LSP status component for Lualine
         "nvim-lua/lsp-status.nvim",
-        -- enabled = false,
+        enabled = false,
         lazy = true,
     },
     {
