@@ -1,5 +1,3 @@
-local env_config = require "user.config.env"
-
 local user = require "user"
 local plugin_util = require "user.config.plugin.util"
 local util = require "user.util"
@@ -266,15 +264,17 @@ function M.setup(specs)
         setup_plugin_sepc(spec)
     end
 
-    setup_lazy_load {
-        name = "observer",
-        lazy_load = {
-            event = "FileType",
-            event_load_checker = function()
-                return false
-            end,
+    if log_util.log_level == vim.log.levels.TRACE then
+        setup_lazy_event {
+            name = "observer",
+            lazy_load = {
+                event = "FileType",
+                event_load_checker = function()
+                    return false
+                end,
+            }
         }
-    }
+    end
 
     load_spec = manager.load
     manager.setup(specs, on_plugin_loaded)
