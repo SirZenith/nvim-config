@@ -1,6 +1,6 @@
 local user = require "user"
 local spec = require "user.config.plugin.spec"
-local loader = require "user.config.plugin.loaders.lazy"
+local loader = require "user.config.plugin.loader"
 local util = require "user.util"
 
 local M = {}

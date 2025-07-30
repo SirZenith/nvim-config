@@ -1,10 +1,38 @@
----@class user.plugin.PluginSpec : lazy.PluginSpec
----@field before_load? fun() # function to be called before any plugin spec is passed to plugin loader
----@field after_finalization? fun() # function to be called after plugin config is finalized
----@field config_no_defer? boolean # finalize config module of plugin right after it's loaded
----@field config? fun(spec: user.plugin.PluginSpec) # cache value of `config` function before being overridden by plugin loader setup.
----@field old_config_func? fun(spec: user.plugin.PluginSpec) # cache value of `config` function before being overridden by plugin loader setup.
----@field autocmd_load_checker? fun(spec: user.plugin.PluginSpec, args: table): boolean
+---@class user.plugin.LazyLoadInfo
+---@field lazy? boolean # If true, plugin would only be loaded when it gets `require`d, or lazy loading handler is triggered
+---@field event? string | string[] # Specifies autocommand events which load this plugin.
+---@field event_load_checker? fun(spec: user.plugin.PluginSpec, args: table): boolean # gets called when lazy load is triggered, plugin will only be load when this function retruns true.
+---@field cond? string | function | (string | function)[] # Specifies a conditional test to load this plugin
+---@field ft? string | string[] # Specifies filetypes which load this plugin.
+---@field cmd? string | string[] # Specifies commands which load this plugin. Can be an autocmd pattern.
+---@field keys? string | string[] # Specifies maps which load this plugin. See "Keybindings".
+---@field module? string | string[] # Specifies Lua module names for require. When requiring a string which starts with one of these module names, the plugin will be loaded.
+--
+---@field very_lazy? boolean # Use `VeryLazy` event provided by lazy.nvim as load trigger
+
+---@class user.plugin.PluginSpec
+---@field [1] string? # URL to plugin
+---@field dir string? # path to local plugin
+---@field url string? # custom git URL to plugin host
+---@field name? string # Specifies an alias under which to install the plugin
+--
+---@field dev? boolean # If true, a local directory will be used instead
+---@field enabled? boolean # Is the plugins activated
+--
+---@field dependencies? string | (string | user.plugin.PluginSpec)[] # Specifies plugin dependencies. When local plugins is specified as dependency, plugin spec value with `dir` field should be used.
+---@field priority? number # useful for non-lazy plugins, higher number means higher priority, default is 50
+--
+---@field branch? string # Specifies a git branch to use
+---@field tag? string # Specifies a git tag to use. Supports '*' for "latest tag"
+---@field commit? string # Specifies a git commit to use
+---@field version? string | false # version to use from the repository
+---@field pin? boolean # if true, this plugin will not be updated by Lazy
+---@field submodules boolean? # if false, submodules will be ignored, default to true,
+--
+---@field on_setup? fun() | string # function to be called or command to run, before any plugin spec is passed to plugin loader backend
+---@field on_finalized? fun() # function to be called after plugin config is finalized
+---@field no_pending? boolean # finalize config module of plugin eagerly, never add it to pending spec list
+---@field lazy_load? user.plugin.LazyLoadInfo
 
 ---@class user.plugin.UserConfigSpec : user.plugin.PluginSpec
 ---@field no_auto_dependencies? boolean

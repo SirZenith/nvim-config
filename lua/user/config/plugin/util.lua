@@ -17,6 +17,26 @@ function M.get_plugin_name_from_spec(spec)
     return name
 end
 
+-- copy key-value pairs from src table to dst table. For all src's keys, if they
+-- are assigned a value other than `false` in field_map, then that value will be
+-- used as key to update dst table; if `false` is assigned, that thoese keys will
+-- be discarded; if they are not presented in field_map, the original key will
+-- be used as is to update dst.
+---@param dst table
+---@param src table
+---@param field_map table
+function M.map_plugin_spec_fields(dst, src, field_map)
+    for key, value in pairs(src) do
+        local map_to = field_map[key]
+
+        if map_to == nil then
+            dst[key] = value
+        elseif map_to ~= false then
+            dst[map_to] = value
+        end
+    end
+end
+
 ---@param spec user.plugin.PluginSpec
 function M.user_config_init(spec)
     local module = spec.name
@@ -100,7 +120,7 @@ end
 ---@param spec user.plugin.PluginSpec
 function M.colorscheme_spec(spec)
     spec.priority = 100
-    spec.after_finalization = M.after_color_scheme_loaded
+    spec.on_finalized = M.after_color_scheme_loaded
     return spec
 end
 

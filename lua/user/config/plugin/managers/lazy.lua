@@ -1,14 +1,10 @@
 local env_config = require "user.config.env"
 
-local user = require "user"
 local plugin_util = require "user.config.plugin.util"
 local util = require "user.util"
-local fs_util = require "user.util.fs"
-local log_util = require "user.util.log"
 
-local fn = vim.fn
-local get_plugin_name_from_spec = plugin_util.get_plugin_name_from_spec
 local import = util.import
+local get_plugin_name_from_spec = plugin_util.get_plugin_name_from_spec
 
 local function require_manager()
     if vim.fn.executable("git") == 0 then
@@ -254,310 +250,107 @@ local manager_config = {
 }
 
 -- ----------------------------------------------------------------------------
--- loading helpers
-
----@param name string # plugin base name
-local function get_config_path(name)
-    return fs_util.path_join("user", "plugins", name, "config.lua")
-end
-
----@param name string # plugin base name
-local function get_keybinding_path(name)
-    return fs_util.path_join("user", "plugins", name, "keybinding.lua")
-end
-
--- Rune before command before adding plugin spec to load list
----@param spec table
-local function handling_before_load_cmd(spec)
-    local before_load = spec.before_load
-    local before_load_type = type(before_load)
-
-    if before_load_type == "string" then
-        vim.cmd(before_load)
-    elseif before_load_type == "function" then
-        before_load()
-    end
-end
-
----@param module_path string # module path relative to user config home directory
----@param reload boolean
----@return any?
-local function load_config_module(module_path, reload)
-    local file = fs_util.path_join(user.env.USER_RUNTIME_PATH(), module_path)
-    if fn.filereadable(file) == 0 then
-        return nil
-    end
-
-    if reload then
-        package.loaded[file] = nil
-    end
-
-    return import(file)
-end
-
--- ----------------------------------------------------------------------------
 
 local M = {}
 
-local augroup = vim.api.nvim_create_augroup("user.util.plugin_loader.lazy", { clear = true })
+local field_map = {
+    dependencies = false,
 
-M._is_bootstrap = is_bootstrap
-M._is_finalized = false
-M._pending_spec_list = nil ---@type user.plugin.PluginSpec[] | nil
-M._custom_autocmd_listener = {} ---@type table<string, table<user.plugin.PluginSpec, true>>
+    on_setup = false,
+    on_finalized = false,
+    no_pending = false,
+    lazy_load = false,
 
--- Add plugin specification to postpone list.
----@param spec user.plugin.PluginSpec
-function M._add_pending_spec(spec)
-    local pending_list = M._pending_spec_list
-    if not pending_list then
-        pending_list = {}
-        M._pending_spec_list = pending_list
-    end
+    no_auto_dependencies = false,
+}
 
-    pending_list[#pending_list + 1] = spec
-end
+local lazy_info_field_map = {
+    lazy = false,
+    event = false,
+    event_load_checker = false,
+    very_lazy = false,
+}
 
--- Finalize all postpone plugin configs.
-function M._finalize_all_pending_spec()
-    local pending_list = M._pending_spec_list
-    if pending_list then
-        for _, spec in ipairs(pending_list) do
-            M._finalize_plugin_config(spec)
-        end
-    end
-    M._pending_spec_list = nil
-end
+---@param dst lazy.PluginSpec
+---@param src user.plugin.PluginSpec | string
+local function copy_dependencies(dst, src)
+    local src_dep = src.dependencies
+    if not src_dep then return end
 
----@param event string
----@param args table
-function M._on_autocmd_triggered(event, args)
-    local set = M._custom_autocmd_listener[event]
-    if not set then return end
-
-    log_util.trace("+ plugin event:", event)
-
-    for spec in pairs(set) do
-        local ok = spec.autocmd_load_checker(spec, args)
-        if ok then
-            local full_name = get_plugin_name_from_spec(spec)
-            log_util.trace("  +", full_name or spec)
-            if full_name then
-                local segments = vim.split(full_name, "/")
-                local name = segments[#segments]
-                manager.load { plugins = { name } }
-            end
-
-            set[spec] = nil
-        end
-    end
-
-    if not next(set) then
-        log_util.trace("-", event, "\n", set)
-        M._custom_autocmd_listener[event] = nil
-        return
-    end
-    log_util.trace("*", event)
-end
-
----@param event string
----@param spec user.plugin.PluginSpec
-function M._register_autocmd_listener(event, spec)
-    local set = M._custom_autocmd_listener[event]
-    if not set then
-        set = {}
-        M._custom_autocmd_listener[event] = set
-
-        vim.api.nvim_create_autocmd(event, {
-            group = augroup,
-            callback = function(args)
-                M._on_autocmd_triggered(event, args)
-            end
-        })
-    end
-
-    set[spec] = true
-end
-
-function M._remove_all_listeners_for_spec(spec)
-    for _, set in pairs(M._custom_autocmd_listener) do
-        set[spec] = nil
-    end
-end
-
--- Check if a specification is config to used custom autocmd handler. If so,
--- register it to autocmd channel. After registration, spec will be modified to
--- `lazy = true` and `event` field will be removed.
----@param spec user.plugin.PluginSpec
-function M._try_setup_spec_autocmd(spec)
-    local plugin_name = get_plugin_name_from_spec(spec)
-    if not plugin_name then
-        return
-    end
-
-    if not spec.autocmd_load_checker then
-        return false
-    end
-
-    local event = spec.event
-    if not event then
-        log_util.warn(
-            "plugin specified custom autocmd handler but doesn't provide autocmd name.",
-            spec
-        )
-        return false
-    end
-
-    local is_custom = true
-
-    if type(event) == "string" then
-        M._register_autocmd_listener(event, spec)
-    elseif type(event) == "table" then
-        for _, value in ipairs(event) do
-            if type(value) == "string" then
-                M._register_autocmd_listener(value, spec)
+    if type(src_dep) == "string" then
+        dst.dependencies = src_dep
+    else
+        local dependencies = {}
+        for _, dep in pairs(src_dep) do
+            if type(dep) == "string" then
+                table.insert(dependencies, dep)
             else
-                log_util.warn(
-                    "autocmd name value for custom handler should be string",
-                    value
-                )
+                table.insert(dependencies, M.convert_sepc(dep))
             end
         end
-    else
-        is_custom = true
-    end
 
-    if is_custom then
-        spec.event = nil
-        spec.lazy = true
+        dst.dependencies = dependencies
     end
 end
 
--- Import config modules of a plugin.
----@param plugin_name string
----@param reload? boolean
----@return any[] | nil
-function M._load_config_modules(plugin_name, reload)
-    if M._is_bootstrap then return nil end
+---@param spec user.plugin.PluginSpec | string
+---@return lazy.PluginSpec
+function M.convert_sepc(spec)
+    ---@type lazy.PluginSpec
+    local result = {}
 
-    reload = reload or false
+    local spec_t = type(spec)
 
-    local plugin_basename = vim.fs.basename(plugin_name)
-    local paths = {
-        get_config_path(plugin_basename),
-        get_keybinding_path(plugin_basename),
-    }
+    if spec_t == "string" then
+        result[1] = spec
+    elseif spec_t == "table" then
+        plugin_util.map_plugin_spec_fields(result, spec, field_map)
 
-    local modules = {}
-    for _, path in ipairs(paths) do
-        modules[#modules + 1] = load_config_module(path, reload)
-    end
+        copy_dependencies(result, spec)
 
-    return modules
-end
+        local lazy_info = spec.lazy_load
+        if lazy_info then
+            result.lazy = true
+            plugin_util.map_plugin_spec_fields(result, lazy_info, lazy_info_field_map)
 
--- Load and finalize config modules of plugin.
----@param spec user.plugin.PluginSpec
-function M._finalize_plugin_config(spec)
-    local plugin_name = get_plugin_name_from_spec(spec)
-    if not plugin_name then
-        log_util.warn("failed to load plugin config: spec has no name", spec)
-        return
-    end
-
-    local old_config_func = spec.old_config_func
-    if old_config_func then
-        old_config_func(spec)
-    end
-
-    local modules = M._load_config_modules(plugin_name)
-    if modules then
-        for _, item in ipairs(modules) do
-            local ok = util.finalize_module(item)
-            if not ok then
-                log_util.warn("failed to finalize plugin config:", plugin_name)
+            if lazy_info.very_lazy then
+                result.event = "VeryLazy"
             end
         end
     end
 
-    local after_finalization = spec.after_finalization
-    if after_finalization then
-        after_finalization()
-    end
-
-    M._remove_all_listeners_for_spec(spec)
-
-    log_util.trace("    *", plugin_name)
-end
-
----@param spec user.plugin.PluginSpec
-function M._on_plugin_loaded(spec)
-    if M._is_finalized or spec.config_no_defer then
-        M._finalize_plugin_config(spec)
-    else
-        M._add_pending_spec(spec)
-    end
-end
-
----@param spec string | user.plugin.PluginSpec
-function M._plugin_spec_preprocess(spec)
-    if type(spec) == "string" then
-        spec = { spec }
-    end
-
-    handling_before_load_cmd(spec)
-
-    spec.old_config_func = spec.config
-    spec.config = M._on_plugin_loaded
-
-    M._try_setup_spec_autocmd(spec)
+    return result;
 end
 
 -- Load plugin specifications into plugin manager.
----@param specs user.plugin.PluginSpec[]
-function M.setup(specs)
-    if M._is_bootstrap then return end
+---@param specs (user.plugin.PluginSpec | string)[]
+---@param on_plugin_loaded fun(spec: user.plugin.PluginSpec | string)
+function M.setup(specs, on_plugin_loaded)
+    if is_bootstrap then return end
 
     local targets = {}
 
     for _, spec in ipairs(specs) do
-        M._plugin_spec_preprocess(spec)
-        table.insert(targets, spec)
-    end
+        local converted = M.convert_sepc(spec)
 
-    M._try_setup_spec_autocmd {
-        name = "observer",
-        event = "FileType",
-        autocmd_load_checker = function()
-            return false
-        end,
-    }
+        converted.config = function()
+            on_plugin_loaded(spec)
+        end
+
+        table.insert(targets, converted)
+    end
 
     manager.setup(targets, manager_config)
-
-    return M
 end
 
-function M.finalize()
-    M._is_finalized = true
-    M._finalize_all_pending_spec()
-end
+---@param spec (user.plugin.PluginSpec | string)[]
+function M.load(spec)
+    local full_name = type(spec) == "string" and spec or get_plugin_name_from_spec(spec)
+    if not full_name then return end
 
--- Utility function that loads config file of all plugins no matter they are
--- activated or not.
----@param specs user.plugin.PluginSpec[]
-function M.load_all_plugin_config(specs)
-    if not M._is_finalized then
-        log_util.info("plugin loader is not finalized yet")
-        return
-    end
-
-    for _, spec in ipairs(specs) do
-        local plugin_name = get_plugin_name_from_spec(spec)
-        if plugin_name then
-            M._load_config_modules(plugin_name, true)
-        end
-    end
+    local segments = vim.split(full_name, "/")
+    local name = segments[#segments]
+    manager.load { plugins = { name } }
 end
 
 return M
