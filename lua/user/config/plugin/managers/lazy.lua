@@ -210,11 +210,11 @@ local manager_config = {
             ---@type string[]
             disabled_plugins = {
                 "gzip",
-                -- "matchit",
+                "matchit",
                 -- "matchparen",
                 "netrwPlugin",
                 "tarPlugin",
-                -- "tohtml",
+                "tohtml",
                 "tutor",
                 "zipPlugin",
             },
