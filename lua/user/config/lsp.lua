@@ -223,7 +223,3 @@ user.lsp = {
     },
     load_extra_plugins = {},
 }
-
-return function()
-    vim.lsp.enable(server)
-end
