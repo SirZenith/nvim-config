@@ -87,9 +87,6 @@ local function on_plugins_loaded()
                 cfg_plugin,
             }, next_step)
         end,
-        function()
-            vim.fn.timer_start(200, show_editor_state)
-        end
     }
 end
 
@@ -118,8 +115,17 @@ local function setup_init_autocmd()
     vim.api.nvim_create_autocmd("User", {
         group = finalize_augroup,
         pattern = "LazyDone",
-        callback = on_plugins_loaded,
         once = true,
+        callback = on_plugins_loaded,
+    })
+
+    vim.api.nvim_create_autocmd("User", {
+        group = finalize_augroup,
+        pattern = "LazyVimStarted",
+        once = true,
+        callback = function()
+            vim.fn.timer_start(200, show_editor_state)
+        end,
     })
 end
 
