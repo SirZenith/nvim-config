@@ -58,33 +58,33 @@ end
 
 -- Finalize plugin configs.
 local function on_plugins_loaded()
-    local workspace = import "user.config.workspace"
+    local cfg_autocmd = import "user.config.autocmd"
+    local cfg_command = import "user.config.command"
+    local cfg_filetype = import "user.config.filetype"
+    local cfg_general = import "user.config.general"
+    local cfg_keybinding = import "user.config.keybinding"
+    local cfg_lsp = import "user.config.lsp"
+    local cfg_option = import "user.config.option"
+    local cfg_platform = import "user.config.platform"
+    local cfg_plugin = import "user.config.plugin"
+    local cfg_workspace = import "user.config.workspace"
 
     util.do_async_steps {
         function(next_step)
-            import "user.config.autocmd"
-            import "user.config.command"
-            import "user.config.filetype"
-            import "user.config.general"
-            import "user.config.keybinding"
-            import "user.config.lsp"
-            import "user.config.option"
-            import "user.config.platform"
-
-            workspace.load(next_step)
+            cfg_workspace.load(next_step)
         end,
         function(next_step)
             util.finalize_async({
-                import "user.config.option",
-                import "user.config.general",
-                import "user.config.filetype",
-                import "user.config.keybinding",
-                import "user.config.command",
-                import "user.config.lsp",
-                import "user.config.platform",
-                workspace,
-                import "user.config.autocmd",
-                import "user.config.plugin"
+                cfg_option,
+                cfg_general,
+                cfg_filetype,
+                cfg_keybinding,
+                cfg_command,
+                cfg_lsp,
+                cfg_platform,
+                cfg_workspace,
+                cfg_autocmd,
+                cfg_plugin,
             }, next_step)
         end,
         function()

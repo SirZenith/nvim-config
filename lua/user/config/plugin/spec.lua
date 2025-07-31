@@ -1,6 +1,5 @@
 local putl = require "user.config.plugin.util"
 
-local ucs = putl.make_user_config_spec
 local cs = putl.colorscheme_spec
 
 putl.turn_on_true_color()
@@ -190,7 +189,6 @@ local specs = {
             --   `nvim-notify` is only needed, if you want to use the notification view.
             --   If not available, we use `mini` as the fallback
             "rcarriga/nvim-notify",
-            ucs "user.config.lsp",
         },
         lazy_load = {
             very_lazy = true,
@@ -213,9 +211,6 @@ local specs = {
         -- Indent level visualization.
         "lukas-reineke/indent-blankline.nvim",
         main = "ibl",
-        dependencies = {
-            ucs "user.config.general",
-        },
         lazy_load = {
             event = "BufEnter",
             event_load_checker = putl.buffer_enter_trigger_loading_predicate,
@@ -301,7 +296,6 @@ local specs = {
         "hiphish/rainbow-delimiters.nvim",
         dependencies = {
             "nvim-treesitter/nvim-treesitter",
-            ucs "user.config.general",
         },
         lazy_load = {
             event = "BufEnter",
