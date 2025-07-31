@@ -5,10 +5,6 @@ local keybinding_util = require "user.config.keybinding.util"
 
 local import = util.import
 
-user.general.option.g = {
-    mapleader = " ",
-}
-
 user.keybinding = {
     __newentry = true,
     global_search = {

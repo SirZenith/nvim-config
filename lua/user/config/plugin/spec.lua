@@ -5,22 +5,8 @@ local cs = putl.colorscheme_spec
 
 putl.turn_on_true_color()
 
-local base_config = putl.make_user_base_config_spec()
-
 ---@type (user.plugin.PluginSpec | string)[]
 local specs = {
-    -- ------------------------------------------------------------------------
-    -- Local configs
-    base_config,
-
-    ucs "user.config.filetype",
-    ucs "user.config.keybinding",
-    ucs "user.config.command",
-    ucs "user.config.platform",
-    ucs "user.config.lsp",
-    ucs "user.config.workspace",
-    ucs "user.config.autocmd",
-
     -- ------------------------------------------------------------------------
     -- Themes
     cs { "EdenEast/nightfox.nvim" },
@@ -149,9 +135,6 @@ local specs = {
     },
     {
         "akinsho/toggleterm.nvim",
-        dependencies = {
-            base_config,
-        },
         lazy_load = {
             keys = "<F12>"
         },
@@ -231,7 +214,7 @@ local specs = {
         "lukas-reineke/indent-blankline.nvim",
         main = "ibl",
         dependencies = {
-            base_config,
+            ucs "user.config.general",
         },
         lazy_load = {
             event = "BufEnter",
@@ -318,7 +301,7 @@ local specs = {
         "hiphish/rainbow-delimiters.nvim",
         dependencies = {
             "nvim-treesitter/nvim-treesitter",
-            base_config,
+            ucs "user.config.general",
         },
         lazy_load = {
             event = "BufEnter",

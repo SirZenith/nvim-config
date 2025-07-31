@@ -45,7 +45,7 @@ end
 local UCS_CACHE = {};
 
 ---@param spec user.plugin.PluginSpec
-local function user_config_init(spec)
+local function finalize_user_config(spec)
     local module = spec.name
 
     if not module then
@@ -58,21 +58,20 @@ end
 
 ---@param module_info string | user.plugin.PluginSpec
 ---@return user.plugin.PluginSpec
----@return boolean is_cached
-local function make_config_spec(module_info)
+function M.make_user_config_spec(module_info)
     local cached_spec = UCS_CACHE[module_info]
     if type(cached_spec) == "table" then
-        return cached_spec, true
+        return cached_spec
     end
 
-    local env_config = require "user.config.env"
+    local env_config = require "user.base.env"
 
     ---@type user.plugin.PluginSpec
     local spec = {
         dir = env_config.USER_RUNTIME_PATH,
         priority = 1000,
         no_pending = true,
-        on_setup = user_config_init,
+        on_finalized = finalize_user_config,
     }
     UCS_CACHE[module_info] = spec
 
@@ -84,27 +83,6 @@ local function make_config_spec(module_info)
             spec[key] = value;
         end
     end
-
-    return spec, false
-end
-
----@return user.plugin.PluginSpec
-function M.make_user_base_config_spec()
-    local spec = make_config_spec "user.config.general"
-    return spec
-end
-
----@param module_info string | user.plugin.PluginSpec
----@return user.plugin.PluginSpec
-function M.make_user_config_spec(module_info)
-    local spec, is_cache = make_config_spec(module_info)
-    if is_cache then
-        return spec
-    end
-
-    spec.dependencies = {
-        M.make_user_base_config_spec(),
-    }
 
     return spec
 end

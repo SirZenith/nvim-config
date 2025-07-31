@@ -1,5 +1,5 @@
 local user = require "user"
-local config_entry = require "user.config.config_entry"
+local config_entry = require "user.base.config_entry"
 local util = require "user.util"
 local fs_util = require "user.util.fs"
 

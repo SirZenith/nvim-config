@@ -1,6 +1,6 @@
 local user = require "user"
 
-user.general.option.g.lightline = {
+user.option.g.lightline = {
     __newentry = true,
     colorscheme = "dogrun",
 }

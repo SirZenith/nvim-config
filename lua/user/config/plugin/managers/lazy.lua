@@ -1,4 +1,4 @@
-local env_config = require "user.config.env"
+local env_config = require "user.base.env"
 
 local plugin_util = require "user.config.plugin.util"
 local util = require "user.util"

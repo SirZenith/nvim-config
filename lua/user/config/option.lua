@@ -1,6 +1,10 @@
-local env_config = require "user.config.env"
+local user = require "user"
 
-local option = {
+local env_config = require "user.base.env"
+
+user.option = {
+    __newentry = true,
+
     o = {
         autochdir = false,              -- auto chdir into directory of current buffer
         autoread = true,                -- reload when file changed externally
@@ -76,8 +80,16 @@ local option = {
         shellredir = "out>",
     },
     g = {
+        mapleader = " ",
         python3_host_prog = env_config.PYTHON_PATH,
     },
 }
 
-return option
+return function()
+    for k, tbl in user.option:pairs() do
+        local target = vim[k]
+        for field, value in pairs(tbl) do
+            target[field] = value
+        end
+    end
+end

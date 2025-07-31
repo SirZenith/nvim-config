@@ -1,6 +1,6 @@
 local user = require "user"
 
-user.general.option.g = {
+user.option.g = {
     instant_username = "陆离",
     instant_only_cwd = true,
 

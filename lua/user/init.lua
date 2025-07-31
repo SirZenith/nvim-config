@@ -1,11 +1,11 @@
-local env_config = require "user.config.env"
+local env_config = require "user.base.env"
 if not env_config.ENV_CONFIG_INIT_OK then
     return { finalize = function() end }
 end
 
 local util = require "user.util"
 local log_uitl = require "user.util.log"
-local config_entry = require "user.config.config_entry"
+local config_entry = require "user.base.config_entry"
 
 local import = util.import
 
@@ -16,23 +16,6 @@ local user = config_entry.ConfigEntry:new {
 } --[[@as UserConfig]]
 
 -- ----------------------------------------------------------------------------
-
--- copying variables in user namespace into vim namespace.
----@param ... string # if a list of string is passed, each element in the list is treated as a key.
-local function load_into_vim(...)
-    local keys = { ... }
-
-    local option_tbl = user.general.option()
-    for _, k in ipairs(keys) do
-        local options = option_tbl[k]
-        if not options then return end
-
-        local target = vim[k]
-        for field, value in pairs(options) do
-            target[field] = value
-        end
-    end
-end
 
 -- chdir to directory of first file in command line arguments.
 -- This directory will be workspace directory of this run.
@@ -79,12 +62,20 @@ local function on_plugins_loaded()
 
     util.do_async_steps {
         function(next_step)
+            import "user.config.autocmd"
+            import "user.config.command"
+            import "user.config.filetype"
+            import "user.config.general"
+            import "user.config.keybinding"
+            import "user.config.lsp"
+            import "user.config.option"
+            import "user.config.platform"
+
             workspace.load(next_step)
         end,
         function(next_step)
-            load_into_vim("o", "g", "go")
-
             util.finalize_async({
+                import "user.config.option",
                 import "user.config.general",
                 import "user.config.filetype",
                 import "user.config.keybinding",
