@@ -78,7 +78,7 @@ local function on_plugins_loaded()
             util.finalize_async({
                 cfg_option,
                 cfg_command,
-                cfg_diagnostic,
+                cfg_diagnostics,
                 cfg_filetype,
                 cfg_keybinding,
                 cfg_lsp,
