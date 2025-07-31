@@ -104,16 +104,6 @@ local specs = {
         },
     },
     {
-        "nvim-tree/nvim-tree.lua",
-        enabled = false,
-        dependencies = {
-            "nvim-tree/nvim-web-devicons"
-        },
-        lazy_load = {
-            very_lazy = true,
-        }
-    },
-    {
         -- A file explorer that allows you edit your file system as vim buffer.
         "stevearc/oil.nvim",
         -- enabled = false,
