@@ -29,10 +29,7 @@
 ---@field pin? boolean # if true, this plugin will not be updated by Lazy
 ---@field submodules boolean? # if false, submodules will be ignored, default to true,
 --
----@field on_setup? fun() | string # function to be called or command to run, before any plugin spec is passed to plugin loader backend
----@field on_finalized? fun() # function to be called after plugin config is finalized
+---@field on_setup? fun(spec: user.plugin.PluginSpec) | string # function to be called or command to run, before any plugin spec is passed to plugin loader backend
+---@field on_finalized? fun(spec: user.plugin.PluginSpec) # function to be called after plugin config is finalized
 ---@field no_pending? boolean # finalize config module of plugin eagerly, never add it to pending spec list
 ---@field lazy_load? user.plugin.LazyLoadInfo
-
----@class user.plugin.UserConfigSpec : user.plugin.PluginSpec
----@field no_auto_dependencies? boolean

@@ -133,7 +133,7 @@ local function run_on_setup(spec)
     if before_load_type == "string" then
         vim.cmd(on_setup)
     elseif before_load_type == "function" then
-        on_setup()
+        on_setup(spec)
     end
 end
 
@@ -200,7 +200,10 @@ local function load_config_modules(plugin_name, reload)
 
     local modules = {}
     for _, path in ipairs(paths) do
-        modules[#modules + 1] = load_plugin_module(path, reload)
+        local module = load_plugin_module(path, reload)
+        if module then
+            modules[#modules + 1] = module
+        end
     end
 
     return modules
@@ -227,7 +230,7 @@ local function finalize_plugin_config(spec)
 
     local on_finalized = spec.on_finalized
     if on_finalized then
-        on_finalized()
+        on_finalized(spec)
     end
 
     remove_all_listeners_for_spec(spec)

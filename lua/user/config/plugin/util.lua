@@ -37,8 +37,15 @@ function M.map_plugin_spec_fields(dst, src, field_map)
     end
 end
 
+-- ----------------------------------------------------------------------------
+-- user base config
+
+-- Cache table for generated user config spec.
+---@type table<string | user.plugin.PluginSpec, user.plugin.PluginSpec>
+local UCS_CACHE = {};
+
 ---@param spec user.plugin.PluginSpec
-function M.user_config_init(spec)
+local function user_config_init(spec)
     local module = spec.name
 
     if not module then
@@ -49,27 +56,25 @@ function M.user_config_init(spec)
     require(spec.name)
 end
 
--- Cache table for generated user config spec.
----@type table<string | user.plugin.UserConfigSpec, user.plugin.PluginSpec>
-local UCS_CACHE = {};
-
----@param module_info string | user.plugin.UserConfigSpec
+---@param module_info string | user.plugin.PluginSpec
 ---@return user.plugin.PluginSpec
-function M.user_config_spec(module_info)
+---@return boolean is_cached
+local function make_config_spec(module_info)
     local cached_spec = UCS_CACHE[module_info]
     if type(cached_spec) == "table" then
-        return cached_spec
+        return cached_spec, true
     end
 
     local env_config = require "user.config.env"
 
-    ---@type user.plugin.UserConfigSpec
+    ---@type user.plugin.PluginSpec
     local spec = {
         dir = env_config.USER_RUNTIME_PATH,
-        config = M.user_config_init,
-        config_no_defer = true,
         priority = 1000,
+        no_pending = true,
+        on_setup = user_config_init,
     }
+    UCS_CACHE[module_info] = spec
 
     local info_type = type(module_info)
     if info_type == "string" then
@@ -80,20 +85,32 @@ function M.user_config_spec(module_info)
         end
     end
 
-    if not spec.no_auto_dependencies then
-        spec.dependencies = {
-            {
-                "user.config.general",
-                name = "user.config.general",
-                dir = env_config.USER_RUNTIME_PATH
-            },
-        }
+    return spec, false
+end
+
+---@return user.plugin.PluginSpec
+function M.make_user_base_config_spec()
+    local spec = make_config_spec "user.config.general"
+    return spec
+end
+
+---@param module_info string | user.plugin.PluginSpec
+---@return user.plugin.PluginSpec
+function M.make_user_config_spec(module_info)
+    local spec, is_cache = make_config_spec(module_info)
+    if is_cache then
+        return spec
     end
 
-    UCS_CACHE[module_info] = spec
+    spec.dependencies = {
+        M.make_user_base_config_spec(),
+    }
 
     return spec
 end
+
+-- ----------------------------------------------------------------------------
+-- color scheme config
 
 function M.turn_on_true_color()
     if vim.fn.has "nvim" then
@@ -105,7 +122,7 @@ function M.turn_on_true_color()
     end
 end
 
-function M.after_color_scheme_loaded()
+local function finalize_color_scheme()
     local user = require "user"
     local colorscheme = user.general.theme.colorscheme()
     if colorscheme and colorscheme ~= "" then
@@ -120,9 +137,11 @@ end
 ---@param spec user.plugin.PluginSpec
 function M.colorscheme_spec(spec)
     spec.priority = 100
-    spec.on_finalized = M.after_color_scheme_loaded
+    spec.on_finalized = finalize_color_scheme
     return spec
 end
+
+-- ----------------------------------------------------------------------------
 
 -- Looing for a directory recrusively in parent
 ---@param target_names string[] # target directory name
