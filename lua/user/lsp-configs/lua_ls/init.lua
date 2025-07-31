@@ -62,13 +62,14 @@ M.settings = {
     }
 }
 
-function M.on_new_config(config, root_dir)
+function M.before_init(_param, config)
     local settings = config.settings
     if not settings then
         settings = {}
         config.settings = settings
     end
 
+    local root_dir = config.root_dir
     local is_in_runtime_path = paths.check_in_nvim_runtime_path(root_dir)
 
     local runtime_version = "Lua 5.4"
@@ -87,7 +88,7 @@ function M.on_new_config(config, root_dir)
     lsp_util.upsert_config_entry(settings, "Lua.workspace.library", library_paths)
 end
 
-function M.root_dir(fname)
+local function get_root_dir(fname)
     local dir = vim.fs.dirname(fname)
     if vim.fs.basename(dir) == workspace.WORKSPACE_CONFIG_DIR_NAME then
         return dir
@@ -118,6 +119,14 @@ function M.root_dir(fname)
     end
 
     return lspconfig_util.find_git_ancestor(fname)
+end
+
+function M.root_dir(bufnr, on_dir)
+    local fname = vim.api.nvim_buf_get_name(bufnr)
+    local root_dir = get_root_dir(fname)
+    if root_dir then
+        on_dir(root_dir)
+    end
 end
 
 return M

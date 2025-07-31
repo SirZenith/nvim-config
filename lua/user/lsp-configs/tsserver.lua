@@ -80,7 +80,7 @@ M.settings = {
     }
 }
 
-function M.on_new_config(config)
+function M.before_init(_param, config)
     config.cmd = {
         "typescript-language-server",
         "--stdio",
