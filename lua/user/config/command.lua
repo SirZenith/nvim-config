@@ -44,8 +44,8 @@ end, {
 })
 
 cmd("DumpConfigMeta", function()
-    local plugin_specs = import "user.config.plugin.spec_"
-    local plugin_loader = import "user.config.plugin.managers.lazy"
+    local plugin_specs = import "user.config.plugin.spec"
+    local plugin_loader = import "user.config.plugin.loader"
     plugin_loader.load_all_plugin_config(plugin_specs)
 
     local filepath = fs_util.path_join(user.env.USER_RUNTIME_PATH(), "user", "meta", "user_config.lua")
