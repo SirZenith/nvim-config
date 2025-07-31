@@ -4,6 +4,6 @@ user.option.g.lightline = {
     __newentry = true,
     colorscheme = "dogrun",
 }
-user.general.theme = {
+user.theme = {
     colorscheme = "dogrun",
 }

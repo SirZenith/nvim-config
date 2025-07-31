@@ -8,6 +8,6 @@ user.option.g = {
     airline_theme = "twofirewatch",
 }
 
-user.general.theme = {
+user.theme = {
     colorscheme = "two-firewatch",
 }

@@ -1,5 +1,5 @@
 local user = require "user"
-local hilight = require "user.config.general.highlight"
+local hilight = require "user.config.theme.highlight"
 
 local color = hilight.color
 

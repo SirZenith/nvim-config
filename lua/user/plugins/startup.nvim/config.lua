@@ -1,5 +1,5 @@
 local user = require "user"
-local highlight = require "user.config.general.highlight"
+local highlight = require "user.config.theme.highlight"
 
 ---@alias user.plugin.StartupTextTypeContent string[] | fun(): string[]
 ---@alias user.plugin.StartupMappingTypeContent string[][] # mapping display name to { [1] = display name, [2] = command,  [3] = keybinding }

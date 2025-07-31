@@ -144,7 +144,7 @@ return function()
     local value = user.plugin.lualine()
     local lualine = require "lualine"
 
-    local theme = user.general.theme.lualine_theme()
+    local theme = user.theme.lualine_theme()
     value.options.theme = theme
 
     lualine.setup(value)

@@ -52,12 +52,12 @@ end
 
 local function finalize_color_scheme()
     local user = require "user"
-    local colorscheme = user.general.theme.colorscheme()
+    local colorscheme = user.theme.colorscheme()
     if colorscheme and colorscheme ~= "" then
         vim.cmd("colorscheme " .. colorscheme)
     end
 
-    for group, config in user.general.theme.highlight:pairs() do
+    for group, config in user.theme.highlight:pairs() do
         vim.api.nvim_set_hl(0, group, config)
     end
 end

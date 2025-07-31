@@ -1,4 +1,4 @@
-local highlight = require "user.config.general.highlight"
+local highlight = require "user.config.theme.highlight"
 
 local color = highlight.color
 

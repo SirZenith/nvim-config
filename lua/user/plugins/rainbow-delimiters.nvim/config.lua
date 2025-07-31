@@ -1,5 +1,5 @@
 local user = require "user"
-local highlight = require "user.config.general.highlight"
+local highlight = require "user.config.theme.highlight"
 
 user.plugin.rainbow_delimiters_nvim = {
     __newentry = true,

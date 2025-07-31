@@ -60,8 +60,9 @@ end
 local function on_plugins_loaded()
     local cfg_autocmd = import "user.config.autocmd"
     local cfg_command = import "user.config.command"
+    local cfg_diagnostics = import "user.config.diagnostics"
     local cfg_filetype = import "user.config.filetype"
-    local cfg_general = import "user.config.general"
+    local cfg_theme = import "user.config.theme"
     local cfg_keybinding = import "user.config.keybinding"
     local cfg_lsp = import "user.config.lsp"
     local cfg_option = import "user.config.option"
@@ -76,12 +77,13 @@ local function on_plugins_loaded()
         function(next_step)
             util.finalize_async({
                 cfg_option,
-                cfg_general,
+                cfg_command,
+                cfg_diagnostic,
                 cfg_filetype,
                 cfg_keybinding,
-                cfg_command,
                 cfg_lsp,
                 cfg_platform,
+                cfg_theme,
                 cfg_workspace,
                 cfg_autocmd,
                 cfg_plugin,

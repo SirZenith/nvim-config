@@ -1,6 +1,6 @@
 local user = require "user"
 
-user.general.theme = {
+user.theme = {
     colorscheme = "nordfox",
     lualine_theme = "nordfox",
 }
