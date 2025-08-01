@@ -295,11 +295,8 @@ local function merge_lsp_config(name)
     return result
 end
 
-return user.lsp:with_wrap(function(value)
-    local server_list = value.server_list
-    if not server_list then return end
-
-    for _, info in ipairs(value.server_list) do
+return function()
+    for _, info in user.lsp.server_list:ipairs() do
         if info.enabled ~= false then
             local name = type(info) == "string" and info or info[1]
 
@@ -310,4 +307,4 @@ return user.lsp:with_wrap(function(value)
             vim.lsp.enable(name)
         end
     end
-end)
+end
