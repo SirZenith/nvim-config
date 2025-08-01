@@ -81,10 +81,10 @@ local function on_plugins_loaded()
                 cfg_diagnostics,
                 cfg_filetype,
                 cfg_keybinding,
-                cfg_lsp,
                 cfg_platform,
                 cfg_theme,
                 cfg_workspace,
+                cfg_lsp,
                 cfg_autocmd,
                 cfg_plugin,
             }, next_step)

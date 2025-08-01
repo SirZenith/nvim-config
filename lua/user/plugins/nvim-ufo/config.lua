@@ -97,13 +97,14 @@ return user.plugin.nvim_ufo:with_wrap(function(value)
     target.foldlevel = 99
     target.foldlevelstart = 99
 
-    user.lsp.capabilities_settings:append {
+    user.lsp.capabilities_list:append {
         textDocument = {
+            -- required by nvim-ufo
             foldingRange = {
                 dynamicRegistration = false,
-                lineFoldingOnly = true
-            }
-        }
+                lineFoldingOnly = true,
+            },
+        },
     }
 
     ufo.setup(value)

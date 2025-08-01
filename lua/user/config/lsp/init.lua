@@ -5,25 +5,16 @@ local log_util = require "user.util.log"
 
 user.lsp = {
     __newentry = true,
-    root_path = fs_util.path_join(user.env.USER_RUNTIME_PATH(), "user", "lsp-configs"),
+
+    kind_label = config_const.KIND_LABEL,
     log_update_method = "append",
     log_scroll_method = "bottom",
-    on_attach_callbacks = {},
+
+    ---@type boolean | fun(client: vim.lsp.Client, bufnr: integer): boolean
     use_inlay_hint = false,
-    capabilities_settings = {
-        {
-            textDocument = {
-                -- required by nvim-ufo
-                foldingRange = {
-                    dynamicRegistration = false,
-                    lineFoldingOnly = true,
-                },
-            },
-        },
-    },
-    format_args = {
-        async = true
-    },
+
+    ---@type table[]
+    capabilities_list = {},
     keymap = {
         -- utility
         ["<F2>"] = vim.lsp.buf.rename,
@@ -52,10 +43,42 @@ user.lsp = {
             end
 
             local msg = table.concat(paths, ",\n")
-            log_util.info(msg)
+            vim.notify(msg)
         end,
     },
-    kind_label = config_const.KIND_LABEL,
+
+    ---@type (fun(client: vim.lsp.Client, bufnr: integer))[]
+    on_attach_callbacks = {
+        -- setup keymap
+        function(_client, bufnr)
+            local set = vim.keymap.set
+            local opts = { noremap = true, silent = true, buffer = bufnr }
+            for key, callback in user.lsp.keymap:pairs() do
+                set("n", key, callback, opts)
+            end
+        end,
+
+        -- try to turn on inlay hint
+        function(client, bufnr)
+            if not client.server_capabilities.inlayHintProvider then
+                return
+            end
+
+            local checker = user.lsp.use_inlay_hint()
+            local checker_type = type(checker)
+
+            local is_on = false
+            if checker_type == "boolean" then
+                is_on = checker
+            elseif checker_type == "function" then
+                is_on = checker(client, bufnr)
+            end
+
+            vim.lsp.inlay_hint.enable(is_on, { bufnr = bufnr })
+        end,
+    },
+
+    -- This field allows injecting configuration from workspace config
     server_config = {},
     server_list = {
         {
@@ -206,20 +229,85 @@ user.lsp = {
             },
         },
     },
-    extra_server = {
-        markdown = {
-            cmd = { "vscode-markdown-language-server", "--stdio" },
-            filetypes = { "markdown" },
-            root_dir = function()
-                local lspconfig_util = require "lspconfig.util"
-                return lspconfig_util.root_pattern(".git")()
-            end,
-            single_file_support = true,
-            settings = {},
-            init_options = {
-                markdownFileExtensions = { "md" },
-            },
-        },
-    },
     load_extra_plugins = {},
 }
+
+---@return table
+local function merge_capabilities()
+    local capabilities = {}
+
+    for _, cap in user.lsp.capabilities_list:ipairs() do
+        local cap_t = type(cap)
+        if cap_t == "table" then
+            capabilities = vim.tbl_extend("force", capabilities, cap)
+        elseif cap_t == "function" then
+            capabilities = vim.tbl_extend("force", capabilities, cap())
+        end
+    end
+
+    return capabilities;
+end
+
+---@param config table
+---@return table
+local function wrap_on_attach(config)
+    local on_attach = config.on_attach
+    config.on_attach = function(client, bufnr)
+        for _, callback in user.lsp.on_attach_callbacks:ipairs() do
+            callback(client, bufnr)
+        end
+
+        if type(on_attach) == 'function' then
+            on_attach(client, bufnr)
+        end
+    end
+
+    return config
+end
+
+-- merging LSP config from different source.
+---@param name string
+local function merge_lsp_config(name)
+    local loader = require "user.config.lsp.loader"
+
+    local config_overlay = user.lsp.server_config[name]()
+    if type(config_overlay) == "function" then
+        config_overlay = config_overlay()
+    end
+
+    local root_path = fs_util.path_join(user.env.USER_RUNTIME_PATH(), "user", "config", "lsp", "configs")
+    local config_module = loader.load(root_path, name)
+
+    local result = vim.tbl_deep_extend(
+        "force",
+        {
+            flags = {
+                debounce_text_changes = 150,
+            },
+        },
+        config_module,
+        config_overlay or {},
+        {
+            capabilities = merge_capabilities(),
+        }
+    )
+
+    return result
+end
+
+return user.lsp:with_wrap(function(value)
+    local server_list = value.server_list
+    if not server_list then return end
+
+    for _, info in ipairs(value.server_list) do
+        if info.enabled ~= false then
+            local name = type(info) == "string" and info or info[1]
+
+            local config = merge_lsp_config(name)
+            config = wrap_on_attach(config)
+
+            vim.lsp.config(name, config)
+            vim.lsp.enable(name)
+        end
+    end
+end)

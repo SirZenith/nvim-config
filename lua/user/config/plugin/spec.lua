@@ -308,6 +308,7 @@ local specs = {
     {
         "SirZenith/lsp-config-loader",
         -- dev = true,
+        enabled = false,
         dependencies = {
             "SirZenith/panelpal.nvim",
             "neovim/nvim-lspconfig",
