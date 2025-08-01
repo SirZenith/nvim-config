@@ -296,6 +296,8 @@ local function merge_lsp_config(name)
 end
 
 return function()
+    require "user.config.lsp.command".init()
+
     for _, info in user.lsp.server_list:ipairs() do
         if info.enabled ~= false then
             local name = type(info) == "string" and info or info[1]

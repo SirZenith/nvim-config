@@ -306,20 +306,6 @@ local specs = {
     -- ------------------------------------------------------------------------
     -- LSP
     {
-        "SirZenith/lsp-config-loader",
-        -- dev = true,
-        enabled = false,
-        dependencies = {
-            "SirZenith/panelpal.nvim",
-            "neovim/nvim-lspconfig",
-        },
-        lazy_load = {
-            event = "BufNew",
-            event_load_checker = putl.new_buffer_trigger_loading_predicate,
-            ft = "TelescopePrompt",
-        },
-    },
-    {
         -- LSP completion item kind icon for completion menu
         "onsails/lspkind.nvim",
         lazy_load = {

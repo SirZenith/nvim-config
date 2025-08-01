@@ -2,7 +2,7 @@ local user = require "user"
 local lspconfig_util = require "lspconfig.util"
 
 local fs_util = require "user.util.fs"
-local lsp_util = require "user.util.lsp"
+local lsp_util = require "user.config.lsp.util"
 local workspace = require "user.config.workspace"
 
 local paths = require "user.config.lsp.configs.lua_ls.paths"
