@@ -480,6 +480,15 @@ local specs = {
         },
     },
     {
+        -- eslint integration for neovim
+        "esmuellert/nvim-eslint",
+        lazy_load = {
+            event = "BufNew",
+            event_load_checker = putl.new_buffer_trigger_loading_predicate,
+            ft = "TelescopePrompt",
+        },
+    },
+    {
         "lervag/vimtex",
         lazy_load = {
             ft = { "tex", "latex", "bibtex" },

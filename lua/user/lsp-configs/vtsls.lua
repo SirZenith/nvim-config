@@ -109,7 +109,7 @@ M.settings = {
                     -- eslint >= 8.0.0,
                     --    but < 9.0.0, starting from 9.0.0, eslint no longer
                     --    supports .eslintrc file
-                    name = "typescript-eslint-language-service",
+                    -- name = "typescript-eslint-language-service",
                 },
             }
         },
