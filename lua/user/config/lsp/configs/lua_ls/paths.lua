@@ -59,7 +59,8 @@ local function get_import_paths(root_dir)
 
     -- Plugin Main Path
     local plugin_names = {}
-    for _, name in user.lsp.load_extra_plugins:ipairs() do
+    local extra_plugins = user.lsp.server_config_args.lua_ls.load_extra_plugins
+    for _, name in extra_plugins:ipairs() do
         plugin_names[#plugin_names + 1] = name
     end
 

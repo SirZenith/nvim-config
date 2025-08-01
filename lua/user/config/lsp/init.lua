@@ -13,8 +13,14 @@ user.lsp = {
     ---@type boolean | fun(client: vim.lsp.Client, bufnr: integer): boolean
     use_inlay_hint = false,
 
+    -- Allowing plugins to add new capabilities.
     ---@type table[]
     capabilities_list = {},
+
+    -- Allowing workspace config to add workspace specific server settings.
+    ---@type table[]
+    server_config = {},
+
     keymap = {
         -- utility
         ["<F2>"] = vim.lsp.buf.rename,
@@ -78,8 +84,6 @@ user.lsp = {
         end,
     },
 
-    -- This field allows injecting configuration from workspace config
-    server_config = {},
     server_list = {
         {
             "bashls",
@@ -229,7 +233,14 @@ user.lsp = {
             },
         },
     },
-    load_extra_plugins = {},
+
+    -- Setting values used by server configuration module at runtime.
+    server_config_args = {
+        lua_ls = {
+            load_extra_plugins = {},
+        }
+
+    }
 }
 
 ---@return table
