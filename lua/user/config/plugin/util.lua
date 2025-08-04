@@ -66,15 +66,14 @@ function M.user_config_spec(module_info)
     end
 
     local env_config = require "user.base.env"
-
-    local path = name:gsub("%.", "/")
+    local path = fs_util.path_join(env_config.USER_RUNTIME_PATH, "user", "plugin", name)
 
     ---@type user.plugin.PluginSpec
     local spec = {
         name = name,
-        dir = fs_util.path_join(env_config.USER_RUNTIME_PATH, path),
+        dir = path,
         on_finalized = function()
-            require(name .. ".plugin")
+            require(path)
         end,
     }
 

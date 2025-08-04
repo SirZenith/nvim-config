@@ -10,7 +10,7 @@ local specs = {
     -- ------------------------------------------------------------------------
     -- User Config
     ucs {
-        name = "user.config.lsp",
+        name = "user-config-lsp",
         lazy_load = {
             event = "BufNew",
             event_load_checker = putl.new_buffer_trigger_loading_predicate,
@@ -18,7 +18,7 @@ local specs = {
         },
     },
     ucs {
-        name = "user.config.snippet",
+        name = "user-config-snippet",
         dependencies = {
             "L3MON4D3/LuaSnip",
             "SirZenith/cmd-snippet",
