@@ -63,11 +63,12 @@ local function on_plugins_loaded()
 
     ---@type (boolean | table | function)[]
     local module_list = {}
-    ---@type table<string, boolean>
-    local after_workspace = {
-        ["lsp"] = true,
-        ["autocmd.lua"] = true,
-        ["plugin"] = true,
+
+    local default_order = 100
+    ---@type table<string, integer>
+    local finalize_order_tbl = {
+        ["option.lua"] = 1, -- first module to finalize
+        ["plugin"] = 1000,  -- last module to finalize
     }
 
     local config_dir = fs_util.path_join(user.env.USER_RUNTIME_PATH(), "user", "config")
@@ -94,21 +95,10 @@ local function on_plugins_loaded()
                 name = uv.fs_scandir_next(data)
             end
 
-            local workspace_module = "workspace.lua"
             table.sort(name_list, function(a, b)
-                local is_after_a = after_workspace[a]
-                local is_after_b = after_workspace[b]
-                if is_after_a ~= is_after_b then
-                    return is_after_b and true or false
-                end
-
-                if a == workspace_module then
-                    return false
-                elseif b == workspace_module then
-                    return true
-                end
-
-                return a < b
+                local order_a = finalize_order_tbl[a] or default_order
+                local order_b = finalize_order_tbl[b] or default_order
+                return order_a < order_b
             end)
 
             for _, element in ipairs(name_list) do
