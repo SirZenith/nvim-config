@@ -112,7 +112,12 @@ local function on_plugins_loaded()
             end)
 
             for _, element in ipairs(name_list) do
-                table.insert(module_list, import(config_dir .. "/" .. element))
+                local len = #element
+                if element:sub(len - 3) == ".lua" then
+                    element = element:sub(1, len - 4)
+                end
+
+                table.insert(module_list, import("user.config." .. element))
             end
 
             next_step()
