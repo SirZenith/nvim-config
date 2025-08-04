@@ -117,10 +117,12 @@ local specs = {
         dependencies = {
             "nvim-lua/plenary.nvim",
         },
-        cmd = {
-            "SearchAndReplace",
-            "Spectre",
-        },
+        lazy_load = {
+            cmd = {
+                "SearchAndReplace",
+                "Spectre",
+            },
+        }
     },
     {
         "nvim-telescope/telescope.nvim",
@@ -327,7 +329,6 @@ local specs = {
             "neovim/nvim-lspconfig",
             "SirZenith/lsp-config-loader",
         },
-
         lazy_load = {
             event = "BufNew",
             event_load_checker = putl.new_buffer_trigger_loading_predicate,
@@ -481,6 +482,9 @@ local specs = {
             "nvim-treesitter/nvim-treesitter",
             "nvim-tree/nvim-web-devicons"
         },
+        lazy_load = {
+            ft = "markdown",
+        }
     },
     {
         "lervag/vimtex",
