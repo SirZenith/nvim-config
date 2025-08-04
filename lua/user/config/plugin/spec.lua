@@ -476,6 +476,13 @@ local specs = {
         },
     },
     {
+        "MeanderingProgrammer/render-markdown.nvim",
+        dependencies = {
+            "nvim-treesitter/nvim-treesitter",
+            "nvim-tree/nvim-web-devicons"
+        },
+    },
+    {
         "lervag/vimtex",
         lazy_load = {
             ft = { "tex", "latex", "bibtex" },
