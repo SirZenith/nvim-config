@@ -55,10 +55,15 @@ M.settings = {
             forceReturnSelf = false,
             functionName = ""
         },
-        extensions = {},
+        extensions = {
+            ".lua",
+        },
         frameworkVersions = {},
         requireLikeFunction = {},
-        requirePattern = {},
+        requirePattern = {
+            "?.lua",
+            "?/init.lua",
+        },
         version = "LuaLatest"
     },
     semanticTokens = {
@@ -108,10 +113,9 @@ function M.before_init(_param, config)
 
     lsp_util.append_config_entry(settings, "diagnostics.globals", is_in_runtime_path and "vim" or nil)
     lsp_util.upsert_config_entry(settings, "runtime.version", runtime_version)
-    -- lsp_util.upsert_config_entry(settings, "runtime.special.import", is_in_runtime_path and "require" or nil)
+    lsp_util.upsert_config_entry(settings, "runtime.requireLikeFunction", is_in_runtime_path and "import" or nil)
 
     local runtime_paths, library_paths = paths.get_path_setting(root_dir)
-    -- lsp_util.upsert_config_entry(settings, "Lua.runtime.path", runtime_paths)
     lsp_util.upsert_config_entry(settings, "workspace.library", library_paths)
 end
 
