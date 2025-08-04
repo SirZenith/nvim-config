@@ -251,7 +251,7 @@ local specs = {
     {
         "nvim-treesitter/nvim-treesitter",
         -- build = ":TSUpdate",
-        -- branch = "main",
+        branch = "main",
         lazy_load = {
             event = { "BufNew", "CmdlineEnter" },
             event_load_checker = putl.new_buffer_trigger_loading_predicate,
