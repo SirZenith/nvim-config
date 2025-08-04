@@ -396,6 +396,10 @@ local specs = {
                     name = "BufEnter",
                     load_checker = putl.buffer_enter_trigger_loading_predicate,
                 },
+                {
+                    name = "User",
+                    load_checker = putl.user_event_cond("UserConfigFinalized"),
+                },
             },
         },
     },
