@@ -1,14 +1,15 @@
+---@class user.plugin.EventTarget
+---@field name string | string[]
+---@field load_checker? fun(spec: user.plugin.PluginSpec, args: table): boolean # gets called when lazy load is triggered, plugin will only be load when this function retruns true.
+
 ---@class user.plugin.LazyLoadInfo
 ---@field lazy? boolean # If true, plugin would only be loaded when it gets `require`d, or lazy loading handler is triggered
----@field event? string | string[] # Specifies autocommand events which load this plugin.
----@field event_load_checker? fun(spec: user.plugin.PluginSpec, args: table): boolean # gets called when lazy load is triggered, plugin will only be load when this function retruns true.
+---@field event? (string | user.plugin.EventTarget)[] # Specifies autocommand events which load this plugin.
 ---@field cond? string | function | (string | function)[] # Specifies a conditional test to load this plugin
 ---@field ft? string | string[] # Specifies filetypes which load this plugin.
 ---@field cmd? string | string[] # Specifies commands which load this plugin. Can be an autocmd pattern.
 ---@field keys? string | string[] # Specifies maps which load this plugin. See "Keybindings".
 ---@field module? string | string[] # Specifies Lua module names for require. When requiring a string which starts with one of these module names, the plugin will be loaded.
---
----@field very_lazy? boolean # Use `VeryLazy` event provided by lazy.nvim as load trigger
 
 ---@class user.plugin.PluginSpec
 ---@field [1] string? # URL to plugin

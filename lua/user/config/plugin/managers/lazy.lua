@@ -268,7 +268,6 @@ local lazy_info_field_map = {
     lazy = false,
     event = false,
     event_load_checker = false,
-    very_lazy = false,
 }
 
 ---@param dst lazy.PluginSpec
@@ -312,10 +311,6 @@ function M.convert_sepc(spec)
         if lazy_info then
             result.lazy = true
             plugin_util.map_plugin_spec_fields(result, lazy_info, lazy_info_field_map)
-
-            if lazy_info.very_lazy then
-                result.event = "VeryLazy"
-            end
         end
     end
 

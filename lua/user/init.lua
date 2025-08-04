@@ -58,38 +58,70 @@ end
 
 -- Finalize plugin configs.
 local function on_plugins_loaded()
-    local cfg_autocmd = import "user.config.autocmd"
-    local cfg_command = import "user.config.command"
-    local cfg_diagnostics = import "user.config.diagnostics"
-    local cfg_filetype = import "user.config.filetype"
-    local cfg_theme = import "user.config.theme"
-    local cfg_keybinding = import "user.config.keybinding"
-    local cfg_lsp = import "user.config.lsp"
-    local cfg_option = import "user.config.option"
-    local cfg_platform = import "user.config.platform"
-    local cfg_plugin = import "user.config.plugin"
-    local cfg_snippet = import "user.config.snippet"
-    local cfg_workspace = import "user.config.workspace"
+    local fs_util = require "user.util.fs"
+    local uv = vim.uv
+
+    ---@type (boolean | table | function)[]
+    local module_list = {}
+    ---@type table<string, boolean>
+    local after_workspace = {
+        ["lsp"] = true,
+        ["autocmd.lua"] = true,
+        ["plugin"] = true,
+    }
+
+    local config_dir = fs_util.path_join(user.env.USER_RUNTIME_PATH(), "user", "config")
 
     util.do_async_steps {
         function(next_step)
-            cfg_workspace.load(next_step)
+            uv.fs_scandir(config_dir, vim.schedule_wrap(next_step))
+        end,
+        function(next_step, err, data)
+            if err then
+                log_uitl.error("failed to read config directory", err)
+                return
+            end
+
+            if not data then
+                log_uitl.warn("config directory scanning returns nil data")
+                return
+            end
+
+            local name_list = {}
+            local name = uv.fs_scandir_next(data)
+            while name do
+                table.insert(name_list, name)
+                name = uv.fs_scandir_next(data)
+            end
+
+            local workspace_module = "workspace.lua"
+            table.sort(name_list, function(a, b)
+                local is_after_a = after_workspace[a]
+                local is_after_b = after_workspace[b]
+                if is_after_a ~= is_after_b then
+                    return is_after_b and true or false
+                end
+
+                if a == workspace_module then
+                    return false
+                elseif b == workspace_module then
+                    return true
+                end
+
+                return a < b
+            end)
+
+            for _, element in ipairs(name_list) do
+                table.insert(module_list, import(config_dir .. "/" .. element))
+            end
+
+            next_step()
         end,
         function(next_step)
-            util.finalize_async({
-                cfg_option,
-                cfg_command,
-                cfg_diagnostics,
-                cfg_filetype,
-                cfg_keybinding,
-                cfg_platform,
-                cfg_theme,
-                cfg_workspace,
-                cfg_autocmd,
-                cfg_lsp,
-                cfg_snippet,
-                cfg_plugin,
-            }, next_step)
+            import "user.config.workspace".load(next_step)
+        end,
+        function(next_step)
+            util.finalize_async(module_list, next_step)
         end,
     }
 end
@@ -129,6 +161,11 @@ local function setup_init_autocmd()
         once = true,
         callback = function()
             vim.fn.timer_start(200, show_editor_state)
+            vim.fn.timer_start(500, function()
+                vim.api.nvim_exec_autocmds("User", {
+                    pattern = "UserConfigFinalized",
+                })
+            end)
         end,
     })
 end

@@ -12,9 +12,17 @@ local specs = {
     ucs {
         name = "user-config-lsp",
         lazy_load = {
-            event = "BufNew",
-            event_load_checker = putl.new_buffer_trigger_loading_predicate,
-            ft = "TelescopePrompt",
+            event = {
+                {
+                    name = "User",
+                    load_checker = putl.user_event_cond("UserConfigFinalized"),
+                },
+                {
+
+                    name = "BufNew",
+                    load_checker = putl.new_buffer_trigger_loading_predicate,
+                },
+            },
         },
     },
     ucs {
@@ -24,9 +32,17 @@ local specs = {
             "SirZenith/cmd-snippet",
         },
         lazy_load = {
-            event = "BufNew",
-            event_load_checker = putl.new_buffer_trigger_loading_predicate,
-            ft = "TelescopePrompt",
+            event = {
+                {
+                    name = "User",
+                    load_checker = putl.user_event_cond("UserConfigFinalized"),
+                },
+                {
+
+                    name = "BufNew",
+                    load_checker = putl.new_buffer_trigger_loading_predicate,
+                },
+            },
         },
     },
 
@@ -43,8 +59,12 @@ local specs = {
     {
         "numToStr/Comment.nvim",
         lazy_load = {
-            event = "BufEnter",
-            event_load_checker = putl.buffer_enter_trigger_loading_predicate,
+            event = {
+                {
+                    name = "BufEnter",
+                    load_checker = putl.buffer_enter_trigger_loading_predicate,
+                },
+            },
         },
     },
     {
@@ -66,16 +86,24 @@ local specs = {
         -- Jump to anywhere with a few key strokes
         "ggandor/leap.nvim",
         lazy_load = {
-            event = "BufEnter",
-            event_load_checker = putl.buffer_enter_trigger_loading_predicate,
+            event = {
+                {
+                    name = "BufEnter",
+                    load_checker = putl.buffer_enter_trigger_loading_predicate,
+                },
+            },
         },
     },
     {
         -- Show bookmark symbols in gutter column.
         "chentoast/marks.nvim",
         lazy_load = {
-            event = "BufEnter",
-            event_load_checker = putl.buffer_enter_trigger_loading_predicate,
+            event = {
+                {
+                    name = "BufEnter",
+                    load_checker = putl.buffer_enter_trigger_loading_predicate,
+                },
+            },
         },
     },
     {
@@ -102,8 +130,12 @@ local specs = {
             "nvim-treesitter/nvim-treesitter-textobjects"
         },
         lazy_load = {
-            event = "BufEnter",
-            event_load_checker = putl.buffer_enter_trigger_loading_predicate,
+            event = {
+                {
+                    name = "BufEnter",
+                    load_checker = putl.buffer_enter_trigger_loading_predicate,
+                },
+            },
         },
     },
     {
@@ -113,7 +145,12 @@ local specs = {
             "nvim-tree/nvim-web-devicons"
         },
         lazy_load = {
-            very_lazy = true,
+            event = {
+                {
+                    name = "User",
+                    load_checker = putl.user_event_cond("VeryLazy"),
+                },
+            },
         },
     },
     {
@@ -168,8 +205,12 @@ local specs = {
         -- Undo tree visualizer.
         "mbbill/undotree",
         lazy_load = {
-            event = "BufEnter",
-            event_load_checker = putl.buffer_enter_trigger_loading_predicate,
+            event = {
+                {
+                    name = "BufEnter",
+                    load_checker = putl.buffer_enter_trigger_loading_predicate,
+                },
+            },
         },
     },
     {
@@ -203,7 +244,12 @@ local specs = {
             "folke/noice.nvim", -- load after noice.nvim
         },
         lazy_load = {
-            very_lazy = true,
+            event = {
+                {
+                    name = "User",
+                    load_checker = putl.user_event_cond("VeryLazy"),
+                },
+            },
         },
     },
     {
@@ -217,7 +263,12 @@ local specs = {
             "rcarriga/nvim-notify",
         },
         lazy_load = {
-            very_lazy = true,
+            event = {
+                {
+                    name = "User",
+                    load_checker = putl.user_event_cond("VeryLazy"),
+                },
+            },
         },
     },
     {
@@ -227,7 +278,9 @@ local specs = {
             "nvim-tree/nvim-web-devicons"
         },
         lazy_load = {
-            event = "TabNew",
+            event = {
+                "TabNew",
+            },
         },
     },
 
@@ -238,8 +291,12 @@ local specs = {
         "lukas-reineke/indent-blankline.nvim",
         main = "ibl",
         lazy_load = {
-            event = "BufEnter",
-            event_load_checker = putl.buffer_enter_trigger_loading_predicate,
+            event = {
+                {
+                    name = "BufEnter",
+                    load_checker = putl.buffer_enter_trigger_loading_predicate,
+                },
+            },
         },
     },
     {
@@ -247,8 +304,12 @@ local specs = {
         "SirZenith/nvim-cursorline",
         -- dev = true,
         lazy_load = {
-            event = "BufEnter",
-            event_load_checker = putl.buffer_enter_trigger_loading_predicate,
+            event = {
+                {
+                    name = "BufEnter",
+                    load_checker = putl.buffer_enter_trigger_loading_predicate,
+                },
+            },
         },
     },
     {
@@ -258,8 +319,12 @@ local specs = {
             "kevinhwang91/promise-async"
         },
         lazy_load = {
-            event = "BufEnter",
-            event_load_checker = putl.buffer_enter_trigger_loading_predicate,
+            event = {
+                {
+                    name = "BufEnter",
+                    load_checker = putl.buffer_enter_trigger_loading_predicate,
+                },
+            },
         },
     },
     {
@@ -267,8 +332,12 @@ local specs = {
         "anuvyklack/pretty-fold.nvim",
         enabled = false,
         lazy_load = {
-            event = "BufEnter",
-            event_load_checker = putl.buffer_enter_trigger_loading_predicate,
+            event = {
+                {
+                    name = "BufEnter",
+                    load_checker = putl.buffer_enter_trigger_loading_predicate,
+                },
+            },
         },
     },
 
@@ -279,9 +348,18 @@ local specs = {
         -- build = ":TSUpdate",
         -- branch = "main",
         lazy_load = {
-            event = { "BufNew", "CmdlineEnter" },
-            event_load_checker = putl.new_buffer_trigger_loading_predicate,
             ft = "TelescopePrompt",
+            event = {
+                {
+                    name = "User",
+                    load_checker = putl.user_event_cond("UserConfigFinalized"),
+                },
+                {
+
+                    name = { "BufNew", "CmdlineEnter" },
+                    load_checker = putl.new_buffer_trigger_loading_predicate,
+                },
+            },
         },
     },
     {
@@ -290,8 +368,12 @@ local specs = {
             "nvim-treesitter/nvim-treesitter"
         },
         lazy_load = {
-            event = "BufEnter",
-            event_load_checker = putl.buffer_enter_trigger_loading_predicate,
+            event = {
+                {
+                    name = "BufEnter",
+                    load_checker = putl.buffer_enter_trigger_loading_predicate,
+                },
+            },
         },
     },
     {
@@ -324,8 +406,12 @@ local specs = {
             "nvim-treesitter/nvim-treesitter",
         },
         lazy_load = {
-            event = "BufEnter",
-            event_load_checker = putl.buffer_enter_trigger_loading_predicate,
+            event = {
+                {
+                    name = "BufEnter",
+                    load_checker = putl.buffer_enter_trigger_loading_predicate,
+                },
+            },
         },
     },
 
@@ -354,8 +440,12 @@ local specs = {
             "SirZenith/lsp-config-loader",
         },
         lazy_load = {
-            event = "BufNew",
-            event_load_checker = putl.new_buffer_trigger_loading_predicate,
+            event = {
+                {
+                    name = "BufNew",
+                    load_checker = putl.new_buffer_trigger_loading_predicate,
+                },
+            },
             cond = putl.root_file_cond {
                 "tsconfig.json",
                 "client/tsconfig.json",
@@ -391,7 +481,9 @@ local specs = {
             "hrsh7th/nvim-cmp"
         },
         lazy_load = {
-            event = "InsertEnter",
+            event = {
+                "InsertEnter"
+            },
         },
     },
     {
@@ -400,7 +492,7 @@ local specs = {
             "hrsh7th/nvim-cmp"
         },
         lazy_load = {
-            event = "LspAttach",
+            event = { "LspAttach" },
         },
     },
     {
@@ -420,7 +512,7 @@ local specs = {
             "hrsh7th/nvim-cmp",
         },
         lazy_load = {
-            event = "InsertEnter",
+            event = { "InsertEnter" },
         },
     },
     {
@@ -432,7 +524,7 @@ local specs = {
     {
         "windwp/nvim-autopairs",
         lazy_load = {
-            event = "InsertEnter",
+            event = { "InsertEnter" },
         },
     },
     {
@@ -459,7 +551,7 @@ local specs = {
             "hrsh7th/nvim-cmp",
         },
         lazy_load = {
-            event = "InsertEnter",
+            event = { "InsertEnter" },
             cond = putl.root_directory_cond {
                 ".creator",
                 "client/.creator",
@@ -473,8 +565,16 @@ local specs = {
         -- Formatter integration
         "stevearc/conform.nvim",
         lazy_load = {
-            event = "BufNew",
-            event_load_checker = putl.new_buffer_trigger_loading_predicate,
+            event = {
+                {
+                    name = "User",
+                    load_checker = putl.user_event_cond("UserConfigFinalized"),
+                },
+                {
+                    name = "BufNew",
+                    load_checker = putl.new_buffer_trigger_loading_predicate,
+                },
+            },
             ft = "TelescopePrompt",
         },
     },
@@ -482,8 +582,12 @@ local specs = {
         -- eslint integration for neovim
         "esmuellert/nvim-eslint",
         lazy_load = {
-            event = "BufNew",
-            event_load_checker = putl.new_buffer_trigger_loading_predicate,
+            event = {
+                {
+                    name = "BufNew",
+                    load_checker = putl.new_buffer_trigger_loading_predicate,
+                },
+            },
             ft = "TelescopePrompt",
         },
     },
@@ -571,8 +675,12 @@ local specs = {
         "lewis6991/gitsigns.nvim",
         lazy_load = {
             cond = putl.root_directory_cond { ".git" },
-            event = "BufEnter",
-            event_load_checker = putl.buffer_enter_trigger_loading_predicate,
+            event = {
+                {
+                    name = "BufEnter",
+                    load_checker = putl.buffer_enter_trigger_loading_predicate,
+                },
+            },
         },
     },
     {
@@ -610,8 +718,12 @@ local specs = {
         -- Highlight color code with its color in vim
         "norcalli/nvim-colorizer.lua",
         lazy_load = {
-            event = "BufEnter",
-            event_load_checker = putl.buffer_enter_trigger_loading_predicate,
+            event = {
+                {
+                    name = "BufEnter",
+                    load_checker = putl.buffer_enter_trigger_loading_predicate,
+                },
+            },
         },
     },
 

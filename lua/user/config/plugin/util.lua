@@ -198,6 +198,14 @@ function M.fs_entry_cond(target_names)
     end
 end
 
+---@param user_event string
+---@return fun(spec: user.plugin.PluginSpec, args: table): boolean
+function M.user_event_cond(user_event)
+    return function(spec, args)
+        return args.match == user_event
+    end
+end
+
 local IGNORE_FILETYPE_TRIGGER = {
     [""] = true,
     oil = true,
@@ -215,6 +223,7 @@ function M.buffer_enter_trigger_loading_predicate()
 end
 
 -- Check if BufNew event is valid for triggering a plugin to load.
+---@param spec user.plugin.PluginSpec
 ---@param args table
 ---@return boolean
 function M.new_buffer_trigger_loading_predicate(spec, args)
