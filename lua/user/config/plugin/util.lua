@@ -73,7 +73,7 @@ function M.user_config_spec(module_info)
         name = name,
         dir = path,
         on_finalized = function()
-            require(path)
+            require("user.plugin." .. name)
         end,
     }
 
