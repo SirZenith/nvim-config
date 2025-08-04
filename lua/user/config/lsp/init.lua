@@ -1,5 +1,5 @@
 local user = require "user"
-local config_const = require "user.config.constant"
+local config_const = require "user.base.constant"
 
 user.lsp = {
     __newentry = true,
