@@ -11,6 +11,9 @@ local specs = {
     -- User Config
     ucs {
         name = "user-config-lsp",
+        dependencies = {
+            "neovim/nvim-lspconfig",
+        },
         lazy_load = {
             event = {
                 {

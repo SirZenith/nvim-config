@@ -106,6 +106,21 @@ user.lsp = {
             install = "npm i -g vscode-langservers-extracted",
         },
         {
+            "emmylua_ls",
+            enabled = false,
+            desc = {
+                "Language server for Lua written in Rust",
+            },
+            install = {
+                via_cargo = {
+                    "cargo install emmylua_ls",
+                    "cargo install emmylua_doc_cli",
+                    "cargo install emmylua_check",
+                },
+                pre_built_binary = "https://github.com/CppCXY/emmylua-analyzer-rust/releases",
+            },
+        },
+        {
             "gleam",
             desc = "`gleam lsp` subcommand of Gleam compiler provides LSP support",
         },
@@ -159,6 +174,7 @@ user.lsp = {
         },
         {
             "lua_ls",
+            -- enabled = false,
             desc = {
                 "repo URL: https://github.com/luals/lua-language-server",
             }

@@ -76,7 +76,9 @@ for _, info in user.lsp.server_list:ipairs() do
         local config = merge_lsp_config(name)
         config = wrap_on_attach(config)
 
-        vim.lsp.config(name, config)
+        log_util.info(name, config)
+
         vim.lsp.enable(name)
+        vim.lsp.config(name, config)
     end
 end
