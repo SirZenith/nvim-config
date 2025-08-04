@@ -1,7 +1,7 @@
 local user = require "user"
 
-local formatter = require "user/plugins/conform.nvim/formatter"
-local filetype_map = require "user/plugins/conform.nvim/filetype_map"
+local formatter = require "user/config/plugin/configs/conform.nvim/formatter"
+local filetype_map = require "user/config/plugin/configs/conform.nvim/filetype_map"
 
 ---@alias user.plugin.FormatterList (string | string[])[]
 ---@alias user.plugin.FormatterGetter fun(bufnr: integer): user.plugin.FormatterList

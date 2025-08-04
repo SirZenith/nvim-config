@@ -1,4 +1,4 @@
-local js_formatter = require "user/plugins/conform.nvim/util/js_formatter"
+local js_formatter = require "user/config/plugin/configs/conform.nvim/util/js_formatter"
 
 ---@type user.plugin.FormatterFileTypeMap
 local map = {

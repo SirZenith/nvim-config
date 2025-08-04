@@ -31,12 +31,12 @@ end
 
 ---@param name string # plugin base name
 local function get_config_path(name)
-    return fs_util.path_join("user", "plugins", name, "config.lua")
+    return fs_util.path_join("user", "config", "plugin", "configs", name, "config.lua")
 end
 
 ---@param name string # plugin base name
 local function get_keybinding_path(name)
-    return fs_util.path_join("user", "plugins", name, "keybinding.lua")
+    return fs_util.path_join("user", "config", "plugin", "configs", name, "keybinding.lua")
 end
 
 -- ----------------------------------------------------------------------------

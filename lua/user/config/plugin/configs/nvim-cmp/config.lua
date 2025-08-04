@@ -32,7 +32,7 @@ end
 return function()
     local cmp = require "cmp"
     local compare = require "cmp.config.compare"
-    local mapping = require "user.plugins.nvim-cmp.mapping"
+    local mapping = require "user.config.plugin.configs.nvim-cmp.mapping"
 
     local cmp_cfg = {
         window = {

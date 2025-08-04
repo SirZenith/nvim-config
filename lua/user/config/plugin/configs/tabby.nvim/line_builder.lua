@@ -1,6 +1,6 @@
 local str_util = require "user.util.str"
 
-local theme = require "user/plugins/tabby.nvim/theme"
+local theme = require "user/config/plugin/configs/tabby.nvim/theme"
 
 local MAX_LEN = 12
 
