@@ -88,12 +88,16 @@ local function on_autocmd_triggered(event, args)
         end
     end
 
-    if not next(channel) then
-        log_util.trace("-", event, "\n", channel)
-        lazy_load_autocmd_listener[event] = nil
-    else
+    if next(channel) then
         log_util.trace("*", event)
+        return
     end
+
+    log_util.trace("-", event, "\n", channel)
+    lazy_load_autocmd_listener[event] = nil
+
+    -- indicating removal of autocmd callback
+    return true
 end
 
 ---@param event string
@@ -108,7 +112,7 @@ local function register_autocmd_listener(event, spec, checker)
         vim.api.nvim_create_autocmd(event, {
             group = lazy_load_augroup,
             callback = function(args)
-                on_autocmd_triggered(event, args)
+                return on_autocmd_triggered(event, args)
             end
         })
     end
