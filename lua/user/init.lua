@@ -68,6 +68,7 @@ local function on_plugins_loaded()
     local cfg_option = import "user.config.option"
     local cfg_platform = import "user.config.platform"
     local cfg_plugin = import "user.config.plugin"
+    local cfg_snippet = import "user.config.snippet"
     local cfg_workspace = import "user.config.workspace"
 
     util.do_async_steps {
@@ -84,8 +85,9 @@ local function on_plugins_loaded()
                 cfg_platform,
                 cfg_theme,
                 cfg_workspace,
-                cfg_lsp,
                 cfg_autocmd,
+                cfg_lsp,
+                cfg_snippet,
                 cfg_plugin,
             }, next_step)
         end,

@@ -1,5 +1,5 @@
 local snip_filetype = "tex"
-local s = require("snippet-loader.utils")
+local s = require "user.config.snippet.utils"
 local makers = s.snippet_makers(snip_filetype)
 local condsp = makers.condsp
 -- local condpsp = makers.condpsp

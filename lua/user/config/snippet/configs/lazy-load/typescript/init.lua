@@ -6,7 +6,7 @@ local snip_util = require "user.util.snippet"
 local extract_param = require "user.snippets.lazy-load.typescript.param_extraction"
 
 local snip_filetype = "typescript"
--- local s = require("snippet-loader.utils")
+-- local s = require "user.config.snippet.utils"
 -- local makers = s.snippet_makers(snip_filetype)
 -- local sp = makers.sp
 -- local asp = makers.asp

@@ -1,3 +1,4 @@
+local fs_util = require "user.util.fs"
 local log_util = require "user.util.log"
 
 local M = {}
@@ -35,6 +36,57 @@ function M.map_plugin_spec_fields(dst, src, field_map)
             dst[map_to] = value
         end
     end
+end
+
+-- ----------------------------------------------------------------------------
+
+---@type table<string, user.plugin.PluginSpec>
+local UCS_CACHE = {}
+
+---@param module_info string | user.plugin.PluginSpec
+---@return user.plugin.PluginSpec
+function M.user_config_spec(module_info)
+    local info_type = type(module_info)
+
+    local name
+    if info_type == "string" then
+        name = module_info
+    elseif info_type == "table" then
+        name = module_info[1] or module_info.name
+    end
+
+    if not name then
+        log_util.error("can't determine name of module", module_info)
+        return {}
+    end
+
+    local cache = UCS_CACHE[name]
+    if cache then
+        return cache
+    end
+
+    local env_config = require "user.base.env"
+
+    local path = name:gsub("%.", "/")
+
+    ---@type user.plugin.PluginSpec
+    local spec = {
+        name = name,
+        dir = fs_util.path_join(env_config.USER_RUNTIME_PATH, path),
+        on_finalized = function()
+            require(name .. ".plugin")
+        end,
+    }
+
+    if info_type == "table" then
+        for key, value in pairs(module_info) do
+            spec[key] = value;
+        end
+    end
+
+    UCS_CACHE[name] = spec
+
+    return spec
 end
 
 -- ----------------------------------------------------------------------------

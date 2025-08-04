@@ -6,7 +6,7 @@ local str_util = require "user.util.str"
 local snippet_util = require "user.util.snippet"
 
 local snip_filetype = "typescript"
-local s = require("snippet-loader.utils")
+local s = require "user.config.snippet.utils"
 -- local makers = s.snippet_makers(snip_filetype)
 -- local sp = makers.sp
 -- local asp = makers.asp

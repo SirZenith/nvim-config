@@ -1,11 +1,35 @@
 local putl = require "user.config.plugin.util"
 
+local ucs = putl.user_config_spec
 local cs = putl.colorscheme_spec
 
 putl.turn_on_true_color()
 
 ---@type (user.plugin.PluginSpec | string)[]
 local specs = {
+    -- ------------------------------------------------------------------------
+    -- User Config
+    ucs {
+        name = "user.config.lsp",
+        lazy_load = {
+            event = "BufNew",
+            event_load_checker = putl.new_buffer_trigger_loading_predicate,
+            ft = "TelescopePrompt",
+        },
+    },
+    ucs {
+        name = "user.config.snippet",
+        dependencies = {
+            "L3MON4D3/LuaSnip",
+            "SirZenith/cmd-snippet",
+        },
+        lazy_load = {
+            event = "BufNew",
+            event_load_checker = putl.new_buffer_trigger_loading_predicate,
+            ft = "TelescopePrompt",
+        },
+    },
+
     -- ------------------------------------------------------------------------
     -- Themes
     cs { "EdenEast/nightfox.nvim" },
@@ -441,19 +465,6 @@ local specs = {
                 "client/.creator",
             },
         }
-    },
-    {
-        "SirZenith/snippet-loader",
-        -- dev = true,
-        dependencies = {
-            "L3MON4D3/LuaSnip",
-            "SirZenith/cmd-snippet",
-        },
-        lazy_load = {
-            event = "BufNew",
-            event_load_checker = putl.new_buffer_trigger_loading_predicate,
-            ft = "TelescopePrompt",
-        },
     },
 
     -- ------------------------------------------------------------------------
