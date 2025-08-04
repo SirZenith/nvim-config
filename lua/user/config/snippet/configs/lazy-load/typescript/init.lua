@@ -3,7 +3,7 @@ local cmd_snip = require "cmd-snippet"
 local log_util = require "user.util.log"
 local snip_util = require "user.util.snippet"
 
-local extract_param = require "user.snippets.lazy-load.typescript.param_extraction"
+local extract_param = require "user.config.snippet.configs.lazy-load.typescript.param_extraction"
 
 local snip_filetype = "typescript"
 -- local s = require "user.config.snippet.utils"
