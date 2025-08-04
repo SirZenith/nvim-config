@@ -58,36 +58,72 @@ end
 
 -- Finalize plugin configs.
 local function on_plugins_loaded()
-    local cfg_autocmd = import "user.config.autocmd"
-    local cfg_command = import "user.config.command"
-    local cfg_diagnostics = import "user.config.diagnostics"
-    local cfg_filetype = import "user.config.filetype"
-    local cfg_theme = import "user.config.theme"
-    local cfg_keybinding = import "user.config.keybinding"
-    local cfg_lsp = import "user.config.lsp"
-    local cfg_option = import "user.config.option"
-    local cfg_platform = import "user.config.platform"
-    local cfg_plugin = import "user.config.plugin"
-    local cfg_workspace = import "user.config.workspace"
+    local fs_util = require "user.util.fs"
+    local uv = vim.uv
+
+    ---@type (boolean | table | function)[]
+    local module_list = {}
+
+    local default_order = 100
+    ---@type table<string, integer>
+    local finalize_order_tbl = {
+        ["option.lua"] = 1, -- first module to finalize
+        ["plugin"] = 1000,  -- last module to finalize
+    }
+
+    local config_dir = fs_util.path_join(user.env.USER_RUNTIME_PATH(), "user", "config")
 
     util.do_async_steps {
         function(next_step)
-            cfg_workspace.load(next_step)
+            uv.fs_scandir(config_dir, vim.schedule_wrap(next_step))
+        end,
+        function(next_step, err, data)
+            if err then
+                log_uitl.error("failed to read config directory", err)
+                return
+            end
+
+            if not data then
+                log_uitl.warn("config directory scanning returns nil data")
+                return
+            end
+
+            local name_list = {}
+            local name = uv.fs_scandir_next(data)
+            while name do
+                table.insert(name_list, name)
+                name = uv.fs_scandir_next(data)
+            end
+
+            table.sort(name_list, function(a, b)
+                local order_a = finalize_order_tbl[a] or default_order
+                local order_b = finalize_order_tbl[b] or default_order
+                return order_a < order_b
+            end)
+
+            for _, element in ipairs(name_list) do
+                local len = #element
+                if element:sub(len - 3) == ".lua" then
+                    element = element:sub(1, len - 4)
+                end
+
+                table.insert(module_list, import("user.config." .. element))
+            end
+
+            next_step()
         end,
         function(next_step)
-            util.finalize_async({
-                cfg_option,
-                cfg_command,
-                cfg_diagnostics,
-                cfg_filetype,
-                cfg_keybinding,
-                cfg_platform,
-                cfg_theme,
-                cfg_workspace,
-                cfg_lsp,
-                cfg_autocmd,
-                cfg_plugin,
-            }, next_step)
+            import "user.config.workspace".load(next_step)
+        end,
+        function(next_step)
+            util.finalize_async(module_list, next_step)
+        end,
+        function(next_step)
+            vim.fn.timer_start(500, function()
+                vim.api.nvim_exec_autocmds("User", {
+                    pattern = "UserConfigFinalized",
+                })
+            end)
         end,
     }
 end

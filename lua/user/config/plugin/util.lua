@@ -1,3 +1,4 @@
+local fs_util = require "user.util.fs"
 local log_util = require "user.util.log"
 
 local M = {}
@@ -35,6 +36,56 @@ function M.map_plugin_spec_fields(dst, src, field_map)
             dst[map_to] = value
         end
     end
+end
+
+-- ----------------------------------------------------------------------------
+
+---@type table<string, user.plugin.PluginSpec>
+local UCS_CACHE = {}
+
+---@param module_info string | user.plugin.PluginSpec
+---@return user.plugin.PluginSpec
+function M.user_config_spec(module_info)
+    local info_type = type(module_info)
+
+    local name
+    if info_type == "string" then
+        name = module_info
+    elseif info_type == "table" then
+        name = module_info[1] or module_info.name
+    end
+
+    if not name then
+        log_util.error("can't determine name of module", module_info)
+        return {}
+    end
+
+    local cache = UCS_CACHE[name]
+    if cache then
+        return cache
+    end
+
+    local env_config = require "user.base.env"
+    local path = fs_util.path_join(env_config.USER_RUNTIME_PATH, "user", "plugin", name)
+
+    ---@type user.plugin.PluginSpec
+    local spec = {
+        name = name,
+        dir = path,
+        on_finalized = function()
+            require(path)
+        end,
+    }
+
+    if info_type == "table" then
+        for key, value in pairs(module_info) do
+            spec[key] = value;
+        end
+    end
+
+    UCS_CACHE[name] = spec
+
+    return spec
 end
 
 -- ----------------------------------------------------------------------------
@@ -147,6 +198,14 @@ function M.fs_entry_cond(target_names)
     end
 end
 
+---@param user_event string
+---@return fun(spec: user.plugin.PluginSpec, args: table): boolean
+function M.user_event_cond(user_event)
+    return function(spec, args)
+        return args.match == user_event
+    end
+end
+
 local IGNORE_FILETYPE_TRIGGER = {
     [""] = true,
     oil = true,
@@ -164,6 +223,7 @@ function M.buffer_enter_trigger_loading_predicate()
 end
 
 -- Check if BufNew event is valid for triggering a plugin to load.
+---@param spec user.plugin.PluginSpec
 ---@param args table
 ---@return boolean
 function M.new_buffer_trigger_loading_predicate(spec, args)

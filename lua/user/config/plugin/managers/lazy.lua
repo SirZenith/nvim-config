@@ -267,7 +267,6 @@ local field_map = {
 local lazy_info_field_map = {
     lazy = false,
     event = false,
-    event_load_checker = false,
     very_lazy = false,
 }
 

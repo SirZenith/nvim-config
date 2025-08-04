@@ -19,7 +19,6 @@ local PLUGIN_TARGETS = {
     "nvim-lspconfig",
     "mongosh.nvim",
     "panelpal.nvim",
-    "snippet-loader",
     "conform.nvim",
 }
 

@@ -39,7 +39,7 @@ user.keybinding = {
             "${buffer_dir}/?",
             function(context)
                 local name = vim.fs.basename(context.cfile)
-                return "lua/user/plugins/" .. name .. "/config.lua"
+                return "lua/user/config/plugin/configs/" .. name .. "/config.lua"
             end,
         }
     },

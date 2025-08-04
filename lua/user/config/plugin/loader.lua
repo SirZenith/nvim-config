@@ -31,12 +31,12 @@ end
 
 ---@param name string # plugin base name
 local function get_config_path(name)
-    return fs_util.path_join("user", "plugins", name, "config.lua")
+    return fs_util.path_join("user", "config", "plugin", "configs", name, "config.lua")
 end
 
 ---@param name string # plugin base name
 local function get_keybinding_path(name)
-    return fs_util.path_join("user", "plugins", name, "keybinding.lua")
+    return fs_util.path_join("user", "config", "plugin", "configs", name, "keybinding.lua")
 end
 
 -- ----------------------------------------------------------------------------
@@ -88,12 +88,16 @@ local function on_autocmd_triggered(event, args)
         end
     end
 
-    if not next(channel) then
-        log_util.trace("-", event, "\n", channel)
-        lazy_load_autocmd_listener[event] = nil
-    else
+    if next(channel) then
         log_util.trace("*", event)
+        return
     end
+
+    log_util.trace("-", event, "\n", channel)
+    lazy_load_autocmd_listener[event] = nil
+
+    -- indicating removal of autocmd callback
+    return true
 end
 
 ---@param event string
@@ -108,7 +112,7 @@ local function register_autocmd_listener(event, spec, checker)
         vim.api.nvim_create_autocmd(event, {
             group = lazy_load_augroup,
             callback = function(args)
-                on_autocmd_triggered(event, args)
+                return on_autocmd_triggered(event, args)
             end
         })
     end
@@ -142,8 +146,8 @@ local function setup_lazy_event(spec)
     local lazy_info = spec.lazy_load
     if not lazy_info then return end
 
-    local event = lazy_info.event
-    if not event then return false end
+    local event_list = lazy_info.event
+    if not event_list then return false end
 
     local plugin_name = get_plugin_name_from_spec(spec)
     if not plugin_name then
@@ -151,19 +155,22 @@ local function setup_lazy_event(spec)
         return
     end
 
-    local checker = lazy_info.event_load_checker or default_load_checker
+    for _, event in ipairs(event_list) do
+        local event_t = type(event)
 
-    if type(event) == "string" then
-        register_autocmd_listener(event, spec, checker)
-    elseif type(event) == "table" then
-        for _, value in ipairs(event) do
-            if type(value) == "string" then
-                register_autocmd_listener(value, spec, checker)
-            else
-                log_util.warn(
-                    "lazy load event should be valid autocmd name string",
-                    value
-                )
+        if event_t == "string" then
+            register_autocmd_listener(event, spec, default_load_checker)
+        elseif event_t == "table" then
+            local name = event.name
+            local name_t = type(name)
+            local checker = event.load_checker or default_load_checker
+
+            if name_t == "string" then
+                register_autocmd_listener(name, spec, checker)
+            elseif name_t == "table" then
+                for _, element in ipairs(name) do
+                    register_autocmd_listener(element, spec, checker)
+                end
             end
         end
     end
@@ -271,10 +278,13 @@ function M.setup(specs)
         setup_lazy_event {
             name = "observer",
             lazy_load = {
-                event = "FileType",
-                event_load_checker = function()
-                    return false
-                end,
+                event = {
+                    {
+                        name = "FileType",
+                        load_checker = function() return false end,
+                    },
+                },
+
             }
         }
     end
