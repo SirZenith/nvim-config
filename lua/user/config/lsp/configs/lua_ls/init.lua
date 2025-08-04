@@ -40,7 +40,7 @@ M.settings = {
             viewString = true,
         },
         misc = {
-            parameters = { "--loglevel", "info" },
+            -- parameters = { "--loglevel", "info" },
         },
         runtime = {
             path = {},
