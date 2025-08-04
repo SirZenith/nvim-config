@@ -10,6 +10,8 @@
 ---@field cmd? string | string[] # Specifies commands which load this plugin. Can be an autocmd pattern.
 ---@field keys? string | string[] # Specifies maps which load this plugin. See "Keybindings".
 ---@field module? string | string[] # Specifies Lua module names for require. When requiring a string which starts with one of these module names, the plugin will be loaded.
+--
+---@field very_lazy? boolean # Load should be triggered by lazy.nvim's VeryLazy User event
 
 ---@class user.plugin.PluginSpec
 ---@field [1] string? # URL to plugin

@@ -145,12 +145,7 @@ local specs = {
             "nvim-tree/nvim-web-devicons"
         },
         lazy_load = {
-            event = {
-                {
-                    name = "User",
-                    load_checker = putl.user_event_cond("VeryLazy"),
-                },
-            },
+            very_lazy = true,
         },
     },
     {
@@ -244,12 +239,7 @@ local specs = {
             "folke/noice.nvim", -- load after noice.nvim
         },
         lazy_load = {
-            event = {
-                {
-                    name = "User",
-                    load_checker = putl.user_event_cond("VeryLazy"),
-                },
-            },
+            very_lazy = true,
         },
     },
     {
@@ -263,12 +253,7 @@ local specs = {
             "rcarriga/nvim-notify",
         },
         lazy_load = {
-            event = {
-                {
-                    name = "User",
-                    load_checker = putl.user_event_cond("VeryLazy"),
-                },
-            },
+            very_lazy = true,
         },
     },
     {
