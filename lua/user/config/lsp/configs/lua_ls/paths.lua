@@ -16,7 +16,6 @@ local PLUGIN_TARGETS = {
     "LuaSnip",
     "noice.nvim",
     "nvim-cmp",
-    "nvim-lspconfig",
     "mongosh.nvim",
     "panelpal.nvim",
     "conform.nvim",

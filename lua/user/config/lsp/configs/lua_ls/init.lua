@@ -7,6 +7,7 @@ local workspace = require "user.config.workspace"
 
 local paths = require "user.config.lsp.configs.lua_ls.paths"
 
+---@type vim.lsp.Config
 local M = {}
 
 M.settings = {
@@ -63,13 +64,15 @@ M.settings = {
 }
 
 function M.before_init(_param, config)
+    local root_dir = config.root_dir
+    if not root_dir then return end
+
     local settings = config.settings
     if not settings then
         settings = {}
         config.settings = settings
     end
 
-    local root_dir = config.root_dir
     local is_in_runtime_path = paths.check_in_nvim_runtime_path(root_dir)
 
     local runtime_version = "Lua 5.4"
@@ -90,35 +93,43 @@ end
 
 local function get_root_dir(fname)
     local dir = vim.fs.dirname(fname)
+
     if vim.fs.basename(dir) == workspace.WORKSPACE_CONFIG_DIR_NAME then
         return dir
     end
 
-    local root_files = {
-        ".luarc.json",
-        ".luarc.jsonc",
-        ".luacheckrc",
-
-        ".stylua.toml",
-        "stylua.toml",
-
-        "selene.toml",
-        "selene.yml",
-
-        "preprocess.lua", -- delite library support
-    }
-
-    local root = lspconfig_util.root_pattern(unpack(root_files))(fname)
-    if root and root ~= vim.env.HOME then
-        return root
+    -- neovim runtime directory
+    do
+        local root = vim.fs.root(fname, { "lua" })
+        if root then
+            return root .. '/lua'
+        end
     end
 
-    root = lspconfig_util.root_pattern 'lua/' (fname)
-    if root then
-        return root .. '/lua'
+    -- root files
+    do
+        local root = vim.fs.root(fname, {
+            "preprocess.lua", -- delite library support
+            {
+                ".luarc.json",
+                ".luarc.jsonc",
+                ".luacheckrc",
+
+                ".stylua.toml",
+                "stylua.toml",
+
+                "selene.toml",
+                "selene.yml",
+            },
+            ".git",
+        })
+
+        if root and root ~= vim.env.HOME then
+            return root
+        end
     end
 
-    return lspconfig_util.find_git_ancestor(fname)
+    return nil
 end
 
 function M.root_dir(bufnr, on_dir)
