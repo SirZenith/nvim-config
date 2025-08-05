@@ -126,6 +126,25 @@ user.lsp = {
             },
         },
         {
+            "eslint-user",
+            desc = {
+                "Custom eslint LS, with vscode-eslnit as server",
+                "repo URL: https://github.com/microsoft/vscode-eslint",
+                "file URL: https://github.com/esmuellert/nvim-eslint/blob/main/vscode-eslint/server/out/eslintServer.js",
+            },
+            install = {
+                "git clone https://github.com/microsoft/vscode-eslint.git",
+                "cd vscode-eslint",
+                "git checkout release/3.0.10",
+                "npm install",
+
+                "cd server",
+                "npm install",
+                "npm run webpack",
+                "ln -s ('./eslintServer.js' | path expand) ('~/.local/bin/eslintServer.js' | path expand)",
+            },
+        },
+        {
             "gleam",
             desc = "`gleam lsp` subcommand of Gleam compiler provides LSP support",
         },
@@ -258,6 +277,5 @@ user.lsp = {
         lua_ls = {
             load_extra_plugins = {},
         }
-
     }
 }

@@ -571,19 +571,6 @@ local specs = {
         },
     },
     {
-        -- eslint integration for neovim
-        "esmuellert/nvim-eslint",
-        lazy_load = {
-            event = {
-                {
-                    name = "BufNew",
-                    load_checker = putl.new_buffer_trigger_loading_predicate,
-                },
-            },
-            ft = "TelescopePrompt",
-        },
-    },
-    {
         "MeanderingProgrammer/render-markdown.nvim",
         dependencies = {
             "nvim-treesitter/nvim-treesitter",

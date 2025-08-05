@@ -1,4 +1,4 @@
 ---@class user.lsp.ServerInfo
 ---@field [1] string # server name
 ---@field desc? string | string[] # drscription of this server
----@field install? string | string[] # instruction to install this server
+---@field install? string | string[] | table # instruction to install this server
