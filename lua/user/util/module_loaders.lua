@@ -84,6 +84,11 @@ local loaders = {
     end,
     -- plugin_config_loader
     function(modulename)
+        local substr = modulename:sub(1, 5)
+        if substr ~= "user." and substr ~= "user/" then
+            return "\n\tnot a plugin config module (plugin config loader)"
+        end
+
         local user_runtime_path = M.user_runtime_path
 
         local errmsg = { "" }
