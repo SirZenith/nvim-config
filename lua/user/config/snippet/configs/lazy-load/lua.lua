@@ -25,6 +25,9 @@ apsp("emvarg", "---@vararg ")
 apsp("emret", "---@return ")
 apsp("emnod", "---@nodiscard ")
 apsp("emovld", "---@overload ")
+apsp("empac", "---@package ")   -- mark a function as private to file
+apsp("empac", "---@private ")   -- mark a function as private method of a class
+apsp("empac", "---@protected ") -- mark a function as protected method of a class
 
 apsp("emgen", "---@generic ")
 apsp("emtp", "---@type ")
@@ -37,11 +40,12 @@ apsp("emfd", "---@field ")
 apsp("emal", "---@alias ")
 apsp("emen", "---@enum ")
 
-apsp("emmod", "---@module ")
+apsp("emmod", "---@module ") -- mark a variable as if it its assigned via a require statement
 apsp("emdiag", "---@diagnostic ")
-apsp("emdep", "---@deprecated")
+apsp("emdep", "---@deprecated ")
 apsp("emver", "---@version ")
-apsp("emsee", "---@see")
+apsp("emsee", "---@see ")
+apsp("emsee", "---@source ") -- takes path to another file marking a identifier as provided in another file
 
 apsp("emasy", "---@async")
 apsp("emme", "---@meta")
