@@ -82,6 +82,7 @@ user.lsp = {
         end,
     },
 
+    ---@type (user.lsp.ServerInfo | string)[]
     server_list = {
         {
             "bashls",
