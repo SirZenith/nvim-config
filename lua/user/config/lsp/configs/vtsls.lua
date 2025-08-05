@@ -1,5 +1,4 @@
 local user = require "user"
-local fs_util = require "user.util.fs"
 
 local M = {}
 

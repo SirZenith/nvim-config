@@ -24,7 +24,7 @@ local function chdir()
     local output = result.output or ""
     local cur_file = output:match("%[(.+)%]")
 
-    local dir_path
+    local dir_path ---@type string?
     if vim.fn.isdirectory(cur_file) == 1 then
         dir_path = cur_file
     elseif vim.fn.filereadable(cur_file) == 1 then

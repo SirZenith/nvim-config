@@ -29,8 +29,12 @@ user.lsp = {
         ["gr"] = vim.lsp.buf.references,
         ["gi"] = vim.lsp.buf.implementation,
         -- diagnostic
-        ["<A-n>"] = vim.diagnostic.goto_prev,
-        ["<A-.>"] = vim.diagnostic.goto_next,
+        ["<A-n>"] = function()
+            vim.diagnostic.jump { count = -1, float = true }
+        end,
+        ["<A-.>"] = function()
+            vim.diagnostic.jump { count = 1, float = true }
+        end,
         ["<space>d"] = vim.diagnostic.setloclist,
         ["<space>e"] = vim.diagnostic.open_float,
         -- hover & detail
@@ -108,7 +112,7 @@ user.lsp = {
         },
         {
             "emmylua_ls",
-            enabled = false,
+            -- enabled = false,
             desc = {
                 "Language server for Lua written in Rust",
             },
@@ -175,7 +179,7 @@ user.lsp = {
         },
         {
             "lua_ls",
-            -- enabled = false,
+            enabled = false,
             desc = {
                 "repo URL: https://github.com/luals/lua-language-server",
             }

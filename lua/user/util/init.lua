@@ -1,7 +1,7 @@
 local log_util = require "user.util.log"
 
 local api = vim.api
-local loop = vim.uv or vim.loop
+local loop = vim.uv
 local hrtime = loop.hrtime
 
 local M = {}
@@ -41,7 +41,7 @@ end
 
 -- ----------------------------------------------------------------------------
 
----@param err? string
+---@param err string
 local function on_import_error(err)
     local thread = coroutine.running()
     local traceback = debug.traceback(thread, err)
