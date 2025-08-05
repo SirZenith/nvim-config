@@ -26,6 +26,7 @@ local ADDON_LIBRARIES = {
     "luafilesystem",
     "luasocket",
     "luasocket-luli",
+    "luvit-meta",
 }
 
 ---@param root_dir string

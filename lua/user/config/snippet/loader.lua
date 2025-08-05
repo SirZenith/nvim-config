@@ -2,7 +2,8 @@ local user = require "user"
 local util = require "user.config.snippet.utils"
 
 local fs = vim.fs
-local loop = vim.loop
+---@module "uv"
+local uv = vim.uv
 
 local M = {}
 
@@ -25,17 +26,17 @@ local function listdir(dir, callback)
 
     callback = vim.schedule_wrap(callback)
 
-    loop.fs_scandir(dir, function(err, data)
+    uv.fs_scandir(dir, function(err, data)
         if err or not data then
             callback(err or ("failed to read directory " .. dir))
             return
         end
 
         local entries = {}
-        local name = loop.fs_scandir_next(data)
+        local name = uv.fs_scandir_next(data)
         while name do
             table.insert(entries, dir .. "/" .. name)
-            name = loop.fs_scandir_next(data)
+            name = uv.fs_scandir_next(data)
         end
 
         callback(nil, entries)

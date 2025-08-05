@@ -59,6 +59,7 @@ end
 -- Finalize plugin configs.
 local function on_plugins_loaded()
     local fs_util = require "user.util.fs"
+    ---@module "uv"
     local uv = vim.uv
 
     ---@type (boolean | table | function)[]

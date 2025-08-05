@@ -599,7 +599,7 @@ local M = {
 
 ---@class DumpEnv
 ---@field buffer string[] # dump result line buffer
----@field cur_path string[]
+---@field cur_path? string[]
 ---@field pending PendingTarget[]
 
 ---@param env DumpEnv
@@ -638,7 +638,7 @@ end
 ---@param config_entry user.config.ConfigEntry
 ---@return string
 local function dump_signature(config_entry)
-    ---@class DumpEnv
+    ---@type DumpEnv
     local env = {
         buffer = { "---@meta", "" },
         pending = {},
@@ -661,23 +661,24 @@ end
 ---@param config_entry user.config.ConfigEntry
 ---@param path string # path to output meta file
 function M.dump_signature(config_entry, path)
-    local loop = vim.uv
+    ---@module "uv"
+    local uv = vim.uv
 
     local permission = 480 -- 0o740
-    loop.fs_open(path, "w+", permission, function(open_err, fd)
+    uv.fs_open(path, "w+", permission, function(open_err, fd)
         if open_err or not fd then
             log_util.info(open_err or "failed to open config meta file")
             return
         end
 
         local metadata = dump_signature(config_entry)
-        loop.fs_write(fd, metadata, function(write_err)
+        uv.fs_write(fd, metadata, function(write_err)
             if write_err then
                 log_util.info(write_err)
                 return
             end
 
-            loop.fs_close(fd)
+            uv.fs_close(fd)
         end)
     end)
 end

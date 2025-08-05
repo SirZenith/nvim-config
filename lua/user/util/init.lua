@@ -1,8 +1,9 @@
 local log_util = require "user.util.log"
 
 local api = vim.api
-local loop = vim.uv
-local hrtime = loop.hrtime
+---@module "uv"
+local uv = vim.uv
+local hrtime = uv.hrtime
 
 local M = {}
 
