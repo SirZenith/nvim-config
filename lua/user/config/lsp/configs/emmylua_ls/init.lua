@@ -68,96 +68,95 @@ local M = {
 }
 
 M.settings = {
-    codeAction = {
-        insertSpace = false,
-    },
-    codeLens = {
-        enable = true,
-    },
-    completion = {
-        enable = true,
-        autoRequire = true,
-        autoRequireFunction = "require",
-        autoRequireNamingConvention = "keep",
-        autoRequireSeparator = ".",
-        callSnippet = false,
-        postfix = "@",
-    },
-    diagnostics = {
-        enable = true,
-        diagnosticInterval = 500,
+    Lua = {
+        codeAction = {
+            insertSpace = false,
+        },
+        codeLens = {
+            enable = true,
+        },
+        completion = {
+            enable = true,
+            autoRequire = true,
+            autoRequireFunction = "require",
+            autoRequireNamingConvention = "keep",
+            autoRequireSeparator = ".",
+            callSnippet = false,
+            postfix = "@",
+        },
+        diagnostics = {
+            enable = true,
+            diagnosticInterval = 500,
 
-        ---@type string[] # diagnostic entry to disable
-        disable = {},
-        ---@type string[] # diagnostic entry to enable
-        enables = {},
-        ---@type table<string, user.lsp.emmylua_ls.Severity> # custom severity for specific diagnostic entry
-        severity = vim.empty_dict(),
+            ---@type string[] # diagnostic entry to disable
+            disable = {},
+            ---@type string[] # diagnostic entry to enable
+            enables = {},
+            ---@type table<string, user.lsp.emmylua_ls.Severity> # custom severity for specific diagnostic entry
+            severity = vim.empty_dict(),
 
-        globals = {},
-        globalsRegex = {},
-    },
-    documentColor = {
-        enable = true,
-    },
-    hint = {
-        enable = true,
-        indexHint = true,
-        localHint = true,
-        overrideHint = true,
-        paramHint = true,
-    },
-    hover = {
-        enable = true,
-    },
-    references = {
-        enable = true,
-        fuzzySearch = true,
-        shortStringSearch = false,
-    },
-    resource = {
-        paths = {},
-    },
-    runtime = {
-        classDefaultCall = {
-            forceNonColon = false,
-            forceReturnSelf = false,
-            functionName = "",
+            globals = {},
+            globalsRegex = {},
         },
-        extensions = {
-            ".lua",
+        documentColor = {
+            enable = true,
         },
-        frameworkVersions = {},
-        requireLikeFunction = {},
-        requirePattern = {
-            "?.lua",
-            "?/init.lua",
+        hint = {
+            enable = true,
+            indexHint = true,
+            localHint = true,
+            overrideHint = true,
+            paramHint = true,
         },
-        version = "LuaLatest",
-    },
-    semanticTokens = {
-        enable = true,
-    },
-    signature = {
-        detailSignatureHelper = true,
-    },
-    strict = {
-        arrayIndex = true,
-        docBaseConstMatchBaseType = true,
-        metaOverrideFileDefine = true,
-        requirePath = false,
-        typeCall = false,
-    },
-    workspace = {
-        enableReindex = false,
-        encoding = "utf-8",
-        ignoreDir = { ".nvim" },
-        ignoreGlobs = {},
-        library = {},
-        moduleMap = {},
-        preloadFileSize = 0,
-        reindexDuration = 5000,
-        workspaceRoots = {},
+        hover = {
+            enable = true,
+        },
+        references = {
+            enable = true,
+            fuzzySearch = true,
+            shortStringSearch = false,
+        },
+        resource = {
+            paths = {},
+        },
+        runtime = {
+            classDefaultCall = {
+                forceNonColon = false,
+                forceReturnSelf = false,
+                functionName = "",
+            },
+            extensions = {
+                ".lua",
+            },
+            frameworkVersions = {},
+            requireLikeFunction = {},
+            requirePattern = {},
+            version = "LuaLatest",
+        },
+        semanticTokens = {
+            enable = true,
+        },
+        signature = {
+            detailSignatureHelper = true,
+        },
+        strict = {
+            arrayIndex = true,
+            docBaseConstMatchBaseType = true,
+            metaOverrideFileDefine = true,
+            requirePath = false,
+            typeCall = false,
+        },
+        workspace = {
+            enableReindex = false,
+            encoding = "utf-8",
+            ignoreDir = { ".nvim" },
+            ignoreGlobs = {},
+            library = {},
+            moduleMap = {},
+            preloadFileSize = 0,
+            reindexDuration = 5000,
+            workspaceRoots = {},
+        },
     },
 }
 
@@ -180,12 +179,13 @@ function M.before_init(_param, config)
         runtime_version = "Lua5.1"
     end
 
-    lsp_util.append_config_entry(settings, "diagnostics.globals", is_in_runtime_path and "vim" or nil)
-    lsp_util.append_config_entry(settings, "runtime.requireLikeFunction", is_in_runtime_path and "import" or nil)
-    lsp_util.upsert_config_entry(settings, "runtime.version", runtime_version)
+    lsp_util.append_config_entry(settings, "Lua.diagnostics.globals", is_in_runtime_path and "vim" or nil)
+    lsp_util.append_config_entry(settings, "Lua.runtime.requireLikeFunction", is_in_runtime_path and "import" or nil)
+    lsp_util.upsert_config_entry(settings, "Lua.runtime.version", runtime_version)
 
     local runtime_paths, library_paths = paths.get_path_setting(root_dir)
-    lsp_util.upsert_config_entry(settings, "workspace.library", library_paths)
+    lsp_util.upsert_config_entry(settings, "Lua.runtime.requirePattern", runtime_paths)
+    lsp_util.upsert_config_entry(settings, "Lua.workspace.library", library_paths)
 end
 
 return M
