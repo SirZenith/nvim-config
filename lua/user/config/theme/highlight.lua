@@ -563,6 +563,16 @@ local highlight = vim.tbl_extend("keep", {
     OilVcsStatusUpstreamUntracked = {
         link = "Normal",
     },
+}, {
+    -- -----------------------------------------------------------------------
+    -- render-markdown
+    RenderMarkdownCode = {
+        bg = color.bg.dark,
+    },
+    RenderMarkdownCodeInline = {
+        fg = color.blue.normal,
+        bg = color.bg.light,
+    },
 })
 
 local rainbow_hl_groups = {

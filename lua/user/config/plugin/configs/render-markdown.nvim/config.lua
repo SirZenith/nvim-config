@@ -291,9 +291,9 @@ user.plugin.render_markdown = {
         -- | left  | left side of code block  |
         position = "left",
         -- Whether to include the language icon above code blocks.
-        language_icon = true,
+        language_icon = false,
         -- Whether to include the language name above code blocks.
-        language_name = true,
+        language_name = false,
         -- Whether to include the language info above code blocks.
         language_info = true,
         -- Amount of padding to add around the language.
@@ -304,7 +304,7 @@ user.plugin.render_markdown = {
         -- Use a boolean to make behavior apply to all languages.
         -- Borders above & below blocks will continue to be rendered.
         ---@type string[] | boolean
-        disable_background = true,
+        disable_background = { "diff" },
         -- Width of the code block background.
         -- | block | width of the code block  |
         -- | full  | full width of the window |
@@ -326,7 +326,7 @@ user.plugin.render_markdown = {
         -- | thick | use the same highlight as the code body              |
         -- | thin  | when lines are empty overlay the above & below icons |
         -- | hide  | conceal lines unless language name or icon is added  |
-        border = "hide",
+        border = "none",
         -- Used above code blocks to fill remaining space around language.
         language_border = "█",
         -- Added to the left of language.
