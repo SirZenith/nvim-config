@@ -4,7 +4,7 @@ local dev_path = vim.env.DEV_PATH or vim.fs.joinpath(env_home, "Developer")
 
 return {
     ENV_CONFIG_INIT_OK = true,
-    ENABLE_BYTE_CODE = false,
+    ENABLE_BYTE_CODE = vim.env.ENABLE_BYTE_CODE ~= nil,
 
     DOTFILES_HOME = vim.fs.joinpath(env_home, ".config", "dotfiles"),
     NVIM_HOME = nvim_home,
