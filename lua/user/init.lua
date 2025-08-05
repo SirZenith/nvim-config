@@ -3,6 +3,13 @@ if not env_config.ENV_CONFIG_INIT_OK then
     return { finalize = function() end }
 end
 
+if env_config.ENABLE_BYTE_CODE then
+    require("user.util.module_loaders").init {
+        enable_byte_code = true,
+        user_runtime_path = env_config.USER_RUNTIME_PATH,
+    }
+end
+
 local util = require "user.util"
 local log_uitl = require "user.util.log"
 local config_entry = require "user.base.config_entry"
@@ -140,12 +147,10 @@ local function setup_environment()
     vim.o.cmdheight = 0                      -- hide cmdline
 
     -- loading custom loader
-    local module_loaders = import "user.util.module_loaders"
-    if module_loaders then
-        module_loaders.setup {
-            user_runtime_path = user.env.USER_RUNTIME_PATH(),
-        }
-    end
+    require("user.util.module_loaders").init {
+        enable_byte_code = false,
+        user_runtime_path = env_config.USER_RUNTIME_PATH,
+    }
 end
 
 local function setup_init_autocmd()
