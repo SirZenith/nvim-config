@@ -1,5 +1,4 @@
 local user = require "user"
-local fs_util = require "user.util.fs"
 local log = require "user.util.log"
 
 local M = {}
@@ -18,8 +17,8 @@ user.env = {
 user.platform = {
     __newentry = true,
     windows = {
-        nu_config_path = fs_util.path_join(user.env.APPDATA(), "nushell/config.nu"),
-        nu_env_path = fs_util.path_join(user.env.APPDATA(), "nushell/env.nu"),
+        nu_config_path = vim.fs.joinpath(user.env.APPDATA(), "nushell/config.nu"),
+        nu_env_path = vim.fs.joinpath(user.env.APPDATA(), "nushell/env.nu"),
     },
 }
 

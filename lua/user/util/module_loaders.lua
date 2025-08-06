@@ -1,9 +1,17 @@
 local PATH_SEP = vim.fn.has("WIN32") == 1 and "\\" or "/"
 
 local initialized = false
+local user_runtime_path = ""
 
-local M = {}
-M.user_runtime_path = nil
+---@type table<string, boolean>
+local user_module_prefix_tbl = {
+    ["user."] = true,
+    ["user/"] = true,
+}
+
+if PATH_SEP ~= "/" then
+    user_module_prefix_tbl["user" .. PATH_SEP] = true
+end
 
 ---@param path string
 ---@return string
@@ -22,8 +30,8 @@ end
 -- byte code loader
 local function byte_code_loader(original_modulename)
     local substr = original_modulename:sub(1, 5)
-    if substr ~= "user." and substr ~= "user/" then
-        return "\n\tnot a user config module (user config byte code loader)"
+    if not user_module_prefix_tbl[substr] then
+        return "\n\tbyte code config loader: not a module under 'user'"
     end
 
     local modulename = original_modulename:sub(6)
@@ -32,10 +40,8 @@ local function byte_code_loader(original_modulename)
     end
     modulename = "user-build/" .. modulename
 
-    local user_runtime_path = M.user_runtime_path
-
     local errmsg = { "" }
-    local err_template = "no file '%s' (user config byte code loader)"
+    local err_template = "byte code config loader: no file '%s'"
 
     local paths = {
         vim.fs.joinpath(user_runtime_path, modulename .. ".luac"),
@@ -64,35 +70,15 @@ end
 
 ---@type (fun(modulename: string): string | function)[]
 local loaders = {
-    -- no_dot_substiting_loader
-    function(modulename)
-        local errmsg = { "" }
-        local err_template = "no file '%s' (no dot-sub loader)"
-
-        for path in string.gmatch(package.path, "([^;]+)") do
-            local filename = string.gsub(path, "%?", modulename)
-            local file = io.open(filename, "rb")
-            if file then
-                local content = assert(file:read("*a"))
-                local chunkname = path_name_digest(filename)
-                return assert(loadstring(content, chunkname))
-            end
-            table.insert(errmsg, err_template:format(filename))
-        end
-
-        return table.concat(errmsg, "\n\t")
-    end,
-    -- plugin_config_loader
+    -- plugin config loader
     function(modulename)
         local substr = modulename:sub(1, 5)
-        if substr ~= "user." and substr ~= "user/" then
-            return "\n\tnot a plugin config module (plugin config loader)"
+        if not user_module_prefix_tbl[substr] then
+            return "\n\tplugin config loader: not a module under 'user'"
         end
 
-        local user_runtime_path = M.user_runtime_path
-
         local errmsg = { "" }
-        local err_template = "no file '%s' (plugin config loader)"
+        local err_template = "plugin config loader: no file '%s'"
 
         local paths = {
             vim.fs.joinpath(user_runtime_path, modulename .. ".lua"),
@@ -112,39 +98,22 @@ local loaders = {
 
         return table.concat(errmsg, "\n\t")
     end,
-    -- workspace_loader
-    function(raw_modulename)
-        local workspace = require "user.config.workspace"
-
-        local dirname = workspace.WORKSPACE_CONFIG_DIR_NAME
-        if raw_modulename:sub(1, #dirname) ~= dirname then
-            return "\n\tnot a module under .nvim directory (workspace loader)"
-        end
-
+    -- no dot substituting loader
+    function(modulename)
         local errmsg = { "" }
-        local err_template = "no file '%s' (workspace loader)"
+        local err_template = "no dot-sub loader: no file '%s'"
 
-        local modulename = raw_modulename:gsub("%.", PATH_SEP)
-        do
-            local temp = dirname:gsub("%.", PATH_SEP)
-            modulename = dirname .. modulename:sub(#temp + 1)
-        end
-
-        local workspace_path = workspace.get_workspace_path()
-        local paths = {
-            vim.fs.joinpath(workspace_path, modulename),
-            vim.fs.joinpath(workspace_path, modulename .. ".lua"),
-            vim.fs.joinpath(workspace_path, modulename, "init.lua"),
-        }
-
-        for i = 1, #paths do
-            local path = paths[i]
-            local file = io.open(path, "rb")
-            if file then
-                local chunkname = path_name_digest(path)
-                return assert(loadstring(assert(file:read("*a")), chunkname))
+        for path in string.gmatch(package.path, "([^;]+)") do
+            local filename = string.gsub(path, "%?", modulename)
+            if vim.fn.filereadable(filename) == 1 then
+                local file = io.open(filename, "rb")
+                if file then
+                    local content = assert(file:read("*a"))
+                    local chunkname = path_name_digest(filename)
+                    return assert(loadstring(content, chunkname))
+                end
             end
-            table.insert(errmsg, err_template:format(path))
+            table.insert(errmsg, err_template:format(filename))
         end
 
         return table.concat(errmsg, "\n\t")
@@ -155,6 +124,8 @@ local loaders = {
 ---@field enable_byte_code? boolean
 ---@field user_runtime_path string
 
+local M = {}
+
 ---@param options user.ModuleLoaderOptions
 function M.init(options)
     if initialized then return end
@@ -162,9 +133,9 @@ function M.init(options)
     initialized = true
 
     -- allow loading modules via absolute path
-    package.path = package.path .. ";?.lua;?/init.lua"
+    package.path = package.path .. ";?"
 
-    M.user_runtime_path = options.user_runtime_path
+    user_runtime_path = options.user_runtime_path
 
     if options.enable_byte_code then
         table.insert(package.loaders, 1, byte_code_loader)

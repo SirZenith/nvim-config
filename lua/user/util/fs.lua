@@ -2,89 +2,13 @@ local M = {}
 
 M.PATH_SEP = vim.fn.has("WIN32") == 1 and "\\" or "/"
 
--- concatenate multiple path component into one.
----@param path string
----@param ... string
----@return string
-function M.path_join(path, ...)
-    local others = { ... }
-    if #others == 0 then return path end
-
-    local sep_size = #M.PATH_SEP
-    local size = #path
-
-    for _, other in ipairs(others) do
-        local o = tostring(other)
-        local o_size = #o
-        if path:sub(size) ~= M.PATH_SEP and o:sub(1) ~= M.PATH_SEP then
-            path = path .. M.PATH_SEP .. o
-            size = size + sep_size + o_size
-        else
-            path = path .. o
-            size = size + o_size
-        end
-    end
-
-    return path
-end
-
--- Convert a path to its normalized absolute form.
----@return string
-function M.to_abs(path)
-    if path == "" then return path end
-
-    path = vim.fs.normalize(path)
-    local parts = vim.split(path, "/")
-    if parts[1] == "." then
-        local cwd = vim.fn.getcwd()
-        cwd = vim.fs.normalize(cwd)
-        parts = vim.list_extend(vim.split(cwd, "/"), parts)
-    end
-
-    local delta = 0
-    for i = 1, #parts do
-        local part = parts[i]
-        if part == "." then
-            delta = delta + 1
-            parts[i] = nil
-        elseif part == ".." then
-            delta = delta + 2
-            parts[i] = nil
-        elseif delta > 0 then
-            local target = i - delta
-            if target < 1 then
-                target = 1
-            end
-
-            parts[i] = nil
-            parts[target] = part
-        end
-    end
-
-    return table.concat(parts, "/")
-end
-
--- Convert input path into relative path if its child path of CWD.
-function M.to_relative(path)
-    path = M.to_abs(path)
-    local cwd = M.to_abs(vim.fn.getcwd())
-
-    if not vim.startswith(path, cwd) then
-        return path
-    end
-
-    local len = #cwd
-
-    return path:sub(len + 1)
-end
-
 -- check if `path` is a sub directory of `other`.
 ---@param path string
 ---@param other string
 ---@return boolean
 function M.is_subdir_of(path, other)
-    path = M.to_abs(path)
-    other = M.to_abs(other)
+    path = vim.fs.abspath(path)
+    other = vim.fs.abspath(other)
     return other == path:sub(1, #other)
 end
 
@@ -145,7 +69,7 @@ function M.path_list_dedup(list)
     local delta = 0
     for i = 1, #paths do
         local path = paths[i]
-        local abs_path = M.to_abs(path)
+        local abs_path = vim.fs.abspath(path)
         local marked = dir_set[abs_path]
 
         if not marked then

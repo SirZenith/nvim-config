@@ -65,7 +65,6 @@ end
 
 -- Finalize plugin configs.
 local function on_plugins_loaded()
-    local fs_util = require "user.util.fs"
     ---@module "uv"
     local uv = vim.uv
 
@@ -79,7 +78,7 @@ local function on_plugins_loaded()
         ["plugin"] = 1000,  -- last module to finalize
     }
 
-    local config_dir = fs_util.path_join(user.env.USER_RUNTIME_PATH(), "user", "config")
+    local config_dir = vim.fs.joinpath(user.env.USER_RUNTIME_PATH(), "user", "config")
 
     util.do_async_steps {
         function(next_step)

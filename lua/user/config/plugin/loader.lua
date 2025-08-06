@@ -17,7 +17,7 @@ local import = util.import
 ---@param reload boolean
 ---@return any?
 local function load_plugin_module(module_path, reload)
-    local file = fs_util.path_join(user.env.USER_RUNTIME_PATH(), module_path .. ".lua")
+    local file = vim.fs.joinpath(user.env.USER_RUNTIME_PATH(), module_path .. ".lua")
     if fn.filereadable(file) == 0 then
         return nil
     end
@@ -31,12 +31,12 @@ end
 
 ---@param name string # plugin base name
 local function get_config_path(name)
-    return fs_util.path_join("user", "config", "plugin", "configs", name, "config")
+    return vim.fs.joinpath("user", "config", "plugin", "configs", name, "config")
 end
 
 ---@param name string # plugin base name
 local function get_keybinding_path(name)
-    return fs_util.path_join("user", "config", "plugin", "configs", name, "keybinding")
+    return vim.fs.joinpath("user", "config", "plugin", "configs", name, "keybinding")
 end
 
 -- ----------------------------------------------------------------------------

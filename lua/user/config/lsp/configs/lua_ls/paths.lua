@@ -69,10 +69,10 @@ local function get_import_paths(root_dir)
         vim.list_extend(plugin_names, PLUGIN_TARGETS)
     end
 
-    local plugin_root = fs_util.path_join(vim.fn.stdpath("data"), "lazy")
+    local plugin_root = vim.fs.joinpath(vim.fn.stdpath("data"), "lazy")
     for i = 1, #plugin_names do
         local name = plugin_names[i]
-        paths[#paths + 1] = fs_util.path_join(plugin_root, name, "lua")
+        paths[#paths + 1] = vim.fs.joinpath(plugin_root, name, "lua")
     end
 
     -- Lua import Path
@@ -110,7 +110,7 @@ local function get_runtime_paths(root_dir)
     local import_paths = get_import_paths(root_dir)
 
     if is_in_nvim_runtime_path then
-        local local_lua_dir = fs_util.path_join(root_dir, "lua")
+        local local_lua_dir = vim.fs.joinpath(root_dir, "lua")
 
         if vim.fn.isdirectory(local_lua_dir) == 1 then
             import_paths[#import_paths + 1] = local_lua_dir
@@ -141,9 +141,9 @@ local function get_library_paths(root_dir)
     vim.list_extend(paths, import_paths)
 
     -- Addon library definition
-    local addon_dir = fs_util.path_join(user.env.LANG_PATH(), "Lua", "luals-addons")
+    local addon_dir = vim.fs.joinpath(user.env.LANG_PATH(), "Lua", "luals-addons")
     for _, name in ipairs(ADDON_LIBRARIES) do
-        paths[#paths + 1] = fs_util.path_join(addon_dir, name, "library")
+        paths[#paths + 1] = vim.fs.joinpath(addon_dir, name, "library")
     end
 
     -- Remove paths under current workspace

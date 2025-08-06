@@ -1,6 +1,5 @@
 local user = require "user"
 local log_util = require "user.util.log"
-local fs_util = require "user.util.fs"
 local lsp_util = require "user.config.lsp.util"
 
 local debug = false
@@ -70,7 +69,7 @@ local function create_cmd()
         table.insert(buffer, "--inspect-brk")
     end
 
-    table.insert(buffer, fs_util.path_join(
+    table.insert(buffer, vim.fs.joinpath(
         user.env.HOME(),
         ".local",
         "bin",

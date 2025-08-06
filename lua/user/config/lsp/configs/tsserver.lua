@@ -1,5 +1,4 @@
 local user = require "user"
-local fs_util = require "user.util.fs"
 
 local M = {}
 
@@ -46,7 +45,7 @@ local function get_ts_lib_path()
 
     if not tslib_path or #tslib_path == 0 then
         local npm_prefix = vim.fn.has("WIN32") == 1 and user.env.APPDATA() or "/usr/local"
-        tslib_path = fs_util.path_join(npm_prefix, "npm", "node_modules", "typescript", "lib")
+        tslib_path = vim.fs.joinpath(npm_prefix, "npm", "node_modules", "typescript", "lib")
     end
 
     return tslib_path

@@ -1,6 +1,5 @@
 local user = require "user"
 local util = require "user.util"
-local fs_util = require "user.util.fs"
 local log_util = require "user.util.log"
 
 local import = util.import
@@ -24,9 +23,7 @@ if not mark or mark == "" then
 end
 
 local platform_config = mark
-    and fs_util.path_join(
-        user.env.USER_RUNTIME_PATH(), "user", "config", "platform", mark
-    )
+    and vim.fs.joinpath("user", "config", "platform", mark)
     or ""
 
 local module = user:with_source(

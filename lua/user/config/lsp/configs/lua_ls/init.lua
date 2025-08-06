@@ -1,6 +1,5 @@
 local user = require "user"
 
-local fs_util = require "user.util.fs"
 local lsp_util = require "user.config.lsp.util"
 local workspace = require "user.config.workspace"
 
@@ -56,7 +55,7 @@ M.settings = {
             -- Annotation files path
             library = {},
             userThirdParty = {
-                fs_util.path_join(user.env.LANG_PATH(), "Lua", "luals-addons"),
+                vim.fs.joinpath(user.env.LANG_PATH(), "Lua", "luals-addons"),
             },
         }
     }

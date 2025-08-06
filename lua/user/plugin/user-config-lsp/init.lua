@@ -1,5 +1,4 @@
 local user = require "user"
-local fs_util = require "user.util.fs"
 local log_util = require "user.util.log"
 
 local command = require "user.config.lsp.command"
@@ -49,7 +48,7 @@ local function merge_lsp_config(name)
         config_overlay = config_overlay()
     end
 
-    local root_path = fs_util.path_join(user.env.USER_RUNTIME_PATH(), "user", "config", "lsp", "configs")
+    local root_path = vim.fs.joinpath(user.env.USER_RUNTIME_PATH(), "user", "config", "lsp", "configs")
     local config_module = loader.load(root_path, name)
 
     local result = vim.tbl_deep_extend(

@@ -1,5 +1,4 @@
 local user = require "user"
-local fs_util = require "user.util.fs"
 
 user.plugin.typescript_tools = {
     __newentry = true,
@@ -18,7 +17,7 @@ user.plugin.typescript_tools = {
         -- specify a custom path to `tsserver.js` file, if this is nil or file
         -- under path not exists then standard path resolution strategy is applied
         ---@type string?
-        tsserver_path = fs_util.path_join(user.env.YARN_GLOBAL_DIR(), "node_modules", "typescript", "lib", "tsserver.js"),
+        tsserver_path = vim.fs.joinpath(user.env.YARN_GLOBAL_DIR(), "node_modules", "typescript", "lib", "tsserver.js"),
         -- specify a list of plugins to load by tsserver, e.g., for support
         -- `styled-components` (see 💅 `styled-components` support section)
         ---@type string[]

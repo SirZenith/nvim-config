@@ -1,6 +1,5 @@
 local user = require "user"
 local util = require "user.util"
-local fs_util = require "user.util.fs"
 
 local import = util.import
 
@@ -41,7 +40,7 @@ end
 
 ---@return string path
 function M.get_workspace_config_dir_path()
-    return fs_util.path_join(
+    return vim.fs.joinpath(
         M.get_workspace_path(),
         M.WORKSPACE_CONFIG_DIR_NAME
     )
@@ -49,7 +48,7 @@ end
 
 ---@return string path
 function M.get_workspace_config_file_path()
-    return fs_util.path_join(
+    return vim.fs.joinpath(
         M.get_workspace_path(),
         M.WORKSPACE_CONFIG_DIR_NAME,
         M.WORKSPACE_CONFIG_INIT_FILE_NAME
@@ -58,7 +57,7 @@ end
 
 ---@return string path
 function M.get_workspace_config_require_path()
-    return fs_util.path_join(
+    return vim.fs.joinpath(
         M.WORKSPACE_CONFIG_DIR_NAME,
         M.WORKSPACE_CONFIG_INIT_FILE_BASENAME
     )

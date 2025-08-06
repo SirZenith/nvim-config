@@ -1,6 +1,5 @@
 local user = require "user"
 local workspace = require "user.config.workspace"
-local fs_util = require "user.util.fs"
 
 local M = {}
 
@@ -33,7 +32,7 @@ local function check_eslint_activated()
     local pwd = workspace.get_workspace_path()
     local paths = { pwd }
     for _, path in user.workspace.sub_directories:ipairs() do
-        paths[#paths + 1] = fs_util.path_join(pwd, path)
+        paths[#paths + 1] = vim.fs.joinpath(pwd, path)
     end
 
     local ok = true

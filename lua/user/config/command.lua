@@ -1,7 +1,6 @@
 local user = require "user"
 local config_entry = require "user.base.config_entry"
 local util = require "user.util"
-local fs_util = require "user.util.fs"
 local log_util = require "user.util.log"
 
 local api = vim.api
@@ -74,6 +73,11 @@ cmd("CompileUserConfig", function()
     local root = vim.fs.joinpath(runtime_path, "user")
     local output = vim.fs.joinpath(runtime_path, "user-build")
 
+    vim.fs.rm(output, {
+        recursive = true,
+        force = true,
+    })
+
     build(root, output)
 end, {
     desc = "compile user config into byte code",
@@ -102,7 +106,7 @@ cmd("DumpConfigMeta", function()
     local plugin_loader = import "user.config.plugin.loader"
     plugin_loader.load_all_plugin_config(plugin_specs)
 
-    local filepath = fs_util.path_join(user.env.USER_RUNTIME_PATH(), "user", "meta", "user_config.lua")
+    local filepath = vim.fs.joinpath(user.env.USER_RUNTIME_PATH(), "user", "meta", "user_config.lua")
     config_entry.dump_signature(user --[[@as user.config.ConfigEntry]], filepath)
 end, {
     desc = "dump user config metadata to file."

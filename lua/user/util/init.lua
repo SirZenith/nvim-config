@@ -199,4 +199,123 @@ function M.do_async_steps(steps, ...)
     next_step(...)
 end
 
+-- ----------------------------------------------------------------------------
+
+---@param basename string
+---@param src_dir string
+---@param output_dir string
+---@param on_finished fun(err: string?)
+local function try_update_compiled_code(basename, src_dir, output_dir, on_finished)
+    local src_file = vim.fs.joinpath(src_dir, basename)
+    local output_file = vim.fs.joinpath(output_dir, basename .. "c")
+
+    M.do_async_steps({
+        function(next_step)
+            uv.fs_stat(src_file, next_step)
+        end,
+
+        ---@param err string?
+        ---@param fd integer?
+        function(next_step, err, src_stat)
+            if not src_stat or err then
+                on_finished("stat failed: " .. src_file)
+                return
+            end
+
+            uv.fs_stat(output_file, function(stat_err, output_stat)
+                if not output_stat or stat_err then
+                    on_finished("stat failed: " .. output_file)
+                    return
+                end
+
+                if output_stat.mtime > src_stat.mtime then
+                    on_finished()
+                    return
+                end
+
+                next_step()
+            end)
+        end,
+
+        function(next_step)
+            uv.fs_open(output_file, "w+", 438, vim.schedule_wrap(next_step))
+        end,
+
+        ---@param err string?
+        ---@param fd integer?
+        function(next_step, err, fd)
+            if not fd or err then
+                on_finished("failed to open" .. output_file .. ": " .. err)
+                return
+            end
+
+            local chunk, load_err = loadfile(src_file)
+            if not chunk then
+                on_finished("failed to load " .. src_file .. ": " .. load_err)
+                return
+            end
+
+            local bytecode = string.dump(chunk, true)
+            uv.fs_write(fd, bytecode)
+            uv.fs_close(fd)
+
+            next_step()
+        end,
+
+        function()
+            on_finished()
+        end,
+    })
+end
+
+---@param src_dir string
+---@param output_dir string
+---@param on_finished fun(err: string?)
+local function compile_config_async(src_dir, output_dir, on_finished)
+    local handle, scan_err = uv.fs_scandir(src_dir)
+    if not handle then
+        on_finished("failed to read directory " .. src_dir .. ": " .. scan_err)
+        return
+    end
+
+    if vim.fn.isdirectory(output_dir) == 0 then
+        uv.fs_mkdir(output_dir, 493)
+    end
+
+    local compile_dir ---@type fun(err: string?)
+    compile_dir = function(err)
+        if err then
+            log_util.warn(err)
+        end
+
+        local name = uv.fs_scandir_next(handle)
+        if not name then
+            on_finished()
+            return
+        end
+
+        local path = vim.fs.joinpath(src_dir, name)
+
+        if vim.fn.filereadable(path) == 1 then
+            if name:sub(#name - 3, #name) == ".lua" then
+                try_update_compiled_code(name, src_dir, output_dir, compile_dir)
+            end
+        else
+            local new_root = vim.fs.joinpath(src_dir, name)
+            local new_out = vim.fs.joinpath(output_dir, name)
+            compile_config_async(new_root, new_out, compile_dir)
+        end
+    end
+
+    compile_dir()
+end
+
+---@param src_dir string
+---@param output_dir string
+function M.compile_config(src_dir, output_dir)
+    compile_config_async(src_dir, output_dir, function(err)
+        log_util.warn(err)
+    end)
+end
+
 return M

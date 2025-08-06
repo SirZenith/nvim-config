@@ -1,9 +1,8 @@
 local user = require "user"
-local fs_util = require "user.util.fs"
 local log_util = require "user.util.log"
 
-local dap_root = fs_util.path_join(user.env.APP_PATH(), "DAP")
-local local_lua_root = fs_util.path_join(dap_root, "local-lua-debugger-vscode")
+local dap_root = vim.fs.joinpath(user.env.APP_PATH(), "DAP")
+local local_lua_root = vim.fs.joinpath(dap_root, "local-lua-debugger-vscode")
 
 user.plugin.nvim_dap = {
     __newentry = true,
@@ -26,7 +25,7 @@ user.plugin.nvim_dap = {
             type = "executable",
             command = "node",
             args = {
-                fs_util.path_join(dap_root, "vscode-firefox-debug", "dist", "adapter.bundle.js"),
+                vim.fs.joinpath(dap_root, "vscode-firefox-debug", "dist", "adapter.bundle.js"),
             },
         },
         local_lua = {
@@ -38,7 +37,7 @@ user.plugin.nvim_dap = {
             type = "executable",
             command = "node",
             args = {
-                fs_util.path_join(local_lua_root, "extension", "debugAdapter.js"),
+                vim.fs.joinpath(local_lua_root, "extension", "debugAdapter.js"),
             },
             enrich_config = function(config, on_config)
                 if not config.extensionPath then

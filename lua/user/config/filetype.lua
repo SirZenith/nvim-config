@@ -1,7 +1,6 @@
 local user = require "user"
 local util = require "user.util"
 local log_util = require "user.util.log"
-local fs_util = require "user.util.fs"
 local functional_util = require "user.util.functional"
 
 local augroup_id = vim.api.nvim_create_augroup("user.filetype", { clear = true })
@@ -38,7 +37,7 @@ user.filetype = {
                 local ok = false
 
                 for path in vim.fs.parents(match) do
-                    local mod_file_path = fs_util.path_join(path, "v.mod")
+                    local mod_file_path = vim.fs.joinpath(path, "v.mod")
                     ok = vim.fn.filereadable(mod_file_path) == 1
                     if ok then
                         break
@@ -91,7 +90,7 @@ user.filetype = {
 ---@param bufnr integer
 ---@param filetype string
 local function load_filetype_keybinding(bufnr, filetype)
-    local module_name = fs_util.path_join(
+    local module_name = vim.fs.joinpath(
         user.env.USER_RUNTIME_PATH(),
         "user",
         "config",
@@ -103,7 +102,7 @@ local function load_filetype_keybinding(bufnr, filetype)
 
     local targets = {
         module_name .. ".lua",
-        fs_util.path_join(module_name, "init.lua")
+        vim.fs.joinpath(module_name, "init.lua")
     }
 
     local module = nil
