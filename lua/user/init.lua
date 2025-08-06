@@ -15,9 +15,9 @@ local import = util.import
 
 log_uitl.log_level = vim.log.levels.WARN
 
-local user = config_entry.ConfigEntry:new {
+local user = config_entry.ConfigEntry:new({
     env = env_config,
-} --[[@as UserConfig]]
+}) --[[@as UserConfig]]
 
 -- ----------------------------------------------------------------------------
 

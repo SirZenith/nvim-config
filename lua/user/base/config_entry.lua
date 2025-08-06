@@ -624,10 +624,10 @@ local function _dump_config_class(env, class_name, tbl, parent_class)
         if type(key) == "number" then
             -- pass
         elseif type(value) ~= "table" then
-            table.insert(env.buffer, "---@field " .. key .. "? " .. type(value))
+            table.insert(env.buffer, "---@field " .. key .. " " .. type(value))
         else
             local name = class_name .. str_util.underscore_to_camel_case(key)
-            table.insert(env.buffer, "---@field " .. key .. "? " .. name)
+            table.insert(env.buffer, "---@field " .. key .. " " .. name)
             table.insert(env.pending, { name = name, value = value })
         end
     end
