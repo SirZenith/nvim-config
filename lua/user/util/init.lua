@@ -120,8 +120,7 @@ end
 function M.finalize_async(modules, callback)
     local i = 0
 
-    local finalize_one_module
-    finalize_one_module = function()
+    local function finalize_one_module()
         i = i + 1
         local module = modules[i]
         if not module then
@@ -185,8 +184,7 @@ end
 function M.do_async_steps(steps, ...)
     local index = 0
 
-    local next_step
-    next_step = function(...)
+    local function next_step(...)
         index = index + 1
         local step = steps[index]
         if type(step) ~= "function" then

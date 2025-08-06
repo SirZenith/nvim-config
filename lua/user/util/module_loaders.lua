@@ -132,9 +132,6 @@ function M.init(options)
 
     initialized = true
 
-    -- allow loading modules via absolute path
-    package.path = package.path .. ";?"
-
     user_runtime_path = options.user_runtime_path
 
     if options.enable_byte_code then

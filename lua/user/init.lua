@@ -1,7 +1,4 @@
 local env_config = require "user.base.env"
-if not env_config.ENV_CONFIG_INIT_OK then
-    return { finalize = function() end }
-end
 
 if env_config.ENABLE_BYTE_CODE then
     require("user.util.module_loaders").init {

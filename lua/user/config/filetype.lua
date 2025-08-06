@@ -91,7 +91,6 @@ user.filetype = {
 ---@param filetype string
 local function load_filetype_keybinding(bufnr, filetype)
     local module_name = vim.fs.joinpath(
-        user.env.USER_RUNTIME_PATH(),
         "user",
         "config",
         "keybinding",
@@ -100,15 +99,16 @@ local function load_filetype_keybinding(bufnr, filetype)
         filetype
     )
 
+    local runtime_path = user.env.USER_RUNTIME_PATH()
     local targets = {
-        module_name .. ".lua",
-        vim.fs.joinpath(module_name, "init.lua")
+        vim.fs.joinpath(runtime_path, module_name .. ".lua"),
+        vim.fs.joinpath(runtime_path, module_name, "init.lua"),
     }
 
     local module = nil
     for _, file in ipairs(targets) do
         if vim.fn.filereadable(file) == 1 then
-            module = util.import(file)
+            module = util.import(module_name)
             break
         end
     end
