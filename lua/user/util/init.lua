@@ -218,17 +218,22 @@ local function try_update_compiled_code(basename, src_dir, output_dir, on_finish
         ---@param fd integer?
         function(next_step, err, src_stat)
             if not src_stat or err then
-                on_finished("stat failed: " .. src_file)
+                on_finished(src_file .. " stat failed: " .. err)
+                return
+            end
+
+            if vim.fn.filereadable(output_file) == 0 then
+                next_step()
                 return
             end
 
             uv.fs_stat(output_file, function(stat_err, output_stat)
                 if not output_stat or stat_err then
-                    on_finished("stat failed: " .. output_file)
+                    on_finished(output_file .. " stat failed: " .. stat_err)
                     return
                 end
 
-                if output_stat.mtime > src_stat.mtime then
+                if output_stat.mtime.nsec > src_stat.mtime.nsec then
                     on_finished()
                     return
                 end
@@ -299,6 +304,8 @@ local function compile_config_async(src_dir, output_dir, on_finished)
         if vim.fn.filereadable(path) == 1 then
             if name:sub(#name - 3, #name) == ".lua" then
                 try_update_compiled_code(name, src_dir, output_dir, compile_dir)
+            else
+                compile_dir()
             end
         else
             local new_root = vim.fs.joinpath(src_dir, name)
@@ -314,7 +321,10 @@ end
 ---@param output_dir string
 function M.compile_config(src_dir, output_dir)
     compile_config_async(src_dir, output_dir, function(err)
-        log_util.warn(err)
+        if err then
+            log_util.warn(err)
+        end
+        vim.notify("Compilation complete", vim.log.levels.INFO)
     end)
 end
 

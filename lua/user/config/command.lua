@@ -26,59 +26,11 @@ cmd("Reload", "source $MYVIMRC", {
 })
 
 cmd("CompileUserConfig", function()
-    local uv = vim.uv
-
-    local build ---@type fun(root: string, out: string)
-    build = function(root, output)
-        local list, err = uv.fs_scandir(root)
-        if not list then
-            log_util.warn(err)
-            return
-        end
-
-        if vim.fn.isdirectory(output) == 0 then
-            uv.fs_mkdir(output, 493)
-        end
-
-        local name = uv.fs_scandir_next(list)
-        while name do
-            local path = vim.fs.joinpath(root, name)
-
-            if vim.fn.filereadable(path) == 1 then
-                local chunk = loadfile(path)
-                if chunk then
-                    local out_path = vim.fs.joinpath(output, name .. "c")
-                    local file, open_err = uv.fs_open(out_path, "w+", 438)
-                    if file then
-                        local bytecode = string.dump(chunk, true)
-                        uv.fs_write(file, bytecode)
-                        uv.fs_close(file)
-
-                        vim.notify(out_path, vim.log.levels.INFO)
-                    else
-                        log_util.warn("failed to open", out_path, open_err)
-                    end
-                end
-            else
-                local new_root = vim.fs.joinpath(root, name)
-                local new_out = vim.fs.joinpath(output, name)
-                build(new_root, new_out)
-            end
-
-            name = uv.fs_scandir_next(list)
-        end
-    end
-
     local runtime_path = user.env.USER_RUNTIME_PATH()
-    local root = vim.fs.joinpath(runtime_path, "user")
-    local output = vim.fs.joinpath(runtime_path, "user-build")
-
-    vim.fs.rm(output, {
-        recursive = true,
-        force = true,
-    })
-
-    build(root, output)
+    util.compile_config(
+        vim.fs.joinpath(runtime_path, "user"),
+        vim.fs.joinpath(runtime_path, "user-build")
+    )
 end, {
     desc = "compile user config into byte code",
 })
