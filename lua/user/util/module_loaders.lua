@@ -1,6 +1,12 @@
+local M = {}
+
+M.BYTE_CODE_DIR_NAME = "user-build"
+
 local PATH_SEP = vim.fn.has("WIN32") == 1 and "\\" or "/"
 
 local initialized = false
+
+-- ----------------------------------------------------------------------------
 local user_runtime_path = ""
 
 ---@type table<string, boolean>
@@ -12,6 +18,8 @@ local user_module_prefix_tbl = {
 if PATH_SEP ~= "/" then
     user_module_prefix_tbl["user" .. PATH_SEP] = true
 end
+
+-- ----------------------------------------------------------------------------
 
 ---@param path string
 ---@return string
@@ -38,7 +46,7 @@ local function byte_code_loader(original_modulename)
     if vim.endswith(modulename, ".lua") then
         modulename = modulename:sub(1, #modulename - 4) .. ".luac"
     end
-    modulename = "user-build/" .. modulename
+    modulename = M.BYTE_CODE_DIR_NAME .. "/" .. modulename
 
     local errmsg = { "" }
     local err_template = "byte code config loader: no file '%s'"
@@ -124,7 +132,6 @@ local loaders = {
 ---@field enable_byte_code? boolean
 ---@field user_runtime_path string
 
-local M = {}
 
 ---@param options user.ModuleLoaderOptions
 function M.init(options)

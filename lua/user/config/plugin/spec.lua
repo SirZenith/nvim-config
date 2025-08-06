@@ -48,6 +48,17 @@ local specs = {
             },
         },
     },
+    ucs {
+        name = "update-compiled-config",
+        lazy_load = {
+            event = {
+                {
+                    name = "User",
+                    load_checker = putl.user_event_cond("UserConfigFinalized"),
+                },
+            },
+        },
+    },
 
     -- ------------------------------------------------------------------------
     -- Themes

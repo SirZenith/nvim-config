@@ -26,10 +26,12 @@ cmd("Reload", "source $MYVIMRC", {
 })
 
 cmd("CompileUserConfig", function()
+    local module_loaders = require "user.util.module_loaders"
+
     local runtime_path = user.env.USER_RUNTIME_PATH()
     util.compile_config(
         vim.fs.joinpath(runtime_path, "user"),
-        vim.fs.joinpath(runtime_path, "user-build")
+        vim.fs.joinpath(runtime_path, module_loaders.BYTE_CODE_DIR_NAME)
     )
 end, {
     desc = "compile user config into byte code",

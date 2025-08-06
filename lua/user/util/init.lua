@@ -202,7 +202,7 @@ end
 ---@param basename string
 ---@param src_dir string
 ---@param output_dir string
----@param on_finished fun(err: string?)
+---@param on_finished fun(err: string?, updated: boolean?)
 local function try_update_compiled_code(basename, src_dir, output_dir, on_finished)
     local src_file = vim.fs.joinpath(src_dir, basename)
     local output_file = vim.fs.joinpath(output_dir, basename .. "c")
@@ -231,7 +231,14 @@ local function try_update_compiled_code(basename, src_dir, output_dir, on_finish
                     return
                 end
 
-                if output_stat.mtime.nsec > src_stat.mtime.nsec then
+                local src_mtime = src_stat.mtime
+                local out_mtime = output_stat.mtime
+                local is_valid = out_mtime.sec > src_mtime.sec
+                if is_valid and out_mtime.sec == src_mtime.sec then
+                    is_valid = out_mtime.nsec > src_mtime.nsec
+                end
+
+                if is_valid then
                     on_finished()
                     return
                 end
@@ -262,11 +269,7 @@ local function try_update_compiled_code(basename, src_dir, output_dir, on_finish
             uv.fs_write(fd, bytecode)
             uv.fs_close(fd)
 
-            next_step()
-        end,
-
-        function()
-            on_finished()
+            on_finished(nil, true)
         end,
     })
 end
@@ -285,13 +288,19 @@ local function compile_config_async(src_dir, output_dir, on_finished)
         uv.fs_mkdir(output_dir, 493)
     end
 
-    local compile_dir ---@type fun(err: string?)
-    compile_dir = function(err)
+    local name ---@type string?
+    local compile_dir ---@type fun(err: string?, updated: boolean?)
+    compile_dir = vim.schedule_wrap(function(err, updated)
         if err then
             log_util.warn(err)
         end
 
-        local name = uv.fs_scandir_next(handle)
+        if updated then
+            local msg = ("byte code updated: %s/%s"):format(src_dir, name)
+            vim.notify(msg, vim.log.levels.INFO)
+        end
+
+        name = uv.fs_scandir_next(handle)
         if not name then
             on_finished()
             return
@@ -310,19 +319,23 @@ local function compile_config_async(src_dir, output_dir, on_finished)
             local new_out = vim.fs.joinpath(output_dir, name)
             compile_config_async(new_root, new_out, compile_dir)
         end
-    end
+    end)
 
     compile_dir()
 end
 
 ---@param src_dir string
 ---@param output_dir string
-function M.compile_config(src_dir, output_dir)
+---@param options? { quiet: boolean }
+function M.compile_config(src_dir, output_dir, options)
     compile_config_async(src_dir, output_dir, function(err)
-        if err then
-            log_util.warn(err)
+        local is_quiet = options and options.quiet
+        if not is_quiet then
+            if err then
+                log_util.warn(err)
+            end
+            vim.notify("Compilation complete", vim.log.levels.INFO)
         end
-        vim.notify("Compilation complete", vim.log.levels.INFO)
     end)
 end
 
