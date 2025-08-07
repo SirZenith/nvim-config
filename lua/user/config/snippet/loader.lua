@@ -201,17 +201,16 @@ function M.init_conditional_load()
             local module = import_ok and result() or {}
 
             local ok = xpcall(
-                vim.validate,
+                function()
+                    vim.validate("event", module.event, { "string", "table" })
+                    vim.validate("pattern", module.pattern, { "string", "table" })
+                    vim.validate("cond_func", module.cond_func, "functionn", true)
+                    vim.validate("setup", module.setup, "function")
+                end,
                 function(msg)
                     msg = ("while loading '%s':\n    %s"):format(module_name, msg)
                     vim.notify(msg, vim.log.levels.WARN)
-                end,
-                {
-                    event = { module.event, { "s", "t" } },
-                    pattern = { module.pattern, { "s", "t" } },
-                    cond_func = { module.cond_func, "f", true },
-                    setup = { module.setup, "f" },
-                }
+                end
             )
 
             if ok and module then
