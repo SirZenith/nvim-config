@@ -64,7 +64,10 @@ local function get_import_paths(root_dir)
     end
 
     local workspace_path = workspace.get_workspace_path()
-    if fs_util.is_subdir_of(workspace_path, user.env.NVIM_HOME()) then
+    if
+        fs_util.is_subdir_of(workspace_path, user.env.NVIM_HOME())
+        or fs_util.is_subdir_of(workspace_path, user.env.DOTFILES_HOME())
+    then
         -- Used when editing user config.
         vim.list_extend(plugin_names, PLUGIN_TARGETS)
     end
