@@ -260,7 +260,7 @@ cmd_snip.register(snip_filetype, {
     ["proto fd"] = {
         args = {
             { "id",   type = "number" },
-            { "name" },
+            "name",
             { "desc", is_varg = true },
         },
         content = function(id, name, ...)
@@ -303,7 +303,7 @@ cmd_snip.register(snip_filetype, {
     ["proto new"] = {
         args = {
             { "id",   type = "number" },
-            { "name" },
+            "name",
             { "desc", is_varg = true },
         },
         content = function(id, name, ...)
@@ -358,7 +358,7 @@ cmd_snip.register(snip_filetype, {
     ["proto new-srv"] = {
         args = {
             { "id",   type = "number" },
-            { "name" },
+            "name",
             { "desc", is_varg = true },
         },
         content = function(id, name, ...)

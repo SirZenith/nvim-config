@@ -194,21 +194,21 @@ cmd_snip.register(snip_filetype, {
     },
 
     pri = {
-        args = { "name", "type" },
-        content = function(name, type)
-            return { { "private ", name, ": ", type, " = ", 1, ";" } }
+        args = { "name", { "type", is_varg = true } },
+        content = function(name, ...)
+            return { { "private ", name, ": ", table.concat({ ... }), " = ", 1, ";" } }
         end
     },
     pro = {
-        args = { "name", "type" },
-        content = function(name, type)
-            return { { "protected ", name, ": ", type, " = ", 1, ";" } }
+        args = { "name", { "type", is_varg = true } },
+        content = function(name, ...)
+            return { { "protected ", name, ": ", table.concat({ ... }), " = ", 1, ";" } }
         end
     },
     pub = {
-        args = { "name", "type" },
-        content = function(name, type)
-            return { { "public ", name, ": ", type, " = ", 1, ";" } }
+        args = { "name", { "type", is_varg = true } },
+        content = function(name, ...)
+            return { { "public ", name, ": ", table.concat({ ... }), " = ", 1, ";" } }
         end
     },
 })
