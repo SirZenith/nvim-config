@@ -123,11 +123,11 @@ local function on_plugins_loaded()
             util.finalize_async(module_list, next_step)
         end,
         function(next_step)
-            vim.fn.timer_start(500, function()
+            vim.defer_fn(function()
                 vim.api.nvim_exec_autocmds("User", {
                     pattern = "UserConfigFinalized",
                 })
-            end)
+            end, 500)
         end,
     }
 end
@@ -164,7 +164,7 @@ local function setup_init_autocmd()
         pattern = "LazyVimStarted",
         once = true,
         callback = function()
-            vim.fn.timer_start(200, show_editor_state)
+            vim.defer_fn(show_editor_state, 200)
         end,
     })
 end
