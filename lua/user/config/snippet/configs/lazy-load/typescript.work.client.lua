@@ -1066,6 +1066,7 @@ cmd_snip.register(snip_filetype, {
             local key_name = name .. "Key"
             local node_name = name .. "Node"
             return {
+                { "// ",     2 },
                 { "const ",  key_name,               " = ",                         1,        " + '", name, "';" },
                 { "const ",  node_name,              " = reddotMgr.addNodeByPath(", key_name, ", '",  2,    "');" },
                 { node_name, ".setCheckFunc(() => {" },
