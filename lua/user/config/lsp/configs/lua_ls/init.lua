@@ -113,11 +113,15 @@ local function get_root_dir(fname)
                 ".luarc.jsonc",
                 ".luacheckrc",
 
-                ".stylua.toml",
-                "stylua.toml",
-
+                ".emmyrc.json",
+            },
+            {
                 "selene.toml",
                 "selene.yml",
+            },
+            {
+                ".stylua.toml",
+                "stylua.toml",
             },
             ".git",
         })
