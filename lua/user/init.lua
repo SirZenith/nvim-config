@@ -55,8 +55,8 @@ local function show_editor_state()
     local msg = table.concat(msg_buffer, "\n")
     util.notify(msg, vim.log.levels.INFO, {
         title = "Editor State",
-        timeout = 800,
-        animated = false,
+        timeout = 1200,
+        animate = false,
     })
 end
 

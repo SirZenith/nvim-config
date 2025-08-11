@@ -159,7 +159,7 @@ end
 ---@param level? string | integer # vim.log.levels
 ---@param opt? table<string, any>
 function M.notify(msg, level, opt)
-    local notify = M.import "notify"
+    local notify = M.import("notify", "")
     if notify then
         notify(msg, level, opt)
     else
