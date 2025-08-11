@@ -34,6 +34,7 @@ user.plugin.nvim_treesitter = {
             "make",
             "markdown",
             "markdown_inline",
+            "nu",
             "python",
             "qmljs",
             "query",
