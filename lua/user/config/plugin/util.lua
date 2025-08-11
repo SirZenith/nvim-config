@@ -91,11 +91,11 @@ end
 -- color scheme config
 
 function M.turn_on_true_color()
-    if vim.fn.has "nvim" then
+    if vim.fn.has("nvim") == 1 then
         vim.env.NVIM_TUI_ENABLE_TRUE_COLOR = 1
     end
 
-    if vim.fn.has "termguicolors" then
+    if vim.fn.has("termguicolors") == 1 then
         vim.o.termguicolors = true
     end
 end
