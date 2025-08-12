@@ -13,6 +13,7 @@ user.filetype = {
 
     filetype_indent = {
         gleam = 2,
+        scheme = 2,
     },
 
     -- file type mapping pattern. file types appear earlier in the list take
