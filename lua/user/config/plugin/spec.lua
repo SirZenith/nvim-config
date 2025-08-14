@@ -704,18 +704,6 @@ local specs = {
             },
         },
     },
-    {
-        -- Highlight color code with its color in vim
-        "norcalli/nvim-colorizer.lua",
-        lazy_load = {
-            event = {
-                {
-                    name = "BufEnter",
-                    load_checker = putl.buffer_enter_trigger_loading_predicate,
-                },
-            },
-        },
-    },
 
     -- ------------------------------------------------------------------------
     -- External Tools
