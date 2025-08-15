@@ -58,8 +58,9 @@ return function(bufnr)
         v = {
             -- adding a new function call wrapping current expression
             ["<space>af"] = function()
+                api.nvim_input("<esc>")
                 editing_util.wrap_selected_text_with("( ", ")", editing_util.WrapAfterPos.left)
-                api.nvim_input("<esc>a")
+                api.nvim_input("a")
             end,
         },
     }
