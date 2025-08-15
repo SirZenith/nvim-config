@@ -1,27 +1,27 @@
+local editing_util = require "user.util.editing"
 local keybinding_util = require "user.config.keybinding.util"
-local util = require "user.util"
 
 ---@param bufnr integer
 return function(bufnr)
     local keymap = {
         v = {
             ["<A-b>"] = function()
-                util.wrap_selected_text_with("<b>", "</b>")
+                editing_util.wrap_selected_text_with("<b>", "</b>")
             end,
             ["<A-h><A-l>"] = function()
-                util.wrap_selected_text_with("<mark>", "</mark>")
+                editing_util.wrap_selected_text_with("<mark>", "</mark>")
             end,
             ["<A-i>"] = function()
-                util.wrap_selected_text_with("*", "*")
+                editing_util.wrap_selected_text_with("*", "*")
             end,
             ["<A-s>"] = function()
-                util.wrap_selected_text_with("**", "**")
+                editing_util.wrap_selected_text_with("**", "**")
             end,
             ["<A-t><A-s>"] = function()
-                util.wrap_selected_text_with("<span class=\"translate\">", "</span>")
+                editing_util.wrap_selected_text_with("<span class=\"translate\">", "</span>")
             end,
             ["<A-u>"] = function()
-                util.wrap_selected_text_with("<u>", "</u>")
+                editing_util.wrap_selected_text_with("<u>", "</u>")
             end,
         },
     }

@@ -9,39 +9,6 @@ local M = {}
 
 -- ----------------------------------------------------------------------------
 
--- wrap_selected_text_with adds given content to the left and right side of selected
--- part of buffer text.
----@param left string
----@param right string
-function M.wrap_selected_text_with(left, right)
-    local panelpal = require "panelpal"
-
-    local st_r, st_c, ed_r, ed_c = panelpal.visual_selection_range()
-    if not (st_r and st_c and ed_r and ed_c) then return end
-
-    local bufnr = 0
-
-    local ed_line = api.nvim_buf_get_lines(bufnr, ed_r, ed_r + 1, true)[1]
-    if not ed_line then return end
-
-    local ed_offset = ed_c + vim.str_utf_end(ed_line, ed_c)
-
-    local list = api.nvim_buf_get_text(bufnr, st_r, st_c, ed_r, ed_offset, {})
-    local len = #list
-    if len == 0 then return end
-
-    list[1] = left .. list[1]
-    list[len] = list[len] .. right
-
-    for _, line in ipairs(list) do
-        print(line)
-    end
-
-    api.nvim_buf_set_text(0, st_r, st_c, ed_r, ed_offset, list)
-end
-
--- ----------------------------------------------------------------------------
-
 ---@param err string
 local function on_import_error(err)
     local thread = coroutine.running()
