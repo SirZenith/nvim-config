@@ -17,6 +17,25 @@ local function with_cur_expr_node(action)
     end
 end
 
+-- get_parent_expression_node_for_range finds smallest expresson node that is
+-- larger then specified range.
+---@param st_r integer
+---@param st_c integer
+---@param ed_r integer
+---@param ed_c integer
+local function get_parent_expression_node_for_range(st_r, st_c, ed_r, ed_c)
+    local parser = vim.treesitter.get_parser(0, "scheme")
+    local tree_list = parser and parser:parse() or nil
+    local tree = tree_list and tree_list[1] or nil
+    if not tree then return end
+
+    local root = tree:root()
+    local node = root:descendant_for_range(st_r, st_c, ed_r, ed_c)
+    if not node or node:id() == root:id() then return end
+
+    return ts_util.get_parent_of_type(node, "list")
+end
+
 ---@param bufnr integer
 return function(bufnr)
     local keymap = {
@@ -54,6 +73,9 @@ return function(bufnr)
                     api.nvim_buf_set_text(0, st_r, st_c, ed_r, ed_c, {})
                 end
             end),
+            ["<space>se"] = with_cur_expr_node(function(node)
+                ts_util.select_node_range(node)
+            end),
         },
         v = {
             -- adding a new function call wrapping current expression
@@ -61,6 +83,17 @@ return function(bufnr)
                 api.nvim_input("<esc>")
                 editing_util.wrap_selected_text_with("( ", ")", editing_util.WrapAfterPos.left)
                 api.nvim_input("a")
+            end,
+            ["<space>se"] = function()
+                local st_r, st_c, ed_r, ed_c = editing_util.get_visual_selection_range()
+                if not st_r or not st_c or not ed_r or not ed_c then
+                    return
+                end
+
+                local result = get_parent_expression_node_for_range(st_r, st_c, ed_r, ed_c)
+                if result then
+                    ts_util.select_node_range(result)
+                end
             end,
         },
     }

@@ -1,5 +1,6 @@
 local log_util = require "user.util.log"
 
+local api = vim.api
 local ts = vim.treesitter
 
 local M = {}
@@ -46,6 +47,25 @@ function M.visit_node_in_buffer(bufnr, filetype, handler_map)
     return M.visit_node(context, root)
 end
 
+-- get_parent_of_type find nearest parent of a node with given type.
+---@param node TSNode # starting node
+---@param node_type string
+---@return TSNode? result
+function M.get_parent_of_type(node, node_type)
+    local pointer = node:parent()
+
+    local i = 0
+    while pointer do
+        if pointer:type() == node_type then
+            break
+        end
+
+        pointer = pointer:parent()
+    end
+
+    return pointer
+end
+
 -- Find smallest named node with given type from cursor position. If no matching
 -- node is found, nil will be returned.
 ---@param bufnr integer? # target buffer, nil or 0 means current buffer.
@@ -67,6 +87,21 @@ function M.buf_get_cursor_node_by_type(bufnr, lang, node_type)
     end
 
     return pointer
+end
+
+-- select_node_range set visual selection range to given treesitter node.
+---@param node TSNode
+function M.select_node_range(node)
+    local mode = api.nvim_get_mode()
+    if mode.mode ~= "v" then
+        api.nvim_cmd({ cmd = "normal", bang = true, args = { "v" } }, {})
+    end
+
+    local st_r, st_c, ed_r, ed_c = ts.get_node_range(node)
+
+    api.nvim_win_set_cursor(0, { st_r + 1, st_c })
+    api.nvim_cmd({ cmd = "normal", bang = true, args = { "o" } }, {})
+    api.nvim_win_set_cursor(0, { ed_r + 1, ed_c - 1 })
 end
 
 return M
