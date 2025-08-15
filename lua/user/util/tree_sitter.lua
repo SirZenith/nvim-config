@@ -46,4 +46,27 @@ function M.visit_node_in_buffer(bufnr, filetype, handler_map)
     return M.visit_node(context, root)
 end
 
+-- Find smallest named node with given type from cursor position. If no matching
+-- node is found, nil will be returned.
+---@param bufnr integer? # target buffer, nil or 0 means current buffer.
+---@param lang string? # target parser language, default to filetype of buffer.
+---@param node_type string # target type.
+---@return TSNode?
+function M.buf_get_cursor_node_by_type(bufnr, lang, node_type)
+    local cur_node = vim.treesitter.get_node({
+        bufnr = bufnr,
+        lang = lang,
+    })
+
+    local pointer = cur_node
+    while pointer do
+        if pointer:named() and pointer:type() == node_type then
+            break
+        end
+        pointer = pointer:parent()
+    end
+
+    return pointer
+end
+
 return M
