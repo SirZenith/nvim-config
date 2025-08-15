@@ -8,29 +8,43 @@ local api = vim.api
 ---@return integer? col_ed # 0-base index
 function M.get_visual_selection_range()
     local unpac = unpack or table.unpack
-    local st_r, st_c, ed_r, ed_c
+    local mark_st_r, mark_st_c, mark_ed_r, mark_ed_c
 
     local cur_mode = api.nvim_get_mode().mode
     if cur_mode == "v" then
-        _, st_r, st_c, _ = unpac(vim.fn.getpos("v"))
-        _, ed_r, ed_c, _ = unpac(vim.fn.getpos("."))
+        _, mark_st_r, mark_st_c, _ = unpac(vim.fn.getpos("v"))
+        _, mark_ed_r, mark_ed_c, _ = unpac(vim.fn.getpos("."))
     else
-        _, st_r, st_c, _ = unpac(vim.fn.getpos("'<"))
-        _, ed_r, ed_c, _ = unpac(vim.fn.getpos("'>"))
+        _, mark_st_r, mark_st_c, _ = unpac(vim.fn.getpos("'<"))
+        _, mark_ed_r, mark_ed_c, _ = unpac(vim.fn.getpos("'>"))
     end
 
     if
-        not (st_r and st_c and ed_r and ed_c)
-        or st_r * st_c * ed_r * ed_c == 0
+        not mark_st_r
+        or not mark_st_c
+        or not mark_ed_r
+        or not mark_ed_c
+        or mark_st_r * mark_st_c * mark_ed_r * mark_ed_c == 0
     then
         return nil
     end
 
-    if st_r < ed_r or (st_r == ed_r and st_c <= ed_c) then
-        return st_r - 1, st_c - 1, ed_r - 1, ed_c
+    local st_r, st_c, ed_r, ed_c
+
+    if mark_st_r < mark_ed_r or (mark_st_r == mark_ed_r and mark_st_c <= mark_ed_c) then
+        st_r, st_c, ed_r, ed_c = mark_st_r - 1, mark_st_c - 1, mark_ed_r - 1, mark_ed_c
     else
-        return ed_r - 1, ed_c - 1, st_r - 1, st_c
+        st_r, st_c, ed_r, ed_c = mark_ed_r - 1, mark_ed_c - 1, mark_st_r - 1, mark_st_c
     end
+
+    -- make sure not to insert content in the middle unicode character.
+    local ed_line = api.nvim_buf_get_lines(0, ed_r, ed_r + 1, true)[1]
+    if ed_line then
+        ed_c = ed_c + vim.str_utf_end(ed_line, ed_c)
+    end
+
+
+    return st_r, st_c, ed_r, ed_c
 end
 
 ---@enum user.util.WrapAfterPos
@@ -50,16 +64,9 @@ M.WrapAfterPos = WrapAfterPos
 ---@param follow_type user.util.WrapAfterPos # where to put cursort after adding contents
 function M.wrap_text_range_with(start_row, start_col, end_row, end_col, left, right, follow_type)
     local winnr = 0
-    local bufnr = api.nvim_win_get_buf(winnr)
     local old_pos = api.nvim_win_get_cursor(winnr)
 
-    local ed_line = api.nvim_buf_get_lines(bufnr, end_row, end_row + 1, true)[1]
-    if not ed_line then return end
-
-    -- make sure not to insert content in the middle unicode character.
-    local end_offset = end_col + vim.str_utf_end(ed_line, end_col)
-
-    local end_pos = { end_row + 1, end_offset }
+    local end_pos = { end_row + 1, end_col }
     api.nvim_win_set_cursor(winnr, end_pos)
     api.nvim_put({ right }, "c", true, false)
 
@@ -86,11 +93,12 @@ end
 -- part of buffer text.
 ---@param left string
 ---@param right string
-function M.wrap_selected_text_with(left, right)
+---@param follow_type user.util.WrapAfterPos? # where to put cursort after adding contents
+function M.wrap_selected_text_with(left, right, follow_type)
     local st_r, st_c, ed_r, ed_c = M.get_visual_selection_range()
     if not st_r or not st_c or not ed_r or not ed_c then return end
 
-    M.wrap_text_range_with(st_r, st_c, ed_r, ed_c, left, right, WrapAfterPos.keep)
+    M.wrap_text_range_with(st_r, st_c, ed_r, ed_c, left, right, follow_type or WrapAfterPos.keep)
 end
 
 return M

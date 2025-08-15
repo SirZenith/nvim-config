@@ -5,25 +5,15 @@ local ts_util = require "user.util.tree_sitter"
 local api = vim.api
 local ts = vim.treesitter
 
----@return integer? start_row
----@return integer? start_col
----@return integer? ed_row
----@return integer? ed_col
-local function get_cur_expr_range()
-    local node = ts_util.buf_get_cursor_node_by_type(0, "scheme", "list")
-    if not node then return end
-    return ts.get_node_range(node)
-end
-
----@param action fun(start_row: integer, start_col: integer, end_row: integer, end_col: integer)
-local function with_cur_expr_range(action)
+---@param action fun(node: TSNode)
+local function with_cur_expr_node(action)
     return function()
-        local st_r, st_c, ed_r, ed_c = get_cur_expr_range();
-        if not st_r or not st_c or not ed_r or not ed_c then
+        local node = ts_util.buf_get_cursor_node_by_type(0, "scheme", "list")
+        if not node then
             vim.notify("No expression found under cursor", vim.log.levels.INFO);
             return
         end
-        action(st_r, st_c, ed_r, ed_c)
+        action(node)
     end
 end
 
@@ -32,15 +22,13 @@ return function(bufnr)
     local keymap = {
         n = {
             -- adding a new function call wrapping current expression
-            ["<space>af"] = with_cur_expr_range(function(st_r, st_c, ed_r, ed_c)
+            ["<space>af"] = with_cur_expr_node(function(node)
+                local st_r, st_c, ed_r, ed_c = ts.get_node_range(node)
                 editing_util.wrap_text_range_with(st_r, st_c, ed_r, ed_c, "( ", ")", editing_util.WrapAfterPos.left)
                 api.nvim_input("a")
             end),
             -- delete current function call
-            ["<space>df"] = function()
-                local node = ts_util.buf_get_cursor_node_by_type(0, "scheme", "list")
-                if not node then return end
-
+            ["<space>df"] = with_cur_expr_node(function(node)
                 local child_cnt = node:named_child_count()
                 if child_cnt <= 0 then return end
 
@@ -65,6 +53,13 @@ return function(bufnr)
                 else
                     api.nvim_buf_set_text(0, st_r, st_c, ed_r, ed_c, {})
                 end
+            end),
+        },
+        v = {
+            -- adding a new function call wrapping current expression
+            ["<space>af"] = function()
+                editing_util.wrap_selected_text_with("( ", ")", editing_util.WrapAfterPos.left)
+                api.nvim_input("<esc>a")
             end,
         },
     }
