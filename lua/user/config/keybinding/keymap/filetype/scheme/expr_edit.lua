@@ -122,7 +122,6 @@ function ExprEdit:get_keymap_tbl()
             local result = ts_util.find_first_containing_child_of_type(node, row - 1, col, row - 1, col, "list")
 
             if result then
-                print(1.3)
                 ts_util.select_node_range(result)
             end
         end,
