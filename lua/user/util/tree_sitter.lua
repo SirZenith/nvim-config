@@ -104,4 +104,43 @@ function M.select_node_range(node)
     api.nvim_win_set_cursor(0, { ed_r + 1, ed_c - 1 })
 end
 
+-- find_first_containing_node_of_type find first node that contains given range
+-- with given type.
+---@param root TSNode
+---@param start_row integer
+---@param start_col integer
+---@param end_row integer
+---@param end_col integer
+---@param node_type string
+---@return TSNode?
+function M.find_first_containing_child_of_type(root, start_row, start_col, end_row, end_col, node_type)
+    local result = nil ---@type TSNode?
+
+    local pointer = root ---@type TSNode?
+    while pointer do
+        local next_pointer = nil ---@type TSNode?
+        for child in pointer:iter_children() do
+            if child:named() then
+                local rst_row, rst_col, red_row, red_col = child:range()
+                if rst_row > start_row or (rst_row == start_row and rst_col > start_col) then
+                    break
+                end
+
+                if red_row > end_row or (red_row == end_row and end_col >= end_col) then
+                    next_pointer = child
+                end
+            end
+        end
+
+        if next_pointer and next_pointer:type() == node_type then
+            result = next_pointer
+            break
+        end
+
+        pointer = next_pointer
+    end
+
+    return result
+end
+
 return M
