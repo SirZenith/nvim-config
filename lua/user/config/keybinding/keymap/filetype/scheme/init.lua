@@ -7,26 +7,18 @@ local util = require "user.config.keybinding.keymap.filetype.scheme.util"
 local api = vim.api
 local ts = vim.treesitter
 
+---@param msg_name string
+---@param node_type string | table<string, boolean>
 ---@param action fun(node: TSNode)
-local function with_cur_list_node(action)
+local function with_cursor_node(msg_name, node_type, action)
     return function()
-        local node = ts_util.buf_get_cursor_node_by_type(0, "scheme", "list")
-        if not node then
-            vim.notify("No list node found under cursor", vim.log.levels.INFO);
-            return
+        local node = ts_util.buf_get_cursor_node_by_type(0, "scheme", node_type)
+        if node then
+            action(node)
+        else
+            local msg = ("No %s node found under cursor"):format(msg_name)
+            vim.notify(msg, vim.log.levels.INFO);
         end
-        action(node)
-    end
-end
-
-local function with_cur_dataum_node(action)
-    return function()
-        local node = ts_util.buf_get_cursor_node_by_type(0, "scheme", util.DATAUM_TYPE_TBL)
-        if not node then
-            vim.notify("No list node found under cursor", vim.log.levels.INFO);
-            return
-        end
-        action(node)
     end
 end
 
@@ -45,24 +37,26 @@ end
 return function(bufnr)
     local keymap = {
         n = {
-            -- adding a new function call wrapping current expression
-            ["<space>wf"] = with_cur_list_node(function(node)
+            -- adds a new function call wrapping current expression
+            ["<space>wf"] = with_cursor_node("list", "list", function(node)
                 local st_r, st_c, ed_r, ed_c = ts.get_node_range(node)
                 editing_util.wrap_text_range_with(st_r, st_c, ed_r, ed_c, "( ", ")", editing_util.WrapAfterPos.left)
                 api.nvim_input("a")
             end),
-            -- delete current function call
-            ["<space>df"] = with_cur_list_node(function(node)
+            -- deletes current function call
+            ["<space>df"] = with_cursor_node("list", "list", function(node)
                 util.del_wrapping_func_call(node)
             end),
-            ["<space>a"] = with_cur_dataum_node(function(node)
+            -- appends new list sibling after current dataum node
+            ["<space>a"] = with_cursor_node("dataum", util.DATAUM_TYPE_TBL, function(node)
                 util.add_list_sibling_after(node)
             end),
-            ["<space>o"] = with_cur_dataum_node(function(node)
+            -- appends new linst sibling after current dataum on a new line.
+            ["<space>o"] = with_cursor_node("dataum", util.DATAUM_TYPE_TBL, function(node)
                 util.add_list_sibling_newline(node)
             end),
             -- entering expression editing mode
-            ["<space>s"] = with_cur_list_node(function(node)
+            ["<space>s"] = with_cursor_node("dataum", util.DATAUM_TYPE_TBL, function(node)
                 ts_util.select_node_range(node)
                 expr_edit_mode_on()
             end),
