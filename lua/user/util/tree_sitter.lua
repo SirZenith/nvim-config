@@ -54,54 +54,65 @@ end
 function M.get_parent_of_type(node, node_type)
     local pointer = node:parent()
 
-    local i = 0
     while pointer do
         if pointer:type() == node_type then
             break
         end
-
         pointer = pointer:parent()
     end
 
     return pointer
 end
 
--- Find smallest named node with given type from cursor position. If no matching
--- node is found, nil will be returned.
----@param bufnr integer? # target buffer, nil or 0 means current buffer.
----@param lang string? # target parser language, default to filetype of buffer.
----@param node_type string # target type.
+-- get_next_sibling_of_type finds next sibling node with given type.
+---@param node TSNode
+---@param node_type string
 ---@return TSNode?
-function M.buf_get_cursor_node_by_type(bufnr, lang, node_type)
-    local cur_node = vim.treesitter.get_node({
-        bufnr = bufnr,
-        lang = lang,
-    })
+function M.get_next_sibling_of_type(node, node_type)
+    local pointer = node:next_sibling()
 
-    local pointer = cur_node
     while pointer do
-        if pointer:named() and pointer:type() == node_type then
+        if pointer:type() == node_type then
             break
         end
-        pointer = pointer:parent()
+        pointer = pointer:next_sibling()
     end
 
     return pointer
 end
 
--- select_node_range set visual selection range to given treesitter node.
+-- get_previous_sibling_of_type finds previous sibling with given type.
 ---@param node TSNode
-function M.select_node_range(node)
-    local mode = api.nvim_get_mode()
-    if mode.mode ~= "v" then
-        api.nvim_cmd({ cmd = "normal", bang = true, args = { "v" } }, {})
+---@param node_type string
+---@return TSNode?
+function M.get_previous_sibling_of_type(node, node_type)
+    local pointer = node:prev_sibling()
+
+    while pointer do
+        if pointer:type() == node_type then
+            break
+        end
+        pointer = pointer:prev_sibling()
     end
 
-    local st_r, st_c, ed_r, ed_c = ts.get_node_range(node)
+    return pointer
+end
 
-    api.nvim_win_set_cursor(0, { st_r + 1, st_c })
-    api.nvim_cmd({ cmd = "normal", bang = true, args = { "o" } }, {})
-    api.nvim_win_set_cursor(0, { ed_r + 1, ed_c - 1 })
+-- get_child_of_type finds first child node with given type.
+---@param node TSNode
+---@param node_type string
+---@return TSNode?
+function M.get_child_of_type(node, node_type)
+    local pointer = node:child(0)
+
+    while pointer do
+        if pointer:type() == node_type then
+            break
+        end
+        pointer = pointer:next_sibling()
+    end
+
+    return pointer
 end
 
 -- find_first_containing_node_of_type find first node that contains given range
@@ -141,6 +152,44 @@ function M.find_first_containing_child_of_type(root, start_row, start_col, end_r
     end
 
     return result
+end
+
+-- Find smallest named node with given type from cursor position. If no matching
+-- node is found, nil will be returned.
+---@param bufnr integer? # target buffer, nil or 0 means current buffer.
+---@param lang string? # target parser language, default to filetype of buffer.
+---@param node_type string # target type.
+---@return TSNode?
+function M.buf_get_cursor_node_by_type(bufnr, lang, node_type)
+    local cur_node = vim.treesitter.get_node({
+        bufnr = bufnr,
+        lang = lang,
+    })
+
+    local pointer = cur_node
+    while pointer do
+        if pointer:named() and pointer:type() == node_type then
+            break
+        end
+        pointer = pointer:parent()
+    end
+
+    return pointer
+end
+
+-- select_node_range set visual selection range to given treesitter node.
+---@param node TSNode
+function M.select_node_range(node)
+    local mode = api.nvim_get_mode()
+    if mode.mode ~= "v" then
+        api.nvim_cmd({ cmd = "normal", bang = true, args = { "v" } }, {})
+    end
+
+    local st_r, st_c, ed_r, ed_c = ts.get_node_range(node)
+
+    api.nvim_win_set_cursor(0, { st_r + 1, st_c })
+    api.nvim_cmd({ cmd = "normal", bang = true, args = { "o" } }, {})
+    api.nvim_win_set_cursor(0, { ed_r + 1, ed_c - 1 })
 end
 
 return M

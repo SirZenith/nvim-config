@@ -12,12 +12,11 @@ local ts = vim.treesitter
 ---@field _restore_tbl table<string, vim.api.keyset.get_keymap | boolean>?
 --
 ---@field bufnr integer
----@field start_pos [integer, integer] # cursor position when starting editing
-local ExprEdit = {}
+local ListEdit = {}
 
 local instances = {} ---@type table<integer, user.keybinding.scheme.ExprEdit?>
 
-function ExprEdit:new()
+function ListEdit:new()
     self.__index = self
 
     local bufnr = api.nvim_get_current_buf()
@@ -38,12 +37,9 @@ function ExprEdit:new()
     return obj
 end
 
-function ExprEdit:edit_start()
+function ListEdit:edit_start()
     if self._is_running then return end
     self._is_running = true
-
-    local pos = api.nvim_win_get_cursor(0)
-    self.start_pos = pos
 
     local keymap = self:get_keymap_tbl()
 
@@ -67,15 +63,25 @@ function ExprEdit:edit_start()
             restore[from] = false
         end
     end
+
+    api.nvim_create_autocmd("ModeChanged", {
+        pattern = "[vV\x16]*:*",
+        once = true,
+        callback = function()
+            self:edit_end()
+        end,
+    })
 end
 
-function ExprEdit:edit_end()
+function ListEdit:edit_end()
     self._is_running = false
 
-    vim.print("exit expr edit")
+    vim.notify("exit Expr Editing", vim.log.levels.INFO)
 
     local restore = self._restore_tbl
     if not restore then return end
+
+    self._restore_tbl = nil
 
     local mode = "v"
     local bufnr = self.bufnr
@@ -98,55 +104,83 @@ function ExprEdit:edit_end()
             vim.keymap.del(mode, lhs, { buffer = bufnr })
         end
     end
-
-    self._restore_tbl = nil
 end
 
 ---@return table<string, function | string>
-function ExprEdit:get_keymap_tbl()
+function ListEdit:get_keymap_tbl()
     return {
+        -- exit expression editing mode
         ["<enter>"] = function()
             self:edit_end()
         end,
-        ["k"] = function()
-            local result = util.get_expression_node_for_selected_range { force_parent = true }
+
+        -- expand selection to parent list towards program root
+        ["h"] = function()
+            local result = util.get_list_node_for_selected_range { force_parent = true }
             if result then
                 ts_util.select_node_range(result)
             end
         end,
-        ["j"] = function()
-            local node = util.get_expression_node_for_selected_range()
+        -- shrink selection to child list towards the starting point of current edit.
+        ["l"] = function()
+            local node = util.get_list_node_for_selected_range()
             if not node then return end
 
-            local row, col = self.start_pos[1], self.start_pos[2]
-            local result = ts_util.find_first_containing_child_of_type(node, row - 1, col, row - 1, col, "list")
-
-            if result then
-                ts_util.select_node_range(result)
-            end
-        end,
-        -- adding a new function call wrapping current expression
-        ["a"] = function()
-            api.nvim_feedkeys("<esc>", "n", false)
-            editing_util.wrap_selected_text_with("( ", ")", editing_util.WrapAfterPos.left)
-            api.nvim_input("a")
-        end,
-        ["d"] = function()
-            local result = util.get_expression_node_for_selected_range { force_parent = true }
+            local result = ts_util.get_child_of_type(node, "list")
             if not result then return end
 
-            util.del_wrapping_func_call(result)
+            ts_util.select_node_range(result)
+        end,
+        ["j"] = function()
+            local node = util.get_list_node_for_selected_range()
+            if not node then return end
 
-            local node = ts_util.buf_get_cursor_node_by_type(0, "scheme", "list")
-            if node then
-                ts_util.select_node_range(node)
-            else
-                self:edit_end()
+            local result = ts_util.get_next_sibling_of_type(node, "list")
+            if not result then
+                result = ts_util.get_child_of_type(node, "list")
             end
+            if not result then return end
+
+            ts_util.select_node_range(result)
+        end,
+        ["k"] = function()
+            local node = util.get_list_node_for_selected_range()
+            if not node then return end
+
+            local result = ts_util.get_previous_sibling_of_type(node, "list")
+            if not result then
+                result = ts_util.get_parent_of_type(node, "list")
+            end
+            if not result then return end
+
+            ts_util.select_node_range(result)
+        end,
+        -- wrapping selected node with extra layer of list
+        ["a"] = function()
+            local result = util.get_list_node_for_selected_range()
+            if not result then return end
+
+            local st_r, st_c, ed_r, ed_c = result:range()
+
+            vim.cmd [[execute "normal \<esc>"]]
+            editing_util.wrap_text_range_with(st_r, st_c, ed_r, ed_c, "( ", ")", editing_util.WrapAfterPos.left)
+            api.nvim_feedkeys("a", "n", false)
+        end,
+        -- delete outter most layer of function call
+        ["d"] = function()
+            local result = util.get_list_node_for_selected_range()
+            if not result then return end
+
+            local parent_expr = ts_util.get_parent_of_type(result, "list")
+            if parent_expr then
+                ts_util.select_node_range(parent_expr)
+            end
+
+            util.del_wrapping_func_call(result)
         end,
     }
 end
 
 return {
-    ExprEdit = ExprEdit,
+    ListEdit = ListEdit,
 }

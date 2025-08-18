@@ -25,9 +25,9 @@ function expr_edit_mode_on()
         api.nvim_cmd({ cmd = "normal", bang = true, args = { "v" } }, {})
     end
 
-    local ExprEdit = require "user.config.keybinding.keymap.filetype.scheme.expr_edit".ExprEdit
-    local expr_edit = ExprEdit:new()
-    expr_edit:edit_start()
+    local list_edit = require "user.config.keybinding.keymap.filetype.scheme.list_edit"
+    local state = list_edit.ListEdit:new()
+    state:edit_start()
 end
 
 ---@param bufnr integer
@@ -44,12 +44,23 @@ return function(bufnr)
             ["<space>df"] = with_cur_expr_node(function(node)
                 util.del_wrapping_func_call(node)
             end),
+            -- entering expression editing mode
             ["<space>s"] = with_cur_expr_node(function(node)
                 ts_util.select_node_range(node)
                 expr_edit_mode_on()
             end),
         },
         v = {
+            -- wrapping selected range with extra layer of list
+            ["<space>af"] = function()
+                local st_r, st_c, ed_r, ed_c = editing_util.get_visual_selection_range()
+                if not st_r or not st_c or not ed_r or not ed_c then return end
+
+                vim.cmd [[execute "normal \<esc>"]]
+                editing_util.wrap_text_range_with(st_r, st_c, ed_r, ed_c, "( ", ")", editing_util.WrapAfterPos.left)
+                api.nvim_feedkeys("a", "n", false)
+            end,
+            -- entering expression editing mode
             ["<space>s"] = function()
                 expr_edit_mode_on()
             end,
