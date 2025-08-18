@@ -6,6 +6,14 @@ local ts = vim.treesitter
 
 local M = {}
 
+local QUOTED_TEYP_TBL = {
+    ["quote"] = true,
+    ["quasiquote"] = true,
+    ["unquote"] = true,
+    ["unquote_splicing"] = true,
+}
+M.QUOTED_TEYP_TBL = QUOTED_TEYP_TBL
+
 local DATAUM_TYPE_TBL = {
     ["boolean"] = true,
     ["character"] = true,

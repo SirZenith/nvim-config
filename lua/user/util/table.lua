@@ -33,4 +33,21 @@ function M.remove_duplicates(...)
     return results
 end
 
+-- reverse reverses a list in place. Then list gets passed in will be returned.
+---@param list any[]
+---@return any[]
+function M.reverse(list)
+    local len = #list
+    if #list <= 1 then return list end
+
+    for i = 1, math.floor(len / 2) do
+        local temp = list[i]
+        local to_index = len - i + 1
+        list[i] = list[to_index]
+        list[to_index] = temp
+    end
+
+    return list
+end
+
 return M
