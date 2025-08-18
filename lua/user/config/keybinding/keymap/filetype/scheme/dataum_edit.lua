@@ -76,7 +76,7 @@ end
 function DataumEdit:edit_end()
     self._is_running = false
 
-    vim.notify("exit Expr Editing", vim.log.levels.INFO)
+    vim.notify("exit Dataum Editing", vim.log.levels.INFO)
 
     local restore = self._restore_tbl
     if not restore then return end
