@@ -115,25 +115,27 @@ end
 -- line
 ---@param node TSNode
 function M.add_list_sibling_newline(node)
-    local st_r, _, ed_r, ed_c = node:range()
+    local _, st_c, ed_r, ed_c = node:range()
 
     local replace_ed_r, replace_ed_c = ed_r, ed_c
 
-    local indent_level = vim.fn.indent(ed_r + 1)
-    -- if newly added line has no previous line break found in parent dataum,
-    -- then increase indent level for new line.
-    if st_r == ed_r then
-        local dataum_parent = ts_util.get_parent_of_type(node, DATAUM_TYPE_TBL)
-        if dataum_parent then
-            local par_st_r = dataum_parent:range()
-            if par_st_r == st_r then
-                indent_level = indent_level + 2
-            end
+    local indent_level = st_c - 1
+
+    local dataum_parent = ts_util.get_parent_of_type(node, DATAUM_TYPE_TBL)
+    if dataum_parent then
+        local _, par_st_c = dataum_parent:range()
+
+        local first_child = dataum_parent:named_child(0)
+        if first_child and first_child:type() == "list" then
+            indent_level = par_st_c + 1
+        else
+            indent_level = par_st_c + 2
         end
     end
 
-    local indent_str = " "
-    local lines = { "", indent_str:rep(indent_level) .. "()" }
+    local indent_unit = " "
+    local indent_str = indent_unit:rep(indent_level)
+    local lines = { "", indent_str .. "()" }
 
 
     local next_sibling = node:next_named_sibling()
@@ -141,12 +143,12 @@ function M.add_list_sibling_newline(node)
         local sib_st_r, sib_st_c, _, _ = next_sibling:range()
         if sib_st_r == ed_r then
             replace_ed_r, replace_ed_c = sib_st_r, sib_st_c
-            table.insert(lines, "")
+            table.insert(lines, indent_str)
         end
     end
 
     api.nvim_buf_set_text(0, ed_r, ed_c, ed_r, replace_ed_c, lines)
-    api.nvim_win_set_cursor(0, { ed_r + 2, #indent_str * indent_level + 1 })
+    api.nvim_win_set_cursor(0, { ed_r + 2, #indent_str + 1 })
     vim.cmd [[execute "normal! \<esc>\<esc>"]]
     vim.cmd [[startinsert]]
 end
