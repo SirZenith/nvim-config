@@ -56,7 +56,7 @@ return function(bufnr)
                 util.add_list_sibling_newline(node)
             end),
             -- entering expression editing mode
-            ["<space>s"] = with_cursor_node("dataum", util.DATAUM_TYPE_TBL, function(node)
+            ["<space>s"] = with_cursor_node("list", "list", function(node)
                 ts_util.select_node_range(node)
                 expr_edit_mode_on()
             end),
