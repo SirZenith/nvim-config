@@ -120,11 +120,15 @@ function M.add_list_sibling_newline(node)
     local replace_ed_r, replace_ed_c = ed_r, ed_c
 
     local indent_level = vim.fn.indent(ed_r + 1)
-    local dataum_parent = ts_util.get_parent_of_type(node, DATAUM_TYPE_TBL)
-    if dataum_parent then
-        local par_st_r = dataum_parent:range()
-        if par_st_r == st_r then
-            indent_level = indent_level + 2
+    -- if newly added line has no previous line break found in parent dataum,
+    -- then increase indent level for new line.
+    if st_r == ed_r then
+        local dataum_parent = ts_util.get_parent_of_type(node, DATAUM_TYPE_TBL)
+        if dataum_parent then
+            local par_st_r = dataum_parent:range()
+            if par_st_r == st_r then
+                indent_level = indent_level + 2
+            end
         end
     end
 
