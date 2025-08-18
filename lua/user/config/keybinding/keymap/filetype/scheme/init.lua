@@ -35,7 +35,7 @@ return function(bufnr)
     local keymap = {
         n = {
             -- adding a new function call wrapping current expression
-            ["<space>af"] = with_cur_list_node(function(node)
+            ["<space>wf"] = with_cur_list_node(function(node)
                 local st_r, st_c, ed_r, ed_c = ts.get_node_range(node)
                 editing_util.wrap_text_range_with(st_r, st_c, ed_r, ed_c, "( ", ")", editing_util.WrapAfterPos.left)
                 api.nvim_input("a")
@@ -44,6 +44,12 @@ return function(bufnr)
             ["<space>df"] = with_cur_list_node(function(node)
                 util.del_wrapping_func_call(node)
             end),
+            ["<space>a"] = with_cur_list_node(function(node)
+                util.add_list_sibling_after(node)
+            end),
+            ["<space>o"] = with_cur_list_node(function(node)
+                util.add_list_sibling_newline(node)
+            end),
             -- entering expression editing mode
             ["<space>s"] = with_cur_list_node(function(node)
                 ts_util.select_node_range(node)
@@ -51,15 +57,6 @@ return function(bufnr)
             end),
         },
         v = {
-            -- wrapping selected range with extra layer of list
-            ["<space>af"] = function()
-                local st_r, st_c, ed_r, ed_c = editing_util.get_visual_selection_range()
-                if not st_r or not st_c or not ed_r or not ed_c then return end
-
-                vim.cmd [[execute "normal \<esc>"]]
-                editing_util.wrap_text_range_with(st_r, st_c, ed_r, ed_c, "( ", ")", editing_util.WrapAfterPos.left)
-                api.nvim_feedkeys("a", "n", false)
-            end,
             -- entering expression editing mode
             ["<space>s"] = expr_edit_mode_on,
         },

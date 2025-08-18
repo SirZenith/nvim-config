@@ -99,4 +99,52 @@ function M.del_wrapping_func_call(node)
     end
 end
 
+-- add_list_sibling_after adds new list sibling after current dataum node
+---@param node TSNode
+function M.add_list_sibling_after(node)
+    local _, _, ed_r, ed_c = node:range()
+    api.nvim_win_set_cursor(0, { ed_r + 1, ed_c - 1 })
+
+    vim.cmd [[execute "normal! \<esc>\<esc>"]]
+    api.nvim_put({ " ()" }, "c", true, false)
+    api.nvim_win_set_cursor(0, { ed_r + 1, ed_c + 2 })
+    vim.cmd [[startinsert]]
+end
+
+-- add_list_sibling_newline adds new list sibling after current dataum on a new
+-- line
+---@param node TSNode
+function M.add_list_sibling_newline(node)
+    local st_r, _, ed_r, ed_c = node:range()
+
+    local replace_ed_r, replace_ed_c = ed_r, ed_c
+
+    local indent_level = vim.fn.indent(ed_r + 1)
+    local dataum_parent = ts_util.get_parent_of_type(node, DATAUM_TYPE_TBL)
+    if dataum_parent then
+        local par_st_r = dataum_parent:range()
+        if par_st_r == st_r then
+            indent_level = indent_level + 2
+        end
+    end
+
+    local indent_str = " "
+    local lines = { "", indent_str:rep(indent_level) .. "()" }
+
+
+    local next_sibling = node:next_named_sibling()
+    if next_sibling then
+        local sib_st_r, sib_st_c, _, _ = next_sibling:range()
+        if sib_st_r == ed_r then
+            replace_ed_r, replace_ed_c = sib_st_r, sib_st_c
+            table.insert(lines, "")
+        end
+    end
+
+    api.nvim_buf_set_text(0, ed_r, ed_c, ed_r, replace_ed_c, lines)
+    api.nvim_win_set_cursor(0, { ed_r + 2, #indent_str * indent_level + 1 })
+    vim.cmd [[execute "normal! \<esc>\<esc>"]]
+    vim.cmd [[startinsert]]
+end
+
 return M

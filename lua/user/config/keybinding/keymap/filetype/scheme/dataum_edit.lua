@@ -227,7 +227,7 @@ function DataumEdit:get_keymap_tbl()
         end,
 
         -- wrapping selected node with extra layer of list
-        ["a"] = function()
+        ["w"] = function()
             editing_util.wrap_selected_text_with("( ", ")", editing_util.WrapAfterPos.left)
             api.nvim_feedkeys("a", "n", false)
         end,
@@ -249,6 +249,17 @@ function DataumEdit:get_keymap_tbl()
             end
 
             util.del_wrapping_func_call(result)
+        end,
+        -- append a list after current dataum
+        ["a"] = function()
+            local node = util.get_dataum_node_for_selected_range()
+            if not node then return end
+            util.add_list_sibling_after(node)
+        end,
+        ["o"] = function()
+            local node = util.get_dataum_node_for_selected_range()
+            if not node then return end
+            util.add_list_sibling_newline(node)
         end,
         -- indent current dataum
         ["f"] = function()
