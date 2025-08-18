@@ -1,3 +1,4 @@
+local editing_util = require "user.util.editing"
 local log_util = require "user.util.log"
 
 local api = vim.api
@@ -47,72 +48,85 @@ function M.visit_node_in_buffer(bufnr, filetype, handler_map)
     return M.visit_node(context, root)
 end
 
--- get_parent_of_type find nearest parent of a node with given type.
----@param node TSNode # starting node
----@param node_type string
----@return TSNode? result
-function M.get_parent_of_type(node, node_type)
-    local pointer = node:parent()
+---@param root TSNode?
+---@param get_next fun(node: TSNode): TSNode?
+---@param type_str string
+---@return TSNode?
+local function walk_node_until_type_str(root, get_next, type_str)
+    local pointer = root
 
     while pointer do
-        if pointer:type() == node_type then
+        if pointer:type() == type_str then
             break
         end
-        pointer = pointer:parent()
+        pointer = get_next(pointer)
     end
 
     return pointer
+end
+
+---@param root TSNode?
+---@param get_next fun(node: TSNode): TSNode?
+---@param type_tbl table<string, boolean>
+---@return TSNode?
+local function walk_node_until_type_tbl(root, get_next, type_tbl)
+    local pointer = root
+
+    while pointer do
+        local cur_type = pointer:type()
+        if type_tbl[cur_type] then
+            break
+        end
+        pointer = get_next(pointer)
+    end
+
+    return pointer
+end
+
+---@param root TSNode?
+---@param get_next fun(node: TSNode): TSNode?
+---@param node_type string | table<string, boolean>
+---@return TSNode?
+local function walk_node_until_type(root, get_next, node_type)
+    local type_t = type(node_type)
+    if type_t == "table" then
+        return walk_node_until_type_tbl(root, get_next, node_type)
+    elseif type_t == "string" then
+        return walk_node_until_type_str(root, get_next, node_type)
+    end
+    return nil
+end
+
+-- get_parent_of_type find nearest parent of a node with given type.
+---@param node TSNode # starting node
+---@param node_type string | table<string, boolean>
+---@return TSNode? result
+function M.get_parent_of_type(node, node_type)
+    return walk_node_until_type(node:parent(), node.parent, node_type)
 end
 
 -- get_next_sibling_of_type finds next sibling node with given type.
 ---@param node TSNode
----@param node_type string
+---@param node_type string | table<string, boolean>
 ---@return TSNode?
 function M.get_next_sibling_of_type(node, node_type)
-    local pointer = node:next_sibling()
-
-    while pointer do
-        if pointer:type() == node_type then
-            break
-        end
-        pointer = pointer:next_sibling()
-    end
-
-    return pointer
+    return walk_node_until_type(node:next_sibling(), node.next_sibling, node_type)
 end
 
 -- get_previous_sibling_of_type finds previous sibling with given type.
 ---@param node TSNode
----@param node_type string
+---@param node_type string | table<string, boolean>
 ---@return TSNode?
 function M.get_previous_sibling_of_type(node, node_type)
-    local pointer = node:prev_sibling()
-
-    while pointer do
-        if pointer:type() == node_type then
-            break
-        end
-        pointer = pointer:prev_sibling()
-    end
-
-    return pointer
+    return walk_node_until_type(node:prev_sibling(), node.prev_sibling, node_type)
 end
 
 -- get_child_of_type finds first child node with given type.
 ---@param node TSNode
----@param node_type string
+---@param node_type string | table<string, boolean>
 ---@return TSNode?
 function M.get_child_of_type(node, node_type)
-    local pointer = node:child(0)
-
-    while pointer do
-        if pointer:type() == node_type then
-            break
-        end
-        pointer = pointer:next_sibling()
-    end
-
-    return pointer
+    return walk_node_until_type(node:child(0), node.next_sibling, node_type)
 end
 
 -- find_first_containing_node_of_type find first node that contains given range
@@ -180,16 +194,8 @@ end
 -- select_node_range set visual selection range to given treesitter node.
 ---@param node TSNode
 function M.select_node_range(node)
-    local mode = api.nvim_get_mode()
-    if mode.mode ~= "v" then
-        api.nvim_cmd({ cmd = "normal", bang = true, args = { "v" } }, {})
-    end
-
     local st_r, st_c, ed_r, ed_c = ts.get_node_range(node)
-
-    api.nvim_win_set_cursor(0, { st_r + 1, st_c })
-    api.nvim_cmd({ cmd = "normal", bang = true, args = { "o" } }, {})
-    api.nvim_win_set_cursor(0, { ed_r + 1, ed_c - 1 })
+    editing_util.set_selection_range( st_r + 1, st_c , ed_r + 1, ed_c - 1)
 end
 
 return M

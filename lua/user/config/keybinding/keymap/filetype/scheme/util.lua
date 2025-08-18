@@ -6,6 +6,31 @@ local ts = vim.treesitter
 
 local M = {}
 
+local DATAUM_TYPE_TBL = {
+    ["boolean"] = true,
+    ["character"] = true,
+    ["string"] = true,
+
+    ["number"] = true,
+    ["symbol"] = true,
+
+    ["vector"] = true,
+    ["byte_vector"] = true,
+    ["list"] = true,
+
+    ["quote"] = true,
+    ["quasiquote"] = true,
+    ["unquote"] = true,
+    ["unquote_splicing"] = true,
+    ["syntax"] = true,
+    ["quasisyntax"] = true,
+    ["unsyntax"] = true,
+    ["unsyntax_splicing"] = true,
+
+    ["keyword"] = true,
+}
+M.DATAUM_TYPE_TBL = DATAUM_TYPE_TBL
+
 ---@class user.keybinding.scheme.GetExpressionOpts
 ---@field force_parent boolean?
 
@@ -17,7 +42,7 @@ local M = {}
 ---@param ed_c integer
 ---@param opts? user.keybinding.scheme.GetExpressionOpts
 ---@return TSNode?
-function M.get_list_node_for_range(st_r, st_c, ed_r, ed_c, opts)
+function M.get_dataum_node_for_range(st_r, st_c, ed_r, ed_c, opts)
     local parser = vim.treesitter.get_parser(0, "scheme")
     local tree_list = parser and parser:parse() or nil
     local tree = tree_list and tree_list[1] or nil
@@ -27,25 +52,23 @@ function M.get_list_node_for_range(st_r, st_c, ed_r, ed_c, opts)
     local node = root:descendant_for_range(st_r, st_c, ed_r, ed_c)
     if not node or node:id() == root:id() then return end
 
-    local target_type = "list"
-
     local force_parent = opts and opts.force_parent or false
-    if not force_parent and node:type() == target_type then
+    if not force_parent and DATAUM_TYPE_TBL[node:type()] then
         return node
     end
 
-    return ts_util.get_parent_of_type(node, target_type)
+    return ts_util.get_parent_of_type(node, DATAUM_TYPE_TBL)
 end
 
 ---@param opts? user.keybinding.scheme.GetExpressionOpts
 ---@return TSNode?
-function M.get_list_node_for_selected_range(opts)
+function M.get_dataum_node_for_selected_range(opts)
     local st_r, st_c, ed_r, ed_c = editing_util.get_visual_selection_range()
     if not st_r or not st_c or not ed_r or not ed_c then
         return
     end
 
-    return M.get_list_node_for_range(st_r, st_c, ed_r, ed_c, opts)
+    return M.get_dataum_node_for_range(st_r, st_c, ed_r, ed_c, opts)
 end
 
 ---@param node TSNode

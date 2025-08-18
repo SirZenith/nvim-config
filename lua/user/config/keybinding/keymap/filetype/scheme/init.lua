@@ -8,7 +8,7 @@ local api = vim.api
 local ts = vim.treesitter
 
 ---@param action fun(node: TSNode)
-local function with_cur_expr_node(action)
+local function with_cur_list_node(action)
     return function()
         local node = ts_util.buf_get_cursor_node_by_type(0, "scheme", "list")
         if not node then
@@ -25,8 +25,8 @@ function expr_edit_mode_on()
         api.nvim_cmd({ cmd = "normal", bang = true, args = { "v" } }, {})
     end
 
-    local list_edit = require "user.config.keybinding.keymap.filetype.scheme.list_edit"
-    local state = list_edit.ListEdit:new()
+    local dataum_edit = require "user.config.keybinding.keymap.filetype.scheme.dataum_edit"
+    local state = dataum_edit.DataumEdit:new()
     state:edit_start()
 end
 
@@ -35,17 +35,17 @@ return function(bufnr)
     local keymap = {
         n = {
             -- adding a new function call wrapping current expression
-            ["<space>af"] = with_cur_expr_node(function(node)
+            ["<space>af"] = with_cur_list_node(function(node)
                 local st_r, st_c, ed_r, ed_c = ts.get_node_range(node)
                 editing_util.wrap_text_range_with(st_r, st_c, ed_r, ed_c, "( ", ")", editing_util.WrapAfterPos.left)
                 api.nvim_input("a")
             end),
             -- delete current function call
-            ["<space>df"] = with_cur_expr_node(function(node)
+            ["<space>df"] = with_cur_list_node(function(node)
                 util.del_wrapping_func_call(node)
             end),
             -- entering expression editing mode
-            ["<space>s"] = with_cur_expr_node(function(node)
+            ["<space>s"] = with_cur_list_node(function(node)
                 ts_util.select_node_range(node)
                 expr_edit_mode_on()
             end),
@@ -61,9 +61,7 @@ return function(bufnr)
                 api.nvim_feedkeys("a", "n", false)
             end,
             -- entering expression editing mode
-            ["<space>s"] = function()
-                expr_edit_mode_on()
-            end,
+            ["<space>s"] = expr_edit_mode_on,
         },
     }
 

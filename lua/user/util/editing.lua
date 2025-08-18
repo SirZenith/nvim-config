@@ -58,7 +58,7 @@ M.WrapAfterPos = WrapAfterPos
 ---@param start_row integer # 0-base index
 ---@param start_col integer # 0-base index
 ---@param end_row integer # 0-base index
----@param end_col integer # 0-base index
+---@param end_col integer # 0-base index, exclusive
 ---@param left string
 ---@param right string
 ---@param follow_type user.util.WrapAfterPos # where to put cursort after adding contents
@@ -66,7 +66,7 @@ function M.wrap_text_range_with(start_row, start_col, end_row, end_col, left, ri
     local winnr = 0
     local old_pos = api.nvim_win_get_cursor(winnr)
 
-    local end_pos = { end_row + 1, end_col }
+    local end_pos = { end_row + 1, end_col - 1 }
     api.nvim_win_set_cursor(winnr, end_pos)
     api.nvim_put({ right }, "c", true, false)
 
@@ -98,7 +98,23 @@ function M.wrap_selected_text_with(left, right, follow_type)
     local st_r, st_c, ed_r, ed_c = M.get_visual_selection_range()
     if not st_r or not st_c or not ed_r or not ed_c then return end
 
+    vim.cmd [[execute "normal \<esc>"]]
     M.wrap_text_range_with(st_r, st_c, ed_r, ed_c, left, right, follow_type or WrapAfterPos.keep)
+end
+
+---@param start_row integer # 1-base index
+---@param start_col integer # 0-base index
+---@param end_row integer # 1-base index
+---@param end_col integer # 0-base index
+function M.set_selection_range(start_row, start_col, end_row, end_col)
+    local mode = api.nvim_get_mode()
+    if mode.mode ~= "v" then
+        api.nvim_cmd({ cmd = "normal", bang = true, args = { "v" } }, {})
+    end
+
+    api.nvim_win_set_cursor(0, { start_row, start_col })
+    api.nvim_cmd({ cmd = "normal", bang = true, args = { "o" } }, {})
+    api.nvim_win_set_cursor(0, { end_row, end_col })
 end
 
 return M
