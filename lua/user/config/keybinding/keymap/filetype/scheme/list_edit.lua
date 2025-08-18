@@ -114,47 +114,51 @@ function ListEdit:get_keymap_tbl()
             self:edit_end()
         end,
 
-        -- expand selection to parent list towards program root
+        -- expand selection to parent list of current list, if no such parent is
+        -- found, it will try to select previous list sibling.
         ["h"] = function()
-            local result = util.get_list_node_for_selected_range { force_parent = true }
-            if result then
-                ts_util.select_node_range(result)
-            end
+            local node = util.get_list_node_for_selected_range()
+            if not node then return end
+
+            local result = ts_util.get_parent_of_type(node, "list") or ts_util.get_previous_sibling_of_type(node, "list")
+            if not result then return end
+
+            ts_util.select_node_range(result)
         end,
-        -- shrink selection to child list towards the starting point of current edit.
+        -- shrink selection to child list of current list, if no such child is
+        -- found, it will try to select next list sibling.
         ["l"] = function()
             local node = util.get_list_node_for_selected_range()
             if not node then return end
 
-            local result = ts_util.get_child_of_type(node, "list")
+            local result = ts_util.get_child_of_type(node, "list") or ts_util.get_next_sibling_of_type(node, "list")
             if not result then return end
 
             ts_util.select_node_range(result)
         end,
+        -- switch selection to next sibling list, if no more list sibling is found
+        -- it will try to select first child list.
         ["j"] = function()
             local node = util.get_list_node_for_selected_range()
             if not node then return end
 
-            local result = ts_util.get_next_sibling_of_type(node, "list")
-            if not result then
-                result = ts_util.get_child_of_type(node, "list")
-            end
+            local result = ts_util.get_next_sibling_of_type(node, "list") or ts_util.get_child_of_type(node, "list")
             if not result then return end
 
             ts_util.select_node_range(result)
         end,
+        -- switch selection to previous sibling list, if not list sibling is found
+        -- it will try to select parent list.
         ["k"] = function()
             local node = util.get_list_node_for_selected_range()
             if not node then return end
 
-            local result = ts_util.get_previous_sibling_of_type(node, "list")
-            if not result then
-                result = ts_util.get_parent_of_type(node, "list")
-            end
+            local result = ts_util.get_previous_sibling_of_type(node, "list") or ts_util.get_parent_of_type(node, "list")
             if not result then return end
 
             ts_util.select_node_range(result)
         end,
+
         -- wrapping selected node with extra layer of list
         ["a"] = function()
             local result = util.get_list_node_for_selected_range()
