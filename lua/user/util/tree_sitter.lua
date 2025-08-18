@@ -172,30 +172,22 @@ end
 -- node is found, nil will be returned.
 ---@param bufnr integer? # target buffer, nil or 0 means current buffer.
 ---@param lang string? # target parser language, default to filetype of buffer.
----@param node_type string # target type.
+---@param node_type string | table<string, boolean> # target type.
 ---@return TSNode?
 function M.buf_get_cursor_node_by_type(bufnr, lang, node_type)
-    local cur_node = vim.treesitter.get_node({
+    local node = vim.treesitter.get_node({
         bufnr = bufnr,
         lang = lang,
     })
 
-    local pointer = cur_node
-    while pointer do
-        if pointer:named() and pointer:type() == node_type then
-            break
-        end
-        pointer = pointer:parent()
-    end
-
-    return pointer
+    return walk_node_until_type(node, node.parent, node_type)
 end
 
 -- select_node_range set visual selection range to given treesitter node.
 ---@param node TSNode
 function M.select_node_range(node)
     local st_r, st_c, ed_r, ed_c = ts.get_node_range(node)
-    editing_util.set_selection_range( st_r + 1, st_c , ed_r + 1, ed_c - 1)
+    editing_util.set_selection_range(st_r + 1, st_c, ed_r + 1, ed_c - 1)
 end
 
 return M

@@ -12,7 +12,18 @@ local function with_cur_list_node(action)
     return function()
         local node = ts_util.buf_get_cursor_node_by_type(0, "scheme", "list")
         if not node then
-            vim.notify("No expression found under cursor", vim.log.levels.INFO);
+            vim.notify("No list node found under cursor", vim.log.levels.INFO);
+            return
+        end
+        action(node)
+    end
+end
+
+local function with_cur_dataum_node(action)
+    return function()
+        local node = ts_util.buf_get_cursor_node_by_type(0, "scheme", util.DATAUM_TYPE_TBL)
+        if not node then
+            vim.notify("No list node found under cursor", vim.log.levels.INFO);
             return
         end
         action(node)
@@ -44,10 +55,10 @@ return function(bufnr)
             ["<space>df"] = with_cur_list_node(function(node)
                 util.del_wrapping_func_call(node)
             end),
-            ["<space>a"] = with_cur_list_node(function(node)
+            ["<space>a"] = with_cur_dataum_node(function(node)
                 util.add_list_sibling_after(node)
             end),
-            ["<space>o"] = with_cur_list_node(function(node)
+            ["<space>o"] = with_cur_dataum_node(function(node)
                 util.add_list_sibling_newline(node)
             end),
             -- entering expression editing mode
