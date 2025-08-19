@@ -269,6 +269,25 @@ function DataumEdit:get_keymap_tbl()
             ts_util.select_node_range(node)
             api.nvim_cmd({ cmd = "normal", bang = true, args = { "=" } }, {})
         end,
+        -- change function name used in current function call
+        ["i"] = function()
+            local node = util.get_dataum_node_for_selected_range()
+            if not node then return end
+
+            local first_node = node:named_child(0)
+            if not first_node then return end
+
+            if first_node:type() ~= "symbol" then
+                return
+            end
+
+            local st_r, st_c, ed_r, ed_c = first_node:range()
+            api.nvim_win_set_cursor(0, { st_r + 1, st_c })
+            api.nvim_buf_set_text(0, st_r, st_c, ed_r, ed_c, {})
+
+            vim.cmd [[execute "normal! \<esc>\<esc>"]]
+            vim.cmd [[startinsert]]
+        end,
     }
 end
 
