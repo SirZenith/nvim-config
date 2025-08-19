@@ -60,6 +60,10 @@ return function(bufnr)
                 ts_util.select_node_range(node)
                 expr_edit_mode_on()
             end),
+            ["<space>d"] = with_cursor_node("dataum", util.DATAUM_TYPE_TBL, function(node)
+                ts_util.select_node_range(node)
+                expr_edit_mode_on()
+            end),
         },
         v = {
             -- entering expression editing mode
