@@ -1,5 +1,6 @@
 local editing_util = require "user.util.editing"
 local keybinding_util = require "user.config.keybinding.util"
+local table_util = require "user.util.table"
 local ts_util = require "user.util.tree_sitter"
 
 local util = require "user.config.keybinding.keymap.filetype.scheme.util"
@@ -224,6 +225,97 @@ function DataumEdit:get_keymap_tbl()
                     pointer = pointer:prev_sibling()
                 end
             end
+        end,
+
+        -- lift selected dataum one level upwards
+        ["<A-h>"] = function()
+            local node = util.get_dataum_node_for_selected_range()
+            if not node then return end
+
+            local parent = node:parent()
+            while parent and parent:type() ~= "list" do
+                node = parent
+                parent = node:parent()
+            end
+
+            if not node or not parent or parent:type() ~= "list" then
+                return
+            end
+
+            local next_sibling = node:next_named_sibling() or parent:child(parent:child_count() - 1)
+            if not next_sibling then return end
+
+            local target_st_r, target_st_c, node_ed_r, node_ed_c = node:range()
+            local target_ed_r, target_ed_c = next_sibling:range()
+
+            local replace_r, replace_c = parent:range()
+            local vst_r, vst_c = replace_r + 1, replace_c
+            local ved_r, ved_c = vst_r + node_ed_r - target_st_r, node_ed_c - 1
+
+            if target_st_r == node_ed_r then
+                -- single line content, ending point should also be shifted
+                ved_c = ved_c + vst_c - target_st_c
+            end
+
+            local lines = api.nvim_buf_get_text(0, target_st_r, target_st_c, target_ed_r, target_ed_c, {})
+            local line_cnt = #lines
+            if line_cnt >= 2 then
+                local last_line = lines[line_cnt]
+                if last_line and last_line:match("%s*") == last_line then
+                    lines[line_cnt] = ""
+                end
+            end
+
+            api.nvim_buf_set_text(0, target_st_r, target_st_c, target_ed_r, target_ed_c, {})
+            api.nvim_buf_set_text(0, replace_r, replace_c, replace_r, replace_c, lines)
+
+            editing_util.set_selection_range(vst_r, vst_c, ved_r, ved_c)
+        end,
+        -- push selected dataum one level downwards
+        ["<A-l>"] = function()
+            local node = util.get_dataum_node_for_selected_range()
+            if not node then return end
+
+            local into = nil ---@type TSNode?
+            local sibling = node:next_sibling()
+            while sibling do
+                into = sibling:type() == "list"
+                    and sibling
+                    or ts_util.get_child_of_type(sibling, "list")
+                if into then
+                    break
+                end
+
+                sibling = sibling:next_sibling()
+            end
+
+            if not into then return end
+
+            local first_child = into:named_child(0)
+            if not first_child then return end
+
+            local target_st_r, target_st_c, node_ed_r, node_ed_c = node:range()
+            local target_ed_r, target_ed_c = node_ed_r, node_ed_c
+            local next_named = node:next_named_sibling()
+            if next_named then
+                target_ed_r, target_ed_c = next_named:range()
+            end
+
+            local replace_r, replace_c = first_child:range()
+            local vst_r, vst_c = replace_r + 1 + target_st_r - target_ed_r, replace_c
+            local ved_r, ved_c = vst_r + node_ed_r - target_st_r, node_ed_c - 1
+
+            if target_st_r == node_ed_r then
+                -- single line content, ending point should also be shifted
+                ved_c = ved_c + vst_c - target_st_c
+            end
+
+            local lines = api.nvim_buf_get_text(0, target_st_r, target_st_c, target_ed_r, target_ed_c, {})
+
+            api.nvim_buf_set_text(0, replace_r, replace_c, replace_r, replace_c, lines)
+            api.nvim_buf_set_text(0, target_st_r, target_st_c, target_ed_r, target_ed_c, {})
+
+            editing_util.set_selection_range(vst_r, vst_c, ved_r, ved_c)
         end,
 
         -- wrapping selected node with extra layer of list
