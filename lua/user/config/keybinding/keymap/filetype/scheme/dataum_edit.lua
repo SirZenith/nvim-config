@@ -155,6 +155,7 @@ function DataumEdit:get_keymap_tbl()
             ts_util.select_node_range(result)
         end,
 
+        -- expand selection range to include next sibling
         ["<C-j>"] = function()
             local st_r, st_c, ed_r, ed_c = editing_util.get_visual_selection_range()
             if not st_r or not st_c or not ed_r or not ed_c then
@@ -188,6 +189,8 @@ function DataumEdit:get_keymap_tbl()
                 end
             end
         end,
+        -- remove last dataum in selection range until there is only one node
+        -- selected.
         ["<C-k>"] = function()
             local st_r, st_c, ed_r, ed_c = editing_util.get_visual_selection_range()
             if not st_r or not st_c or not ed_r or not ed_c then
@@ -290,7 +293,7 @@ function DataumEdit:get_keymap_tbl()
 
             if not into then return end
 
-            local first_child = into:named_child(0)
+            local first_child = into:named_child(0) or into:child(into:child_count() - 1)
             if not first_child then return end
 
             local target_st_r, target_st_c, node_ed_r, node_ed_c = node:range()

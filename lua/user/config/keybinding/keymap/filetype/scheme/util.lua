@@ -6,13 +6,19 @@ local ts = vim.treesitter
 
 local M = {}
 
-local QUOTED_TEYP_TBL = {
+local QUOTED_TYPE_TBL = {
     ["quote"] = true,
     ["quasiquote"] = true,
     ["unquote"] = true,
     ["unquote_splicing"] = true,
 }
-M.QUOTED_TEYP_TBL = QUOTED_TEYP_TBL
+M.QUOTED_TYPE_TBL = QUOTED_TYPE_TBL
+
+local LIST_LIKE_TYPE_TBL = {
+    ["list"] = true,
+    ["program"] = true,
+}
+M.LIST_LIKE_TYPE_TBL = LIST_LIKE_TYPE_TBL
 
 local DATAUM_TYPE_TBL = {
     ["boolean"] = true,
