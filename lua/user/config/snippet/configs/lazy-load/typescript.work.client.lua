@@ -1010,6 +1010,17 @@ cmd_snip.register(snip_filetype, {
             return "const Log = LOGGING.logger('" .. name .. "');"
         end,
     },
+    ["new region"] = {
+        args = { "name" },
+        content = function(name)
+            return {
+                { "// #region ",   name },
+                "",
+                "",
+                { "// #endregion", name },
+            }
+        end,
+    },
     ["new request"] = {
         args = { "name", { "flag_name", is_optional = true } },
         content = function(name, flag_name)
