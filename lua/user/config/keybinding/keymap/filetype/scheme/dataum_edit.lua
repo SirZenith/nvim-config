@@ -1,6 +1,5 @@
 local editing_util = require "user.util.editing"
 local keybinding_util = require "user.config.keybinding.util"
-local table_util = require "user.util.table"
 local ts_util = require "user.util.tree_sitter"
 
 local util = require "user.config.keybinding.keymap.filetype.scheme.util"
@@ -314,6 +313,72 @@ function DataumEdit:get_keymap_tbl()
 
             api.nvim_buf_set_text(0, replace_r, replace_c, replace_r, replace_c, lines)
             api.nvim_buf_set_text(0, target_st_r, target_st_c, target_ed_r, target_ed_c, {})
+
+            editing_util.set_selection_range(vst_r, vst_c, ved_r, ved_c)
+        end,
+        ["<A-j>"] = function()
+            local node = util.get_dataum_node_for_selected_range()
+            if not node then return end
+
+            local sibling = ts_util.get_next_sibling_of_type(node, util.DATAUM_TYPE_TBL)
+            if not sibling then return end
+
+            local st_r, st_c, ed_r, ed_c = node:range()
+            local sib_st_r, sib_st_c, sib_ed_r, sib_ed_c = sibling:range()
+
+            local node_text = api.nvim_buf_get_text(0, st_r, st_c, ed_r, ed_c, {})
+            local sibling_text = api.nvim_buf_get_text(0, sib_st_r, sib_st_c, sib_ed_r, sib_ed_c, {})
+
+            api.nvim_buf_set_text(0, sib_st_r, sib_st_c, sib_ed_r, sib_ed_c, node_text)
+            api.nvim_buf_set_text(0, st_r, st_c, ed_r, ed_c, sibling_text)
+
+            local line_span_delta = sib_ed_r - sib_st_r - ed_r + st_r
+
+            local vst_r, vst_c = sib_st_r + line_span_delta + 1, sib_st_c
+            local ved_r, ved_c = vst_r + ed_r - st_r, ed_c - 1
+            if ed_r == sib_st_r then
+                -- after switching, starting of target node and ending of sibling
+                -- node will be on the same line
+                local node_gap = sib_st_c - ed_c
+
+                if sib_st_r == sib_ed_r then
+                    -- single line sibling
+                    local sib_len = sib_ed_c - sib_st_c
+                    vst_c = st_c + sib_len + node_gap
+                else
+                    -- multi-line sibling
+                    local col_shift = sib_ed_c - sib_st_c
+                    vst_c = sib_st_c + col_shift + node_gap
+                end
+            end
+            if vst_r == ved_r then
+                -- target node has only one line of content
+                ved_c = ved_c + vst_c - st_c
+            end
+
+            editing_util.set_selection_range(vst_r, vst_c, ved_r, ved_c)
+        end,
+        ["<A-k>"] = function()
+            local node = util.get_dataum_node_for_selected_range()
+            if not node then return end
+
+            local sibling = ts_util.get_previous_sibling_of_type(node, util.DATAUM_TYPE_TBL)
+            if not sibling then return end
+
+            local st_r, st_c, ed_r, ed_c = node:range()
+            local sib_st_r, sib_st_c, sib_ed_r, sib_ed_c = sibling:range()
+
+            local node_text = api.nvim_buf_get_text(0, st_r, st_c, ed_r, ed_c, {})
+            local sibling_text = api.nvim_buf_get_text(0, sib_st_r, sib_st_c, sib_ed_r, sib_ed_c, {})
+
+            api.nvim_buf_set_text(0, st_r, st_c, ed_r, ed_c, sibling_text)
+            api.nvim_buf_set_text(0, sib_st_r, sib_st_c, sib_ed_r, sib_ed_c, node_text)
+
+            local vst_r, vst_c = sib_st_r + 1, sib_st_c
+            local ved_r, ved_c = vst_r + ed_r - st_r, ed_c - 1
+            if vst_r == ved_r then
+                ved_c = ved_c + vst_c - st_c
+            end
 
             editing_util.set_selection_range(vst_r, vst_c, ved_r, ved_c)
         end,
