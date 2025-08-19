@@ -247,19 +247,13 @@ function DataumEdit:get_keymap_tbl()
             local next_sibling = node:next_named_sibling() or parent:child(parent:child_count() - 1)
             if not next_sibling then return end
 
-            local target_st_r, target_st_c, node_ed_r, node_ed_c = node:range()
-            local target_ed_r, target_ed_c = next_sibling:range()
+            local node_st_r, node_st_c, node_ed_r, node_ed_c = node:range()
+            local content_st_r, content_st_c = node_st_r, node_st_c
+            local content_ed_r, content_ed_c = next_sibling:range()
 
-            local replace_r, replace_c = parent:range()
-            local vst_r, vst_c = replace_r + 1, replace_c
-            local ved_r, ved_c = vst_r + node_ed_r - target_st_r, node_ed_c - 1
+            local insert_r, insert_c = parent:range()
 
-            if target_st_r == node_ed_r then
-                -- single line content, ending point should also be shifted
-                ved_c = ved_c + vst_c - target_st_c
-            end
-
-            local lines = api.nvim_buf_get_text(0, target_st_r, target_st_c, target_ed_r, target_ed_c, {})
+            local lines = api.nvim_buf_get_text(0, content_st_r, content_st_c, content_ed_r, content_ed_c, {})
             local line_cnt = #lines
             if line_cnt >= 2 then
                 local last_line = lines[line_cnt]
@@ -268,8 +262,18 @@ function DataumEdit:get_keymap_tbl()
                 end
             end
 
-            api.nvim_buf_set_text(0, target_st_r, target_st_c, target_ed_r, target_ed_c, {})
-            api.nvim_buf_set_text(0, replace_r, replace_c, replace_r, replace_c, lines)
+            api.nvim_buf_set_text(0, content_st_r, content_st_c, content_ed_r, content_ed_c, {})
+            api.nvim_buf_set_text(0, insert_r, insert_c, insert_r, insert_c, lines)
+
+            -- update visual selection
+
+            local vst_r, vst_c = insert_r + 1, insert_c
+            local ved_r, ved_c = vst_r + node_ed_r - content_st_r, node_ed_c - 1
+
+            if content_st_r == node_ed_r then
+                -- single line content, ending point should also be shifted
+                ved_c = ved_c + vst_c - content_st_c
+            end
 
             editing_util.set_selection_range(vst_r, vst_c, ved_r, ved_c)
         end,
@@ -296,26 +300,36 @@ function DataumEdit:get_keymap_tbl()
             local first_child = into:named_child(0) or into:child(into:child_count() - 1)
             if not first_child then return end
 
-            local target_st_r, target_st_c, node_ed_r, node_ed_c = node:range()
-            local target_ed_r, target_ed_c = node_ed_r, node_ed_c
+            local node_st_r, node_st_c, node_ed_r, node_ed_c = node:range()
+            local content_st_r, content_st_c = node_st_r, node_st_c
+            local content_ed_r, content_ed_c = node_ed_r, node_ed_c
+
             local next_named = node:next_named_sibling()
             if next_named then
-                target_ed_r, target_ed_c = next_named:range()
+                content_ed_r, content_ed_c = next_named:range()
             end
 
-            local replace_r, replace_c = first_child:range()
-            local vst_r, vst_c = replace_r + 1 + target_st_r - target_ed_r, replace_c
-            local ved_r, ved_c = vst_r + node_ed_r - target_st_r, node_ed_c - 1
+            local insert_r, insert_c = first_child:range()
+            local lines = api.nvim_buf_get_text(0, content_st_r, content_st_c, content_ed_r, content_ed_c, {})
 
-            if target_st_r == node_ed_r then
+            api.nvim_buf_set_text(0, insert_r, insert_c, insert_r, insert_c, lines)
+            api.nvim_buf_set_text(0, content_st_r, content_st_c, content_ed_r, content_ed_c, {})
+
+            -- update visual selection
+
+            local line_span = content_ed_r - node_st_r
+
+            local vst_r, vst_c = insert_r - line_span + 1, insert_c
+            local ved_r, ved_c = vst_r + node_ed_r - node_st_r, node_ed_c - 1
+
+            if content_ed_r == insert_r then
+                local node_gap = insert_c - content_ed_c
+                vst_c = node_st_c + node_gap
+            end
+            if node_st_r == node_ed_r then
                 -- single line content, ending point should also be shifted
-                ved_c = ved_c + vst_c - target_st_c
+                ved_c = ved_c + vst_c - node_st_c
             end
-
-            local lines = api.nvim_buf_get_text(0, target_st_r, target_st_c, target_ed_r, target_ed_c, {})
-
-            api.nvim_buf_set_text(0, replace_r, replace_c, replace_r, replace_c, lines)
-            api.nvim_buf_set_text(0, target_st_r, target_st_c, target_ed_r, target_ed_c, {})
 
             editing_util.set_selection_range(vst_r, vst_c, ved_r, ved_c)
         end,
@@ -334,6 +348,8 @@ function DataumEdit:get_keymap_tbl()
 
             api.nvim_buf_set_text(0, sib_st_r, sib_st_c, sib_ed_r, sib_ed_c, node_text)
             api.nvim_buf_set_text(0, st_r, st_c, ed_r, ed_c, sibling_text)
+
+            -- update visual selection
 
             local line_span_delta = sib_ed_r - sib_st_r - ed_r + st_r
 
@@ -376,6 +392,8 @@ function DataumEdit:get_keymap_tbl()
 
             api.nvim_buf_set_text(0, st_r, st_c, ed_r, ed_c, sibling_text)
             api.nvim_buf_set_text(0, sib_st_r, sib_st_c, sib_ed_r, sib_ed_c, node_text)
+
+            -- update visual selection
 
             local vst_r, vst_c = sib_st_r + 1, sib_st_c
             local ved_r, ved_c = vst_r + ed_r - st_r, ed_c - 1
