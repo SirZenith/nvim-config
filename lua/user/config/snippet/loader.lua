@@ -204,7 +204,7 @@ function M.init_conditional_load()
                 function()
                     vim.validate("event", module.event, { "string", "table" })
                     vim.validate("pattern", module.pattern, { "string", "table" })
-                    vim.validate("cond_func", module.cond_func, "functionn", true)
+                    vim.validate("cond_func", module.cond_func, "function", true)
                     vim.validate("setup", module.setup, "function")
                 end,
                 function(msg)
@@ -221,8 +221,13 @@ function M.init_conditional_load()
                         if module.cond_func and not module.cond_func(info) then
                             return
                         end
+
+                        M.loaded_snippets_set[module_name] = true
+
                         module.setup()
                         util.finalize()
+
+                        return true
                     end,
                 })
             end
