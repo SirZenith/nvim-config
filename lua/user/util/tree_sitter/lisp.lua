@@ -6,58 +6,21 @@ local ts = vim.treesitter
 
 local M = {}
 
-local QUOTED_TYPE_TBL = {
-    ["quote"] = true,
-    ["quasiquote"] = true,
-    ["unquote"] = true,
-    ["unquote_splicing"] = true,
-}
-M.QUOTED_TYPE_TBL = QUOTED_TYPE_TBL
-
-local LIST_LIKE_TYPE_TBL = {
-    ["list"] = true,
-    ["program"] = true,
-}
-M.LIST_LIKE_TYPE_TBL = LIST_LIKE_TYPE_TBL
-
-local DATAUM_TYPE_TBL = {
-    ["boolean"] = true,
-    ["character"] = true,
-    ["string"] = true,
-
-    ["number"] = true,
-    ["symbol"] = true,
-
-    ["vector"] = true,
-    ["byte_vector"] = true,
-    ["list"] = true,
-
-    ["quote"] = true,
-    ["quasiquote"] = true,
-    ["unquote"] = true,
-    ["unquote_splicing"] = true,
-    ["syntax"] = true,
-    ["quasisyntax"] = true,
-    ["unsyntax"] = true,
-    ["unsyntax_splicing"] = true,
-
-    ["keyword"] = true,
-}
-M.DATAUM_TYPE_TBL = DATAUM_TYPE_TBL
-
----@class user.keybinding.scheme.GetExpressionOpts
+---@class user.util.tree_sitter.lisp.GetExpressionOpts
 ---@field force_parent boolean?
 
 -- get_parent_expression_node_for_range finds smallest expresson node that is
 -- larger then specified range.
+---@param lang string
+---@param dataum_type_tbl table<string, boolean>
 ---@param st_r integer
 ---@param st_c integer
 ---@param ed_r integer
 ---@param ed_c integer
----@param opts? user.keybinding.scheme.GetExpressionOpts
+---@param opts? user.util.tree_sitter.lisp.GetExpressionOpts
 ---@return TSNode?
-function M.get_dataum_node_for_range(st_r, st_c, ed_r, ed_c, opts)
-    local parser = vim.treesitter.get_parser(0, "scheme")
+function M.get_dataum_node_for_range(lang, dataum_type_tbl, st_r, st_c, ed_r, ed_c, opts)
+    local parser = vim.treesitter.get_parser(0, lang)
     local tree_list = parser and parser:parse() or nil
     local tree = tree_list and tree_list[1] or nil
     if not tree then return end
@@ -67,33 +30,36 @@ function M.get_dataum_node_for_range(st_r, st_c, ed_r, ed_c, opts)
     if not node or node:id() == root:id() then return end
 
     local force_parent = opts and opts.force_parent or false
-    if not force_parent and DATAUM_TYPE_TBL[node:type()] then
+    if not force_parent and dataum_type_tbl[node:type()] then
         return node
     end
 
-    return ts_util.get_parent_of_type(node, DATAUM_TYPE_TBL)
+    return ts_util.get_parent_of_type(node, dataum_type_tbl)
 end
 
----@param opts? user.keybinding.scheme.GetExpressionOpts
+---@param lang string
+---@param dataum_type_tbl table<string, boolean>
+---@param opts? user.util.tree_sitter.lisp.GetExpressionOpts
 ---@return TSNode?
-function M.get_dataum_node_for_selected_range(opts)
+function M.get_dataum_node_for_selected_range(lang, dataum_type_tbl, opts)
     local st_r, st_c, ed_r, ed_c = editing_util.get_visual_selection_range()
     if not st_r or not st_c or not ed_r or not ed_c then
         return
     end
 
-    return M.get_dataum_node_for_range(st_r, st_c, ed_r, ed_c, opts)
+    return M.get_dataum_node_for_range(lang, dataum_type_tbl, st_r, st_c, ed_r, ed_c, opts)
 end
 
+---@param symbol_type_tbl table<string, boolean>
 ---@param node TSNode
-function M.del_wrapping_func_call(node)
+function M.del_wrapping_func_call(symbol_type_tbl, node)
     local child_cnt = node:named_child_count()
     if child_cnt <= 0 then return end
 
     local children = node:named_children()
 
     local first_child = children[1] --[[@as TSNode]]
-    if first_child:type() ~= "symbol" then
+    if not symbol_type_tbl[first_child:type()] then
         vim.notify("Current expression is not a function call", vim.log.levels.INFO)
         return
     end
@@ -127,20 +93,22 @@ end
 
 -- add_list_sibling_newline adds new list sibling after current dataum on a new
 -- line
+---@param dataum_type_tbl table<string, boolean>
+---@param list_type_tbl table<string, boolean>
 ---@param node TSNode
-function M.add_list_sibling_newline(node)
+function M.add_list_sibling_newline(dataum_type_tbl, list_type_tbl, node)
     local _, st_c, ed_r, ed_c = node:range()
 
     local replace_ed_r, replace_ed_c = ed_r, ed_c
 
     local indent_level = st_c - 1
 
-    local dataum_parent = ts_util.get_parent_of_type(node, DATAUM_TYPE_TBL)
+    local dataum_parent = ts_util.get_parent_of_type(node, dataum_type_tbl)
     if dataum_parent then
         local _, par_st_c = dataum_parent:range()
 
         local first_child = dataum_parent:named_child(0)
-        if first_child and first_child:type() == "list" then
+        if first_child and list_type_tbl[first_child:type()] then
             indent_level = par_st_c + 1
         else
             indent_level = par_st_c + 2

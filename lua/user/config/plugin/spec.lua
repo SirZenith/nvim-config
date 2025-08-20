@@ -59,6 +59,15 @@ local specs = {
             },
         },
     },
+    ucs {
+        name = "scheme-list-highlight",
+        dependencies = {
+            "nvim-treesitter/nvim-treesitter",
+        },
+        lazy_load = {
+            ft = "scheme",
+        },
+    },
 
     -- ------------------------------------------------------------------------
     -- Themes

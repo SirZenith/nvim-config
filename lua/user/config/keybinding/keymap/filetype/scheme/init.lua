@@ -1,8 +1,7 @@
 local editing_util = require "user.util.editing"
 local keybinding_util = require "user.config.keybinding.util"
 local ts_util = require "user.util.tree_sitter"
-
-local util = require "user.config.keybinding.keymap.filetype.scheme.util"
+local scheme_ts_util = require "user.util.tree_sitter.scheme"
 
 local api = vim.api
 local ts = vim.treesitter
@@ -45,22 +44,22 @@ return function(bufnr)
             end),
             -- deletes current function call
             ["<space>df"] = with_cursor_node("list", "list", function(node)
-                util.del_wrapping_func_call(node)
+                scheme_ts_util.del_wrapping_func_call(node)
             end),
             -- appends new list sibling after current dataum node
-            ["<space>a"] = with_cursor_node("dataum", util.DATAUM_TYPE_TBL, function(node)
-                util.add_list_sibling_after(node)
+            ["<space>a"] = with_cursor_node("dataum", scheme_ts_util.DATAUM_TYPE_TBL, function(node)
+                scheme_ts_util.add_list_sibling_after(node)
             end),
             -- appends new linst sibling after current dataum on a new line.
-            ["<space>o"] = with_cursor_node("dataum", util.DATAUM_TYPE_TBL, function(node)
-                util.add_list_sibling_newline(node)
+            ["<space>o"] = with_cursor_node("dataum", scheme_ts_util.DATAUM_TYPE_TBL, function(node)
+                scheme_ts_util.add_list_sibling_newline(node)
             end),
             -- entering expression editing mode
             ["<space>s"] = with_cursor_node("list", "list", function(node)
                 ts_util.select_node_range(node)
                 expr_edit_mode_on()
             end),
-            ["<space>d"] = with_cursor_node("dataum", util.DATAUM_TYPE_TBL, function(node)
+            ["<space>d"] = with_cursor_node("dataum", scheme_ts_util.DATAUM_TYPE_TBL, function(node)
                 ts_util.select_node_range(node)
                 expr_edit_mode_on()
             end),

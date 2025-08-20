@@ -1,8 +1,7 @@
 local editing_util = require "user.util.editing"
 local keybinding_util = require "user.config.keybinding.util"
 local ts_util = require "user.util.tree_sitter"
-
-local util = require "user.config.keybinding.keymap.filetype.scheme.util"
+local scheme_ts_util = require "user.util.tree_sitter.scheme"
 
 local api = vim.api
 local ts = vim.treesitter
@@ -116,40 +115,40 @@ function DataumEdit:get_keymap_tbl()
 
         -- expand selection to parent dataum.
         ["h"] = function()
-            local node = util.get_dataum_node_for_selected_range()
+            local node = scheme_ts_util.get_dataum_node_for_selected_range()
             if not node then return end
 
-            local result = ts_util.get_parent_of_type(node, util.DATAUM_TYPE_TBL)
+            local result = ts_util.get_parent_of_type(node, scheme_ts_util.DATAUM_TYPE_TBL)
             if not result then return end
 
             ts_util.select_node_range(result)
         end,
         -- shrink selection to child dataum.
         ["l"] = function()
-            local node = util.get_dataum_node_for_selected_range()
+            local node = scheme_ts_util.get_dataum_node_for_selected_range()
             if not node then return end
 
-            local result = ts_util.get_child_of_type(node, util.DATAUM_TYPE_TBL)
+            local result = ts_util.get_child_of_type(node, scheme_ts_util.DATAUM_TYPE_TBL)
             if not result then return end
 
             ts_util.select_node_range(result)
         end,
         -- switch selection to next sibling dataum.
         ["j"] = function()
-            local node = util.get_dataum_node_for_selected_range()
+            local node = scheme_ts_util.get_dataum_node_for_selected_range()
             if not node then return end
 
-            local result = ts_util.get_next_sibling_of_type(node, util.DATAUM_TYPE_TBL)
+            local result = ts_util.get_next_sibling_of_type(node, scheme_ts_util.DATAUM_TYPE_TBL)
             if not result then return end
 
             ts_util.select_node_range(result)
         end,
         -- switch selection to previous sibling dataum.
         ["k"] = function()
-            local node = util.get_dataum_node_for_selected_range()
+            local node = scheme_ts_util.get_dataum_node_for_selected_range()
             if not node then return end
 
-            local result = ts_util.get_previous_sibling_of_type(node, util.DATAUM_TYPE_TBL)
+            local result = ts_util.get_previous_sibling_of_type(node, scheme_ts_util.DATAUM_TYPE_TBL)
             if not result then return end
 
             ts_util.select_node_range(result)
@@ -162,13 +161,13 @@ function DataumEdit:get_keymap_tbl()
                 return
             end
 
-            local node = util.get_dataum_node_for_range(st_r, st_c, ed_r, ed_c)
+            local node = scheme_ts_util.get_dataum_node_for_range(st_r, st_c, ed_r, ed_c)
             if not node then return end
 
             local _, _, ned_r, ned_c = node:range()
             if ed_r > ned_r or ed_c >= ned_c then
                 -- current selection range covers the whole node
-                local result = ts_util.get_next_sibling_of_type(node, util.DATAUM_TYPE_TBL)
+                local result = ts_util.get_next_sibling_of_type(node, scheme_ts_util.DATAUM_TYPE_TBL)
                 if result then
                     local _, _, red_r, red_c = result:range()
                     editing_util.set_selection_range(st_r + 1, st_c, red_r + 1, red_c - 1)
@@ -178,7 +177,7 @@ function DataumEdit:get_keymap_tbl()
                 -- to successive sibling.
                 local pointer = node:child(0)
                 while pointer do
-                    if util.DATAUM_TYPE_TBL[pointer:type()] then
+                    if scheme_ts_util.DATAUM_TYPE_TBL[pointer:type()] then
                         local _, _, ped_r, ped_c = pointer:range()
                         if ped_r > ed_r or (ped_r == ed_r and ped_c > ed_c) then
                             editing_util.set_selection_range(st_r + 1, st_c, ped_r + 1, ped_c - 1)
@@ -197,7 +196,7 @@ function DataumEdit:get_keymap_tbl()
                 return
             end
 
-            local node = util.get_dataum_node_for_range(st_r, st_c, ed_r, ed_c)
+            local node = scheme_ts_util.get_dataum_node_for_range(st_r, st_c, ed_r, ed_c)
             if not node then return end
 
             local nst_r, nst_c, ned_r, ned_c = node:range()
@@ -212,7 +211,7 @@ function DataumEdit:get_keymap_tbl()
                 -- by one dataum.
                 local pointer = node:child(node:child_count() - 1)
                 while pointer do
-                    if util.DATAUM_TYPE_TBL[pointer:type()] then
+                    if scheme_ts_util.DATAUM_TYPE_TBL[pointer:type()] then
                         local pst_r, pst_c, ped_r, ped_c = pointer:range()
                         -- check if a node is fully contained inside selection
                         -- range without touching the edge of selection
@@ -231,7 +230,7 @@ function DataumEdit:get_keymap_tbl()
 
         -- lift selected dataum one level upwards
         ["<A-h>"] = function()
-            local node = util.get_dataum_node_for_selected_range()
+            local node = scheme_ts_util.get_dataum_node_for_selected_range()
             if not node then return end
 
             local parent = node:parent()
@@ -279,7 +278,7 @@ function DataumEdit:get_keymap_tbl()
         end,
         -- push selected dataum one level downwards
         ["<A-l>"] = function()
-            local node = util.get_dataum_node_for_selected_range()
+            local node = scheme_ts_util.get_dataum_node_for_selected_range()
             if not node then return end
 
             local into = nil ---@type TSNode?
@@ -334,10 +333,10 @@ function DataumEdit:get_keymap_tbl()
             editing_util.set_selection_range(vst_r, vst_c, ved_r, ved_c)
         end,
         ["<A-j>"] = function()
-            local node = util.get_dataum_node_for_selected_range()
+            local node = scheme_ts_util.get_dataum_node_for_selected_range()
             if not node then return end
 
-            local sibling = ts_util.get_next_sibling_of_type(node, util.DATAUM_TYPE_TBL)
+            local sibling = ts_util.get_next_sibling_of_type(node, scheme_ts_util.DATAUM_TYPE_TBL)
             if not sibling then return end
 
             local st_r, st_c, ed_r, ed_c = node:range()
@@ -378,10 +377,10 @@ function DataumEdit:get_keymap_tbl()
             editing_util.set_selection_range(vst_r, vst_c, ved_r, ved_c)
         end,
         ["<A-k>"] = function()
-            local node = util.get_dataum_node_for_selected_range()
+            local node = scheme_ts_util.get_dataum_node_for_selected_range()
             if not node then return end
 
-            local sibling = ts_util.get_previous_sibling_of_type(node, util.DATAUM_TYPE_TBL)
+            local sibling = ts_util.get_previous_sibling_of_type(node, scheme_ts_util.DATAUM_TYPE_TBL)
             if not sibling then return end
 
             local st_r, st_c, ed_r, ed_c = node:range()
@@ -411,7 +410,7 @@ function DataumEdit:get_keymap_tbl()
         end,
         -- delete outter most layer of function call
         ["d"] = function()
-            local result = util.get_dataum_node_for_selected_range()
+            local result = scheme_ts_util.get_dataum_node_for_selected_range()
             if not result then return end
 
             local delete_type = "list"
@@ -426,22 +425,22 @@ function DataumEdit:get_keymap_tbl()
                 ts_util.select_node_range(parent_expr)
             end
 
-            util.del_wrapping_func_call(result)
+            scheme_ts_util.del_wrapping_func_call(result)
         end,
         -- append a list after current dataum
         ["a"] = function()
-            local node = util.get_dataum_node_for_selected_range()
+            local node = scheme_ts_util.get_dataum_node_for_selected_range()
             if not node then return end
-            util.add_list_sibling_after(node)
+            scheme_ts_util.add_list_sibling_after(node)
         end,
         ["o"] = function()
-            local node = util.get_dataum_node_for_selected_range()
+            local node = scheme_ts_util.get_dataum_node_for_selected_range()
             if not node then return end
-            util.add_list_sibling_newline(node)
+            scheme_ts_util.add_list_sibling_newline(node)
         end,
         -- indent current dataum
         ["f"] = function()
-            local node = util.get_dataum_node_for_selected_range()
+            local node = scheme_ts_util.get_dataum_node_for_selected_range()
             if not node then return end
 
             ts_util.select_node_range(node)
@@ -449,7 +448,7 @@ function DataumEdit:get_keymap_tbl()
         end,
         -- change function name used in current function call
         ["i"] = function()
-            local node = util.get_dataum_node_for_selected_range()
+            local node = scheme_ts_util.get_dataum_node_for_selected_range()
             if not node then return end
 
             local first_node = node:named_child(0)

@@ -179,6 +179,7 @@ function M.buf_get_cursor_node_by_type(bufnr, lang, node_type)
         bufnr = bufnr,
         lang = lang,
     })
+    if not node then return end
 
     return walk_node_until_type(node, node.parent, node_type)
 end

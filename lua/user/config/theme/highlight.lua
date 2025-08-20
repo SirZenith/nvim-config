@@ -573,6 +573,12 @@ local highlight = vim.tbl_extend("keep", {
         fg = color.blue.normal,
         bg = color.bg.light,
     },
+}, {
+    -- ------------------------------------------------------------------------
+    -- Scheme List range
+    UserPluginSchemeListRange = {
+        underline = true,
+    },
 })
 
 local rainbow_hl_groups = {
