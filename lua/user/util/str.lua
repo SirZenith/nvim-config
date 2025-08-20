@@ -68,4 +68,16 @@ function M.underscore_to_camel_case(text)
     return table.concat(buffer)
 end
 
+---@param str string
+---@return string
+function M.first_char_upper(str)
+    return str:sub(1, 1):upper() .. str:sub(2)
+end
+
+---@param str string
+---@return string
+function M.first_char_lower(str)
+    return str:sub(1, 1):lower() .. str:sub(2)
+end
+
 return M

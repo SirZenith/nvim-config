@@ -5,6 +5,8 @@ local snip_util = require "user.util.snippet"
 
 local extract_param = require "user.config.snippet.configs.lazy-load.typescript.param_extraction"
 
+local util = require "user.config.snippet.configs.lazy-load.typescript.util"
+
 local snip_filetype = "typescript"
 -- local s = require "user.config.snippet.utils"
 -- local makers = s.snippet_makers(snip_filetype)
@@ -78,6 +80,16 @@ cmd_snip.register(snip_filetype, {
         content = {
             { "const values = Object.values(", 1, ");" },
         }
+    },
+
+    ["init namespace"] = {
+        content = function()
+            local name = util.get_namespace_name_from_file_name()
+
+            return {
+                { "export namespace ", name, " {}" },
+            }
+        end,
     },
 
     ["iter list"] = {
@@ -190,6 +202,17 @@ cmd_snip.register(snip_filetype, {
             table.insert(result, " */")
 
             return result
+        end,
+    },
+    ["new region"] = {
+        args = { "name" },
+        content = function(name)
+            return {
+                { "// #region ",    name },
+                "",
+                "",
+                { "// #endregion ", name },
+            }
         end,
     },
 

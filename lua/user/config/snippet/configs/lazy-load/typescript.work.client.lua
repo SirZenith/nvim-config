@@ -35,18 +35,6 @@ local function to_camel(index)
     end, { index })
 end
 
----@param str string
----@return string
-local function first_char_upper(str)
-    return str:sub(1, 1):upper() .. str:sub(2)
-end
-
----@param str string
----@return string
-local function first_char_lower(str)
-    return str:sub(1, 1):lower() .. str:sub(2)
-end
-
 -- Generate panel name and class name by file name.
 ---@param index_gen fun(): integer # index generator
 ---@return  string | integer panel_name
@@ -66,15 +54,6 @@ local function get_panel_name_from_file_name(index_gen)
     end
 
     return panel_name, class_name
-end
-
--- Generate namespace module name by file name.
----@return string
-local function get_namespace_name_from_file_name()
-    local file_name = vim.api.nvim_buf_get_name(0)
-    file_name = fs_util.remove_ext(file_name)
-    file_name = vim.fs.basename(file_name) or ""
-    return file_name:upper()
 end
 
 ---@param index number
@@ -99,7 +78,7 @@ end
 ---@param clear_func string
 ---@return (string|string[])[]
 local function make_timer_snippet(name, add_func, clear_func)
-    name = first_char_upper(name)
+    name = str_util.first_char_upper(name)
     return {
         { "private init",    name, "Timer(): void {" },
         { "    this.cancel", name, "Timer();" },
@@ -263,73 +242,6 @@ local INIT_GM = {
     "};",
 }
 
-local NEW_ADS = {
-    { "// #region ", 2 },
-    "",
-    "/**",
-    " * @param role - 玩家数据",
-    { " * @returns 今天已经观看", 2, "广告的次数" },
-    " */",
-    { "export const get",                                          1, "CurCount = (role: Role): number => {" },
-    "// TODO",
-    { "    const cnt = SPAN_COUNTER.getDayCount(role as Role, ad", 1, "Flag);" },
-    "    return cnt;",
-    "};",
-    "",
-    "/**",
-    { " * @returns ", 2, "广告今日可看最大次数" },
-    " */",
-    { "export const get", 1, "MaxCnt = (): number => {" },
-    "// TODO",
-    { "    const maxCnt = GLOBAL_CONFIG.getConfigValue('') as number;" },
-    "    return maxCnt;",
-    "};",
-    "",
-    "/**",
-    " * @param role - 玩家数据",
-    { " * @returns ", 2, "广告 CD 结束的时间" },
-    " */",
-    { "export const getNext",       1, "Ts = (role: Role): number => {" },
-    "    const adsData = role.adsData;",
-    "    if (!adsData) {",
-    "        return COMMON_CONST.ZERO;",
-    "    }",
-    "",
-    "    // TODO",
-    { "    const ts = adsData.get", 1, "Ts();" },
-    "    const cd = GLOBAL_CONFIG.getConfigValue('');",
-    "    return ts + cd;",
-    "};",
-    "",
-    "/**",
-    " * @param role - 玩家数据",
-    { " * @returns 玩家当前是否可以观看", 2, "广告" },
-    " */",
-    { "export const is", 1, "CanPlayAd = (role: Role): IOkLocaleErrRet => {" },
-    "    const adsData = role.adsData;",
-    "    if (!adsData) {",
-    "        // 第一次看",
-    "        return { ok: true };",
-    "    }",
-    "",
-    { "    const cnt = get",    1, "CurCount(role);" },
-    { "    const maxCnt = get", 1, "MaxCnt();" },
-    "    if (cnt >= maxCnt) {",
-    "        return { ok: false };",
-    "    }",
-    "",
-    { "    const nextTs = getNext", 1, "Ts(role);" },
-    "    const now = TIMES.now();",
-    "    if (now < nextTs) {",
-    "        return { ok: false };",
-    "    }",
-    "",
-    "    return { ok: true };",
-    "};",
-    "",
-    { "// #endregion ",             2 },
-}
-
 local NEW_CLOSE_BTN = [[
 const btnClose = this.getGameObject('node_bg/panel/btn_close', UIButton);
 btnClose.setOnClick(this.close.bind(this));
@@ -362,7 +274,7 @@ cmd_snip.register(snip_filetype, {
             "counter-type",
         },
         content = function(index, name, counter_type)
-            counter_type = first_char_upper(counter_type)
+            counter_type = str_util.first_char_upper(counter_type)
 
             local type_ok = false
             for _, known_type in pairs(SpanCounterType) do
@@ -428,13 +340,6 @@ cmd_snip.register(snip_filetype, {
         end,
     },
 
-    ["field panel-fx-map"] = {
-        content = "private panelFxMap: UI_UTILITY.FxMap = new Map();",
-    },
-    ["field timer-map"] = {
-        content = "private timerMap: UI_UTILITY.TimerMap = new Map();",
-    },
-
     ["fx add"] = {
         args = { "path" },
         content = function(path)
@@ -487,7 +392,7 @@ cmd_snip.register(snip_filetype, {
             if prefix then
                 name = name == "_"
                     and prefix
-                    or prefix .. first_char_upper(name)
+                    or prefix .. str_util.first_char_upper(name)
             end
 
             if class_name == "" then
@@ -741,15 +646,6 @@ cmd_snip.register(snip_filetype, {
             }
         end,
     },
-    ["init namespace"] = {
-        content = function()
-            local name = get_namespace_name_from_file_name()
-
-            return {
-                { "export namespace ", name, " {}" },
-            }
-        end,
-    },
     ["init panel"] = {
         args = { { "prefab-path", is_optional = true } },
         content = function(prefab_path)
@@ -974,8 +870,8 @@ cmd_snip.register(snip_filetype, {
             local index = 1
 
             return {
-                { "export const send",      first_char_upper(name), " = (args: Req",      get_rpc_name(index), ", backfunc?: (ret: Res", get_rpc_name(index), ") => void): void => {" },
-                { "    NETWORK.send('c2s/", index,                  "', args, (ret) => {" },
+                { "export const send",      str_util.first_char_upper(name), " = (args: Req",      get_rpc_name(index), ", backfunc?: (ret: Res", get_rpc_name(index), ") => void): void => {" },
+                { "    NETWORK.send('c2s/", index,                           "', args, (ret) => {" },
                 "        backfunc?.(ret);",
                 "    });",
                 "};",
@@ -983,15 +879,6 @@ cmd_snip.register(snip_filetype, {
         end,
     },
 
-    ["new ads"] = {
-        args = { "ads_name", "ads_desc_name" },
-        content = function(ads_name, ads_desc_name)
-            return s.snippet_tbl_substitute(NEW_ADS, {
-                [1] = first_char_upper(ads_name),
-                [2] = ads_desc_name,
-            })
-        end,
-    },
     ["new close-btn"] = {
         content = NEW_CLOSE_BTN,
     },
@@ -1010,25 +897,14 @@ cmd_snip.register(snip_filetype, {
             return "const Log = LOGGING.logger('" .. name .. "');"
         end,
     },
-    ["new region"] = {
-        args = { "name" },
-        content = function(name)
-            return {
-                { "// #region ",   name },
-                "",
-                "",
-                { "// #endregion", name },
-            }
-        end,
-    },
     ["new request"] = {
         args = { "name", { "flag_name", is_optional = true } },
         content = function(name, flag_name)
             flag_name = flag_name or name
-            local flag_property = "this.requested" .. first_char_upper(flag_name)
+            local flag_property = "this.requested" .. str_util.first_char_upper(flag_name)
             return {
-                { "private do", first_char_upper(name), "(",  1, "): void {" },
-                { "    if (",   flag_property,          ") {" },
+                { "private do", str_util.first_char_upper(name), "(",  1, "): void {" },
+                { "    if (",   flag_property,                   ") {" },
                 "        return;",
                 "    }",
                 "",
@@ -1042,7 +918,7 @@ cmd_snip.register(snip_filetype, {
     ["new scroll"] = {
         args = { "name" },
         content = function(name)
-            name = first_char_upper(name)
+            name = str_util.first_char_upper(name)
             return {
                 "private update" .. name .. "Scroll(): void {",
                 { "    const scroll = this.getGameObject('", 1, "', UIScrollView);" },
@@ -1063,7 +939,7 @@ cmd_snip.register(snip_filetype, {
     ["new textid"] = {
         args = { "name" },
         content = function(name)
-            local varName = 'textId' .. first_char_upper(name)
+            local varName = 'textId' .. str_util.first_char_upper(name)
             return "const " .. varName .. ": LOCALE.textIdType = '';"
         end,
     },
@@ -1103,8 +979,8 @@ cmd_snip.register(snip_filetype, {
     ["reddot setup-func"] = {
         args = { "name" },
         content = function(name)
-            local node_name = first_char_lower(name)
-            local func_name = first_char_upper(name)
+            local node_name = str_util.first_char_lower(name)
+            local func_name = str_util.first_char_upper(name)
 
             return {
                 { "const init",                               func_name, "Reddot = (): void => {" },
@@ -1129,7 +1005,7 @@ cmd_snip.register(snip_filetype, {
     ["sheet cfg"] = {
         args = { "name" },
         content = function(name)
-            name = first_char_upper(name)
+            name = str_util.first_char_upper(name)
 
             return {
                 { "export const get",           name, "Cfg = (id: ", 2, "): I", 1, " | null => {" },
@@ -1142,7 +1018,7 @@ cmd_snip.register(snip_filetype, {
     ["sheet tbl"] = {
         args = { "name" },
         content = function(name)
-            name = first_char_upper(name)
+            name = str_util.first_char_upper(name)
 
             local file_index = 1
             local file_node = snippet_util.dynamic_conversion(file_index, str_util.underscore_to_camel_case)
