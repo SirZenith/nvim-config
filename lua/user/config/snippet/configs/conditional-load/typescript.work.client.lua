@@ -967,14 +967,14 @@ function M.setup()
         },
 
         ["reddot new"] = {
-            args = { "name" },
-            content = function(name)
+            args = { "name", "desc" },
+            content = function(name, desc)
                 local key_name = name .. "Key"
                 local node_name = name .. "Node"
                 return {
-                    { "// ",     2 },
+                    { "// ",     desc },
                     { "const ",  key_name,               " = ",                         1,        " + '", name, "';" },
-                    { "const ",  node_name,              " = reddotMgr.addNodeByPath(", key_name, ", '",  2,    "');" },
+                    { "const ",  node_name,              " = reddotMgr.addNodeByPath(", key_name, ", '",  desc, "');" },
                     { node_name, ".setCheckFunc(() => {" },
                     "    return false;",
                     "});",
