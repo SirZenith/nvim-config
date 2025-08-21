@@ -68,7 +68,7 @@ end
 function setup_buffer_autocmd(bufnr)
     update_highlight_range(bufnr)
 
-    create_autocmd({ "CursorMoved", "CursorMovedI" }, {
+    create_autocmd({ "CursorMoved", "CursorMovedI", "ModeChanged" }, {
         group = augroup_id,
         buffer = bufnr,
         callback = function(args)
