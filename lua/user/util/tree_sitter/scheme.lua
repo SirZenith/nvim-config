@@ -55,7 +55,7 @@ M.SYMBOL_TYPE_TBL = SYMBOL_TYPE_TBL
 ---@param opts? user.util.tree_sitter.lisp.GetExpressionOpts
 ---@return TSNode?
 function M.get_dataum_node_for_range(st_r, st_c, ed_r, ed_c, opts)
-    lisp_util.get_dataum_node_for_range("scheme", DATAUM_TYPE_TBL, st_r, st_c, ed_r, ed_c, opts)
+    return lisp_util.get_dataum_node_for_range("scheme", DATAUM_TYPE_TBL, st_r, st_c, ed_r, ed_c, opts)
 end
 
 ---@param opts? user.util.tree_sitter.lisp.GetExpressionOpts
