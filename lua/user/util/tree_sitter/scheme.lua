@@ -66,7 +66,7 @@ end
 
 ---@param node TSNode
 function M.del_wrapping_func_call(node)
-    lisp_util.del_wrapping_func_call(SYMBOL_TYPE_TBL, node)
+    lisp_util.del_wrapping_func_call(node, SYMBOL_TYPE_TBL)
 end
 
 -- add_list_sibling_after adds new list sibling after current dataum node
@@ -79,7 +79,7 @@ end
 -- line
 ---@param node TSNode
 function M.add_list_sibling_newline(node)
-    lisp_util.add_list_sibling_newline(DATAUM_TYPE_TBL, LIST_LIKE_TYPE_TBL, node)
+    lisp_util.add_list_sibling_newline(node, DATAUM_TYPE_TBL, SYMBOL_TYPE_TBL)
 end
 
 return M

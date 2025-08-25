@@ -50,9 +50,9 @@ function M.get_dataum_node_for_selected_range(lang, dataum_type_tbl, opts)
     return M.get_dataum_node_for_range(lang, dataum_type_tbl, st_r, st_c, ed_r, ed_c, opts)
 end
 
----@param symbol_type_tbl table<string, boolean>
 ---@param node TSNode
-function M.del_wrapping_func_call(symbol_type_tbl, node)
+---@param symbol_type_tbl table<string, boolean>
+function M.del_wrapping_func_call(node, symbol_type_tbl)
     local child_cnt = node:named_child_count()
     if child_cnt <= 0 then return end
 
@@ -91,29 +91,42 @@ function M.add_list_sibling_after(node)
     vim.cmd [[startinsert]]
 end
 
+-- get_new_chlid_indent_level finds indent level counted in space for new child
+-- node of a dataum node.
+---@param node TSNode
+---@param dataum_type_tbl table<string, boolean>
+---@param symbol_type_tbl table<string, boolean>
+---@return integer indent_level
+local function get_new_sibling_indent_level(node, dataum_type_tbl, symbol_type_tbl)
+    local _, st_c = node:range()
+
+    local dataum_parent = ts_util.get_parent_of_type(node, dataum_type_tbl)
+    if not dataum_parent then
+        return st_c
+    end
+
+    local _, par_st_c = dataum_parent:range()
+
+    local prev_sibling = node:prev_named_sibling()
+    if not prev_sibling and symbol_type_tbl[node:type()] then
+        local _, par_st_c = dataum_parent:range()
+        return par_st_c + 2
+    end
+
+    return st_c
+end
+
 -- add_list_sibling_newline adds new list sibling after current dataum on a new
 -- line
----@param dataum_type_tbl table<string, boolean>
----@param list_type_tbl table<string, boolean>
 ---@param node TSNode
-function M.add_list_sibling_newline(dataum_type_tbl, list_type_tbl, node)
-    local _, st_c, ed_r, ed_c = node:range()
+---@param dataum_type_tbl table<string, boolean>
+---@param symbol_type_tbl table<string, boolean>
+function M.add_list_sibling_newline(node, dataum_type_tbl, symbol_type_tbl)
+    local _, _, ed_r, ed_c = node:range()
 
     local replace_ed_r, replace_ed_c = ed_r, ed_c
 
-    local indent_level = st_c - 1
-
-    local dataum_parent = ts_util.get_parent_of_type(node, dataum_type_tbl)
-    if dataum_parent then
-        local _, par_st_c = dataum_parent:range()
-
-        local first_child = dataum_parent:named_child(0)
-        if first_child and list_type_tbl[first_child:type()] then
-            indent_level = par_st_c + 1
-        else
-            indent_level = par_st_c + 2
-        end
-    end
+    local indent_level = get_new_sibling_indent_level(node, dataum_type_tbl, symbol_type_tbl)
 
     local indent_unit = " "
     local indent_str = indent_unit:rep(indent_level)
