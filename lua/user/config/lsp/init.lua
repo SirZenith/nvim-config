@@ -112,7 +112,7 @@ user.lsp = {
         },
         {
             "emmylua_ls",
-            -- enabled = false,
+            enabled = false,
             desc = {
                 "Language server for Lua written in Rust",
             },
@@ -198,7 +198,7 @@ user.lsp = {
         },
         {
             "lua_ls",
-            enabled = false,
+            -- enabled = false,
             desc = {
                 "repo URL: https://github.com/luals/lua-language-server",
             }
