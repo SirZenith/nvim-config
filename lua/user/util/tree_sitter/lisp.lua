@@ -91,27 +91,37 @@ function M.add_list_sibling_after(node)
     vim.cmd [[startinsert]]
 end
 
+---@class user.util.treesitter.lisp.NewSiblingIndentArgs
+---@field dataum_type_tbl table<string, boolean>
+---@field symbol_type_tbl table<string, boolean>
+---@field statement_block_tbl table<string, boolean>
+
 -- get_new_chlid_indent_level finds indent level counted in space for new child
 -- node of a dataum node.
 ---@param node TSNode
----@param dataum_type_tbl table<string, boolean>
----@param symbol_type_tbl table<string, boolean>
+---@param args user.util.treesitter.lisp.NewSiblingIndentArgs
 ---@return integer indent_level
-local function get_new_sibling_indent_level(node, dataum_type_tbl, symbol_type_tbl)
+local function get_new_sibling_indent_level(node, args)
+    local parent = ts_util.get_parent_of_type(node, args.dataum_type_tbl)
+    if not parent then
+        return 0
+    end
+
+    local par_st_r, par_st_c = parent:range()
+
+    local first_child = parent:named_child(0)
+    if first_child and args.symbol_type_tbl[first_child:type()] then
+        local first_st_r = first_child:range()
+        if first_st_r == par_st_r then
+            local text = ts.get_node_text(first_child, 0)
+            print(text)
+            if args.statement_block_tbl[text] then
+                return par_st_c + 2
+            end
+        end
+    end
+
     local _, st_c = node:range()
-
-    local dataum_parent = ts_util.get_parent_of_type(node, dataum_type_tbl)
-    if not dataum_parent then
-        return st_c
-    end
-
-    local _, par_st_c = dataum_parent:range()
-
-    local prev_sibling = node:prev_named_sibling()
-    if not prev_sibling and symbol_type_tbl[node:type()] then
-        local _, par_st_c = dataum_parent:range()
-        return par_st_c + 2
-    end
 
     return st_c
 end
@@ -119,14 +129,13 @@ end
 -- add_list_sibling_newline adds new list sibling after current dataum on a new
 -- line
 ---@param node TSNode
----@param dataum_type_tbl table<string, boolean>
----@param symbol_type_tbl table<string, boolean>
-function M.add_list_sibling_newline(node, dataum_type_tbl, symbol_type_tbl)
+---@param args user.util.treesitter.lisp.NewSiblingIndentArgs
+function M.add_list_sibling_newline(node, args)
     local _, _, ed_r, ed_c = node:range()
 
-    local replace_ed_r, replace_ed_c = ed_r, ed_c
+    local _, replace_ed_c = ed_r, ed_c
 
-    local indent_level = get_new_sibling_indent_level(node, dataum_type_tbl, symbol_type_tbl)
+    local indent_level = get_new_sibling_indent_level(node, args)
 
     local indent_unit = " "
     local indent_str = indent_unit:rep(indent_level)
@@ -137,7 +146,7 @@ function M.add_list_sibling_newline(node, dataum_type_tbl, symbol_type_tbl)
     if next_sibling then
         local sib_st_r, sib_st_c, _, _ = next_sibling:range()
         if sib_st_r == ed_r then
-            replace_ed_r, replace_ed_c = sib_st_r, sib_st_c
+            replace_ed_c = sib_st_c
             table.insert(lines, indent_str)
         end
     end

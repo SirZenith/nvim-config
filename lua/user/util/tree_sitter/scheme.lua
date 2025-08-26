@@ -46,6 +46,19 @@ local SYMBOL_TYPE_TBL = {
 }
 M.SYMBOL_TYPE_TBL = SYMBOL_TYPE_TBL
 
+local STATEMENT_BLOCK_TBL = {
+    ["define"] = true,
+    ["let"] = true,
+    ["let*"] = true,
+    ["letrec"] = true,
+    ["lambda"] = true,
+    ["if"] = true,
+    ["when"] = true,
+    ["define-syntax"] = true,
+    ["syntax-rules"] = true,
+}
+M.STATEMENT_BLOCK_TBL = STATEMENT_BLOCK_TBL
+
 -- get_parent_expression_node_for_range finds smallest expresson node that is
 -- larger then specified range.
 ---@param st_r integer
@@ -79,7 +92,11 @@ end
 -- line
 ---@param node TSNode
 function M.add_list_sibling_newline(node)
-    lisp_util.add_list_sibling_newline(node, DATAUM_TYPE_TBL, SYMBOL_TYPE_TBL)
+    lisp_util.add_list_sibling_newline(node, {
+        dataum_type_tbl = DATAUM_TYPE_TBL,
+        symbol_type_tbl = SYMBOL_TYPE_TBL,
+        statement_block_tbl = STATEMENT_BLOCK_TBL,
+    })
 end
 
 return M
