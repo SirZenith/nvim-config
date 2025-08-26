@@ -408,8 +408,12 @@ function DataumEdit:get_keymap_tbl()
             editing_util.wrap_selected_text_with("( ", ")", editing_util.WrapAfterPos.left)
             api.nvim_feedkeys("a", "n", false)
         end,
+        ["p"] = function()
+            editing_util.wrap_selected_text_with("(", ")", editing_util.WrapAfterPos.right)
+            api.nvim_feedkeys("a", "n", false)
+        end,
         -- delete outter most layer of function call
-        ["d"] = function()
+        ["u"] = function()
             local result = scheme_ts_util.get_dataum_node_for_selected_range()
             if not result then return end
 
