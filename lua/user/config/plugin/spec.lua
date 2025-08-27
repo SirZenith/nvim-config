@@ -91,21 +91,6 @@ local specs = {
         },
     },
     {
-        -- Collaborative edit support
-        "jbyuki/instant.nvim",
-        lazy_load = {
-            cmd = {
-                "InstantStartServer",
-
-                "InstantStartSingle",
-                "InstantJoinSingle",
-
-                "InstantStartSession",
-                "InstantJoinSession",
-            },
-        },
-    },
-    {
         -- Jump to anywhere with a few key strokes
         "ggandor/leap.nvim",
         lazy_load = {
@@ -127,18 +112,6 @@ local specs = {
                     load_checker = putl.buffer_enter_trigger_loading_predicate,
                 },
             },
-        },
-    },
-    {
-        -- Clipboard history manager
-        "AckslD/nvim-neoclip.lua",
-        requires = {
-            -- you'll need at least one of these
-            "nvim-telescope/telescope.nvim",
-            -- "ibhagwan/fzf-lua",
-        },
-        lazy_load = {
-            keys = "<leader>p",
         },
     },
     {
@@ -442,30 +415,6 @@ local specs = {
             lazy = true,
         },
     },
-    {
-        -- tsserer adapter for NeoVim
-        "pmizio/typescript-tools.nvim",
-        enabled = false,
-        dependencies = {
-            "nvim-lua/plenary.nvim",
-            "neovim/nvim-lspconfig",
-            "SirZenith/lsp-config-loader",
-        },
-        lazy_load = {
-            event = {
-                {
-                    name = "BufNew",
-                    load_checker = putl.new_buffer_trigger_loading_predicate,
-                },
-            },
-            cond = putl.root_file_cond {
-                "tsconfig.json",
-                "client/tsconfig.json",
-                "project.code-workspace",
-            },
-            ft = "TelescopePrompt",
-        },
-    },
 
     -- ------------------------------------------------------------------------
     -- Completion
@@ -731,17 +680,6 @@ local specs = {
         },
         lazy_load = {
             cmd = "Mongo",
-        },
-    },
-    {
-        -- Preview PlantUML in browser
-        "weirongxu/plantuml-previewer.vim",
-        dependencies = {
-            "aklt/plantuml-syntax",
-            "tyru/open-browser.vim",
-        },
-        lazy_load = {
-            ft = "plantuml",
         },
     },
 }
