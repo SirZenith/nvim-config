@@ -53,7 +53,7 @@
   "toggleterm.nvim": { "branch": "main", "commit": "9a88eae817ef395952e08650b3283726786fb5fb" },
   "ts-grammar-navigator": { "branch": "main", "commit": "857267913929f3322f672eb51ddc58d49f2a6bba" },
   "undotree": { "branch": "master", "commit": "28f2f54a34baff90ea6f4a735ef1813ad875c743" },
-  "vcs-helper.nvim": { "branch": "main", "commit": "7d0018bb34d5d5d4d775e7328cdbe8d24a03a601" },
+  "vcs-helper.nvim": { "branch": "main", "commit": "f3881a4e29ed011ca18294c5522c76151ae68938" },
   "vim-arduino": { "branch": "master", "commit": "2ded67cdf09bb07c4805d9e93d478095ed3d8606" },
   "vim-arduino-syntax": { "branch": "master", "commit": "adbc4774f10aa407f366d41cba759b4e2996d68a" },
   "vimtex": { "branch": "master", "commit": "dc90feacb86f7b85b0b791d8073eefc769a23725" }
