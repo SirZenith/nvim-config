@@ -42,15 +42,15 @@ function M.setup()
     cmd_snip.register(snip_filetype, {
         ["init script"] = {
             args = {
-                { "source", is_optional = true },
+                { "source-dir", is_optional = true },
             },
-            content = function(source)
-                if not source then
+            content = function(source_dir)
+                if not source_dir then
                     return SCRIPT_INIT
                 end
 
                 local file_name = vim.api.nvim_buf_get_name(0)
-                local source_dir = vim.fs.joinpath(vim.fs.dirname(file_name), source)
+                local source_dir = vim.fs.joinpath(vim.fs.dirname(file_name), source_dir)
                 local files = fs_util.listdir(source_dir)
 
                 local head = {
