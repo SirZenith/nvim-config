@@ -55,13 +55,18 @@ function M.setup()
 
                 local head = {
                     "local delite = require \"delite\"",
-                    "-- local html = require \"html\"",
-                    "-- local atom = require \"html-atom\"",
+                    "local html = require \"html\"",
+                    "local atom = require \"html-atom\"",
+                    "",
+                    "local Node = html.Node",
+                    "local NodeType = html.NodeType",
                     "",
                     "delite.switch_handler(meta.source_filename, {",
                 }
                 local tail = {
                     "})",
+                    "",
+                    'delite.render_node(meta.source_filename .. ".html", doc_node)',
                     "",
                     "return doc_node",
                 }
