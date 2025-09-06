@@ -44,13 +44,13 @@ function M.setup()
             args = {
                 { "source-dir", is_optional = true },
             },
-            content = function(source_dir)
-                if not source_dir then
+            content = function(source_dir_arg)
+                if not source_dir_arg then
                     return SCRIPT_INIT
                 end
 
                 local file_name = vim.api.nvim_buf_get_name(0)
-                local source_dir = vim.fs.joinpath(vim.fs.dirname(file_name), source_dir)
+                local source_dir = vim.fs.joinpath(vim.fs.dirname(file_name), source_dir_arg)
                 local files = fs_util.listdir(source_dir)
 
                 local head = {
@@ -60,6 +60,28 @@ function M.setup()
                     "",
                     "local Node = html.Node",
                     "local NodeType = html.NodeType",
+                    "",
+
+                    "---@param toc_filename string",
+                    "local function setup_chapter_title(toc_filename)",
+                    "end",
+                    "",
+                    "---@class CommonSetupArgs",
+                    "---@field delete_files string[]",
+                    "---@field toc_filename string",
+                    "---@field pagebreak_before string[]",
+                    "",
+                    "---@param args CommonSetupArgs",
+                    "local function common_handler(args)",
+                    "    delite.delete_file_content(doc_node, args.delete_files)",
+                    "",
+                    "    setup_chapter_title(args.toc_filename)",
+                    "    delite.replace_file_content_with_toc(doc_node, args.toc_filename)",
+                    "",
+                    "    for _, file in ipairs(args.pagebreak_before) do",
+                    "        delite.add_pagebreak_before_file(doc_node, file)",
+                    "    end",
+                    "end",
                     "",
                     "delite.switch_handler(meta.source_filename, {",
                 }
