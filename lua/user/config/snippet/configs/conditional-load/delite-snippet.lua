@@ -4,18 +4,6 @@ M.event = "BufRead"
 M.pattern = "preprocess.lua"
 M.cond_func = nil
 
-local SCRIPT_INIT = [[
-local delite = require "delite"
--- local html = require "html"
--- local atom = require "html-atom"
-
-delite.switch_handler(meta.source_filename, {
-    _ = fnil,
-})
-
-return doc_node
-]]
-
 function M.setup()
     local cmd_snip = require "cmd-snippet"
 
@@ -57,10 +45,16 @@ function M.setup()
                     "local function default_chapter_handler(toc_filename)",
                     "end",
                     "",
+                    "---@param toc_filename string",
+                    "local function default_toc_content_handler(toc_filename)",
+                    "    delite.replace_file_content_with_toc(doc_node, toc_filename)",
+                    "end",
+                    "",
                     "---@class CommonSetupArgs",
                     "---@field delete_files string[]",
                     "---@field toc_filename string",
                     "---@field chapter_title_handler? fun(toc_filename: string)",
+                    "---@field toc_content_handler? fun(toc_filename: string)",
                     "---@field pagebreak_before string[]",
                     "",
                     "---@param args CommonSetupArgs",
@@ -73,7 +67,11 @@ function M.setup()
                     "            default_chapter_handler(args.toc_filename)",
                     "        end",
                     "",
-                    "        delite.replace_file_content_with_toc(doc_node, args.toc_filename)",
+                    '        if type(args.toc_content_handler) == "function" then',
+                    "            args.toc_content_handler(toc_filename)",
+                    "        else",
+                    "            default_toc_content_handler(toc_filename)",
+                    "        end",
                     "    end",
                     "",
                     "    for _, file in ipairs(args.pagebreak_before) do",
