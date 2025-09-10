@@ -28,6 +28,23 @@ function M.setup()
     -- local regapsp = makers.regapsp
 
     cmd_snip.register(snip_filetype, {
+        ["handling toc-with-id"] = {
+            content = {
+                "for node in delite.iter_in_file_matching(doc_node, toc_filename, {",
+                "    tag = atom.A,",
+                '    attr = "href",',
+                "}) do",
+                '    local href = node:attr("href") or ""',
+                '    local id = href:match(".*#(.+)")',
+                "    local title_node = id and doc_node:find { id = id }",
+                "",
+                "    if title_node then",
+                "        title_node:change_tag(atom.H1)",
+                "    end",
+                "end",
+            },
+        },
+
         ["init script"] = {
             args = {
                 { "source-dir", is_optional = true },
