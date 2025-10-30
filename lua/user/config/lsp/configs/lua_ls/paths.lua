@@ -27,6 +27,7 @@ local ADDON_LIBRARIES = {
     "luasocket",
     "luasocket-luli",
     "luvit-meta",
+    "reframework",
 }
 
 ---@param root_dir string
