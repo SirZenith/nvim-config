@@ -226,6 +226,11 @@ user.lsp = {
             install = "cargo install --features lsp --locked taplo-cli",
         },
         {
+            "tailwindcss",
+            desc = "language server for tailwind css",
+            install = "npm install -g @tailwindcss/language-server",
+        },
+        {
             "tsserver",
             enabled = false,
             desc = "TypeScript/JavaScript Server",
