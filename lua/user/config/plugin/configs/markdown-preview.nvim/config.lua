@@ -1,6 +1,6 @@
 local user = require "user"
 
-local css_root = vim.fs.joinpath(user.env.USER_RUNTIME_PATH(), "user", "plugins", "css")
+local css_root = vim.fs.joinpath(user.env.USER_RUNTIME_PATH(), "user", "config", "plugin", "configs", "css")
 
 user.plugin.markdown_preview_nvim.option.g = {
     __newentry = true,
