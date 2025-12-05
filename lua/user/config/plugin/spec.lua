@@ -50,6 +50,7 @@ local specs = {
     },
     ucs {
         name = "update-compiled-config",
+        enabled = false,
         lazy_load = {
             event = {
                 {
