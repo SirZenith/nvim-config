@@ -186,6 +186,11 @@ user.lsp = {
             desc = "make use of built in language server of nu",
         },
         {
+            "openscad_ls",
+            desc = "openSCAD Langauge Server",
+            install = "cargo install openscad-language-server",
+        },
+        {
             "pylsp",
             install = "pip install 'python-lsp-server[all]'",
         },
