@@ -9,12 +9,11 @@ user.filetype = {
     __newentry = true,
 
     -- disable soft tab for listed file types
-    no_soft_tab = { "go", "make", "plantuml", "vlang" },
+    no_soft_tab = { "asm", "go", "make", "plantuml", "vlang" },
 
     filetype_indent = {
         gleam = 2,
         scheme = 2,
-        asm = 4,
     },
 
     -- file type mapping pattern. file types appear earlier in the list take
