@@ -101,6 +101,7 @@ user.lsp = {
         },
         {
             "csharp_ls",
+            enabled = false,
             install = {
                 "nuget config -set http_proxy=http://127.0.0.1:1080",
                 "dotnet tool install --global csharp-ls",
@@ -193,6 +194,16 @@ user.lsp = {
         {
             "pylsp",
             install = "pip install 'python-lsp-server[all]'",
+        },
+        {
+            "roslyn_ls",
+            enabled = false,
+            install = {
+                "Download nuget package",
+                "https://dev.azure.com/azure-public/vside/_artifacts/feed/vs-impl/NuGet/Microsoft.CodeAnalysis.LanguageServer.<platform>/overview",
+                "where `<platform> is one of following: linux-x64, osx-x64, win-x64, netural`",
+                "extract downloaded package as zip file, put extracted folder to PATH",
+            },
         },
         {
             "rust_analyzer",
