@@ -197,7 +197,7 @@ user.lsp = {
         },
         {
             "roslyn_ls",
-            enabled = false,
+            -- enabled = false,
             install = {
                 "Download nuget package",
                 "https://dev.azure.com/azure-public/vside/_artifacts/feed/vs-impl/NuGet/Microsoft.CodeAnalysis.LanguageServer.<platform>/overview",
