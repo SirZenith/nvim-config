@@ -94,6 +94,7 @@ local specs = {
     {
         -- Jump to anywhere with a few key strokes
         "ggandor/leap.nvim",
+        url = "https://codeberg.org/andyg/leap.nvim",
         lazy_load = {
             event = {
                 {
@@ -681,6 +682,13 @@ local specs = {
         },
         lazy_load = {
             cmd = "Mongo",
+        },
+    },
+    {
+        "apyra/nvim-unity-sync",
+        lazy = false,
+        lazy_load = {
+            cond = putl.root_file_cond { "Assembly-CSharp.csproj" },
         },
     },
 }
