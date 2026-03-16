@@ -16,31 +16,31 @@ local M = {
         },
         ["csharp|inlay_hints"] = {
             ---@type boolean
-            dotnet_enable_inlay_hints_for_parameters = true,
+            dotnet_enable_inlay_hints_for_parameters = false,
             ---@type boolean
-            dotnet_enable_inlay_hints_for_literal_parameters = true,
+            dotnet_enable_inlay_hints_for_literal_parameters = false,
             ---@type boolean
-            dotnet_enable_inlay_hints_for_indexer_parameters = true,
+            dotnet_enable_inlay_hints_for_indexer_parameters = false,
             ---@type boolean
-            dotnet_enable_inlay_hints_for_object_creation_parameters = true,
+            dotnet_enable_inlay_hints_for_object_creation_parameters = false,
             ---@type boolean
-            dotnet_enable_inlay_hints_for_other_parameters = true,
+            dotnet_enable_inlay_hints_for_other_parameters = false,
             ---@type boolean
-            dotnet_suppress_inlay_hints_for_parameters_that_differ_only_by_suffix = true,
+            dotnet_suppress_inlay_hints_for_parameters_that_differ_only_by_suffix = false,
             ---@type boolean
-            dotnet_suppress_inlay_hints_for_parameters_that_match_method_intent = true,
+            dotnet_suppress_inlay_hints_for_parameters_that_match_method_intent = false,
             ---@type boolean
-            dotnet_suppress_inlay_hints_for_parameters_that_match_argument_name = true,
+            dotnet_suppress_inlay_hints_for_parameters_that_match_argument_name = false,
             ---@type boolean
-            csharp_enable_inlay_hints_for_types = true,
+            csharp_enable_inlay_hints_for_types = false,
             ---@type boolean
-            csharp_enable_inlay_hints_for_implicit_variable_types = true,
+            csharp_enable_inlay_hints_for_implicit_variable_types = false,
             ---@type boolean
-            csharp_enable_inlay_hints_for_lambda_parameter_types = true,
+            csharp_enable_inlay_hints_for_lambda_parameter_types = false,
             ---@type boolean
-            csharp_enable_inlay_hints_for_implicit_object_creation = true,
+            csharp_enable_inlay_hints_for_implicit_object_creation = false,
             ---@type boolean
-            csharp_enable_inlay_hints_for_collection_expressions = true,
+            csharp_enable_inlay_hints_for_collection_expressions = false,
         },
         ["csharp|code_lens"] = {
             ---@type boolean
