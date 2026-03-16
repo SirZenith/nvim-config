@@ -552,18 +552,6 @@ local specs = {
         }
     },
     {
-        "seblyng/roslyn.nvim",
-        lazy_load = {
-            cond = putl.root_file_cond { "Assembly-CSharp.csproj" },
-            event = {
-                {
-                    name = "BufEnter",
-                    load_checker = putl.buffer_enter_trigger_loading_predicate,
-                },
-            },
-        },
-    },
-    {
         "lervag/vimtex",
         lazy_load = {
             ft = { "tex", "latex", "bibtex" },
@@ -694,18 +682,6 @@ local specs = {
         },
         lazy_load = {
             cmd = "Mongo",
-        },
-    },
-    {
-        "apyra/nvim-unity-sync",
-        lazy_load = {
-            cond = putl.root_file_cond { "Assembly-CSharp.csproj" },
-            event = {
-                {
-                    name = "BufEnter",
-                    load_checker = putl.buffer_enter_trigger_loading_predicate,
-                },
-            },
         },
     },
 }

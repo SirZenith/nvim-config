@@ -176,9 +176,21 @@ function M.find_root_by_file(target_names)
                 break
             end
         end
+
+        if is_found then
+            break
+        end
     end
 
     return is_found
+end
+
+-- Looing for a file recrusively in child directory
+---@param target_names string[] # target file name
+---@return boolean is_found
+function M.find_root_by_child_file(target_names)
+    local results = vim.fs.find(target_names)
+    return #results > 0
 end
 
 ---@param target_names string[] # target file name
@@ -186,6 +198,14 @@ end
 function M.root_file_cond(target_names)
     return function()
         return M.find_root_by_file(target_names)
+    end
+end
+
+---@param target_names string[] # target file name
+---@return fun(): boolean
+function M.child_file_cond(target_names)
+    return function()
+        return M.find_root_by_child_file(target_names)
     end
 end
 
