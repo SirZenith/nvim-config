@@ -1,5 +1,6 @@
 ---@type vim.lsp.Config
 local M = {
+    offset_encoding = 'utf-16',
     settings = {
         ["csharp|background_analysis"] = {
             -- Option to turn configure background analysis scope for the current
