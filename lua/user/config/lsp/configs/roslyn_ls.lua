@@ -7,13 +7,13 @@ local M = {
             -- user. Note: setting this to "fullSolution" may result in significant
             -- performance degradation, see: https://github.com/dotnet/vscode-csharp/issues/8145#issuecomment-2784568100
             ---@type "openFiles" | "fullSolution" | "none"
-            dotnet_analyzer_diagnostics_scope = "fullSolution",
+            dotnet_analyzer_diagnostics_scope = "openFiles",
 
             -- Option to configure compiler diagnostics scope for the current user.
             -- Note: setting this to "fullSolution" may result in significant
             -- performance degradation, see: https://github.com/dotnet/vscode-csharp/issues/8145#issuecomment-2784568100
             ---@type "openFiles" | "fullSolution" | "none"
-            dotnet_compiler_diagnostics_scope = "fullSolution",
+            dotnet_compiler_diagnostics_scope = "openFiles",
         },
         ["csharp|inlay_hints"] = {
             ---@type boolean
