@@ -28,6 +28,7 @@ local ADDON_LIBRARIES = {
     "luasocket-luli",
     "luvit-meta",
     "reframework",
+    "swayimg",
 }
 
 ---@param root_dir string
