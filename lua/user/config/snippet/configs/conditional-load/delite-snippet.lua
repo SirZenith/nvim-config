@@ -131,6 +131,19 @@ function M.setup()
             end,
         },
 
+        ["iter toc-entry"] = {
+            content = {
+                "for node in delite.iter_in_file_matching(doc_node, toc_filename, {",
+                "    tag = atom.A,",
+                "}) do",
+                '    local href = node:attr("href ") or " "',
+                '    local id = href:match(".*#(.+)")',
+                '    if id and id ~= "" then',
+                "    end",
+                "end",
+            }
+        },
+
         ["new common-handling"] = {
             content = {
                 "common_handler {",
