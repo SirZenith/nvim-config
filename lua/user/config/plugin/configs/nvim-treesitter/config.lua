@@ -194,7 +194,8 @@ return user.plugin.nvim_treesitter:with_wrap(function(value)
         pattern = filetypes,
         callback = function()
             -- indentation
-            vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+            -- vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+
             -- syntax highlighting
             vim.treesitter.start()
         end,
