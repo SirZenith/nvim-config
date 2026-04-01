@@ -123,20 +123,6 @@ local specs = {
         },
     },
     {
-        "kylechui/nvim-surround",
-        dependencies = {
-            "nvim-treesitter/nvim-treesitter-textobjects"
-        },
-        lazy_load = {
-            event = {
-                {
-                    name = "BufEnter",
-                    load_checker = putl.buffer_enter_trigger_loading_predicate,
-                },
-            },
-        },
-    },
-    {
         -- A file explorer that allows you edit your file system as vim buffer.
         "stevearc/oil.nvim",
         dependencies = {
@@ -327,9 +313,23 @@ local specs = {
     -- ------------------------------------------------------------------------
     -- tree-sitter
     {
+        "kylechui/nvim-surround",
+        dependencies = {
+            -- "nvim-treesitter/nvim-treesitter-textobjects"
+        },
+        lazy_load = {
+            event = {
+                {
+                    name = "BufEnter",
+                    load_checker = putl.buffer_enter_trigger_loading_predicate,
+                },
+            },
+        },
+    },
+    {
         "nvim-treesitter/nvim-treesitter",
         -- build = ":TSUpdate",
-        -- branch = "main",
+        branch = "main",
         lazy_load = {
             ft = "TelescopePrompt",
             event = {
@@ -346,7 +346,9 @@ local specs = {
         },
     },
     {
+        -- incompatable with new nvim-treesitter
         "nvim-treesitter/nvim-treesitter-textobjects",
+        enabled = false,
         dependencies = {
             "nvim-treesitter/nvim-treesitter"
         },
@@ -384,7 +386,9 @@ local specs = {
         },
     },
     {
+        -- does not work well with new treesitter api. 2026.04.01
         "hiphish/rainbow-delimiters.nvim",
+        enabled = false,
         dependencies = {
             "nvim-treesitter/nvim-treesitter",
         },

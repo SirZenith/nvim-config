@@ -1,6 +1,7 @@
 local user = require "user"
 
-user.plugin.nvim_treesitter = {
+--[[ legazy
+--{
     __newentry = true,
     configs = {
         ---@type "all" | "maintained" | string[]
@@ -110,6 +111,62 @@ user.plugin.nvim_treesitter = {
     },
     parsers = {},
 }
+]]
+
+user.plugin.nvim_treesitter = {
+    __newentry = true,
+    languages = {
+        "bash",
+        "bibtex",
+        "c",
+        "clojure",
+        "cmake",
+        -- "comment", -- disable due to performance problem
+        "cpp",
+        "c_sharp",
+        "css",
+        -- "dap_repl",
+        "devicetree",
+        "dot",
+        "gitignore",
+        "gleam",
+        "glsl",
+        "go",
+        "gomod",
+        "haskell",
+        "html",
+        "hyprlang",
+        "ini",
+        "javascript",
+        "json",
+        "kotlin",
+        "latex",
+        "lua",
+        "make",
+        "markdown",
+        "markdown_inline",
+        "nu",
+        "python",
+        "qmljs",
+        "query",
+        "rasi",
+        "regex",
+        "ron",
+        "rust",
+        "scss",
+        "sql",
+        "toml",
+        "typescript",
+        "v",
+        "vim",
+        "vimdoc",
+        "yaml",
+        "yuck", -- configuration language for eww
+        "zig",
+    },
+    ---@type ParserInfo
+    parsers = {},
+}
 
 local env_cc = user.env.CC()
 if env_cc ~= "cc" then
@@ -117,11 +174,32 @@ if env_cc ~= "cc" then
 end
 
 return user.plugin.nvim_treesitter:with_wrap(function(value)
-    local nts_configs = require "nvim-treesitter.configs"
+    local nts = require "nvim-treesitter"
     local nts_parsers = require "nvim-treesitter.parsers"
-    local nts_install = require "nvim-treesitter.install"
 
-    local augroup = vim.api.nvim_create_augroup("user.plugin.nvim_treesitter", { clear = true })
+    -- ------------------------------------------------------------------------
+
+    local augroup_name = "user.plugin.nvim_treesitter"
+    local augroup = vim.api.nvim_create_augroup(augroup_name, { clear = true })
+
+    local filetypes = {}
+    for _, lang in ipairs(value.languages) do
+        local list = vim.treesitter.language.get_filetypes(lang)
+        vim.list_extend(filetypes, list)
+    end
+
+    -- activate treesitter functionality
+    vim.api.nvim_create_autocmd("FileType", {
+        group = augroup,
+        pattern = filetypes,
+        callback = function()
+            -- indentation
+            vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+            -- syntax highlighting
+            vim.treesitter.start()
+        end,
+    })
+
     -- remote italic in markdown code block
     vim.api.nvim_create_autocmd("FileType", {
         group = augroup,
@@ -133,29 +211,14 @@ return user.plugin.nvim_treesitter:with_wrap(function(value)
         end,
     })
 
-    -- ------------------------------------------------------------------------
-
-    nts_configs.setup(value.configs)
 
     -- ------------------------------------------------------------------------
 
-    nts_install.prefer_git = value.install.prefer_git
-
-    local compilers = value.install.compilers
-    if compilers then
-        nts_install.compilers = compilers
-    end
-
-    nts_install.command_extra_args = vim.tbl_extend(
-        "force",
-        nts_install.command_extra_args,
-        value.install.command_extra_args
-    )
+    nts.install(value.languages)
 
     -- ------------------------------------------------------------------------
 
-    local parser_config = nts_parsers.get_parser_configs()
     for name, info in pairs(value.parsers) do
-        parser_config[name] = info
+        nts_parsers[name] = info
     end
 end)
