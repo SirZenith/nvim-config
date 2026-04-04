@@ -315,7 +315,7 @@ local specs = {
     {
         "kylechui/nvim-surround",
         dependencies = {
-            -- "nvim-treesitter/nvim-treesitter-textobjects"
+            "nvim-treesitter/nvim-treesitter-textobjects"
         },
         lazy_load = {
             event = {
@@ -346,9 +346,8 @@ local specs = {
         },
     },
     {
-        -- incompatable with new nvim-treesitter
         "nvim-treesitter/nvim-treesitter-textobjects",
-        enabled = false,
+        branch = "main",
         dependencies = {
             "nvim-treesitter/nvim-treesitter"
         },
