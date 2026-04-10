@@ -687,6 +687,17 @@ local specs = {
             cmd = "Mongo",
         },
     },
+    {
+        "github/copilot.vim",
+        lazy_load = {
+            event = {
+                {
+                    name = "BufEnter",
+                    load_checker = putl.buffer_enter_trigger_loading_predicate,
+                },
+            },
+        },
+    },
 }
 
 return specs
